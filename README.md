@@ -1,5 +1,5 @@
-<h1 align="center">OpenGeode-ModuleTemplate<sup><i>by Geode-solutions</i></sup></h1>
-<h3 align="center">Template for creating your own OpenGeode modules</h3>
+<h1 align="center">OpenGeode-Inspector<sup><i>by Geode-solutions</i></sup></h1>
+<h3 align="center">OpenGeode module for inspecting meshes and models</h3>
 
 
 <p align="center">
@@ -31,18 +31,22 @@
 
 ## Introduction
 
-OpenGeode-ModuleTemplate provides a template for creating an [OpenGeode] module.
+OpenGeode-Inspector is a module of [OpenGeode] providing ways of inspecting your meshes and models and verifying their validity.
 
 [OpenGeode]: https://github.com/Geode-solutions/OpenGeode
 
 ## Documentation
 
-To know how to use this template, please have a look at this page: https://help.github.com/en/articles/creating-a-repository-from-a-template
+Go check out the online documentation at [docs.geode-solutions.com].
 
-Have also a look at this [OpenGeode] documentation: https://docs.geode-solutions.com/opengeode then click on "How to create your own OpenGeode module"
+[docs.geode-solutions.com] https://docs.geode-solutions.com
+
+Installing OpenGeode-Inspector is done:
+
+ * by compiling the C++ source.
 
 ## Questions
-For questions and support please use the official [slack](https://slackin-opengeode.herokuapp.com) and go to the channel #module_template. The issue list of this repo is exclusively for bug reports and feature requests. 
+For questions and support please use the official [slack](https://slackin-opengeode.herokuapp.com) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests. 
 
 
 ## License

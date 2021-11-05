@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include <mylib/mymodule_mylib_export.h>
+#include <geode/inspector/common.h>
 
-namespace mymodule
+namespace geode
 {
-    bool mymodule_mylib_api hello_world();
-} // namespace mymodule
+    bool opengeode_inspector_inspector_api hello_world();
+} // namespace geode

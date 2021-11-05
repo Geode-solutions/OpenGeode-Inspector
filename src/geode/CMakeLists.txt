@@ -18,14 +18,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.11)
-    
-if(NOT TARGET OpenGeode-Inspector::inspector)
-    project(OpenGeode-Inspector CXX)
-    find_package(OpenGeode REQUIRED CONFIG)
-    find_package(OpenGeode-Inspector REQUIRED CONFIG)
-    enable_testing()
-endif()
-
 add_subdirectory(inspector)
-

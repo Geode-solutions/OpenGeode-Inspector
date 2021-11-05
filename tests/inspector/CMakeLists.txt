@@ -19,8 +19,10 @@
 # SOFTWARE.
 
 add_geode_test(
-    SOURCE "test-hello-world.cpp"
+    SOURCE "test-degeneration.cpp"
     DEPENDENCIES
         OpenGeode::basic
-        ${PROJECT_NAME}::mylib
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspector
 )

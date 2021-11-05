@@ -21,15 +21,8 @@
  *
  */
 
-#include <mylib/hello_world.h>
+#pragma once
 
-#include <geode/basic/logger.h>
+#include <geode/basic/common.h>
 
-namespace mymodule
-{
-    bool hello_world()
-    {
-        geode::Logger::info( "Hello Geode World!" );
-        return true;
-    }
-} // namespace mymodule
+#include <geode/inspector/opengeode_inspector_inspector_export.h>

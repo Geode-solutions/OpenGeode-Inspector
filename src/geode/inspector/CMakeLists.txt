@@ -18,14 +18,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.11)
-    
-if(NOT TARGET OpenGeode-Inspector::inspector)
-    project(OpenGeode-Inspector CXX)
-    find_package(OpenGeode REQUIRED CONFIG)
-    find_package(OpenGeode-Inspector REQUIRED CONFIG)
-    enable_testing()
-endif()
-
-add_subdirectory(inspector)
+add_geode_library(
+    NAME inspector
+    FOLDER "geode/inspector"
+    SOURCES
+        "common.cpp"
+        "criterion/degeneration.cpp"
+    PUBLIC_HEADERS
+        "common.h"
+        "criterion/degeneration.h"
+    ADVANCED_HEADERS
+        # "mixin/core/detail/components_storage.h"
+    PRIVATE_HEADERS
+        # "helpers/private/simplicial_model_creator.h"
+    PUBLIC_DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        # absl::flat_hash_map
+        # Bitsery::bitsery
+        # ghcFilesystem::ghc_filesystem
+        # ${PROJECT_NAME}::geometry
+        # ${PROJECT_NAME}::mesh
+    PRIVATE_DEPENDENCIES
+        # Async++
+)
 

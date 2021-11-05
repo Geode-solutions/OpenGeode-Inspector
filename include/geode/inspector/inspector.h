@@ -21,14 +21,11 @@
  *
  */
 
-#include <geode/basic/common.h>
+#pragma once
 
-namespace
+#include <geode/inspector/common.h>
+
+namespace geode
 {
-    OPENGEODE_LIBRARY_INITIALIZE( myLib )
-    {
-        /* Here the functions to call when initializing the library
-         * For exemple: registers, ...
-         */
-    }
-} // namespace
+    bool opengeode_inspector_inspector_api hello_world();
+} // namespace geode
