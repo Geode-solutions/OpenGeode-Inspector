@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration.h>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
 
 #include <geode/basic/pimpl_impl.h>
 
@@ -67,7 +67,7 @@ namespace geode
             index_t nb_degenerated_edges(
                 const SurfaceMesh< dimension >& mesh ) const
             {
-                index_t nb_degeneration;
+                index_t nb_degeneration = 0;
 
                 mesh.enable_edges();
                 for( auto edge_index : Range( mesh.edges().nb_edges() ) )
@@ -89,7 +89,7 @@ namespace geode
             std::vector< index_t > degenerated_edges(
                 const SurfaceMesh< dimension >& mesh ) const
             {
-                std::vector< index_t > degenerated_edge_points;
+                std::vector< index_t > degenerated_edges_index;
 
                 mesh.enable_edges();
                 for( auto edge_index : Range( mesh.edges().nb_edges() ) )
@@ -101,13 +101,18 @@ namespace geode
                                            p2 = mesh.point( edge_vertices[1] );
                     if( geode::point_point_distance( p1, p2 ) < global_epsilon )
                     {
-                        degenerated_edge_points.push_back( edge_index );
+                        degenerated_edges_index.push_back( edge_index );
                     }
                 }
 
-                return degenerated_edge_points;
+                return degenerated_edges_index;
             }
         };
+
+        template < index_t dimension >
+        SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration()
+        {
+        }
 
         template < index_t dimension >
         SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration()

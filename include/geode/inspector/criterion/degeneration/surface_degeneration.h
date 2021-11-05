@@ -30,7 +30,6 @@
 namespace geode
 {
     FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
 } // namespace geode
 
 namespace geode
@@ -44,8 +43,7 @@ namespace geode
         class opengeode_inspector_inspector_api SurfaceMeshDegeneration
         {
         public:
-            SurfaceMeshDegeneration() = default;
-            SurfaceMeshDegeneration( SurfaceMeshDegeneration&& other );
+            SurfaceMeshDegeneration();
             ~SurfaceMeshDegeneration();
 
             bool is_mesh_degenerated(
@@ -58,30 +56,10 @@ namespace geode
                 const SurfaceMesh< dimension >& mesh ) const;
 
         private:
+            // SurfaceMeshDegeneration( SurfaceMeshDegeneration&& other );
+
             IMPLEMENTATION_MEMBER( impl_ );
         };
         ALIAS_2D_AND_3D( SurfaceMeshDegeneration );
-
-        // template < index_t dimension >
-        // class SolidMeshDegeneration
-        // {
-        // public:
-        //     SolidMeshDegeneration();
-        //     SolidMeshDegeneration( SolidMeshDegeneration&& other );
-        //     ~SolidMeshDegeneration();
-
-        //     bool is_mesh_degenerated(
-        //         const SolidMesh< dimension >& mesh ) const;
-
-        //     index_t nb_degenerated_edges(
-        //         const SolidMesh< dimension >& mesh ) const;
-
-        //     const std::vector< index_t > degenerated_edges(
-        //         const SolidMesh< dimension >& mesh ) const;
-
-        // private:
-        //     IMPLEMENTATION_MEMBER( impl_ );
-        // };
-        // ALIAS_2D_AND_3D( SolidMeshDegeneration );
     } // namespace inspector
 } // namespace geode

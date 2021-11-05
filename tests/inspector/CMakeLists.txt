@@ -19,7 +19,16 @@
 # SOFTWARE.
 
 add_geode_test(
-    SOURCE "test-degeneration.cpp"
+    SOURCE "test-surface-degeneration.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_test(
+    SOURCE "test-solid-degeneration.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

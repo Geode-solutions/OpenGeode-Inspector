@@ -23,10 +23,12 @@ add_geode_library(
     FOLDER "geode/inspector"
     SOURCES
         "common.cpp"
-        "criterion/degeneration.cpp"
+        "criterion/degeneration/surface_degeneration.cpp"
+        "criterion/degeneration/solid_degeneration.cpp"
     PUBLIC_HEADERS
         "common.h"
-        "criterion/degeneration.h"
+        "criterion/degeneration/surface_degeneration.h"
+        "criterion/degeneration/solid_degeneration.h"
     ADVANCED_HEADERS
         # "mixin/core/detail/components_storage.h"
     PRIVATE_HEADERS
