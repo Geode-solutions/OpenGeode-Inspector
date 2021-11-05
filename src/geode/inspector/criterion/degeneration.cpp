@@ -67,7 +67,7 @@ namespace geode
             index_t nb_degenerated_edges(
                 const SurfaceMesh< dimension >& mesh ) const
             {
-                index_t nb_degeneration;
+                index_t nb_degeneration = 0;
 
                 mesh.enable_edges();
                 for( auto edge_index : Range( mesh.edges().nb_edges() ) )
@@ -108,6 +108,11 @@ namespace geode
                 return degenerated_edge_points;
             }
         };
+
+        template < index_t dimension >
+        SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration()
+        {
+        }
 
         template < index_t dimension >
         SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration()

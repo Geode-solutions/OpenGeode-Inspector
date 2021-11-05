@@ -44,7 +44,7 @@ namespace geode
         class opengeode_inspector_inspector_api SurfaceMeshDegeneration
         {
         public:
-            SurfaceMeshDegeneration() = default;
+            SurfaceMeshDegeneration();
             SurfaceMeshDegeneration( SurfaceMeshDegeneration&& other );
             ~SurfaceMeshDegeneration();
 
