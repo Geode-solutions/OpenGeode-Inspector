@@ -40,7 +40,7 @@ namespace geode
         /*!
          * Class for inspecting the degeneration of a SolidMesh
          */
-        class SolidMeshDegeneration
+        class opengeode_inspector_inspector_api SolidMeshDegeneration
         {
         public:
             SolidMeshDegeneration();
