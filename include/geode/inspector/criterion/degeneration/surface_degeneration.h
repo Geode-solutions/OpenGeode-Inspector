@@ -34,32 +34,26 @@ namespace geode
 
 namespace geode
 {
-    namespace inspector
+    /*!
+     * Class for inspecting the degeneration of a SurfaceMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SurfaceMeshDegeneration
     {
-        /*!
-         * Class for inspecting the degeneration of a SurfaceMesh
-         */
-        template < index_t dimension >
-        class opengeode_inspector_inspector_api SurfaceMeshDegeneration
-        {
-        public:
-            SurfaceMeshDegeneration();
-            ~SurfaceMeshDegeneration();
+        OPENGEODE_DISABLE_COPY( SurfaceMeshDegeneration );
 
-            bool is_mesh_degenerated(
-                const SurfaceMesh< dimension >& mesh ) const;
+    public:
+        SurfaceMeshDegeneration( const SurfaceMesh< dimension >& mesh );
+        ~SurfaceMeshDegeneration();
 
-            index_t nb_degenerated_edges(
-                const SurfaceMesh< dimension >& mesh ) const;
+        bool is_mesh_degenerated() const;
 
-            const std::vector< index_t > degenerated_edges(
-                const SurfaceMesh< dimension >& mesh ) const;
+        index_t nb_degenerated_edges() const;
 
-        private:
-            // SurfaceMeshDegeneration( SurfaceMeshDegeneration&& other );
+        std::vector< index_t > degenerated_edges() const;
 
-            IMPLEMENTATION_MEMBER( impl_ );
-        };
-        ALIAS_2D_AND_3D( SurfaceMeshDegeneration );
-    } // namespace inspector
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( SurfaceMeshDegeneration );
 } // namespace geode

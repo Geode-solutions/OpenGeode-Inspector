@@ -28,7 +28,6 @@ namespace
     OPENGEODE_LIBRARY_INITIALIZE( OpenGeode_Inspector_inspector )
     {
         /* Here the functions to call when initializing the library
-         * For exemple: registers, ...
          */
     }
 } // namespace
