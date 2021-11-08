@@ -25,24 +25,17 @@ add_geode_library(
         "common.cpp"
         "criterion/degeneration/surface_degeneration.cpp"
         "criterion/degeneration/solid_degeneration.cpp"
+        "criterion/detail/degeneration_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
         "criterion/degeneration/surface_degeneration.h"
         "criterion/degeneration/solid_degeneration.h"
-    ADVANCED_HEADERS
-        # "mixin/core/detail/components_storage.h"
     PRIVATE_HEADERS
-        # "helpers/private/simplicial_model_creator.h"
+        "criterion/detail/degeneration_impl.h"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
+    PRIVATE_DEPENDENCIES
         OpenGeode::geometry
         OpenGeode::mesh
-        # absl::flat_hash_map
-        # Bitsery::bitsery
-        # ghcFilesystem::ghc_filesystem
-        # ${PROJECT_NAME}::geometry
-        # ${PROJECT_NAME}::mesh
-    PRIVATE_DEPENDENCIES
-        # Async++
 )
 
