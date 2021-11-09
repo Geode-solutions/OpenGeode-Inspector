@@ -25,13 +25,13 @@ add_geode_library(
         "common.cpp"
         "criterion/degeneration/surface_degeneration.cpp"
         "criterion/degeneration/solid_degeneration.cpp"
-        "criterion/detail/degeneration_impl.cpp"
+        "criterion/private/degeneration_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
         "criterion/degeneration/surface_degeneration.h"
         "criterion/degeneration/solid_degeneration.h"
     PRIVATE_HEADERS
-        "criterion/detail/degeneration_impl.h"
+        "criterion/private/degeneration_impl.h"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES

@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
-#include <geode/inspector/criterion/detail/degeneration_impl.h>
+#include <geode/inspector/criterion/private/degeneration_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
@@ -35,7 +35,7 @@ namespace geode
     {
     public:
         Impl( const SolidMesh3D& mesh )
-            : detail::DegenerationImpl< SolidMesh3D >( mesh )
+            : detail::DegenerationImpl< SolidMesh3D >{ mesh }
         {
         }
     };

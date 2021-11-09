@@ -44,7 +44,7 @@ void check_non_degeneration()
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
 
-    geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
+    const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
@@ -66,7 +66,7 @@ void check_degeneration_by_colocalisation()
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
 
-    geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
+    const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is shown not degenerated whereas it is." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
@@ -89,7 +89,7 @@ void check_degeneration_by_point_multiple_presence()
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 2, 1 } );
 
-    geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
+    const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is not shown degenerated whereas it is." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,

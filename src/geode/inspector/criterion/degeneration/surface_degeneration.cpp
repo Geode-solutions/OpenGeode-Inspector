@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
-#include <geode/inspector/criterion/detail/degeneration_impl.h>
+#include <geode/inspector/criterion/private/degeneration_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
@@ -36,7 +36,7 @@ namespace geode
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >( mesh )
+            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
         {
         }
     };

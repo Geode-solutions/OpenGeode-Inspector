@@ -39,7 +39,6 @@ namespace geode
 
         public:
             DegenerationImpl( const MeshType& mesh );
-            ~DegenerationImpl();
 
             bool is_mesh_degenerated() const;
 
@@ -50,6 +49,7 @@ namespace geode
         private:
             bool edge_is_degenerated( index_t edge_index ) const;
 
+        private:
             const MeshType& mesh_;
         };
     } // namespace detail

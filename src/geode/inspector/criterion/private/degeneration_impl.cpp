@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/detail/degeneration_impl.h>
+#include <geode/inspector/criterion/private/degeneration_impl.h>
 
 #include <geode/mesh/core/solid_edges.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -40,11 +40,6 @@ namespace geode
             : mesh_( mesh )
         {
             mesh_.enable_edges();
-        }
-
-        template < class MeshType >
-        DegenerationImpl< MeshType >::~DegenerationImpl()
-        {
         }
 
         template < class MeshType >
@@ -98,10 +93,10 @@ namespace geode
         bool DegenerationImpl< MeshType >::edge_is_degenerated(
             index_t edge_index ) const
         {
-            const auto edge_vertices{ mesh_.edges().edge_vertices(
-                edge_index ) };
-            const auto p1{ mesh_.point( edge_vertices[0] ) };
-            const auto p2{ mesh_.point( edge_vertices[1] ) };
+            const auto edge_vertices =
+                mesh_.edges().edge_vertices( edge_index );
+            const auto p1 = mesh_.point( edge_vertices[0] );
+            const auto p2 = mesh_.point( edge_vertices[1] );
             return point_point_distance( p1, p2 ) < global_epsilon;
         }
 
