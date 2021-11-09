@@ -18,14 +18,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.11)
-    
-if(NOT TARGET OpenGeode-Inspector::inspector)
-    project(OpenGeode-Inspector CXX)
-    find_package(OpenGeode REQUIRED CONFIG)
-    find_package(OpenGeode-Inspector REQUIRED CONFIG)
-    enable_testing()
-endif()
-
-add_subdirectory(inspector)
+add_geode_library(
+    NAME inspector
+    FOLDER "geode/inspector"
+    SOURCES
+        "common.cpp"
+        "criterion/degeneration/surface_degeneration.cpp"
+        "criterion/degeneration/solid_degeneration.cpp"
+        "criterion/private/degeneration_impl.cpp"
+    PUBLIC_HEADERS
+        "common.h"
+        "criterion/degeneration/surface_degeneration.h"
+        "criterion/degeneration/solid_degeneration.h"
+    PRIVATE_HEADERS
+        "criterion/private/degeneration_impl.h"
+    PUBLIC_DEPENDENCIES
+        OpenGeode::basic
+    PRIVATE_DEPENDENCIES
+        OpenGeode::geometry
+        OpenGeode::mesh
+)
 

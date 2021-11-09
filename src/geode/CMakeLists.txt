@@ -18,10 +18,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-@PACKAGE_INIT@ 
-
-include(CMakeFindDependencyMacro)
-find_dependency(OpenGeode)
-
-# Load information for each target
-include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@_mylib_target.cmake)
+add_subdirectory(inspector)

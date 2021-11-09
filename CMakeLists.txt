@@ -21,33 +21,23 @@
 cmake_minimum_required(VERSION 3.11)
 
 # Define the project
-project(MyModule CXX)
+project(OpenGeode-Inspector CXX)
 
-option(MYMODULE_WITH_TESTS "Compile test projects" ON)
+option(OPENGEODE_INSPECTOR_WITH_TESTS "Compile test projects" ON)
 
-# Get MyModule dependencies
+# Get OpenGeode-inspector dependencies
 find_package(OpenGeode REQUIRED)
 
 #------------------------------------------------------------------------------------------------
-# Configure the MyModule libraries
-add_geode_library(
-    NAME mylib
-    FOLDER "mylib"
-    SOURCES
-        "common.cpp"
-        "hello_world.cpp"
-    PUBLIC_HEADERS
-        "hello_world.h"
-    PRIVATE_DEPENDENCIES
-        OpenGeode::basic
-)
+# Configure the OpenGeode-inspector libraries
+add_subdirectory(src/geode)
 
 #------------------------------------------------------------------------------------------------
 # Optional modules configuration
-if(MYMODULE_WITH_TESTS)
+if(OPENGEODE_INSPECTOR_WITH_TESTS)
     # Enable testing with CTest
     enable_testing()
-    message(STATUS "Configuring MyModule with tests")
+    message(STATUS "Configuring OpenGeode-inspector with tests")
     add_subdirectory(tests)
 endif()
 

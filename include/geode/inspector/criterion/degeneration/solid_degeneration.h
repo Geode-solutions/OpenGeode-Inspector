@@ -23,9 +23,36 @@
 
 #pragma once
 
-#include <mylib/mymodule_mylib_export.h>
+#include <geode/basic/pimpl.h>
 
-namespace mymodule
+#include <geode/inspector/common.h>
+
+namespace geode
 {
-    bool mymodule_mylib_api hello_world();
-} // namespace mymodule
+    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    ALIAS_3D( SolidMesh );
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the degeneration of a SolidMesh
+     */
+    class opengeode_inspector_inspector_api SolidMeshDegeneration
+    {
+        OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
+
+    public:
+        SolidMeshDegeneration( const SolidMesh3D& mesh );
+        ~SolidMeshDegeneration();
+
+        bool is_mesh_degenerated() const;
+
+        index_t nb_degenerated_edges() const;
+
+        std::vector< index_t > degenerated_edges() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+} // namespace geode

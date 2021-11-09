@@ -21,14 +21,44 @@
  *
  */
 
-#include <geode/basic/common.h>
+#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/criterion/private/degeneration_impl.h>
 
-namespace
+#include <geode/basic/pimpl_impl.h>
+
+#include <geode/mesh/core/solid_mesh.h>
+
+namespace geode
 {
-    OPENGEODE_LIBRARY_INITIALIZE( myLib )
+    class SolidMeshDegeneration::Impl
+        : public detail::DegenerationImpl< SolidMesh3D >
     {
-        /* Here the functions to call when initializing the library
-         * For exemple: registers, ...
-         */
+    public:
+        Impl( const SolidMesh3D& mesh )
+            : detail::DegenerationImpl< SolidMesh3D >{ mesh }
+        {
+        }
+    };
+
+    SolidMeshDegeneration::SolidMeshDegeneration( const SolidMesh3D& mesh )
+        : impl_( mesh )
+    {
     }
-} // namespace
+
+    SolidMeshDegeneration::~SolidMeshDegeneration() {}
+
+    bool SolidMeshDegeneration::is_mesh_degenerated() const
+    {
+        return impl_->is_mesh_degenerated();
+    }
+
+    index_t SolidMeshDegeneration::nb_degenerated_edges() const
+    {
+        return impl_->nb_degenerated_edges();
+    }
+
+    std::vector< index_t > SolidMeshDegeneration::degenerated_edges() const
+    {
+        return impl_->degenerated_edges();
+    }
+} // namespace geode

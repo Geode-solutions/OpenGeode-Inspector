@@ -21,23 +21,39 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#pragma once
 
-#include <mylib/hello_world.h>
+#include <geode/basic/pimpl.h>
 
-int main()
+#include <geode/inspector/common.h>
+
+namespace geode
 {
-    try
-    {
-        OPENGEODE_EXCEPTION(
-            mymodule::hello_world(), "[Test] Hello World is not correct" );
+    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
+} // namespace geode
 
-        geode::Logger::info( "TEST SUCCESS" );
-        return 0;
-    }
-    catch( ... )
+namespace geode
+{
+    /*!
+     * Class for inspecting the degeneration of a SurfaceMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SurfaceMeshDegeneration
     {
-        return geode::geode_lippincott();
-    }
-}
+        OPENGEODE_DISABLE_COPY( SurfaceMeshDegeneration );
+
+    public:
+        SurfaceMeshDegeneration( const SurfaceMesh< dimension >& mesh );
+        ~SurfaceMeshDegeneration();
+
+        bool is_mesh_degenerated() const;
+
+        index_t nb_degenerated_edges() const;
+
+        std::vector< index_t > degenerated_edges() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( SurfaceMeshDegeneration );
+} // namespace geode
