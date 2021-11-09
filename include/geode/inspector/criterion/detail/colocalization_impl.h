@@ -27,5 +27,32 @@
 
 namespace geode
 {
-    bool opengeode_inspector_inspector_api hello_world();
+    namespace detail
+    {
+        /*!
+         * Implementation of the inspection of the colocalization of a Mesh
+         */
+        template < class MeshType >
+        class opengeode_inspector_inspector_api ColocalizationImpl
+        {
+            OPENGEODE_DISABLE_COPY( ColocalizationImpl );
+
+        public:
+            ColocalizationImpl( const MeshType& mesh );
+            ~ColocalizationImpl();
+
+            bool mesh_has_colocalized_points() const;
+
+            index_t nb_colocalized_points() const;
+
+            std::vector< std::vector< index_t > >
+                colocalized_points_groups() const;
+
+        private:
+            bool points_are_colocalized(
+                index_t pt_index_1, index_t pt_index_2 ) const;
+
+            const MeshType& mesh_;
+        };
+    } // namespace detail
 } // namespace geode

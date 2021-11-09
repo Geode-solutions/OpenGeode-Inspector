@@ -23,9 +23,36 @@
 
 #pragma once
 
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    bool opengeode_inspector_inspector_api hello_world();
+    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the colocalization of points in a mesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SurfaceMeshColocalization
+    {
+    public:
+        SurfaceMeshColocalization( const SurfaceMesh< dimension >& mesh );
+        ~SurfaceMeshColocalization();
+
+        bool mesh_has_colocalized_points() const;
+
+        index_t nb_colocalized_points() const;
+
+        const std::vector< std::vector< index_t > >
+            colocalized_points_groups() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( SurfaceMeshColocalization );
 } // namespace geode

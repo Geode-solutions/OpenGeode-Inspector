@@ -22,107 +22,43 @@
  */
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/criterion/detail/degeneration_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/solid_edges.h>
 #include <geode/mesh/core/solid_mesh.h>
-
-#include <geode/geometry/distance.h>
-#include <geode/geometry/point.h>
 
 namespace geode
 {
-    namespace inspector
+    class SolidMeshDegeneration::Impl
+        : public detail::DegenerationImpl< SolidMesh3D >
     {
-        class SolidMeshDegeneration::Impl
+    public:
+        Impl( const SolidMesh3D& mesh )
+            : detail::DegenerationImpl< SolidMesh3D >( mesh )
         {
-        public:
-            Impl() = default;
-
-            bool is_mesh_degenerated( const SolidMesh3D& mesh ) const
-            {
-                bool is_degenerated = false;
-
-                mesh.enable_edges();
-                for( auto edge_index : Range( mesh.edges().nb_edges() ) )
-                {
-                    const auto edge_vertices =
-                        mesh.edges().edge_vertices( edge_index );
-                    const Point3D &p1 = mesh.point( edge_vertices[0] ),
-                                  p2 = mesh.point( edge_vertices[1] );
-                    if( geode::point_point_distance( p1, p2 ) < global_epsilon )
-                    {
-                        is_degenerated = true;
-                        break;
-                    }
-                }
-
-                return is_degenerated;
-            }
-
-            index_t nb_degenerated_edges( const SolidMesh3D& mesh ) const
-            {
-                index_t nb_degeneration = 0;
-
-                mesh.enable_edges();
-                for( auto edge_index : Range( mesh.edges().nb_edges() ) )
-                {
-                    const auto edge_vertices =
-                        mesh.edges().edge_vertices( edge_index );
-                    const Point3D &p1 = mesh.point( edge_vertices[0] ),
-                                  p2 = mesh.point( edge_vertices[1] );
-                    if( geode::point_point_distance( p1, p2 ) < global_epsilon )
-                    {
-                        nb_degeneration++;
-                    }
-                }
-
-                return nb_degeneration;
-            }
-
-            std::vector< index_t > degenerated_edges(
-                const SolidMesh3D& mesh ) const
-            {
-                std::vector< index_t > degenerated_edges_index;
-
-                mesh.enable_edges();
-                for( auto edge_index : Range( mesh.edges().nb_edges() ) )
-                {
-                    const auto edge_vertices =
-                        mesh.edges().edge_vertices( edge_index );
-                    const Point3D &p1 = mesh.point( edge_vertices[0] ),
-                                  p2 = mesh.point( edge_vertices[1] );
-                    if( geode::point_point_distance( p1, p2 ) < global_epsilon )
-                    {
-                        degenerated_edges_index.push_back( edge_index );
-                    }
-                }
-
-                return degenerated_edges_index;
-            }
-        };
-
-        SolidMeshDegeneration::SolidMeshDegeneration() {}
-
-        SolidMeshDegeneration::~SolidMeshDegeneration() {}
-
-        bool SolidMeshDegeneration::is_mesh_degenerated(
-            const SolidMesh3D& mesh ) const
-        {
-            return impl_->is_mesh_degenerated( mesh );
         }
+    };
 
-        index_t SolidMeshDegeneration::nb_degenerated_edges(
-            const SolidMesh3D& mesh ) const
-        {
-            return impl_->nb_degenerated_edges( mesh );
-        }
+    SolidMeshDegeneration::SolidMeshDegeneration( const SolidMesh3D& mesh )
+        : impl_( mesh )
+    {
+    }
 
-        const std::vector< index_t > SolidMeshDegeneration::degenerated_edges(
-            const SolidMesh3D& mesh ) const
-        {
-            return impl_->degenerated_edges( mesh );
-        }
-    } // namespace inspector
+    SolidMeshDegeneration::~SolidMeshDegeneration() {}
+
+    bool SolidMeshDegeneration::is_mesh_degenerated() const
+    {
+        return impl_->is_mesh_degenerated();
+    }
+
+    index_t SolidMeshDegeneration::nb_degenerated_edges() const
+    {
+        return impl_->nb_degenerated_edges();
+    }
+
+    std::vector< index_t > SolidMeshDegeneration::degenerated_edges() const
+    {
+        return impl_->degenerated_edges();
+    }
 } // namespace geode

@@ -21,8 +21,8 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
-#include <geode/inspector/criterion/detail/degeneration_impl.h>
+#include <geode/inspector/criterion/colocalization/surface_colocalization.h>
+#include <geode/inspector/criterion/detail/colocalization_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
@@ -31,8 +31,8 @@
 namespace geode
 {
     template < index_t dimension >
-    class SurfaceMeshDegeneration< dimension >::Impl
-        : public detail::DegenerationImpl< SurfaceMesh< dimension > >
+    class SurfaceMeshColocalization< dimension >::Impl
+        : public detail::ColocalizationImpl< SurfaceMesh< dimension > >
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh )
@@ -42,38 +42,41 @@ namespace geode
     };
 
     template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
+    SurfaceMeshColocalization< dimension >::SurfaceMeshColocalization(
         const SurfaceMesh< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration()
+    SurfaceMeshColocalization< dimension >::~SurfaceMeshColocalization()
     {
     }
 
     template < index_t dimension >
-    bool SurfaceMeshDegeneration< dimension >::is_mesh_degenerated() const
+    bool SurfaceMeshColocalization< dimension >::mesh_has_colocalized_points()
+        const
     {
-        return impl_->is_mesh_degenerated();
+        return impl_->mesh_has_colocalized_points( mesh );
     }
 
     template < index_t dimension >
-    index_t SurfaceMeshDegeneration< dimension >::nb_degenerated_edges() const
+    index_t
+        SurfaceMeshColocalization< dimension >::nb_colocalized_points() const
     {
-        return impl_->nb_degenerated_edges();
+        return impl_->nb_colocalized_points( mesh );
     }
 
     template < index_t dimension >
-    std::vector< index_t >
-        SurfaceMeshDegeneration< dimension >::degenerated_edges() const
+    const std::vector< std::vector< index_t > >
+        SurfaceMeshColocalization< dimension >::colocalized_points_groups()
+            const
     {
-        return impl_->degenerated_edges();
+        return impl_->colocalized_points_groups( mesh );
     }
 
     template class opengeode_inspector_inspector_api
-        SurfaceMeshDegeneration< 2 >;
+        SurfaceMeshColocalization< 2 >;
     template class opengeode_inspector_inspector_api
-        SurfaceMeshDegeneration< 3 >;
+        SurfaceMeshColocalization< 3 >;
 } // namespace geode

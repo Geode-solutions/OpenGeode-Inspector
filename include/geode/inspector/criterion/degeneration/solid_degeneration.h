@@ -35,28 +35,24 @@ namespace geode
 
 namespace geode
 {
-    namespace inspector
+    /*!
+     * Class for inspecting the degeneration of a SolidMesh
+     */
+    class opengeode_inspector_inspector_api SolidMeshDegeneration
     {
-        /*!
-         * Class for inspecting the degeneration of a SolidMesh
-         */
-        class opengeode_inspector_inspector_api SolidMeshDegeneration
-        {
-        public:
-            SolidMeshDegeneration();
-            ~SolidMeshDegeneration();
+        OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
 
-            bool is_mesh_degenerated( const SolidMesh3D& mesh ) const;
+    public:
+        SolidMeshDegeneration( const SolidMesh3D& mesh );
+        ~SolidMeshDegeneration();
 
-            index_t nb_degenerated_edges( const SolidMesh3D& mesh ) const;
+        bool is_mesh_degenerated() const;
 
-            const std::vector< index_t > degenerated_edges(
-                const SolidMesh3D& mesh ) const;
+        index_t nb_degenerated_edges() const;
 
-        private:
-            // SolidMeshDegeneration( SolidMeshDegeneration&& other );
+        std::vector< index_t > degenerated_edges() const;
 
-            IMPLEMENTATION_MEMBER( impl_ );
-        };
-    } // namespace inspector
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
 } // namespace geode
