@@ -23,32 +23,37 @@
 
 #pragma once
 
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    namespace detail
+    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the colocation of points in a SolidMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SolidMeshColocation
     {
-        /*!
-         * Implementation of the inspection of the degeneration of a Mesh
-         */
-        template < class MeshType >
-        class DegenerationImpl
-        {
-        public:
-            DegenerationImpl( const MeshType& mesh );
+        OPENGEODE_DISABLE_COPY( SolidMeshColocation );
 
-            bool is_mesh_degenerated() const;
+    public:
+        SolidMeshColocation( const SolidMesh< dimension >& mesh );
+        ~SolidMeshColocation();
 
-            index_t nb_degenerated_edges() const;
+        bool mesh_has_colocated_points() const;
 
-            std::vector< index_t > degenerated_edges() const;
+        index_t nb_colocated_points() const;
 
-        private:
-            bool edge_is_degenerated( index_t edge_index ) const;
+        std::vector< std::vector< index_t > > colocated_points_groups() const;
 
-        private:
-            const MeshType& mesh_;
-        };
-    } // namespace detail
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( SolidMeshColocation );
 } // namespace geode

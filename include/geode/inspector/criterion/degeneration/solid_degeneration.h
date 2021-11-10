@@ -30,7 +30,6 @@
 namespace geode
 {
     FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-    ALIAS_3D( SolidMesh );
 } // namespace geode
 
 namespace geode
@@ -38,12 +37,13 @@ namespace geode
     /*!
      * Class for inspecting the degeneration of a SolidMesh
      */
+    template < index_t dimension >
     class opengeode_inspector_inspector_api SolidMeshDegeneration
     {
         OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
 
     public:
-        SolidMeshDegeneration( const SolidMesh3D& mesh );
+        SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
         ~SolidMeshDegeneration();
 
         bool is_mesh_degenerated() const;
@@ -55,4 +55,5 @@ namespace geode
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
+    ALIAS_2D_AND_3D( SolidMeshDegeneration );
 } // namespace geode

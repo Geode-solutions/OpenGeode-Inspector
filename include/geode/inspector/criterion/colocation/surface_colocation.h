@@ -35,24 +35,25 @@ namespace geode
 namespace geode
 {
     /*!
-     * Class for inspecting the colocalization of points in a mesh
+     * Class for inspecting the colocation of points in a SurfaceMesh
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshColocalization
+    class opengeode_inspector_inspector_api SurfaceMeshColocation
     {
+        OPENGEODE_DISABLE_COPY( SurfaceMeshColocation );
+
     public:
-        SurfaceMeshColocalization( const SurfaceMesh< dimension >& mesh );
-        ~SurfaceMeshColocalization();
+        SurfaceMeshColocation( const SurfaceMesh< dimension >& mesh );
+        ~SurfaceMeshColocation();
 
-        bool mesh_has_colocalized_points() const;
+        bool mesh_has_colocated_points() const;
 
-        index_t nb_colocalized_points() const;
+        index_t nb_colocated_points() const;
 
-        const std::vector< std::vector< index_t > >
-            colocalized_points_groups() const;
+        std::vector< std::vector< index_t > > colocated_points_groups() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshColocalization );
+    ALIAS_2D_AND_3D( SurfaceMeshColocation );
 } // namespace geode

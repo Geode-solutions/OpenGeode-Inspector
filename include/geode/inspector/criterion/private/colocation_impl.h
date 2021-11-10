@@ -25,34 +25,31 @@
 
 #include <geode/inspector/common.h>
 
+#include <geode/geometry/nn_search.h>
+
 namespace geode
 {
     namespace detail
     {
         /*!
-         * Implementation of the inspection of the colocalization of a Mesh
+         * Implementation of the inspection of the colocation of a Mesh
          */
-        template < class MeshType >
-        class opengeode_inspector_inspector_api ColocalizationImpl
+        template < index_t dimension, class MeshType >
+        class ColocationImpl
         {
-            OPENGEODE_DISABLE_COPY( ColocalizationImpl );
-
         public:
-            ColocalizationImpl( const MeshType& mesh );
-            ~ColocalizationImpl();
+            ColocationImpl( const MeshType& mesh );
 
-            bool mesh_has_colocalized_points() const;
+            bool mesh_has_colocated_points() const;
 
-            index_t nb_colocalized_points() const;
+            index_t nb_colocated_points() const;
 
             std::vector< std::vector< index_t > >
-                colocalized_points_groups() const;
+                colocated_points_groups() const;
 
         private:
-            bool points_are_colocalized(
-                index_t pt_index_1, index_t pt_index_2 ) const;
-
-            const MeshType& mesh_;
+            const typename NNSearch< dimension >::ColocatedInfo
+                mesh_colocation_info_;
         };
     } // namespace detail
 } // namespace geode

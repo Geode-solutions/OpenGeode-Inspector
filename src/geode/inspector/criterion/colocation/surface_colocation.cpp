@@ -21,8 +21,8 @@
  *
  */
 
-#include <geode/inspector/criterion/colocalization/surface_colocalization.h>
-#include <geode/inspector/criterion/detail/colocalization_impl.h>
+#include <geode/inspector/criterion/colocation/surface_colocation.h>
+#include <geode/inspector/criterion/private/colocation_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
@@ -31,52 +31,48 @@
 namespace geode
 {
     template < index_t dimension >
-    class SurfaceMeshColocalization< dimension >::Impl
-        : public detail::ColocalizationImpl< SurfaceMesh< dimension > >
+    class SurfaceMeshColocation< dimension >::Impl
+        : public detail::ColocationImpl< dimension, SurfaceMesh< dimension > >
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >( mesh )
+            : detail::ColocationImpl< dimension, SurfaceMesh< dimension > >(
+                mesh )
         {
         }
     };
 
     template < index_t dimension >
-    SurfaceMeshColocalization< dimension >::SurfaceMeshColocalization(
+    SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
         const SurfaceMesh< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshColocalization< dimension >::~SurfaceMeshColocalization()
+    SurfaceMeshColocation< dimension >::~SurfaceMeshColocation()
     {
     }
 
     template < index_t dimension >
-    bool SurfaceMeshColocalization< dimension >::mesh_has_colocalized_points()
-        const
+    bool SurfaceMeshColocation< dimension >::mesh_has_colocated_points() const
     {
-        return impl_->mesh_has_colocalized_points( mesh );
+        return impl_->mesh_has_colocated_points();
     }
 
     template < index_t dimension >
-    index_t
-        SurfaceMeshColocalization< dimension >::nb_colocalized_points() const
+    index_t SurfaceMeshColocation< dimension >::nb_colocated_points() const
     {
-        return impl_->nb_colocalized_points( mesh );
+        return impl_->nb_colocated_points();
     }
 
     template < index_t dimension >
-    const std::vector< std::vector< index_t > >
-        SurfaceMeshColocalization< dimension >::colocalized_points_groups()
-            const
+    std::vector< std::vector< index_t > >
+        SurfaceMeshColocation< dimension >::colocated_points_groups() const
     {
-        return impl_->colocalized_points_groups( mesh );
+        return impl_->colocated_points_groups();
     }
 
-    template class opengeode_inspector_inspector_api
-        SurfaceMeshColocalization< 2 >;
-    template class opengeode_inspector_inspector_api
-        SurfaceMeshColocalization< 3 >;
+    template class opengeode_inspector_inspector_api SurfaceMeshColocation< 2 >;
+    template class opengeode_inspector_inspector_api SurfaceMeshColocation< 3 >;
 } // namespace geode

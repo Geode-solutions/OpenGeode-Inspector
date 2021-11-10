@@ -21,60 +21,58 @@
  *
  */
 
-#include <geode/inspector/criterion/colocalization/solid_colocalization.h>
-#include <geode/inspector/criterion/detail/colocalization_impl.h>
+#include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
+#include <geode/inspector/criterion/private/colocation_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/edged_curve.h>
 
 namespace geode
 {
     template < index_t dimension >
-    class SolidMeshColocalization< dimension >::Impl
-        : public detail::ColocalizationImpl< SolidMesh< dimension > >
+    class EdgedCurveColocation< dimension >::Impl
+        : public detail::ColocationImpl< dimension, EdgedCurve< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SolidMesh< dimension > >( mesh )
+        Impl( const EdgedCurve< dimension >& mesh )
+            : detail::ColocationImpl< dimension, EdgedCurve< dimension > >(
+                mesh )
         {
         }
     };
 
     template < index_t dimension >
-    SolidMeshColocalization< dimension >::SolidMeshColocalization(
-        const SolidMesh< dimension >& mesh )
+    EdgedCurveColocation< dimension >::EdgedCurveColocation(
+        const EdgedCurve< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    SolidMeshColocalization< dimension >::~SolidMeshColocalization()
+    EdgedCurveColocation< dimension >::~EdgedCurveColocation()
     {
     }
 
     template < index_t dimension >
-    bool SolidMeshColocalization< dimension >::mesh_has_colocalized_points()
-        const
+    bool EdgedCurveColocation< dimension >::mesh_has_colocated_points() const
     {
-        return impl_->mesh_has_colocalized_points( mesh );
+        return impl_->mesh_has_colocated_points();
     }
 
     template < index_t dimension >
-    index_t SolidMeshColocalization< dimension >::nb_colocalized_points() const
+    index_t EdgedCurveColocation< dimension >::nb_colocated_points() const
     {
-        return impl_->nb_colocalized_points( mesh );
+        return impl_->nb_colocated_points();
     }
 
     template < index_t dimension >
-    const std::vector< std::vector< index_t > >
-        SolidMeshColocalization< dimension >::colocalized_points_groups() const
+    std::vector< std::vector< index_t > >
+        EdgedCurveColocation< dimension >::colocated_points_groups() const
     {
-        return impl_->colocalized_points_groups( mesh );
+        return impl_->colocated_points_groups();
     }
 
-    template class opengeode_inspector_inspector_api
-        SolidMeshColocalization< 2 >;
-    template class opengeode_inspector_inspector_api
-        SolidMeshColocalization< 3 >;
+    template class opengeode_inspector_inspector_api EdgedCurveColocation< 2 >;
+    template class opengeode_inspector_inspector_api EdgedCurveColocation< 3 >;
 } // namespace geode

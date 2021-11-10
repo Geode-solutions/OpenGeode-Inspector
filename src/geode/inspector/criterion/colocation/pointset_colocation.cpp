@@ -21,56 +21,57 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
-#include <geode/inspector/criterion/private/degeneration_impl.h>
+#include <geode/inspector/criterion/colocation/pointset_colocation.h>
+#include <geode/inspector/criterion/private/colocation_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/point_set.h>
 
 namespace geode
 {
     template < index_t dimension >
-    class SolidMeshDegeneration< dimension >::Impl
-        : public detail::DegenerationImpl< SolidMesh< dimension > >
+    class PointSetColocation< dimension >::Impl
+        : public detail::ColocationImpl< dimension, PointSet< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh }
+        Impl( const PointSet< dimension >& mesh )
+            : detail::ColocationImpl< dimension, PointSet< dimension > >( mesh )
         {
         }
     };
 
     template < index_t dimension >
-    SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
-        const SolidMesh< dimension >& mesh )
+    PointSetColocation< dimension >::PointSetColocation(
+        const PointSet< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    SolidMeshDegeneration< dimension >::~SolidMeshDegeneration()
+    PointSetColocation< dimension >::~PointSetColocation()
     {
     }
 
     template < index_t dimension >
-    bool SolidMeshDegeneration< dimension >::is_mesh_degenerated() const
+    bool PointSetColocation< dimension >::mesh_has_colocated_points() const
     {
-        return impl_->is_mesh_degenerated();
+        return impl_->mesh_has_colocated_points();
     }
 
     template < index_t dimension >
-    index_t SolidMeshDegeneration< dimension >::nb_degenerated_edges() const
+    index_t PointSetColocation< dimension >::nb_colocated_points() const
     {
-        return impl_->nb_degenerated_edges();
+        return impl_->nb_colocated_points();
     }
 
     template < index_t dimension >
-    std::vector< index_t >
-        SolidMeshDegeneration< dimension >::degenerated_edges() const
+    std::vector< std::vector< index_t > >
+        PointSetColocation< dimension >::colocated_points_groups() const
     {
-        return impl_->degenerated_edges();
+        return impl_->colocated_points_groups();
     }
 
-    template class opengeode_inspector_inspector_api SolidMeshDegeneration< 3 >;
+    template class opengeode_inspector_inspector_api PointSetColocation< 2 >;
+    template class opengeode_inspector_inspector_api PointSetColocation< 3 >;
 } // namespace geode

@@ -52,7 +52,6 @@ namespace geode
                     return true;
                 }
             }
-
             return false;
         }
 
@@ -60,7 +59,6 @@ namespace geode
         index_t DegenerationImpl< MeshType >::nb_degenerated_edges() const
         {
             index_t nb_degeneration{ 0 };
-
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
                 if( edge_is_degenerated( edge_index ) )
@@ -68,7 +66,6 @@ namespace geode
                     nb_degeneration++;
                 }
             }
-
             return nb_degeneration;
         }
 
@@ -77,7 +74,6 @@ namespace geode
             DegenerationImpl< MeshType >::degenerated_edges() const
         {
             std::vector< index_t > degenerated_edges_index;
-
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
                 if( edge_is_degenerated( edge_index ) )
@@ -85,7 +81,6 @@ namespace geode
                     degenerated_edges_index.push_back( edge_index );
                 }
             }
-
             return degenerated_edges_index;
         }
 

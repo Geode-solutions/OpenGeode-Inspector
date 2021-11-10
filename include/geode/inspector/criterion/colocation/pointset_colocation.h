@@ -29,30 +29,31 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the colocalization of points in a mesh
+     * Class for inspecting the colocation of points in a PointSet
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshColocalization
+    class opengeode_inspector_inspector_api PointSetColocation
     {
+        OPENGEODE_DISABLE_COPY( PointSetColocation );
+
     public:
-        SolidMeshColocalization( const SolidMesh< dimension >& mesh );
-        ~SolidMeshColocalization();
+        PointSetColocation( const PointSet< dimension >& mesh );
+        ~PointSetColocation();
 
-        bool mesh_has_colocalized_points() const;
+        bool mesh_has_colocated_points() const;
 
-        index_t nb_colocalized_points() const;
+        index_t nb_colocated_points() const;
 
-        const std::vector< std::vector< index_t > >
-            colocalized_points_groups() const;
+        std::vector< std::vector< index_t > > colocated_points_groups() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SolidMeshColocalization );
+    ALIAS_2D_AND_3D( PointSetColocation );
 } // namespace geode

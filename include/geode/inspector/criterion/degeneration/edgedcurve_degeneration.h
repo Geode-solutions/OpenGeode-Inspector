@@ -23,32 +23,37 @@
 
 #pragma once
 
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    namespace detail
+    FORWARD_DECLARATION_DIMENSION_CLASS( EdgedCurve );
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the degeneration of an EdgedCurve
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api EdgedCurveDegeneration
     {
-        /*!
-         * Implementation of the inspection of the degeneration of a Mesh
-         */
-        template < class MeshType >
-        class DegenerationImpl
-        {
-        public:
-            DegenerationImpl( const MeshType& mesh );
+        OPENGEODE_DISABLE_COPY( EdgedCurveDegeneration );
 
-            bool is_mesh_degenerated() const;
+    public:
+        EdgedCurveDegeneration( const EdgedCurve< dimension >& mesh );
+        ~EdgedCurveDegeneration();
 
-            index_t nb_degenerated_edges() const;
+        bool is_mesh_degenerated() const;
 
-            std::vector< index_t > degenerated_edges() const;
+        index_t nb_degenerated_edges() const;
 
-        private:
-            bool edge_is_degenerated( index_t edge_index ) const;
+        std::vector< index_t > degenerated_edges() const;
 
-        private:
-            const MeshType& mesh_;
-        };
-    } // namespace detail
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( EdgedCurveDegeneration );
 } // namespace geode
