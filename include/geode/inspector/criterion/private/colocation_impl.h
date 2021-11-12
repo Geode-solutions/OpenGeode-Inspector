@@ -23,38 +23,34 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
 
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-} // namespace geode
+#include <geode/geometry/nn_search.h>
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the degeneration of a SolidMesh
-     */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshDegeneration
+    namespace detail
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
-        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
+        /*!
+         * Implementation of the inspection of the colocation of a Mesh
+         */
+        template < index_t dimension, typename Mesh >
+        class ColocationImpl
+        {
+        protected:
+            ColocationImpl( const Mesh& mesh );
 
-    public:
-        SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
-        ~SolidMeshDegeneration();
+        public:
+            bool mesh_has_colocated_points() const;
 
-        bool is_mesh_degenerated() const;
+            index_t nb_colocated_points() const;
 
-        index_t nb_degenerated_edges() const;
+            std::vector< std::vector< index_t > >
+                colocated_points_groups() const;
 
-        std::vector< index_t > degenerated_edges() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
-    ALIAS_2D_AND_3D( SolidMeshDegeneration );
+        private:
+            const typename NNSearch< dimension >::ColocatedInfo
+                mesh_colocation_info_;
+        };
+    } // namespace detail
 } // namespace geode

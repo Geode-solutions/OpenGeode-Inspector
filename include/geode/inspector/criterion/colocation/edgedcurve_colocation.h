@@ -29,32 +29,31 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    FORWARD_DECLARATION_DIMENSION_CLASS( EdgedCurve );
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the degeneration of a SolidMesh
+     * Class for inspecting the colocation of points in an EdgedCurve
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshDegeneration
+    class opengeode_inspector_inspector_api EdgedCurveColocation
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
-        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
+        OPENGEODE_DISABLE_COPY( EdgedCurveColocation );
 
     public:
-        SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
-        ~SolidMeshDegeneration();
+        EdgedCurveColocation( const EdgedCurve< dimension >& mesh );
+        ~EdgedCurveColocation();
 
-        bool is_mesh_degenerated() const;
+        bool mesh_has_colocated_points() const;
 
-        index_t nb_degenerated_edges() const;
+        index_t nb_colocated_points() const;
 
-        std::vector< index_t > degenerated_edges() const;
+        std::vector< std::vector< index_t > > colocated_points_groups() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SolidMeshDegeneration );
+    ALIAS_2D_AND_3D( EdgedCurveColocation );
 } // namespace geode

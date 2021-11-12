@@ -27,13 +27,23 @@ add_geode_library(
         "criterion/degeneration/surface_degeneration.cpp"
         "criterion/degeneration/solid_degeneration.cpp"
         "criterion/private/degeneration_impl.cpp"
+        "criterion/colocation/pointset_colocation.cpp"
+        "criterion/colocation/edgedcurve_colocation.cpp"
+        "criterion/colocation/surface_colocation.cpp"
+        "criterion/colocation/solid_colocation.cpp"
+        "criterion/private/colocation_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
         "criterion/degeneration/edgedcurve_degeneration.h"
         "criterion/degeneration/surface_degeneration.h"
         "criterion/degeneration/solid_degeneration.h"
+        "criterion/colocation/pointset_colocation.h"
+        "criterion/colocation/edgedcurve_colocation.h"
+        "criterion/colocation/surface_colocation.h"
+        "criterion/colocation/solid_colocation.h"
     PRIVATE_HEADERS
         "criterion/private/degeneration_impl.h"
+        "criterion/private/colocation_impl.h"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES
