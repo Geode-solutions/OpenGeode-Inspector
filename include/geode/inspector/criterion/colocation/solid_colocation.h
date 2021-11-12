@@ -41,6 +41,7 @@ namespace geode
     class opengeode_inspector_inspector_api SolidMeshColocation
     {
         OPENGEODE_DISABLE_COPY( SolidMeshColocation );
+        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
         SolidMeshColocation( const SolidMesh< dimension >& mesh );

@@ -33,7 +33,7 @@
 namespace
 {
     template < geode::index_t dimension, typename Mesh >
-    const typename geode::NNSearch< dimension >::ColocatedInfo
+    typename geode::NNSearch< dimension >::ColocatedInfo
         mesh_points_colocated_info(
             const Mesh& mesh, double colocation_distance )
     {
@@ -81,13 +81,13 @@ namespace geode
             std::vector< std::vector< index_t > > colocated_points_indices(
                 mesh_colocation_info_.nb_unique_points() );
             for( const auto point_index :
-                Range{ mesh_colocation_info_.colocated_mapping.size() } )
+                Indices{ mesh_colocation_info_.colocated_mapping } )
             {
                 colocated_points_indices[mesh_colocation_info_
                                              .colocated_mapping[point_index]]
                     .push_back( point_index );
             }
-            auto colocated_points_groups_end =
+            const auto colocated_points_groups_end =
                 std::remove_if( colocated_points_indices.begin(),
                     colocated_points_indices.end(),
                     []( const std::vector< index_t >& colocated_points_group ) {

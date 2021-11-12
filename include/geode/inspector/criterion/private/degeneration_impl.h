@@ -35,9 +35,10 @@ namespace geode
         template < typename Mesh >
         class DegenerationImpl
         {
-        public:
+        protected:
             DegenerationImpl( const Mesh& mesh );
 
+        public:
             bool is_mesh_degenerated() const;
 
             index_t nb_degenerated_edges() const;

@@ -37,9 +37,10 @@ namespace geode
         template < index_t dimension, typename Mesh >
         class ColocationImpl
         {
-        public:
+        protected:
             ColocationImpl( const Mesh& mesh );
 
+        public:
             bool mesh_has_colocated_points() const;
 
             index_t nb_colocated_points() const;

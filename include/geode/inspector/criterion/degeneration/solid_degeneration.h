@@ -41,6 +41,7 @@ namespace geode
     class opengeode_inspector_inspector_api SolidMeshDegeneration
     {
         OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
+        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
         SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
