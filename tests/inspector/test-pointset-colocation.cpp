@@ -25,38 +25,35 @@
 #include <geode/basic/logger.h>
 
 #include <geode/geometry/point.h>
-#include <geode/mesh/builder/triangulated_surface_builder.h>
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/mesh/builder/point_set_builder.h>
+#include <geode/mesh/core/point_set.h>
 
-#include <geode/inspector/criterion/colocation/surface_colocation.h>
+#include <geode/inspector/criterion/colocation/pointset_colocation.h>
 
 void check_non_colocation2D()
 {
-    auto surface = geode::TriangulatedSurface2D::create();
-    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
+    auto pointset = geode::PointSet2D::create();
+    auto builder = geode::PointSetBuilder2D::create( *pointset );
     builder->create_vertices( 4 );
     builder->set_point( 0, { { 0., 2. } } );
     builder->set_point( 1, { { 2., 0. } } );
     builder->set_point( 2, { { 1., 4. } } );
     builder->set_point( 3, { { 3., 3. } } );
 
-    builder->create_triangle( { 0, 1, 2 } );
-    builder->create_triangle( { 2, 1, 3 } );
-
-    const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
+    const geode::PointSetColocation2D colocation_inspector{ *pointset };
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Surface has colocated points when it should have none." );
+        "[Test] PointSet has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
-        "[Test] Surface has more colocated points than it should." );
+        "[Test] PointSet has more colocated points than it should." );
     OPENGEODE_EXCEPTION(
         colocation_inspector.colocated_points_groups().size() == 0,
-        "[Test] Surface points are shown colocated whereas they are not." );
+        "[Test] PointSet points are shown colocated whereas they are not." );
 }
 
 void check_colocation2D()
 {
-    auto surface = geode::TriangulatedSurface2D::create();
-    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
+    auto pointset = geode::PointSet2D::create();
+    auto builder = geode::PointSetBuilder2D::create( *pointset );
     builder->create_vertices( 7 );
     builder->set_point( 0, { { 0., 2. } } );
     builder->set_point( 1, { { 0., 2. } } );
@@ -66,47 +63,47 @@ void check_colocation2D()
     builder->set_point( 5, { { 2., geode::global_epsilon / 2 } } );
     builder->set_point( 6, { { geode::global_epsilon / 1.1, 2. } } );
 
-    const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
+    const geode::PointSetColocation2D colocation_inspector{ *pointset };
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Surface doesn't have colocated points whereas it should have "
+        "[Test] PointSet doesn't have colocated points whereas it should have "
         "several." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
-        "[Test] Surface has wrong number of colocated points." );
-    const std::vector< geode::index_t > first_colocated_points_group{ 1, 6, 0 };
+        "[Test] PointSet has wrong number of colocated points." );
+    const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
                              == first_colocated_points_group,
-        "[Test] Surface has wrong first colocated points group." );
-    const std::vector< geode::index_t > second_colocated_points_group{ 5, 3 };
+        "[Test] PointSet has wrong first colocated points group." );
+    const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
                              == second_colocated_points_group,
-        "[Test] Surface has wrong second colocated points group." );
+        "[Test] PointSet has wrong second colocated points group." );
 }
 
 void check_non_colocation3D()
 {
-    auto surface = geode::TriangulatedSurface3D::create();
-    auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
+    auto pointset = geode::PointSet3D::create();
+    auto builder = geode::PointSetBuilder3D::create( *pointset );
     builder->create_vertices( 4 );
     builder->set_point( 0, { { 0., 2., 0. } } );
     builder->set_point( 1, { { 2., 0., 0.5 } } );
     builder->set_point( 2, { { 1., 4., 1. } } );
     builder->set_point( 3, { { 3., 3., 2. } } );
 
-    const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
+    const geode::PointSetColocation3D colocation_inspector{ *pointset };
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
-        "[Test] (3D) Surface has colocated points when it should have none." );
+        "[Test] (3D) PointSet has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
-        "[Test] (3D) Surface has more colocated points than it should." );
+        "[Test] (3D) PointSet has more colocated points than it should." );
     OPENGEODE_EXCEPTION(
         colocation_inspector.colocated_points_groups().size() == 0,
-        "[Test] (3D) Surface points are shown colocated whereas they are "
+        "[Test] (3D) PointSet points are shown colocated whereas they are "
         "not." );
 }
 
 void check_colocation3D()
 {
-    auto surface = geode::TriangulatedSurface3D::create();
-    auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
+    auto pointset = geode::PointSet3D::create();
+    auto builder = geode::PointSetBuilder3D::create( *pointset );
     builder->create_vertices( 7 );
     builder->set_point( 0, { { 0., 2., 1. } } );
     builder->set_point( 1, { { 0., 2., 1. } } );
@@ -117,21 +114,21 @@ void check_colocation3D()
         5, { { 2., geode::global_epsilon / 2, geode::global_epsilon / 2 } } );
     builder->set_point( 6, { { geode::global_epsilon / 1.1, 2., 1. } } );
 
-    const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
+    const geode::PointSetColocation3D colocation_inspector{ *pointset };
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
-        "[Test] (3D) Surface doesn't have colocated points whereas it should "
+        "[Test] (3D) PointSet doesn't have colocated points whereas it should "
         "have "
         "several." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
-        "[Test] (3D) Surface has wrong number of colocated points." );
-    const std::vector< geode::index_t > first_colocated_points_group{ 1, 6, 0 };
+        "[Test] (3D) PointSet has wrong number of colocated points." );
+    const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
                              == first_colocated_points_group,
-        "[Test] (3D) Surface has wrong first colocated points group." );
-    const std::vector< geode::index_t > second_colocated_points_group{ 5, 3 };
+        "[Test] (3D) PointSet has wrong first colocated points group." );
+    const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
                              == second_colocated_points_group,
-        "[Test] (3D) Surface has wrong second colocated points group." );
+        "[Test] (3D) PointSet has wrong second colocated points group." );
 }
 
 int main()

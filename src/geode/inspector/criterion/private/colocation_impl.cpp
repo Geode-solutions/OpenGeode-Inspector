@@ -30,85 +30,71 @@
 
 #include <geode/geometry/point.h>
 
+namespace
+{
+    template < geode::index_t dimension, typename Mesh >
+    const typename geode::NNSearch< dimension >::ColocatedInfo
+        mesh_points_colocated_info(
+            const Mesh& mesh, double colocation_distance )
+    {
+        std::vector< geode::Point< dimension > > mesh_points(
+            mesh.nb_vertices() );
+        for( const auto point_index : geode::Range{ mesh.nb_vertices() } )
+        {
+            mesh_points[point_index] = mesh.point( point_index );
+        }
+        const geode::NNSearch< dimension > nnsearch{ mesh_points };
+        return nnsearch.colocated_index_mapping( colocation_distance );
+    }
+} // namespace
+
 namespace geode
 {
     namespace detail
     {
-        template < index_t dimension, class MeshType >
-        const typename NNSearch< dimension >::ColocatedInfo
-            mesh_points_colocated_info(
-                const MeshType& mesh, double colocation_distance )
-        {
-            std::vector< Point< dimension > > mesh_points{ mesh.nb_vertices() };
-            for( const auto point_index : Range{ mesh.nb_vertices() } )
-            {
-                mesh_points[point_index] = mesh.point( point_index );
-            }
-            const geode::NNSearch< dimension > nnsearch{ mesh_points };
-            return nnsearch.colocated_index_mapping( colocation_distance );
-        }
-
-        template < index_t dimension, class MeshType >
-        ColocationImpl< dimension, MeshType >::ColocationImpl(
-            const MeshType& mesh )
+        template < index_t dimension, typename Mesh >
+        ColocationImpl< dimension, Mesh >::ColocationImpl( const Mesh& mesh )
             : mesh_colocation_info_{
-                  mesh_points_colocated_info< dimension, MeshType >(
+                  mesh_points_colocated_info< dimension, Mesh >(
                       mesh, global_epsilon )
               }
         {
         }
 
-        template < index_t dimension, class MeshType >
-        bool ColocationImpl< dimension, MeshType >::mesh_has_colocated_points()
-            const
+        template < index_t dimension, typename Mesh >
+        bool
+            ColocationImpl< dimension, Mesh >::mesh_has_colocated_points() const
         {
             return mesh_colocation_info_.nb_colocated_points() > 0;
         }
 
-        template < index_t dimension, class MeshType >
-        index_t
-            ColocationImpl< dimension, MeshType >::nb_colocated_points() const
+        template < index_t dimension, typename Mesh >
+        index_t ColocationImpl< dimension, Mesh >::nb_colocated_points() const
         {
             return mesh_colocation_info_.nb_colocated_points();
         }
 
-        template < index_t dimension, class MeshType >
+        template < index_t dimension, typename Mesh >
         std::vector< std::vector< index_t > >
-            ColocationImpl< dimension, MeshType >::colocated_points_groups()
-                const
+            ColocationImpl< dimension, Mesh >::colocated_points_groups() const
         {
-            std::vector< std::vector< index_t > > colocated_points_indices;
-            std::vector< index_t > points_already_checked{
-                mesh_colocation_info_.nb_colocated_points() - 1
-            };
-
-            for( const auto point_index_1 :
-                Range{ mesh_colocation_info_.colocated_mapping.size() - 1 } )
+            std::vector< std::vector< index_t > > colocated_points_indices(
+                mesh_colocation_info_.nb_unique_points() );
+            for( const auto point_index :
+                Range{ mesh_colocation_info_.colocated_mapping.size() } )
             {
-                std::vector< index_t > colocated_points;
-                for( const auto point_index_2 : Range{ point_index_1 + 1,
-                         mesh_colocation_info_.colocated_mapping.size() } )
-                {
-                    if( absl::c_find( points_already_checked, point_index_2 )
-                        != points_already_checked.end() )
-                    {
-                        continue;
-                    }
-                    if( mesh_colocation_info_.colocated_mapping[point_index_1]
-                        == mesh_colocation_info_
-                               .colocated_mapping[point_index_2] )
-                    {
-                        colocated_points.push_back( point_index_2 );
-                        points_already_checked.push_back( point_index_2 );
-                    }
-                }
-                if( colocated_points.size() > 0 )
-                {
-                    colocated_points.push_back( point_index_1 );
-                    colocated_points_indices.push_back( colocated_points );
-                }
+                colocated_points_indices[mesh_colocation_info_
+                                             .colocated_mapping[point_index]]
+                    .push_back( point_index );
             }
-
+            auto colocated_points_groups_end =
+                std::remove_if( colocated_points_indices.begin(),
+                    colocated_points_indices.end(),
+                    []( const std::vector< index_t >& colocated_points_group ) {
+                        return colocated_points_group.size() < 2;
+                    } );
+            colocated_points_indices.erase(
+                colocated_points_groups_end, colocated_points_indices.end() );
             return colocated_points_indices;
         }
 

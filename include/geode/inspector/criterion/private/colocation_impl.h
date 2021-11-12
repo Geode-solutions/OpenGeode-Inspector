@@ -34,11 +34,11 @@ namespace geode
         /*!
          * Implementation of the inspection of the colocation of a Mesh
          */
-        template < index_t dimension, class MeshType >
+        template < index_t dimension, typename Mesh >
         class ColocationImpl
         {
         public:
-            ColocationImpl( const MeshType& mesh );
+            ColocationImpl( const Mesh& mesh );
 
             bool mesh_has_colocated_points() const;
 

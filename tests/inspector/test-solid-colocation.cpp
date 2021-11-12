@@ -72,11 +72,11 @@ void check_colocation()
         "several." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
         "[Test] Solid has wrong number of colocated points." );
-    const std::vector< geode::index_t > first_colocated_points_group{ 1, 6, 0 };
+    const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
                              == first_colocated_points_group,
         "[Test] Solid has wrong first colocated points group." );
-    const std::vector< geode::index_t > second_colocated_points_group{ 5, 3 };
+    const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
                              == second_colocated_points_group,
         "[Test] Solid has wrong second colocated points group." );
