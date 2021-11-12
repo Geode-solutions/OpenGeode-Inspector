@@ -30,35 +30,47 @@
 
 namespace geode
 {
-    class SolidMeshDegeneration::Impl
-        : public detail::DegenerationImpl< SolidMesh3D >
+    template < index_t dimension >
+    class SolidMeshDegeneration< dimension >::Impl
+        : public detail::DegenerationImpl< SolidMesh< dimension > >
     {
     public:
-        Impl( const SolidMesh3D& mesh )
-            : detail::DegenerationImpl< SolidMesh3D >{ mesh }
+        Impl( const SolidMesh< dimension >& mesh )
+            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh }
         {
         }
     };
 
-    SolidMeshDegeneration::SolidMeshDegeneration( const SolidMesh3D& mesh )
+    template < index_t dimension >
+    SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
+        const SolidMesh< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
-    SolidMeshDegeneration::~SolidMeshDegeneration() {}
+    template < index_t dimension >
+    SolidMeshDegeneration< dimension >::~SolidMeshDegeneration()
+    {
+    }
 
-    bool SolidMeshDegeneration::is_mesh_degenerated() const
+    template < index_t dimension >
+    bool SolidMeshDegeneration< dimension >::is_mesh_degenerated() const
     {
         return impl_->is_mesh_degenerated();
     }
 
-    index_t SolidMeshDegeneration::nb_degenerated_edges() const
+    template < index_t dimension >
+    index_t SolidMeshDegeneration< dimension >::nb_degenerated_edges() const
     {
         return impl_->nb_degenerated_edges();
     }
 
-    std::vector< index_t > SolidMeshDegeneration::degenerated_edges() const
+    template < index_t dimension >
+    std::vector< index_t >
+        SolidMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
     }
+
+    template class opengeode_inspector_inspector_api SolidMeshDegeneration< 3 >;
 } // namespace geode

@@ -29,22 +29,22 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    FORWARD_DECLARATION_DIMENSION_CLASS( EdgedCurve );
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the degeneration of a SolidMesh
+     * Class for inspecting the degeneration of an EdgedCurve
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshDegeneration
+    class opengeode_inspector_inspector_api EdgedCurveDegeneration
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshDegeneration );
+        OPENGEODE_DISABLE_COPY( EdgedCurveDegeneration );
 
     public:
-        SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
-        ~SolidMeshDegeneration();
+        EdgedCurveDegeneration( const EdgedCurve< dimension >& mesh );
+        ~EdgedCurveDegeneration();
 
         bool is_mesh_degenerated() const;
 
@@ -55,5 +55,5 @@ namespace geode
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SolidMeshDegeneration );
+    ALIAS_2D_AND_3D( EdgedCurveDegeneration );
 } // namespace geode

@@ -32,13 +32,11 @@ namespace geode
         /*!
          * Implementation of the inspection of the degeneration of a Mesh
          */
-        template < class MeshType >
-        class opengeode_inspector_inspector_api DegenerationImpl
+        template < typename Mesh >
+        class DegenerationImpl
         {
-            OPENGEODE_DISABLE_COPY( DegenerationImpl );
-
         public:
-            DegenerationImpl( const MeshType& mesh );
+            DegenerationImpl( const Mesh& mesh );
 
             bool is_mesh_degenerated() const;
 
@@ -50,7 +48,7 @@ namespace geode
             bool edge_is_degenerated( index_t edge_index ) const;
 
         private:
-            const MeshType& mesh_;
+            const Mesh& mesh_;
         };
     } // namespace detail
 } // namespace geode

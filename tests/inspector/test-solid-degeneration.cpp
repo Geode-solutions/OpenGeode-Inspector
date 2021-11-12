@@ -45,7 +45,7 @@ void check_non_degeneration()
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 0, 1, 2, 4 } );
 
-    const geode::SolidMeshDegeneration degeneration_inspector{ *solid };
+    const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
@@ -69,7 +69,7 @@ void check_degeneration_by_colocalisation()
     builder->create_tetrahedron( { 0, 1, 2, 4 } );
     solid->enable_edges();
 
-    const geode::SolidMeshDegeneration degeneration_inspector{ *solid };
+    const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is shown not degenerated whereas it is." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
@@ -93,7 +93,7 @@ void check_degeneration_by_point_multiple_presence()
     builder->create_tetrahedron( { 0, 1, 2, 1 } );
     solid->enable_edges();
 
-    const geode::SolidMeshDegeneration degeneration_inspector{ *solid };
+    const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is not shown degenerated whereas it is." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,

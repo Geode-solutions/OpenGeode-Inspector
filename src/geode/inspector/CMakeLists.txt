@@ -23,11 +23,13 @@ add_geode_library(
     FOLDER "geode/inspector"
     SOURCES
         "common.cpp"
+        "criterion/degeneration/edgedcurve_degeneration.cpp"
         "criterion/degeneration/surface_degeneration.cpp"
         "criterion/degeneration/solid_degeneration.cpp"
         "criterion/private/degeneration_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
+        "criterion/degeneration/edgedcurve_degeneration.h"
         "criterion/degeneration/surface_degeneration.h"
         "criterion/degeneration/solid_degeneration.h"
     PRIVATE_HEADERS
