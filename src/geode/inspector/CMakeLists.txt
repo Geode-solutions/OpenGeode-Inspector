@@ -31,6 +31,7 @@ add_geode_library(
         "criterion/colocation/edgedcurve_colocation.cpp"
         "criterion/colocation/surface_colocation.cpp"
         "criterion/colocation/solid_colocation.cpp"
+        "criterion/adjacency/surface_adjacency.cpp"
         "criterion/private/colocation_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
@@ -41,6 +42,7 @@ add_geode_library(
         "criterion/colocation/edgedcurve_colocation.h"
         "criterion/colocation/surface_colocation.h"
         "criterion/colocation/solid_colocation.h"
+        "criterion/adjacency/surface_adjacency.h"
     PRIVATE_HEADERS
         "criterion/private/degeneration_impl.h"
         "criterion/private/colocation_impl.h"
