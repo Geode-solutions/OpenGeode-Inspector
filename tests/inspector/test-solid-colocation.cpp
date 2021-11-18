@@ -46,8 +46,7 @@ void check_non_colocation()
         "[Test] Solid has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
         "[Test] Solid has more colocated points than it should." );
-    OPENGEODE_EXCEPTION(
-        colocation_inspector.colocated_points_groups().size() == 0,
+    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
         "[Test] Solid points are shown colocated whereas they are "
         "not." );
 }

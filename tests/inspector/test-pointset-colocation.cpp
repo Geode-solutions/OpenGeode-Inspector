@@ -45,8 +45,7 @@ void check_non_colocation2D()
         "[Test] PointSet has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
         "[Test] PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION(
-        colocation_inspector.colocated_points_groups().size() == 0,
+    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
         "[Test] PointSet points are shown colocated whereas they are not." );
 }
 
@@ -94,8 +93,7 @@ void check_non_colocation3D()
         "[Test] (3D) PointSet has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
         "[Test] (3D) PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION(
-        colocation_inspector.colocated_points_groups().size() == 0,
+    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
         "[Test] (3D) PointSet points are shown colocated whereas they are "
         "not." );
 }

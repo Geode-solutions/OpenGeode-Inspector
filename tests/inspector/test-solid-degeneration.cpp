@@ -50,7 +50,7 @@ void check_non_degeneration()
         "[Test] Solid is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
         "[Test] Solid has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().size() == 0,
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
         "[Test] Solid has degenerated edges when it should have none." );
 }
 

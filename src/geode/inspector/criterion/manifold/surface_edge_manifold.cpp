@@ -32,26 +32,22 @@
 
 namespace
 {
+    using Edge = geode::detail::VertexCycle< std::array< geode::index_t, 2 > >;
+
     template < geode::index_t dimension >
-    std::vector< geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >
-        mesh_non_manifold_edges( const geode::SurfaceMesh< dimension >& mesh )
+    absl::flat_hash_map< Edge, geode::local_index_t > edge_to_polygons_around(
+        const geode::SurfaceMesh< dimension >& mesh )
     {
-        std::vector<
-            geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >
-            non_manifold_edges;
-        absl::flat_hash_map<
-            geode::detail::VertexCycle< std::array< geode::index_t, 2 > >,
-            geode::local_index_t >
-            polygons_around_edges;
+        absl::flat_hash_map< Edge, geode::local_index_t > polygons_around_edges;
         for( const auto polygon_id : geode::Range{ mesh.nb_polygons() } )
         {
             for( const auto polygon_edge_id :
                 geode::LRange{ mesh.nb_polygon_edges( polygon_id ) } )
             {
-                const geode::detail::VertexCycle<
-                    std::array< geode::index_t, 2 > >
-                    polygon_edge_vertex_cycle{ mesh.polygon_edge_vertices(
-                        { { polygon_id, polygon_edge_id } } ) };
+                const Edge polygon_edge_vertex_cycle{
+                    mesh.polygon_edge_vertices(
+                        { { polygon_id, polygon_edge_id } } )
+                };
                 if( !polygons_around_edges
                          .try_emplace( polygon_edge_vertex_cycle, 1 )
                          .second )
@@ -60,7 +56,15 @@ namespace
                 }
             }
         }
-        for( const auto& edge : polygons_around_edges )
+        return polygons_around_edges;
+    }
+
+    template < geode::index_t dimension >
+    std::vector< Edge > mesh_non_manifold_edges(
+        const geode::SurfaceMesh< dimension >& mesh )
+    {
+        std::vector< Edge > non_manifold_edges;
+        for( const auto& edge : edge_to_polygons_around( mesh ) )
         {
             if( edge.second > 2 )
             {
@@ -85,7 +89,7 @@ namespace geode
 
         bool mesh_edges_are_manifold() const
         {
-            return non_manifold_edges_.size() == 0;
+            return non_manifold_edges_.empty();
         }
 
         index_t nb_non_manifold_edges() const

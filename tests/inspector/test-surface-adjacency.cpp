@@ -51,7 +51,7 @@ void check_adjacency2D()
         adjacency_inspector.nb_edges_with_wrong_adjacency() == 0,
         "[Test] Surface has more wrong adjacencies on edges than it should." );
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polygon_edges_with_wrong_adjacency().size() == 0,
+        adjacency_inspector.polygon_edges_with_wrong_adjacency().empty(),
         "[Test] Surface edges adjacencies are shown wrong whereas they are "
         "not." );
 }
@@ -176,10 +176,10 @@ void check_adjacency3D()
         "[Test] 3D Surface has wrong adjacencies when it should have none." );
     OPENGEODE_EXCEPTION(
         adjacency_inspector.nb_edges_with_wrong_adjacency() == 0,
-        "[Test] 3D Surface has morewrong adjacencies on edges than it "
+        "[Test] 3D Surface has more wrong adjacencies on edges than it "
         "should." );
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polygon_edges_with_wrong_adjacency().size() == 0,
+        adjacency_inspector.polygon_edges_with_wrong_adjacency().empty(),
         "[Test] 3D Surface edges adjacencies are shown wrong whereas they are "
         "not." );
 }

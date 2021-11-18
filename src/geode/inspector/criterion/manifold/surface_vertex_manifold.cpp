@@ -39,7 +39,7 @@ namespace
         {
             return false;
         }
-        for( const auto polygon_vertex : pav1 )
+        for( const auto& polygon_vertex : pav1 )
         {
             if( absl::c_find( pav2, polygon_vertex ) == pav2.end() )
             {
@@ -93,7 +93,7 @@ namespace geode
 
         bool mesh_vertices_are_manifold() const
         {
-            return non_manifold_vertices_.size() == 0;
+            return non_manifold_vertices_.empty();
         }
 
         index_t nb_non_manifold_vertices() const

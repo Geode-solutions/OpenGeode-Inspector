@@ -49,7 +49,7 @@ void check_non_degeneration2D()
         "[Test] Surface is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
         "[Test] Surface has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().size() == 0,
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
         "[Test] Surface has degenerated edges when it should have none." );
 }
 
@@ -117,7 +117,7 @@ void check_non_degeneration3D()
         "[Test] (3D) Surface is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
         "[Test] (3D) Surface has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().size() == 0,
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
         "[Test] (3D) Surface has degenerated edges when it should have none." );
 }
 

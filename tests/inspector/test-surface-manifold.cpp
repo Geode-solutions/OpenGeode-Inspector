@@ -51,7 +51,7 @@ void check_vertex_manifold2D()
         "[Test] Surface is shown non-manifold whereas it is." );
     OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_vertices() == 0,
         "[Test] Surface has more non manifold vertices than it should." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_vertices().size() == 0,
+    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_vertices().empty(),
         "[Test] Surface vertices are shown non manifold whereas they are." );
 }
 
@@ -100,7 +100,7 @@ void check_edge_manifold2D()
         "[Test] Surface is shown non-manifold through edges whereas it is." );
     OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_edges() == 0,
         "[Test] Surface has more non manifold edges than it should." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().size() == 0,
+    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().empty(),
         "[Test] Surface edges are shown non manifold whereas they are." );
 }
 
@@ -117,10 +117,9 @@ void check_edge_non_manifold2D()
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 4, 2 } );
     builder->create_triangle( { 1, 3, 2 } );
-    // builder->set_polygon_adjacent( { { 0, 1 } }, 1 );
-    // builder->set_polygon_adjacent( { { 1, 2 } }, 0 );
-    // builder->set_polygon_adjacent( { { 1, 0 } }, 2 );
-    // builder->set_polygon_adjacent( { { 2, 2 } }, 1 );
+    builder->set_polygon_adjacent( { { 0, 1 } }, 1 );
+    builder->set_polygon_adjacent( { { 1, 2 } }, 0 );
+    builder->set_polygon_adjacent( { { 2, 2 } }, 0 );
 
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),
