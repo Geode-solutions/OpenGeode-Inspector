@@ -32,6 +32,8 @@ add_geode_library(
         "criterion/colocation/surface_colocation.cpp"
         "criterion/colocation/solid_colocation.cpp"
         "criterion/adjacency/surface_adjacency.cpp"
+        "criterion/manifold/surface_vertex_manifold.cpp"
+        "criterion/manifold/surface_edge_manifold.cpp"
         "criterion/private/colocation_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
@@ -43,6 +45,8 @@ add_geode_library(
         "criterion/colocation/surface_colocation.h"
         "criterion/colocation/solid_colocation.h"
         "criterion/adjacency/surface_adjacency.h"
+        "criterion/manifold/surface_vertex_manifold.h"
+        "criterion/manifold/surface_edge_manifold.h"
     PRIVATE_HEADERS
         "criterion/private/degeneration_impl.h"
         "criterion/private/colocation_impl.h"
