@@ -45,8 +45,7 @@ void check_non_colocation2D()
         "[Test] EdgedCurve has colocated points when it should have none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
         "[Test] EdgedCurve has more colocated points than it should." );
-    OPENGEODE_EXCEPTION(
-        colocation_inspector.colocated_points_groups().size() == 0,
+    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
         "[Test] EdgedCurve points are shown colocated whereas they are not." );
 }
 
@@ -95,8 +94,7 @@ void check_non_colocation3D()
         "none." );
     OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
         "[Test] (3D) EdgedCurve has more colocated points than it should." );
-    OPENGEODE_EXCEPTION(
-        colocation_inspector.colocated_points_groups().size() == 0,
+    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
         "[Test] (3D) EdgedCurve points are shown colocated whereas they are "
         "not." );
 }
