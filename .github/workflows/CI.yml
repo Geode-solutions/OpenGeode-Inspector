@@ -37,11 +37,17 @@ jobs:
         repository: OpenGeode
         file: '-${{ matrix.config.system }}.tar.gz'
         token: ${{ secrets.TOKEN }}
+    - uses: Geode-solutions/actions/get-release@master
+      id: opengeode-io
+      with:
+        repository: OpenGeode-IO
+        file: '-${{ matrix.config.system }}.tar.gz'
+        token: ${{ secrets.TOKEN }}
     - name: Compile
       run: |
         mkdir -p build
         cd build
-        cmake ${{ matrix.config.cmake_args }} -DCMAKE_PREFIX_PATH:PATH=${{ steps.opengeode.outputs.path }} ..
+        cmake ${{ matrix.config.cmake_args }} -DCMAKE_PREFIX_PATH:PATH="${{ steps.opengeode.outputs.path }};${{ steps.opengeode-io.outputs.path }}" ..
         cmake --build . -- -j2
     - name: Test
       run: |
@@ -73,11 +79,17 @@ jobs:
         repository: OpenGeode
         file: '-ubuntu.tar.gz'
         token: ${{ secrets.TOKEN }}
+    - uses: Geode-solutions/actions/get-release@master
+      id: opengeode-io
+      with:
+        repository: OpenGeode-IO
+        file: '-ubuntu.tar.gz'
+        token: ${{ secrets.TOKEN }}
     - name: Compile
       run: |
         mkdir -p build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH:PATH=${{ steps.opengeode.outputs.path }} ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH:PATH="${{ steps.opengeode.outputs.path }};${{ steps.opengeode-io.outputs.path }}" ..
         cmake --build . -- -j2
     - name: Kcov
       run: curl -s https://raw.githubusercontent.com/Geode-solutions/actions/master/kcov.sh | bash -s -- ${GITHUB_WORKSPACE}/build/bin
@@ -109,11 +121,17 @@ jobs:
         repository: OpenGeode
         file: '-darwin.tar.gz'
         token: ${{ secrets.TOKEN }}
+    - uses: Geode-solutions/actions/get-release@master
+      id: opengeode-io
+      with:
+        repository: OpenGeode-IO
+        file: '-darwin.tar.gz'
+        token: ${{ secrets.TOKEN }}
     - name: Compile & Test
       run: |
         mkdir -p build
         cd build
-        cmake -G "Xcode" -DCMAKE_PREFIX_PATH:PATH=${{ steps.opengeode.outputs.path }} ..
+        cmake -G "Xcode" -DCMAKE_PREFIX_PATH:PATH="${{ steps.opengeode.outputs.path }};${{ steps.opengeode-io.outputs.path }}" ..
         cmake --build . --config ${{ matrix.config }}
         ctest -C ${{ matrix.config }} --output-on-failure
     - name: Notify slack
@@ -140,11 +158,17 @@ jobs:
         repository: OpenGeode
         file: '-win64.zip'
         token: ${{ secrets.TOKEN }}
+    - uses: Geode-solutions/actions/get-release@master
+      id: opengeode-io
+      with:
+        repository: OpenGeode-IO
+        file: '-win64.zip'
+        token: ${{ secrets.TOKEN }}
     - name: Compile & Test
       run: |
         mkdir -p build
         cd build
-        cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_PREFIX_PATH:PATH=${{ steps.opengeode.outputs.path }} ..
+        cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_PREFIX_PATH:PATH="${{ steps.opengeode.outputs.path }};${{ steps.opengeode-io.outputs.path }}" ..
         cmake --build . --config ${{ matrix.config }}
         ctest -C ${{ matrix.config }} --output-on-failure
     - name: Notify slack
