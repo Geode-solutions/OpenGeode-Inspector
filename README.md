@@ -53,4 +53,4 @@ For questions and support please use the official [slack](https://slackin-openge
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2019 - 2021, Geode-solutions
+Copyright (c) 2019 - 2022, Geode-solutions
