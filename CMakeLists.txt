@@ -27,10 +27,16 @@ option(OPENGEODE_INSPECTOR_WITH_TESTS "Compile test projects" ON)
 
 # Get OpenGeode-inspector dependencies
 find_package(OpenGeode REQUIRED)
+find_package(OpenGeode-IO REQUIRED)
+find_package(Async++ REQUIRED)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
 add_subdirectory(src/geode)
+
+#------------------------------------------------------------------------------------------------
+# Configure the OpenGeode-inspector binaries
+add_subdirectory(src/bin)
 
 #------------------------------------------------------------------------------------------------
 # Optional modules configuration
