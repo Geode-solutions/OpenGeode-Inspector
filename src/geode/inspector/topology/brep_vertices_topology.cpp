@@ -57,6 +57,11 @@ namespace geode
                 {
                     return false;
                 }
+                else if( brep_.nb_embeddings( corner_uuid ) != 1
+                         && brep_.nb_incidences( corner_uuid ) < 1 )
+                {
+                    return false;
+                }
                 for( const auto& line : brep_.mesh_component_vertices(
                          unique_vertex_id, Line3D::component_type_static() ) )
                 {
@@ -104,6 +109,25 @@ namespace geode
                 }
             }
             return multiple_internals_corners;
+        }
+
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices() const
+        {
+            std::vector< index_t > not_internal_nor_boundary_corners;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                const auto corners = brep_.mesh_component_vertices(
+                    unique_vertex_id, Corner3D::component_type_static() );
+                if( !corners.empty()
+                    && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
+                    && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
+                {
+                    not_internal_nor_boundary_corners.push_back(
+                        unique_vertex_id );
+                }
+            }
+            return not_internal_nor_boundary_corners;
         }
 
         std::vector< index_t > line_corners_without_boundary_status() const
@@ -159,6 +183,12 @@ namespace geode
         BRepVerticesTopology::multiple_internals_corner_vertices() const
     {
         return impl_->multiple_internals_corner_vertices();
+    }
+
+    std::vector< index_t >
+        BRepVerticesTopology::not_internal_nor_boundary_corner_vertices() const
+    {
+        return impl_->not_internal_nor_boundary_corner_vertices();
     }
 
     std::vector< index_t >

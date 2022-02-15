@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2021 Geode-solutions
+ * Copyright (c) 2019 - 2022 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,13 @@ void check_a1_vertices_topology()
         OPENGEODE_EXCEPTION( "[Test] Model unique vertex with index ",
             vertex_index, "is a corner associated with multiple embeddings." );
     }
+    auto not_internal_nor_boundary_corner_vertices =
+        brep_corner_inspector.not_internal_nor_boundary_corner_vertices();
+    for( const auto vertex_index : not_internal_nor_boundary_corner_vertices )
+    {
+        OPENGEODE_EXCEPTION( "[Test] Model unique vertex with index ",
+            vertex_index, "is neither internal nor a boundary." );
+    }
     auto line_corners_without_boundary_status =
         brep_corner_inspector.line_corners_without_boundary_status();
     for( const auto vertex_index : line_corners_without_boundary_status )
@@ -85,6 +92,13 @@ void check_a1_valid_vertices_topology()
     {
         OPENGEODE_EXCEPTION( "[Test] Model unique vertex with index ",
             vertex_index, "is a corner associated with multiple embeddings." );
+    }
+    auto not_internal_nor_boundary_corner_vertices =
+        brep_corner_inspector.not_internal_nor_boundary_corner_vertices();
+    for( const auto vertex_index : not_internal_nor_boundary_corner_vertices )
+    {
+        OPENGEODE_EXCEPTION( "[Test] Model unique vertex with index ",
+            vertex_index, "is neither internal nor a boundary." );
     }
     auto line_corners_without_boundary_status =
         brep_corner_inspector.line_corners_without_boundary_status();
