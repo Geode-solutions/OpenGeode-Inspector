@@ -33,13 +33,14 @@ ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
 ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
 ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
 
-void inspect_surface( const geode::SurfaceMesh3D& surface )
+template < geode::index_t dimension >
+void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
 {
     absl::InlinedVector< async::task< void >, 5 > tasks;
     if( absl::GetFlag( FLAGS_adjacency ) )
     {
         tasks.emplace_back( async::spawn( [&surface] {
-            const geode::SurfaceMeshAdjacency3D adjacency{ surface };
+            const geode::SurfaceMeshAdjacency< dimension > adjacency{ surface };
             const auto nb = adjacency.nb_edges_with_wrong_adjacency();
             geode::Logger::info( nb, " edges with wrong adjacency" );
         } ) );
@@ -47,7 +48,9 @@ void inspect_surface( const geode::SurfaceMesh3D& surface )
     if( absl::GetFlag( FLAGS_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&surface] {
-            const geode::SurfaceMeshColocation3D colocation{ surface };
+            const geode::SurfaceMeshColocation< dimension > colocation{
+                surface
+            };
             const auto nb = colocation.nb_colocated_points();
             geode::Logger::info( nb, " colocated points" );
         } ) );
@@ -55,7 +58,9 @@ void inspect_surface( const geode::SurfaceMesh3D& surface )
     if( absl::GetFlag( FLAGS_degeneration ) )
     {
         tasks.emplace_back( async::spawn( [&surface] {
-            const geode::SurfaceMeshDegeneration3D degeneration{ surface };
+            const geode::SurfaceMeshDegeneration< dimension > degeneration{
+                surface
+            };
             const auto nb = degeneration.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
         } ) );
@@ -63,7 +68,9 @@ void inspect_surface( const geode::SurfaceMesh3D& surface )
     if( absl::GetFlag( FLAGS_manifold_vertex ) )
     {
         tasks.emplace_back( async::spawn( [&surface] {
-            const geode::SurfaceMeshVertexManifold3D manifold_vertex{ surface };
+            const geode::SurfaceMeshVertexManifold< dimension > manifold_vertex{
+                surface
+            };
             const auto nb = manifold_vertex.nb_non_manifold_vertices();
             geode::Logger::info( nb, " non manifold vertices" );
         } ) );
@@ -71,7 +78,9 @@ void inspect_surface( const geode::SurfaceMesh3D& surface )
     if( absl::GetFlag( FLAGS_manifold_edge ) )
     {
         tasks.emplace_back( async::spawn( [&surface] {
-            const geode::SurfaceMeshEdgeManifold3D manifold_edge{ surface };
+            const geode::SurfaceMeshEdgeManifold< dimension > manifold_edge{
+                surface
+            };
             const auto nb = manifold_edge.nb_non_manifold_edges();
             geode::Logger::info( nb, " non manifold edges" );
         } ) );
@@ -104,6 +113,16 @@ int main( int argc, char* argv[] )
         {
             inspect_surface(
                 *geode::load_triangulated_surface< 3 >( filename ) );
+        }
+        else if( geode::TriangulatedSurfaceInputFactory2D::has_creator( ext ) )
+        {
+            inspect_surface(
+                *geode::load_triangulated_surface< 2 >( filename ) );
+        }
+        else if( geode::PolygonalSurfaceInputFactory2D::has_creator( ext ) )
+        {
+            inspect_surface(
+                *geode::load_triangulated_surface< 2 >( filename ) );
         }
         else
         {
