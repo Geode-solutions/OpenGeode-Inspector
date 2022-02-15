@@ -35,6 +35,7 @@ add_geode_library(
         "criterion/manifold/surface_vertex_manifold.cpp"
         "criterion/manifold/surface_edge_manifold.cpp"
         "criterion/private/colocation_impl.cpp"
+        "topology/brep_vertices_topology.cpp"
     PUBLIC_HEADERS
         "common.h"
         "criterion/degeneration/edgedcurve_degeneration.h"
@@ -47,6 +48,7 @@ add_geode_library(
         "criterion/adjacency/surface_adjacency.h"
         "criterion/manifold/surface_vertex_manifold.h"
         "criterion/manifold/surface_edge_manifold.h"
+        "topology/brep_vertices_topology.h"
     PRIVATE_HEADERS
         "criterion/private/degeneration_impl.h"
         "criterion/private/colocation_impl.h"
@@ -55,5 +57,6 @@ add_geode_library(
     PRIVATE_DEPENDENCIES
         OpenGeode::geometry
         OpenGeode::mesh
+        OpenGeode::model
 )
 
