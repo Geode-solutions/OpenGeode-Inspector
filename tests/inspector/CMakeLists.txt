@@ -100,7 +100,7 @@ add_geode_test(
 )
 
 add_geode_test(
-    SOURCE "test-brep-vertices-topology.cpp"
+    SOURCE "test-brep-topology.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

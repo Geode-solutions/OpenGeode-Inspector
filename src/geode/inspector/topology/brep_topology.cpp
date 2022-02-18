@@ -1,0 +1,461 @@
+/*
+ * Copyright (c) 2019 - 2022 Geode-solutions
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+#include <geode/inspector/topology/brep_topology.h>
+
+#include <geode/basic/pimpl_impl.h>
+
+#include <geode/model/mixin/core/block.h>
+#include <geode/model/mixin/core/corner.h>
+#include <geode/model/mixin/core/line.h>
+#include <geode/model/mixin/core/surface.h>
+#include <geode/model/representation/core/brep.h>
+
+#include <geode/inspector/topology/private/brep_blocks_topology_impl.h>
+#include <geode/inspector/topology/private/brep_corners_topology_impl.h>
+#include <geode/inspector/topology/private/brep_lines_topology_impl.h>
+#include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
+
+namespace
+{
+    bool brep_has_unique_vertex_associated_to_component_id(
+        const geode::BRep& brep, const geode::uuid& component_id )
+    {
+        for( const auto unique_vertex_id :
+            geode::Range{ brep.nb_unique_vertices() } )
+        {
+            if( brep.has_mesh_component_vertices(
+                    unique_vertex_id, component_id ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+} // namespace
+
+namespace geode
+{
+    class BRepTopologyInspector::Impl : public detail::BRepCornersTopologyImpl,
+                                        public detail::BRepLinesTopologyImpl,
+                                        public detail::BRepSurfacesTopologyImpl,
+                                        public detail::BRepBlocksTopologyImpl
+    {
+    public:
+        Impl( const BRep& brep )
+            : detail::BRepCornersTopologyImpl( brep ),
+              detail::BRepLinesTopologyImpl( brep ),
+              detail::BRepSurfacesTopologyImpl( brep ),
+              detail::BRepBlocksTopologyImpl( brep ),
+              brep_( brep )
+        {
+        }
+
+        bool brep_topology_is_valid() const
+        {
+            if( brep_.nb_unique_vertices() == 0 )
+            {
+                return false;
+            }
+            if( !brep_components_are_linked_to_a_unique_vertex() )
+            {
+                return false;
+            }
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( !brep_corner_topology_is_valid( unique_vertex_id )
+                    || !brep_vertex_lines_topology_is_valid( unique_vertex_id )
+                    || !brep_vertex_surfaces_topology_is_valid(
+                        unique_vertex_id )
+                    || !brep_vertex_blocks_topology_is_valid(
+                        unique_vertex_id ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool brep_components_are_linked_to_a_unique_vertex() const
+        {
+            for( const auto& corner : brep_.corners() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, corner.id() ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& line : brep_.lines() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, line.id() ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& surface : brep_.surfaces() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, surface.id() ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& block : brep_.blocks() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, block.id() ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        std::vector< index_t >
+            invalid_components_topology_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( !brep_corner_topology_is_valid( unique_vertex_id )
+                    || !brep_vertex_lines_topology_is_valid( unique_vertex_id )
+                    || !brep_vertex_surfaces_topology_is_valid(
+                        unique_vertex_id )
+                    || !brep_vertex_blocks_topology_is_valid(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t > multiple_corners_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t > multiple_internals_corner_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( corner_has_multiple_embeddings( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t > line_corners_without_boundary_status() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( corner_is_part_of_line_but_not_boundary(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_not_boundary_nor_internal_line_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_not_boundary_nor_internal_line(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_line_with_invalid_internal_topology_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_line_with_invalid_internal_topology(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_invalid_unique_line_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_lines_but_not_corner_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_not_boundary_nor_internal_surface_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_not_boundary_nor_internal_surface(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_surface_with_invalid_internal_topology_unique_vertices()
+                const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_surface_with_invalid_internal_topology(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_invalid_unique_surface_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_invalid_unique_surface(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_invalid_multiple_surfaces_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_invalid_multiple_surfaces(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t > part_of_invalid_blocks_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( !brep_vertex_blocks_topology_is_valid( unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+    private:
+        const BRep& brep_;
+    };
+
+    BRepTopologyInspector::BRepTopologyInspector( const BRep& brep )
+        : impl_( brep )
+    {
+    }
+
+    BRepTopologyInspector::~BRepTopologyInspector() {}
+
+    bool BRepTopologyInspector::brep_topology_is_valid() const
+    {
+        return impl_->brep_topology_is_valid();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::invalid_components_topology_unique_vertices()
+            const
+    {
+        return impl_->invalid_components_topology_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::multiple_corners_unique_vertices() const
+    {
+        return impl_->multiple_corners_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::multiple_internals_corner_vertices() const
+    {
+        return impl_->multiple_internals_corner_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::not_internal_nor_boundary_corner_vertices() const
+    {
+        return impl_->not_internal_nor_boundary_corner_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::line_corners_without_boundary_status() const
+    {
+        return impl_->line_corners_without_boundary_status();
+    }
+
+    std::vector< index_t > BRepTopologyInspector::
+        part_of_not_boundary_nor_internal_line_unique_vertices() const
+    {
+        return impl_->part_of_not_boundary_nor_internal_line_unique_vertices();
+    }
+
+    std::vector< index_t > BRepTopologyInspector::
+        part_of_line_with_invalid_internal_topology_unique_vertices() const
+    {
+        return impl_
+            ->part_of_line_with_invalid_internal_topology_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::part_of_invalid_unique_line_unique_vertices()
+            const
+    {
+        return impl_->part_of_invalid_unique_line_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::part_of_lines_but_not_corner_unique_vertices()
+            const
+    {
+        return impl_->part_of_lines_but_not_corner_unique_vertices();
+    }
+
+    std::vector< index_t > BRepTopologyInspector::
+        part_of_not_boundary_nor_internal_surface_unique_vertices() const
+    {
+        return impl_
+            ->part_of_not_boundary_nor_internal_surface_unique_vertices();
+    }
+
+    std::vector< index_t > BRepTopologyInspector::
+        part_of_surface_with_invalid_internal_topology_unique_vertices() const
+    {
+        return impl_
+            ->part_of_surface_with_invalid_internal_topology_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::part_of_invalid_unique_surface_unique_vertices()
+            const
+    {
+        return impl_->part_of_invalid_unique_surface_unique_vertices();
+    }
+
+    std::vector< index_t > BRepTopologyInspector::
+        part_of_invalid_multiple_surfaces_unique_vertices() const
+    {
+        return impl_->part_of_invalid_multiple_surfaces_unique_vertices();
+    }
+
+    std::vector< index_t >
+        BRepTopologyInspector::part_of_invalid_blocks_unique_vertices() const
+    {
+        return impl_->part_of_invalid_blocks_unique_vertices();
+    }
+} // namespace geode
