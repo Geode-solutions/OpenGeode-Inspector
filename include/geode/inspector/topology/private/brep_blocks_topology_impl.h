@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
 
 namespace geode
@@ -34,36 +32,30 @@ namespace geode
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the topology of a BRep model corners
-     */
-    class opengeode_inspector_inspector_api BRepVerticesTopology
+    namespace detail
     {
-        OPENGEODE_DISABLE_COPY( BRepVerticesTopology );
-
-    public:
-        BRepVerticesTopology( const BRep& brep );
-        ~BRepVerticesTopology();
-
         /*!
-         * Checks if the brep has topologically valid unique vertices, i.e. has
-         * vertices which verify:
-         * Each unique_vertex can only be associated to one corner.
-         * Each corner can only be internal to one object (surface or block).
-         * Each corner is a boundary of every line it is associated to.
+         * Class for inspecting the topology of a BRep model blocks through
+         * their unique vertices
          */
-        bool brep_vertices_topology_is_valid() const;
+        class BRepBlocksTopologyImpl
+        {
+        public:
+            BRepBlocksTopologyImpl( const BRep& brep );
 
-        std::vector< index_t > multiple_corners_unique_vertices() const;
+            /*!
+             * Checks if the brep unique vertices are parts of valid blocks,
+             * i.e. verify:
+             * If the vertex is part of multiple blocks, either it is part of
+             * exactly 2 blocks (and at least one surface which is boundary to
+             * the 2 blocks), or it is part of more than to blocks (and it is
+             * either a corner, or not a corner but part of only one line).
+             */
+            bool brep_vertex_blocks_topology_is_valid(
+                index_t unique_vertex_index ) const;
 
-        std::vector< index_t > multiple_internals_corner_vertices() const;
-
-        std::vector< index_t >
-            not_internal_nor_boundary_corner_vertices() const;
-
-        std::vector< index_t > line_corners_without_boundary_status() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
+        private:
+            const BRep& brep_;
+        };
+    } // namespace detail
 } // namespace geode
