@@ -107,14 +107,6 @@ namespace geode
                     return false;
                 }
             }
-            for( const auto& line : brep_.lines() )
-            {
-                if( !brep_has_unique_vertex_associated_to_component_id(
-                        brep_, line.id() ) )
-                {
-                    return false;
-                }
-            }
             for( const auto& surface : brep_.surfaces() )
             {
                 if( !brep_has_unique_vertex_associated_to_component_id(
@@ -132,6 +124,62 @@ namespace geode
                 }
             }
             return true;
+        }
+
+        index_t nb_corners_not_linked_to_a_unique_vertex() const
+        {
+            index_t counter{ 0 };
+            for( const auto& corner : brep_.corners() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, corner.id() ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        index_t nb_lines_not_linked_to_a_unique_vertex() const
+        {
+            index_t counter{ 0 };
+            for( const auto& line : brep_.lines() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, line.id() ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        index_t nb_surfaces_not_linked_to_a_unique_vertex() const
+        {
+            index_t counter{ 0 };
+            for( const auto& surface : brep_.surfaces() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, surface.id() ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        index_t nb_blocks_not_linked_to_a_unique_vertex() const
+        {
+            index_t counter{ 0 };
+            for( const auto& block : brep_.blocks() )
+            {
+                if( !brep_has_unique_vertex_associated_to_component_id(
+                        brep_, block.id() ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
         }
 
         std::vector< index_t >
@@ -366,6 +414,30 @@ namespace geode
     bool BRepTopologyInspector::brep_topology_is_valid() const
     {
         return impl_->brep_topology_is_valid();
+    }
+
+    index_t
+        BRepTopologyInspector::nb_corners_not_linked_to_a_unique_vertex() const
+    {
+        return impl_->nb_corners_not_linked_to_a_unique_vertex();
+    }
+
+    index_t
+        BRepTopologyInspector::nb_lines_not_linked_to_a_unique_vertex() const
+    {
+        return impl_->nb_lines_not_linked_to_a_unique_vertex();
+    }
+
+    index_t
+        BRepTopologyInspector::nb_surfaces_not_linked_to_a_unique_vertex() const
+    {
+        return impl_->nb_surfaces_not_linked_to_a_unique_vertex();
+    }
+
+    index_t
+        BRepTopologyInspector::nb_blocks_not_linked_to_a_unique_vertex() const
+    {
+        return impl_->nb_blocks_not_linked_to_a_unique_vertex();
     }
 
     std::vector< index_t >

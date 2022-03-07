@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2021 Geode-solutions. All rights reserved.
+ * Copyright (c) 2019 - 2022 Geode-solutions. All rights reserved.
  */
 
 #include <absl/flags/flag.h>
@@ -34,9 +34,9 @@ int main( int argc, char* argv[] )
 {
     try
     {
-        absl::SetProgramUsageMessage(
-            absl::StrCat( "PointSet inspector from Geode-solutions.\n",
-                "Sample usage:\n", argv[0], " --input my_pointset.og_pts3d\n" );
+        absl::SetProgramUsageMessage( absl::StrCat(
+            "PointSet inspector from Geode-solutions.\n", "Sample usage:\n",
+            argv[0], " --input my_pointset.og_pts3d\n" ) );
 
         geode::detail::initialize_mesh_io();
         const auto filename = absl::GetFlag( FLAGS_input );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2021 Geode-solutions. All rights reserved.
+ * Copyright (c) 2019 - 2022 Geode-solutions. All rights reserved.
  */
 
 #include <absl/flags/flag.h>
@@ -70,17 +70,17 @@ int main( int argc, char* argv[] )
         const auto ext =
             geode::to_string( geode::extension_from_filename( filename ) );
 
-        if( geode::HybridSolidInputFactory3D::has_creator( ext ) )
+        if( geode::TetrahedralSolidInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_hybrid_solid< 3 >( filename ) );
+            inspect_solid( *geode::load_tetrahedral_solid< 3 >( filename ) );
         }
         else if( geode::PolyhedralSolidInputFactory3D::has_creator( ext ) )
         {
             inspect_solid( *geode::load_polyhedral_solid< 3 >( filename ) );
         }
-        else if( geode::TetrahedralSolidInputFactory3D::has_creator( ext ) )
+        else if( geode::HybridSolidInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_tetrahedral_solid< 3 >( filename ) );
+            inspect_solid( *geode::load_hybrid_solid< 3 >( filename ) );
         }
         else
         {
