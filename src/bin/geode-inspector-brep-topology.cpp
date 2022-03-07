@@ -19,7 +19,7 @@
 
 #include <geode/inspector/topology/brep_topology.h>
 
-ABSL_FLAG( std::string, input, "/path/my/surface.og_tfs3d", "Input surface" );
+ABSL_FLAG( std::string, input, "/path/my/model.og_brep", "Input model" );
 ABSL_FLAG( bool,
     component_linking,
     true,
@@ -193,8 +193,6 @@ int main( int argc, char* argv[] )
 
         geode::detail::initialize_model_io();
         const auto filename = absl::GetFlag( FLAGS_input );
-        const auto ext =
-            geode::to_string( geode::extension_from_filename( filename ) );
 
         inspect_brep( geode::load_brep( filename ) );
 
