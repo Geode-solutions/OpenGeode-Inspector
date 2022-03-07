@@ -53,6 +53,14 @@ namespace geode
 
         bool brep_components_are_linked_to_a_unique_vertex() const;
 
+        index_t nb_corners_not_linked_to_a_unique_vertex() const;
+
+        index_t nb_lines_not_linked_to_a_unique_vertex() const;
+
+        index_t nb_surfaces_not_linked_to_a_unique_vertex() const;
+
+        index_t nb_blocks_not_linked_to_a_unique_vertex() const;
+
         std::vector< index_t >
             invalid_components_topology_unique_vertices() const;
 
