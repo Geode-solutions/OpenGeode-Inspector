@@ -32,6 +32,26 @@
 
 #include <geode/inspector/topology/brep_topology.h>
 
+void check_components_linking( geode::BRepTopologyInspector& brep_inspector )
+{
+    const auto nb_unlinked_corners =
+        brep_inspector.nb_corners_not_linked_to_a_unique_vertex();
+    geode::Logger::info( "There are ", nb_unlinked_corners,
+        " corners not linked to a unique vertex." );
+    const auto nb_unlinked_lines =
+        brep_inspector.nb_lines_not_linked_to_a_unique_vertex();
+    geode::Logger::info( "There are ", nb_unlinked_lines,
+        " lines not linked to a unique vertex." );
+    const auto nb_unlinked_surfaces =
+        brep_inspector.nb_surfaces_not_linked_to_a_unique_vertex();
+    geode::Logger::info( "There are ", nb_unlinked_surfaces,
+        " surfaces not linked to a unique vertex." );
+    const auto nb_unlinked_blocks =
+        brep_inspector.nb_blocks_not_linked_to_a_unique_vertex();
+    geode::Logger::info( "There are ", nb_unlinked_blocks,
+        " blocks not linked to a unique vertex." );
+}
+
 void check_invalid_components_topology_unique_vertices(
     geode::BRepTopologyInspector& brep_inspector )
 {
@@ -262,6 +282,7 @@ void check_part_of_invalid_blocks_unique_vertices(
 void launch_topological_validity_checks(
     geode::BRepTopologyInspector& brep_inspector )
 {
+    check_components_linking( brep_inspector );
     check_invalid_components_topology_unique_vertices( brep_inspector );
     check_multiple_corners_unique_vertices( brep_inspector );
     check_multiple_internals_corner_vertices( brep_inspector );
