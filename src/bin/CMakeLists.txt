@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2021 Geode-solutions
+# Copyright (c) 2019 - 2022 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,46 @@
 # SOFTWARE.
 
 add_geode_binary(
+    SOURCE "geode-inspector-pointset.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-edgedcurve.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
     SOURCE "geode-inspector-surface.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-solid.cpp"
     DEPENDENCIES
         Async++
         absl::flags
