@@ -24,11 +24,12 @@ cmake_minimum_required(VERSION 3.11)
 project(OpenGeode-Inspector CXX)
 
 option(OPENGEODE_INSPECTOR_WITH_TESTS "Compile test projects" ON)
+option(OPENGEODE_INSPECTOR_WITH_PYTHON "Compile Python bindings" OFF)
 
 # Get OpenGeode-inspector dependencies
 find_package(OpenGeode REQUIRED)
-find_package(OpenGeode-IO REQUIRED)
 find_package(Async++ REQUIRED)
+find_package(OpenGeode-IO REQUIRED)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
@@ -45,6 +46,11 @@ if(OPENGEODE_INSPECTOR_WITH_TESTS)
     enable_testing()
     message(STATUS "Configuring OpenGeode-inspector with tests")
     add_subdirectory(tests)
+endif()
+
+if(OPENGEODE_INSPECTOR_WITH_PYTHON)
+    message(STATUS "Configuring OpenGeode-Inspector with Python bindings")
+    add_subdirectory(bindings/python)
 endif()
 
 #------------------------------------------------------------------------------------------------

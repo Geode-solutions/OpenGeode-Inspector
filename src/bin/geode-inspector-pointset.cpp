@@ -37,6 +37,7 @@ int main( int argc, char* argv[] )
         absl::SetProgramUsageMessage( absl::StrCat(
             "PointSet inspector from Geode-solutions.\n", "Sample usage:\n",
             argv[0], " --input my_pointset.og_pts3d\n" ) );
+        absl::ParseCommandLine( argc, argv );
 
         geode::detail::initialize_mesh_io();
         const auto filename = absl::GetFlag( FLAGS_input );
