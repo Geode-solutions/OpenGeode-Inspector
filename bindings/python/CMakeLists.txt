@@ -36,7 +36,10 @@ configure_file(
     setup.py
     ${PROJECT_BINARY_DIR}/wheel/setup.py
 )
-
+execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -m pip install --user -r requirements.txt
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+)
 add_custom_target(wheel
     COMMAND ${CMAKE_COMMAND} 
         -DSOURCE_DIR="${CMAKE_BINARY_DIR}"

@@ -21,7 +21,7 @@
 
 import os, sys, platform
 if sys.version_info >= (3,8,0) and platform.system() == "Windows":
-    for path in [x.strip() for x in os.environ['PATH'].split('') if x]:
+    for path in [x.strip() for x in os.environ['PATH'].split(';') if x]:
         os.add_dll_directory(path)
 
 import opengeode as geode
@@ -37,12 +37,12 @@ def check_non_colocation():
     builder.set_point( 3, geode.Point3D( [ 1., 3., 3. ] ) )
     builder.set_point( 4, geode.Point3D( [ 1., 2., -3. ] ) )
 
-    colocation_inspector = geode.SolidMeshColocation3D( solid )
+    colocation_inspector = inspector.SolidMeshColocation3D( solid )
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Solid has colocated points when it should have none." )
     if not colocation_inspector.nb_colocated_points() == 0:
         raise ValueError( "[Test] Solid has more colocated points than it should." )
-    if not colocation_inspector.colocated_points_groups().empty():
+    if colocation_inspector.colocated_points_groups():
         raise ValueError( "[Test] Solid points are shown colocated whereas they are not." )
 
 def check_colocation():
@@ -58,7 +58,7 @@ def check_colocation():
         geode.Point3D( [ 5., 2. + geode.global_epsilon / 2, geode.global_epsilon / 2 ] ) )
     builder.set_point( 6, geode.Point3D( [ 5. + geode.global_epsilon / 1.1, 2., 1. ] ) )
 
-    colocation_inspector = geode.SolidMeshColocation3D( solid )
+    colocation_inspector = inspector.SolidMeshColocation3D( solid )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Solid doesn't have colocated points whereas it should have several." )
     if not colocation_inspector.nb_colocated_points() == 3:
