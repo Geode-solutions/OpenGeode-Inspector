@@ -416,6 +416,12 @@ namespace geode
         return impl_->brep_topology_is_valid();
     }
 
+    bool BRepTopologyInspector::brep_components_are_linked_to_a_unique_vertex()
+        const
+    {
+        return impl_->brep_components_are_linked_to_a_unique_vertex();
+    }
+
     index_t
         BRepTopologyInspector::nb_corners_not_linked_to_a_unique_vertex() const
     {

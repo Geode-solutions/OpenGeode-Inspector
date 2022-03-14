@@ -74,27 +74,6 @@ void check_degeneration_by_colocalisation2D()
         "[Test] EdgedCurve has wrong degenerated edges." );
 }
 
-void check_degeneration_by_point_multiple_presence2D()
-{
-    auto curve = geode::EdgedCurve2D::create();
-    auto builder = geode::EdgedCurveBuilder2D::create( *curve );
-    builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
-
-    builder->create_edge( 0, 1 );
-    builder->create_edge( 1, 2 );
-    builder->create_edge( 0, 0 );
-
-    const geode::EdgedCurveDegeneration2D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] EdgedCurve is not shown degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
-        "[Test] EdgedCurve has the wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0] == 2,
-        "[Test] EdgedCurve shows the wrong degenerated edges." );
-}
 void check_non_degeneration3D()
 {
     auto curve = geode::EdgedCurve3D::create();
@@ -141,38 +120,14 @@ void check_degeneration_by_colocalisation3D()
         "[Test] (3D) EdgedCurve has wrong degenerated edges." );
 }
 
-void check_degeneration_by_point_multiple_presence3D()
-{
-    auto curve = geode::EdgedCurve3D::create();
-    auto builder = geode::EdgedCurveBuilder3D::create( *curve );
-    builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
-
-    builder->create_edge( 0, 1 );
-    builder->create_edge( 1, 2 );
-    builder->create_edge( 0, 0 );
-
-    const geode::EdgedCurveDegeneration3D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] (3D) EdgedCurve is not shown degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
-        "[Test] (3D) EdgedCurve has the wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0] == 2,
-        "[Test] (3D) EdgedCurve shows the wrong degenerated edges." );
-}
-
 int main()
 {
     try
     {
         check_non_degeneration2D();
         check_degeneration_by_colocalisation2D();
-        check_degeneration_by_point_multiple_presence2D();
         check_non_degeneration3D();
         check_degeneration_by_colocalisation3D();
-        check_degeneration_by_point_multiple_presence3D();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

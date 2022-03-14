@@ -34,6 +34,10 @@
 
 void check_components_linking( geode::BRepTopologyInspector& brep_inspector )
 {
+    const auto components_are_linked =
+        brep_inspector.brep_components_are_linked_to_a_unique_vertex();
+    geode::Logger::info( "BRep components are ",
+        components_are_linked ? "" : "not ", "all linked to a unique vertex." );
     const auto nb_unlinked_corners =
         brep_inspector.nb_corners_not_linked_to_a_unique_vertex();
     geode::Logger::info( "There are ", nb_unlinked_corners,
