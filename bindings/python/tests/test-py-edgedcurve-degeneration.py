@@ -31,35 +31,35 @@ def check_non_degeneration2D():
     curve = geode.EdgedCurve2D.create()
     builder = geode.EdgedCurveBuilder2D.create( curve )
     builder.create_vertices( 3 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 1., 4. ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 1., 4. ] ) )
 
-    builder.create_edge( 0, 1 )
-    builder.create_edge( 1, 2 )
-    builder.create_edge( 2, 0 )
+    builder.create_edge_with_vertices( 0, 1 )
+    builder.create_edge_with_vertices( 1, 2 )
+    builder.create_edge_with_vertices( 2, 0 )
 
-    degeneration_inspector = geode.EdgedCurveDegeneration2D( curve )
+    degeneration_inspector = inspector.EdgedCurveDegeneration2D( curve )
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] EdgedCurve is shown degenerated whereas it is not." )
     if not degeneration_inspector.nb_degenerated_edges() == 0:
         raise ValueError( "[Test] EdgedCurve has more degenerated edges than it should." )
-    if not degeneration_inspector.degenerated_edges().empty():
+    if degeneration_inspector.degenerated_edges():
         raise ValueError( "[Test] EdgedCurve has degenerated edges when it should have none." )
 
 def check_degeneration_by_colocalisation2D():
     curve = geode.EdgedCurve2D.create()
     builder = geode.EdgedCurveBuilder2D.create( curve )
     builder.create_vertices( 3 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 2., geode.global_epsilon / 2 ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 2., geode.global_epsilon / 2 ] ) )
 
-    builder.create_edge( 0, 1 )
-    builder.create_edge( 0, 2 )
-    builder.create_edge( 1, 2 )
+    builder.create_edge_with_vertices( 0, 1 )
+    builder.create_edge_with_vertices( 0, 2 )
+    builder.create_edge_with_vertices( 1, 2 )
 
-    degeneration_inspector = geode.EdgedCurveDegeneration2D( curve )
+    degeneration_inspector = inspector.EdgedCurveDegeneration2D( curve )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] EdgedCurve is shown not degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:
@@ -75,16 +75,16 @@ def check_non_degeneration3D():
     builder.set_point( 1, geode.Point3D( [ 2., 0., 0.5 ] ) )
     builder.set_point( 2, geode.Point3D( [ 1., 4., 1. ] ) )
 
-    builder.create_edge( 0, 1 )
-    builder.create_edge( 1, 2 )
-    builder.create_edge( 2, 0 )
+    builder.create_edge_with_vertices( 0, 1 )
+    builder.create_edge_with_vertices( 1, 2 )
+    builder.create_edge_with_vertices( 2, 0 )
 
-    degeneration_inspector = geode.EdgedCurveDegeneration2D( curve )
+    degeneration_inspector = inspector.EdgedCurveDegeneration3D( curve )
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] (3D) EdgedCurve is shown degenerated whereas it is not." )
     if not degeneration_inspector.nb_degenerated_edges() == 0:
         raise ValueError( "[Test] (3D) EdgedCurve has more degenerated edges than it should." )
-    if not degeneration_inspector.degenerated_edges().empty():
+    if degeneration_inspector.degenerated_edges():
         raise ValueError( "[Test] (3D) EdgedCurve has degenerated edges when it should have none." )
 
 def check_degeneration_by_colocalisation3D():
@@ -96,11 +96,11 @@ def check_degeneration_by_colocalisation3D():
     builder.set_point( 2, geode.Point3D( [ 2., geode.global_epsilon / 2,
                                0.5 + geode.global_epsilon / 2 ] ) )
 
-    builder.create_edge( 0, 1 )
-    builder.create_edge( 0, 2 )
-    builder.create_edge( 1, 2 )
+    builder.create_edge_with_vertices( 0, 1 )
+    builder.create_edge_with_vertices( 0, 2 )
+    builder.create_edge_with_vertices( 1, 2 )
 
-    degeneration_inspector = geode.EdgedCurveDegeneration2D( curve )
+    degeneration_inspector = inspector.EdgedCurveDegeneration3D( curve )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] (3D) EdgedCurve is shown not degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:

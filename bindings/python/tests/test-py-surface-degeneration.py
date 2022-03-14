@@ -31,35 +31,35 @@ def check_non_degeneration2D():
     surface = geode.TriangulatedSurface2D.create()
     builder = geode.TriangulatedSurfaceBuilder2D.create( surface )
     builder.create_vertices( 4 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 1., 4. ] ) )
-    builder.set_point( 3, geode.Point3D( [ 3., 3. ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 1., 4. ] ) )
+    builder.set_point( 3, geode.Point2D( [ 3., 3. ] ) )
 
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 2, 1, 3 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration2D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration2D( surface )
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] Surface is shown degenerated whereas it is not." )
     if not degeneration_inspector.nb_degenerated_edges() == 0:
         raise ValueError( "[Test] Surface has more degenerated edges than it should." )
-    if not degeneration_inspector.degenerated_edges().empty():
+    if degeneration_inspector.degenerated_edges():
         raise ValueError( "[Test] Surface has degenerated edges when it should have none." )
 
 def check_degeneration_by_colocalisation2D():
     surface = geode.TriangulatedSurface2D.create()
     builder = geode.TriangulatedSurfaceBuilder2D.create( surface )
     builder.create_vertices( 4 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 1., 4. ] ) )
-    builder.set_point( 3, geode.Point3D( [ 2., geode.global_epsilon / 2 ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 1., 4. ] ) )
+    builder.set_point( 3, geode.Point2D( [ 2., geode.global_epsilon / 2 ] ) )
 
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 2, 1, 3 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration2D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration2D( surface )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] Surface is shown not degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:
@@ -72,14 +72,14 @@ def check_degeneration_by_point_multiple_presence2D():
     surface = geode.TriangulatedSurface2D.create()
     builder = geode.TriangulatedSurfaceBuilder2D.create( surface )
     builder.create_vertices( 4 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 1., 4. ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 1., 4. ] ) )
 
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 1, 2, 1 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration2D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration2D( surface )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] Surface is not shown degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:
@@ -100,12 +100,12 @@ def check_non_degeneration3D():
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 2, 1, 3 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration3D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration3D( surface )
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] (3D) Surface is shown degenerated whereas it is not." )
     if not degeneration_inspector.nb_degenerated_edges() == 0:
         raise ValueError( "[Test] (3D) Surface has more degenerated edges than it should." )
-    if not degeneration_inspector.degenerated_edges().empty():
+    if degeneration_inspector.degenerated_edges():
         raise ValueError( "[Test] (3D) Surface has degenerated edges when it should have none." )
 
 def check_degeneration_by_colocalisation3D():
@@ -121,7 +121,7 @@ def check_degeneration_by_colocalisation3D():
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 2, 1, 3 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration3D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration3D( surface )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] (3D) Surface is shown not degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:
@@ -141,7 +141,7 @@ def check_degeneration_by_point_multiple_presence3D():
     builder.create_triangle( [ 0, 1, 2 ] )
     builder.create_triangle( [ 1, 2, 1 ] )
 
-    degeneration_inspector = geode.SurfaceMeshDegeneration3D( surface )
+    degeneration_inspector = inspector.SurfaceMeshDegeneration3D( surface )
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError( "[Test] (3D) Surface is not shown degenerated whereas it is." )
     if not degeneration_inspector.nb_degenerated_edges() == 1:

@@ -19,7 +19,20 @@
 # SOFTWARE.
 
 from setuptools import setup
+from setuptools.dist import Distribution
+from setuptools.command.install import install
 from os import path
+
+class BinaryDistribution(Distribution):
+    def has_ext_modules(self):
+        return True
+    def is_pure(self):
+        return False
+        
+class InstallPlatlib(install):
+    def finalize_options(self):
+        install.finalize_options(self)
+        self.install_lib = self.install_platlib
 
 with open(path.join('${CMAKE_SOURCE_DIR}', 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -27,8 +40,8 @@ with open('${CMAKE_CURRENT_LIST_DIR}/requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
 setup(
-    name='OpenGeode-inspector',
-    version='${CMAKE_PACKAGE_VERSION}',
+    name='OpenGeode-Inspector',
+    version='${WHEEL_VERSION}',
     description='Open source framework for inspecting the validity of geometric models',
     keywords=['brep', 'inspecting', 'mesh', 'topology'],
     long_description=long_description,
@@ -36,14 +49,16 @@ setup(
     author='Geode-solutions',
     author_email='contact@geode-solutions.com',
     url='https://github.com/Geode-solutions/OpenGeode-Inspector',
-    packages=['opengeode-inspector'],
+    packages=['opengeode_inspector'],
     package_data={
-        '': ['*.so', '*.dll', '*.pyd', '*.dylib']
+        'opengeode_inspector': ['*.so', '*.dll', '*.pyd', '*.dylib']
     },
     license='MIT',
     classifiers=[
         'License :: OSI Approved :: MIT License'
     ],
     install_requires=install_requires,
-    zip_safe=False
+    zip_safe=False,
+    distclass=BinaryDistribution,
+    cmdclass={'install': InstallPlatlib}
 )

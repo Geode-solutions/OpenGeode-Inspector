@@ -31,32 +31,32 @@ def check_non_colocation2D():
     surface = geode.TriangulatedSurface2D.create()
     builder = geode.TriangulatedSurfaceBuilder2D.create( surface )
     builder.create_vertices( 4 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 1., 4. ] ) )
-    builder.set_point( 3, geode.Point3D( [ 3., 3. ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 1., 4. ] ) )
+    builder.set_point( 3, geode.Point2D( [ 3., 3. ] ) )
 
-    colocation_inspector = geode.SurfaceMeshColocation2D( surface )
+    colocation_inspector = inspector.SurfaceMeshColocation2D( surface )
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Surface has colocated points when it should have none." )
     if not colocation_inspector.nb_colocated_points() == 0:
         raise ValueError( "[Test] Surface has more colocated points than it should." )
-    if not colocation_inspector.colocated_points_groups().empty():
+    if colocation_inspector.colocated_points_groups():
         raise ValueError( "[Test] Surface points are shown colocated whereas they are not." )
 
 def check_colocation2D():
     surface = geode.TriangulatedSurface2D.create()
     builder = geode.TriangulatedSurfaceBuilder2D.create( surface )
     builder.create_vertices( 7 )
-    builder.set_point( 0, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 1, geode.Point3D( [ 0., 2. ] ) )
-    builder.set_point( 2, geode.Point3D( [ 0., 0. ] ) )
-    builder.set_point( 3, geode.Point3D( [ 2., 0. ] ) )
-    builder.set_point( 4, geode.Point3D( [ 1., 4. ] ) )
-    builder.set_point( 5, geode.Point3D( [ 2., geode.global_epsilon / 2 ] ) )
-    builder.set_point( 6, geode.Point3D( [ geode.global_epsilon / 1.1, 2. ] ) )
+    builder.set_point( 0, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 1, geode.Point2D( [ 0., 2. ] ) )
+    builder.set_point( 2, geode.Point2D( [ 0., 0. ] ) )
+    builder.set_point( 3, geode.Point2D( [ 2., 0. ] ) )
+    builder.set_point( 4, geode.Point2D( [ 1., 4. ] ) )
+    builder.set_point( 5, geode.Point2D( [ 2., geode.global_epsilon / 2 ] ) )
+    builder.set_point( 6, geode.Point2D( [ geode.global_epsilon / 1.1, 2. ] ) )
 
-    colocation_inspector = geode.SurfaceMeshColocation2D( surface )
+    colocation_inspector = inspector.SurfaceMeshColocation2D( surface )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Surface doesn't have colocated points whereas it should have several." )
     if not colocation_inspector.nb_colocated_points() == 3:
@@ -77,12 +77,12 @@ def check_non_colocation3D():
     builder.set_point( 2, geode.Point3D( [ 1., 4., 1. ] ) )
     builder.set_point( 3, geode.Point3D( [ 3., 3., 2. ] ) )
 
-    colocation_inspector = geode.SurfaceMeshColocation3D( surface )
+    colocation_inspector = inspector.SurfaceMeshColocation3D( surface )
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] (3D) Surface has colocated points when it should have none." )
     if not colocation_inspector.nb_colocated_points() == 0:
         raise ValueError( "[Test] (3D) Surface has more colocated points than it should." )
-    if not colocation_inspector.colocated_points_groups().empty():
+    if colocation_inspector.colocated_points_groups():
         raise ValueError( "[Test] (3D) Surface points are shown colocated whereas they are not." )
 
 def check_colocation3D():
@@ -98,7 +98,7 @@ def check_colocation3D():
         5, geode.Point3D( [ 2., geode.global_epsilon / 2, geode.global_epsilon / 2 ] ) )
     builder.set_point( 6, geode.Point3D( [ geode.global_epsilon / 1.1, 2., 1. ] ) )
 
-    colocation_inspector = geode.SurfaceMeshColocation3D( surface )
+    colocation_inspector = inspector.SurfaceMeshColocation3D( surface )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] (3D) Surface doesn't have colocated points whereas it should have several." )
     if not colocation_inspector.nb_colocated_points() == 3:
