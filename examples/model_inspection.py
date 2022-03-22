@@ -1,31 +1,7 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2019 - 2022 Geode-solutions
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-import os, sys, platform
-if sys.version_info >= (3,8,0) and platform.system() == "Windows":
-    for path in [x.strip() for x in os.environ['PATH'].split(';') if x]:
-        os.add_dll_directory(path)
-
-import opengeode 
-import opengeode_inspector_py_inspector as inspector
+import os
+import opengeode
+import opengeode_inspector as inspector
+import opengeode_io
 
 def check_components_linking( brep_inspector ):
     nb_unlinked_corners = brep_inspector.nb_corners_not_linked_to_a_unique_vertex()
@@ -138,28 +114,13 @@ def launch_topological_validity_checks( brep_inspector ):
     check_part_of_invalid_multiple_surfaces_unique_vertices( brep_inspector )
     check_part_of_invalid_blocks_unique_vertices( brep_inspector )
 
-def check_a1_vertices_topology():
-    test_dir = os.path.dirname(__file__)
-    data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_brep = opengeode.load_brep( data_dir + "/model_A1.og_brep" )
-    brep_inspector = inspector.BRepTopologyInspector( model_brep )
-    if brep_inspector.brep_topology_is_valid():
-        print( "model_A1 topology is valid." )
-    else:
-        print( "model_A1 topology is invalid." )
-    launch_topological_validity_checks( brep_inspector )
-
-def check_a1_valid_vertices_topology():
-    test_dir = os.path.dirname(__file__)
-    data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_brep = opengeode.load_brep( data_dir + "/model_A1_valid.og_brep" )
-    brep_inspector = inspector.BRepTopologyInspector( model_brep )
-    if brep_inspector.brep_topology_is_valid():
-        print( "model_A1_valid topology is valid." )
-    else:
-        print( "model_A1_valid topology is invalid." )
-    launch_topological_validity_checks( brep_inspector )
-
 if __name__ == '__main__':
-    check_a1_vertices_topology()
-    check_a1_valid_vertices_topology()
+    test_dir = os.path.dirname(__file__)
+    data_dir = os.path.abspath(os.path.join(test_dir, "../tests/data"))
+    brep = opengeode.load_brep( data_dir + "/model_A1_valid.og_brep" )
+    brep_inspector = inspector.BRepTopologyInspector(brep)
+    if brep_inspector.brep_topology_is_valid():
+        print( "Model topology is valid." )
+    else:
+        print( "Model topology is invalid." )
+    launch_topological_validity_checks( brep_inspector )
