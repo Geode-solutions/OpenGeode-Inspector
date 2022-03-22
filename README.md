@@ -42,7 +42,9 @@ Go check out the online documentation at [docs.geode-solutions.com].
 
 Installing OpenGeode-Inspector is done:
 
- * by compiling the C++ source.
+ * either by compiling the C++ source.
+ * or by using the pip command ```pip install opengeode-inspector``` and adding ```import opengeode_inspector``` in your Python script. Check [this documentation page](https://docs.geode-solutions.com/how-to-use-binding) for more details. Examples are also procured in the ```examples``` folder.
+
 
 ## Questions
 For questions and support please use the official [slack](https://slackin-opengeode.herokuapp.com) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests. 
