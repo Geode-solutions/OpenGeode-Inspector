@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
 
+#include <geode/mesh/core/solid_mesh.h>
+
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
@@ -32,7 +34,8 @@
 
 namespace
 {
-    bool line_is_boundary_of_at_least_two_surfaces( const geode::BRep& brep,
+    bool line_is_boundary_of_at_least_two_surfaces_or_one_embedded_surface(
+        const geode::BRep& brep,
         const geode::MeshComponentVertex& line,
         const std::vector< geode::MeshComponentVertex >& surfaces )
     {
@@ -42,6 +45,10 @@ namespace
             if( brep.Relationships::is_boundary(
                     line.component_id.id(), surface.component_id.id() ) )
             {
+                if( brep.nb_embeddings( surface.component_id.id() ) > 0 )
+                {
+                    return true;
+                }
                 counter++;
                 if( counter > 1 )
                 {
@@ -50,6 +57,19 @@ namespace
             }
         }
         return false;
+    }
+
+    bool brep_blocks_are_meshed( const geode::BRep& brep )
+    {
+        for( const auto& block : brep.blocks() )
+        {
+            if( brep.block( block.component_id().id() ).mesh().nb_vertices()
+                == 0 )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 } // namespace
 
@@ -108,15 +128,16 @@ namespace geode
             for( const auto surface : brep_.mesh_component_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
             {
-                if( brep_.nb_embeddings( surface.component_id.id() ) < 1 )
+                const auto embeddings =
+                    brep_.embeddings( surface.component_id.id() );
+
+                for( const auto embedding : embeddings )
                 {
-                    return false;
-                }
-                else if( brep_.nb_embeddings( surface.component_id.id() ) > 1
-                         || brep_.nb_incidences( surface.component_id.id() )
-                                > 0 )
-                {
-                    return true;
+                    if( brep_.Relationships::is_boundary(
+                            surface.component_id.id(), embedding.id() ) )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -140,9 +161,10 @@ namespace geode
             }
             if( brep_.nb_embeddings( surface_id ) > 0 )
             {
-                if( blocks.size() != 1
-                    || !brep_.Relationships::is_internal(
-                        surface_id, blocks[0].component_id.id() ) )
+                if( brep_blocks_are_meshed( brep_ )
+                    && ( blocks.size() != 1
+                         || !brep_.Relationships::is_internal(
+                             surface_id, blocks[0].component_id.id() ) ) )
                 {
                     return true;
                 }
@@ -190,6 +212,9 @@ namespace geode
                 {
                     if( !brep_.Relationships::is_boundary(
                             lines[0].component_id.id(),
+                            surface.component_id.id() )
+                        && !brep_.Relationships::is_internal(
+                            lines[0].component_id.id(),
                             surface.component_id.id() ) )
                     {
                         return true;
@@ -201,7 +226,7 @@ namespace geode
                 for( const auto& line : lines )
                 {
                     if( brep_.nb_embeddings( line.component_id.id() ) < 1
-                        && !line_is_boundary_of_at_least_two_surfaces(
+                        && !line_is_boundary_of_at_least_two_surfaces_or_one_embedded_surface(
                             brep_, line, surfaces ) )
                     {
                         return true;

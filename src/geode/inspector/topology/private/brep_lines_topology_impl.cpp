@@ -83,14 +83,16 @@ namespace geode
             for( const auto line : brep_.mesh_component_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
-                if( brep_.nb_embeddings( line.component_id.id() ) < 1 )
+                const auto embeddings =
+                    brep_.embeddings( line.component_id.id() );
+
+                for( const auto embedding : embeddings )
                 {
-                    return false;
-                }
-                else if( brep_.nb_embeddings( line.component_id.id() ) > 1
-                         || brep_.nb_incidences( line.component_id.id() ) > 0 )
-                {
-                    return true;
+                    if( brep_.Relationships::is_boundary(
+                            line.component_id.id(), embedding.id() ) )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -113,7 +115,12 @@ namespace geode
             {
                 if( !brep_.Relationships::is_internal(
                         lines[0].component_id.id(),
-                        surfaces[0].component_id.id() ) )
+                        surfaces[0].component_id.id() )
+                    && !( brep_.Relationships::nb_embeddings(
+                              surfaces[0].component_id.id() )
+                          && brep_.Relationships::is_boundary(
+                              lines[0].component_id.id(),
+                              surfaces[0].component_id.id() ) ) )
                 {
                     return true;
                 }
@@ -133,6 +140,9 @@ namespace geode
                 for( const auto& surface : surfaces )
                 {
                     if( !brep_.Relationships::is_boundary(
+                            lines[0].component_id.id(),
+                            surface.component_id.id() )
+                        && !brep_.Relationships::is_internal(
                             lines[0].component_id.id(),
                             surface.component_id.id() ) )
                     {

@@ -31,18 +31,20 @@
         .def( pybind11::init< const BRep& >() )                                  \
         .def( "brep_topology_is_valid",                                          \
             &BRepTopologyInspector::brep_topology_is_valid )                     \
-        .def( "brep_components_are_linked_to_a_unique_vertex",                   \
+        .def( "brep_meshed_components_are_linked_to_a_unique_vertex",            \
             &BRepTopologyInspector::                                             \
-                brep_components_are_linked_to_a_unique_vertex )                  \
+                brep_meshed_components_are_linked_to_a_unique_vertex )           \
         .def( "nb_corners_not_linked_to_a_unique_vertex",                        \
             &BRepTopologyInspector::nb_corners_not_linked_to_a_unique_vertex )   \
-        .def( "nb_lines_not_linked_to_a_unique_vertex",                          \
-            &BRepTopologyInspector::nb_lines_not_linked_to_a_unique_vertex )     \
-        .def( "nb_surfaces_not_linked_to_a_unique_vertex",                       \
+        .def( "nb_lines_meshed_but_not_linked_to_a_unique_vertex",               \
             &BRepTopologyInspector::                                             \
-                nb_surfaces_not_linked_to_a_unique_vertex )                      \
-        .def( "nb_blocks_not_linked_to_a_unique_vertex",                         \
-            &BRepTopologyInspector::nb_blocks_not_linked_to_a_unique_vertex )    \
+                nb_lines_meshed_but_not_linked_to_a_unique_vertex )              \
+        .def( "nb_surfaces_meshed_but_not_linked_to_a_unique_vertex",            \
+            &BRepTopologyInspector::                                             \
+                nb_surfaces_meshed_but_not_linked_to_a_unique_vertex )           \
+        .def( "nb_blocks_meshed_but_not_linked_to_a_unique_vertex",              \
+            &BRepTopologyInspector::                                             \
+                nb_blocks_meshed_but_not_linked_to_a_unique_vertex )             \
         .def( "invalid_components_topology_unique_vertices",                     \
             &BRepTopologyInspector::                                             \
                 invalid_components_topology_unique_vertices )                    \
