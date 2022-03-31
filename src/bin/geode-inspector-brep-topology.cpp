@@ -55,21 +55,24 @@ void inspect_brep( const geode::BRep& brep )
         } ) );
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb_lines =
-                brep_inspector.nb_lines_not_linked_to_a_unique_vertex();
+                brep_inspector
+                    .nb_lines_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
-                nb_lines, " corners not linked to a unique vertex" );
+                nb_lines, " lines meshed but not linked to a unique vertex" );
         } ) );
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb_surfaces =
-                brep_inspector.nb_surfaces_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_surfaces, " surfaces not linked to a unique vertex" );
+                brep_inspector
+                    .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
+            geode::Logger::info( nb_surfaces,
+                " surfaces meshed but not linked to a unique vertex" );
         } ) );
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb_blocks =
-                brep_inspector.nb_blocks_not_linked_to_a_unique_vertex();
+                brep_inspector
+                    .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
-                nb_blocks, " blocks not linked to a unique vertex" );
+                nb_blocks, " blocks meshed but not linked to a unique vertex" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_corners ) )
