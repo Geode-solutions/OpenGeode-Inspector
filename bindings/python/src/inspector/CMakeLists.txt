@@ -32,6 +32,7 @@ add_geode_python_binding(
         "manifold/surface_edge_manifold.h"
         "manifold/surface_vertex_manifold.h"
         "topology/brep_topology.h"
+        "topology/section_topology.h"
         "inspector.cpp"
     DEPENDENCIES
         ${PROJECT_NAME}::inspector

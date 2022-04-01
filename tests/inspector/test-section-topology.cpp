@@ -27,40 +27,39 @@
 #include <geode/basic/logger.h>
 
 #include <geode/model/helpers/convert_model_meshes.h>
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/io/brep_input.h>
+#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/io/section_input.h>
 
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/topology/section_topology.h>
 
-void check_components_linking( geode::BRepTopologyInspector& brep_inspector )
+void check_components_linking(
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto components_are_linked =
-        brep_inspector.brep_meshed_components_are_linked_to_a_unique_vertex();
-    geode::Logger::info( "BRep components are ",
+        section_inspector
+            .section_meshed_components_are_linked_to_a_unique_vertex();
+    geode::Logger::info( "Section components are ",
         components_are_linked ? "" : "not ", "all linked to a unique vertex." );
     const auto nb_unlinked_corners =
-        brep_inspector.nb_corners_not_linked_to_a_unique_vertex();
+        section_inspector.nb_corners_not_linked_to_a_unique_vertex();
     geode::Logger::info( "There are ", nb_unlinked_corners,
         " corners not linked to a unique vertex." );
     const auto nb_unlinked_lines =
-        brep_inspector.nb_lines_meshed_but_not_linked_to_a_unique_vertex();
+        section_inspector.nb_lines_meshed_but_not_linked_to_a_unique_vertex();
     geode::Logger::info( "There are ", nb_unlinked_lines,
         " lines not linked to a unique vertex." );
     const auto nb_unlinked_surfaces =
-        brep_inspector.nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
+        section_inspector
+            .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
     geode::Logger::info( "There are ", nb_unlinked_surfaces,
         " surfaces not linked to a unique vertex." );
-    const auto nb_unlinked_blocks =
-        brep_inspector.nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
-    geode::Logger::info( "There are ", nb_unlinked_blocks,
-        " blocks not linked to a unique vertex." );
 }
 
 void check_invalid_components_topology_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto invalid_components_unique_vertices =
-        brep_inspector.invalid_components_topology_unique_vertices();
+        section_inspector.invalid_components_topology_unique_vertices();
     geode::Logger::info( "There are ",
         invalid_components_unique_vertices.size(),
         " vertices with invalid components." );
@@ -72,10 +71,10 @@ void check_invalid_components_topology_unique_vertices(
 }
 
 void check_multiple_corners_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto multiple_corners_unique_vertices =
-        brep_inspector.multiple_corners_unique_vertices();
+        section_inspector.multiple_corners_unique_vertices();
     geode::Logger::info( "There are ", multiple_corners_unique_vertices.size(),
         " vertices with multiple corners." );
     for( const auto vertex_index : multiple_corners_unique_vertices )
@@ -86,10 +85,10 @@ void check_multiple_corners_unique_vertices(
 }
 
 void check_multiple_internals_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto multiple_internals_corner_vertices =
-        brep_inspector.multiple_internals_corner_vertices();
+        section_inspector.multiple_internals_corner_vertices();
     geode::Logger::info( "There are ",
         multiple_internals_corner_vertices.size(),
         " vertices with multiple internals." );
@@ -101,10 +100,10 @@ void check_multiple_internals_corner_vertices(
 }
 
 void check_not_internal_nor_boundary_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto not_internal_nor_boundary_corner_vertices =
-        brep_inspector.not_internal_nor_boundary_corner_vertices();
+        section_inspector.not_internal_nor_boundary_corner_vertices();
     geode::Logger::info( "There are ",
         not_internal_nor_boundary_corner_vertices.size(),
         " corner vertices with no boundary nor internal property." );
@@ -116,10 +115,10 @@ void check_not_internal_nor_boundary_corner_vertices(
 }
 
 void check_internal_with_multiple_incidences_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto internal_with_multiple_incidences_corner_vertices =
-        brep_inspector.internal_with_multiple_incidences_corner_vertices();
+        section_inspector.internal_with_multiple_incidences_corner_vertices();
     geode::Logger::info( "There are ",
         internal_with_multiple_incidences_corner_vertices.size(),
         " corner vertices who are internal but have multiple incidences." );
@@ -132,10 +131,10 @@ void check_internal_with_multiple_incidences_corner_vertices(
 }
 
 void check_line_corners_without_boundary_status(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto line_corners_without_boundary_status =
-        brep_inspector.line_corners_without_boundary_status();
+        section_inspector.line_corners_without_boundary_status();
     geode::Logger::info( "There are ",
         line_corners_without_boundary_status.size(),
         " corner vertices part of a line but not its boundary." );
@@ -148,10 +147,11 @@ void check_line_corners_without_boundary_status(
 }
 
 void check_part_of_not_boundary_nor_internal_line_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto part_of_not_boundary_nor_internal_line_unique_vertices =
-        brep_inspector.part_of_not_boundary_nor_internal_line_unique_vertices();
+        section_inspector
+            .part_of_not_boundary_nor_internal_line_unique_vertices();
     geode::Logger::info( "There are ",
         part_of_not_boundary_nor_internal_line_unique_vertices.size(),
         " vertices part of a line which is not boundary not internal." );
@@ -165,10 +165,10 @@ void check_part_of_not_boundary_nor_internal_line_unique_vertices(
 }
 
 void check_part_of_line_with_invalid_internal_topology_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto part_of_line_with_invalid_internal_topology_unique_vertices =
-        brep_inspector
+        section_inspector
             .part_of_line_with_invalid_internal_topology_unique_vertices();
     geode::Logger::info( "There are ",
         part_of_line_with_invalid_internal_topology_unique_vertices.size(),
@@ -183,10 +183,10 @@ void check_part_of_line_with_invalid_internal_topology_unique_vertices(
 }
 
 void check_part_of_invalid_unique_line_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto part_of_invalid_unique_line_unique_vertices =
-        brep_inspector.part_of_invalid_unique_line_unique_vertices();
+        section_inspector.part_of_invalid_unique_line_unique_vertices();
     geode::Logger::info( "There are ",
         part_of_invalid_unique_line_unique_vertices.size(),
         " vertices part of a unique line with invalid toplogy." );
@@ -200,10 +200,10 @@ void check_part_of_invalid_unique_line_unique_vertices(
 }
 
 void check_part_of_lines_but_not_corner_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
     const auto part_of_lines_but_not_corner_unique_vertices =
-        brep_inspector.part_of_lines_but_not_corner_unique_vertices();
+        section_inspector.part_of_lines_but_not_corner_unique_vertices();
     geode::Logger::info( "There are ",
         part_of_lines_but_not_corner_unique_vertices.size(),
         " vertices part of multiple lines but not corner." );
@@ -215,140 +215,53 @@ void check_part_of_lines_but_not_corner_unique_vertices(
     }
 }
 
-void check_part_of_not_boundary_nor_internal_surface_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+void check_part_of_invalid_surfaces_unique_vertices(
+    geode::SectionTopologyInspector& section_inspector )
 {
-    const auto part_of_not_boundary_nor_internal_surface_unique_vertices =
-        brep_inspector
-            .part_of_not_boundary_nor_internal_surface_unique_vertices();
+    const auto part_of_invalid_surfaces_unique_vertices =
+        section_inspector.part_of_invalid_surfaces_unique_vertices();
     geode::Logger::info( "There are ",
-        part_of_not_boundary_nor_internal_surface_unique_vertices.size(),
-        " vertices part of a surface which is neither internal nor boundary." );
-    for( const auto vertex_index :
-        part_of_not_boundary_nor_internal_surface_unique_vertices )
+        part_of_invalid_surfaces_unique_vertices.size(),
+        " vertices with invalid surface topology." );
+    for( const auto vertex_index : part_of_invalid_surfaces_unique_vertices )
     {
         geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index,
-            " is part of a surface which is neither internal nor boundary." );
-    }
-}
-
-void check_part_of_surface_with_invalid_internal_topology_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
-{
-    const auto part_of_surface_with_invalid_internal_topology_unique_vertices =
-        brep_inspector
-            .part_of_surface_with_invalid_internal_topology_unique_vertices();
-    geode::Logger::info( "There are ",
-        part_of_surface_with_invalid_internal_topology_unique_vertices.size(),
-        " vertices part of a surface with invalid internal topology." );
-    for( const auto vertex_index :
-        part_of_surface_with_invalid_internal_topology_unique_vertices )
-    {
-        geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index,
-            " is part of a surface with invalid internal topology." );
-    }
-}
-
-void check_part_of_invalid_unique_surface_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
-{
-    const auto part_of_invalid_unique_surface_unique_vertices =
-        brep_inspector.part_of_invalid_unique_surface_unique_vertices();
-    geode::Logger::info( "There are ",
-        part_of_invalid_unique_surface_unique_vertices.size(),
-        " vertices part of a unique surface with invalid topology." );
-    for( const auto vertex_index :
-        part_of_invalid_unique_surface_unique_vertices )
-    {
-        geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index,
-            " is part of a unique surface with invalid topology." );
-    }
-}
-
-void check_part_of_invalid_multiple_surfaces_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
-{
-    const auto part_of_invalid_multiple_surfaces_unique_vertices =
-        brep_inspector.part_of_invalid_multiple_surfaces_unique_vertices();
-    geode::Logger::info( "There are ",
-        part_of_invalid_multiple_surfaces_unique_vertices.size(),
-        " vertices part of invalid multiple surfaces." );
-    for( const auto vertex_index :
-        part_of_invalid_multiple_surfaces_unique_vertices )
-    {
-        geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index, " is part of invalid multiple surfaces." );
-    }
-}
-
-void check_part_of_invalid_blocks_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
-{
-    const auto part_of_invalid_blocks_unique_vertices =
-        brep_inspector.part_of_invalid_blocks_unique_vertices();
-    geode::Logger::info( "There are ",
-        part_of_invalid_blocks_unique_vertices.size(),
-        " vertices with invalid block topology." );
-    for( const auto vertex_index : part_of_invalid_blocks_unique_vertices )
-    {
-        geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index, " has invalid blocks topology." );
+            vertex_index, " has invalid surfaces topology." );
     }
 }
 
 void launch_topological_validity_checks(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::SectionTopologyInspector& section_inspector )
 {
-    check_components_linking( brep_inspector );
-    check_invalid_components_topology_unique_vertices( brep_inspector );
-    check_multiple_corners_unique_vertices( brep_inspector );
-    check_multiple_internals_corner_vertices( brep_inspector );
-    check_not_internal_nor_boundary_corner_vertices( brep_inspector );
-    check_internal_with_multiple_incidences_corner_vertices( brep_inspector );
-    check_line_corners_without_boundary_status( brep_inspector );
+    check_components_linking( section_inspector );
+    check_invalid_components_topology_unique_vertices( section_inspector );
+    check_multiple_corners_unique_vertices( section_inspector );
+    check_multiple_internals_corner_vertices( section_inspector );
+    check_not_internal_nor_boundary_corner_vertices( section_inspector );
+    check_line_corners_without_boundary_status( section_inspector );
     check_part_of_not_boundary_nor_internal_line_unique_vertices(
-        brep_inspector );
-    check_part_of_invalid_unique_line_unique_vertices( brep_inspector );
-    check_part_of_invalid_unique_line_unique_vertices( brep_inspector );
-    check_part_of_lines_but_not_corner_unique_vertices( brep_inspector );
-    check_part_of_not_boundary_nor_internal_surface_unique_vertices(
-        brep_inspector );
-    check_part_of_surface_with_invalid_internal_topology_unique_vertices(
-        brep_inspector );
-    check_part_of_invalid_unique_surface_unique_vertices( brep_inspector );
-    check_part_of_invalid_multiple_surfaces_unique_vertices( brep_inspector );
-    check_part_of_invalid_blocks_unique_vertices( brep_inspector );
+        section_inspector );
+    check_part_of_invalid_unique_line_unique_vertices( section_inspector );
+    check_part_of_invalid_unique_line_unique_vertices( section_inspector );
+    check_part_of_lines_but_not_corner_unique_vertices( section_inspector );
+    check_part_of_invalid_surfaces_unique_vertices( section_inspector );
 }
 
-void check_a1_vertices_topology()
+void check_section_vertices_topology()
 {
-    const auto model_brep = geode::load_brep(
-        absl::StrCat( geode::data_path, "model_A1.og_brep" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
-    geode::Logger::info( "model_A1 topology is ",
-        brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    launch_topological_validity_checks( brep_inspector );
-}
-
-void check_a1_valid_vertices_topology()
-{
-    const auto model_brep = geode::load_brep(
-        absl::StrCat( geode::data_path, "model_A1_valid.og_brep" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
-    geode::Logger::info( "model_A1_valid topology is ",
-        brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    launch_topological_validity_checks( brep_inspector );
+    const auto model_section = geode::load_section(
+        absl::StrCat( geode::data_path, "vertical_lines.og_sctn" ) );
+    geode::SectionTopologyInspector section_inspector{ model_section };
+    geode::Logger::info( "vertical_lines section topology is ",
+        section_inspector.section_topology_is_valid() ? "valid." : "invalid." );
+    launch_topological_validity_checks( section_inspector );
 }
 
 int main()
 {
     try
     {
-        check_a1_vertices_topology();
-        check_a1_valid_vertices_topology();
+        check_section_vertices_topology();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

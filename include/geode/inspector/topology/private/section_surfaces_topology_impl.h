@@ -27,7 +27,7 @@
 
 namespace geode
 {
-    class BRep;
+    class Section;
 } // namespace geode
 
 namespace geode
@@ -35,41 +35,25 @@ namespace geode
     namespace detail
     {
         /*!
-         * Class for inspecting the topology of a BRep model lines through their
-         * unique vertices
+         * Class for inspecting the topology of a Section model surfaces through
+         * its unique vertices
          */
-        class BRepLinesTopologyImpl
+        class SectionSurfacesTopologyImpl
         {
         public:
-            BRepLinesTopologyImpl( const BRep& brep );
+            SectionSurfacesTopologyImpl( const Section& section );
 
             /*!
-             * Checks if the brep unique vertices are parts of valid lines, i.e.
-             * verify:
-             * Each line is either internal or boundary.
-             * If a line is internal to an object, it cannot be incident to it.
-             * If the vertex is part of only one line, the line is either
-             * internal to a surface, internal to a block, or a boundary of
-             * multiple surfaces.
-             * If the vertex is part of multiple lines, it is also a corner.
+             * Checks if the section unique vertices are parts of valid
+             * surfaces, i.e. verify:
+             * If a unique vertex is part of two surfaces, it is part of a least
+             * one line which is boundary of the two blocks.
              */
-            bool brep_vertex_lines_topology_is_valid(
-                index_t unique_vertex_index ) const;
-
-            bool vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index ) const;
-
-            bool vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const;
-
-            bool vertex_is_part_of_invalid_unique_line(
-                index_t unique_vertex_index ) const;
-
-            bool vertex_has_lines_but_is_not_corner(
+            bool section_vertex_surfaces_topology_is_valid(
                 index_t unique_vertex_index ) const;
 
         private:
-            const BRep& brep_;
+            const Section& section_;
         };
     } // namespace detail
 } // namespace geode

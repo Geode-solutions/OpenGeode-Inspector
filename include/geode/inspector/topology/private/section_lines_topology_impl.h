@@ -27,7 +27,7 @@
 
 namespace geode
 {
-    class BRep;
+    class Section;
 } // namespace geode
 
 namespace geode
@@ -35,25 +35,27 @@ namespace geode
     namespace detail
     {
         /*!
-         * Class for inspecting the topology of a BRep model lines through their
-         * unique vertices
+         * Class for inspecting the topology of a Section model lines through
+         * their unique vertices
          */
-        class BRepLinesTopologyImpl
+        class SectionLinesTopologyImpl
         {
         public:
-            BRepLinesTopologyImpl( const BRep& brep );
+            SectionLinesTopologyImpl( const Section& section );
 
             /*!
-             * Checks if the brep unique vertices are parts of valid lines, i.e.
-             * verify:
+             * Checks if the section unique vertices are parts of valid lines,
+             * i.e. verify:
              * Each line is either internal or boundary.
-             * If a line is internal to an object, it cannot be incident to it.
-             * If the vertex is part of only one line, the line is either
-             * internal to a surface, internal to a block, or a boundary of
-             * multiple surfaces.
+             * Each internal line is internal to only one object and is not
+             * boundary.
+             * If the vertex is part of only one line, the vertex is part of
+             * no more than 2 surfaces, and the line is either internal to a
+             * surface (and the vertex is in one and only one surface) or a
+             * boundary of all the surfaces the vertex is in.
              * If the vertex is part of multiple lines, it is also a corner.
              */
-            bool brep_vertex_lines_topology_is_valid(
+            bool section_vertex_lines_topology_is_valid(
                 index_t unique_vertex_index ) const;
 
             bool vertex_is_part_of_not_boundary_nor_internal_line(
@@ -69,7 +71,7 @@ namespace geode
                 index_t unique_vertex_index ) const;
 
         private:
-            const BRep& brep_;
+            const Section& section_;
         };
     } // namespace detail
 } // namespace geode

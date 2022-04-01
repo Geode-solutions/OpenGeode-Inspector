@@ -108,3 +108,13 @@ add_geode_test(
         OpenGeode::model
         ${PROJECT_NAME}::inspector
 )
+
+add_geode_test(
+    SOURCE "test-section-topology.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::inspector
+)
