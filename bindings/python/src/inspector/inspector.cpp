@@ -40,6 +40,7 @@
 #include "manifold/surface_vertex_manifold.h"
 
 #include "topology/brep_topology.h"
+#include "topology/section_topology.h"
 
 PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
 {
@@ -55,4 +56,5 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );
     geode::define_brep_topology_inspector( module );
+    geode::define_section_topology_inspector( module );
 }

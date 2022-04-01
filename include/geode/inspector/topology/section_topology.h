@@ -29,29 +29,29 @@
 
 namespace geode
 {
-    class BRep;
+    class Section;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the topology of a BRep model corners
+     * Class for inspecting the topology of a Section model corners
      */
-    class opengeode_inspector_inspector_api BRepTopologyInspector
+    class opengeode_inspector_inspector_api SectionTopologyInspector
     {
-        OPENGEODE_DISABLE_COPY( BRepTopologyInspector );
+        OPENGEODE_DISABLE_COPY( SectionTopologyInspector );
 
     public:
-        BRepTopologyInspector( const BRep& brep );
-        ~BRepTopologyInspector();
+        SectionTopologyInspector( const Section& section );
+        ~SectionTopologyInspector();
 
         /*!
-         * Checks if the brep is topologically valid through the unique
+         * Checks if the section is topologically valid through the unique
          * vertices.
          */
-        bool brep_topology_is_valid() const;
+        bool section_topology_is_valid() const;
 
-        bool brep_meshed_components_are_linked_to_a_unique_vertex() const;
+        bool section_meshed_components_are_linked_to_a_unique_vertex() const;
 
         index_t nb_corners_not_linked_to_a_unique_vertex() const;
 
@@ -88,20 +88,7 @@ namespace geode
         std::vector< index_t >
             part_of_lines_but_not_corner_unique_vertices() const;
 
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_surface_with_invalid_internal_topology_unique_vertices()
-                const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_multiple_surfaces_unique_vertices() const;
-
-        std::vector< index_t > part_of_invalid_blocks_unique_vertices() const;
+        std::vector< index_t > part_of_invalid_surfaces_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

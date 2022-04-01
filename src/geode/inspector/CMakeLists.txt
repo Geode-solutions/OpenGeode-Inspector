@@ -40,6 +40,10 @@ add_geode_library(
         "topology/private/brep_lines_topology_impl.cpp"
         "topology/private/brep_surfaces_topology_impl.cpp"
         "topology/private/brep_blocks_topology_impl.cpp"
+        "topology/section_topology.cpp"
+        "topology/private/section_corners_topology_impl.cpp"
+        "topology/private/section_lines_topology_impl.cpp"
+        "topology/private/section_surfaces_topology_impl.cpp"
     PUBLIC_HEADERS
         "common.h"
         "criterion/degeneration/edgedcurve_degeneration.h"
@@ -53,6 +57,7 @@ add_geode_library(
         "criterion/manifold/surface_vertex_manifold.h"
         "criterion/manifold/surface_edge_manifold.h"
         "topology/brep_topology.h"
+        "topology/section_topology.h"
     PRIVATE_HEADERS
         "criterion/private/degeneration_impl.h"
         "criterion/private/colocation_impl.h"
@@ -60,6 +65,9 @@ add_geode_library(
         "topology/private/brep_lines_topology_impl.h"
         "topology/private/brep_surfaces_topology_impl.h"
         "topology/private/brep_blocks_topology_impl.h"
+        "topology/private/section_corners_topology_impl.h"
+        "topology/private/section_lines_topology_impl.h"
+        "topology/private/section_surfaces_topology_impl.h"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES

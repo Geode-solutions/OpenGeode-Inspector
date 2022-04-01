@@ -1,0 +1,173 @@
+/*
+ * Copyright (c) 2019 - 2022 Geode-solutions
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+#include <geode/inspector/topology/private/section_lines_topology_impl.h>
+
+#include <geode/mesh/core/surface_mesh.h>
+
+#include <geode/model/mixin/core/corner.h>
+#include <geode/model/mixin/core/line.h>
+#include <geode/model/mixin/core/relationships.h>
+#include <geode/model/mixin/core/surface.h>
+#include <geode/model/representation/core/section.h>
+
+namespace
+{
+    bool section_surfaces_are_meshed( const geode::Section& section )
+    {
+        for( const auto& surface : section.surfaces() )
+        {
+            if( section.surface( surface.component_id().id() )
+                    .mesh()
+                    .nb_vertices()
+                == 0 )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+} // namespace
+
+namespace geode
+{
+    namespace detail
+    {
+        SectionLinesTopologyImpl::SectionLinesTopologyImpl(
+            const Section& section )
+            : section_( section )
+        {
+        }
+
+        bool SectionLinesTopologyImpl::section_vertex_lines_topology_is_valid(
+            index_t unique_vertex_index ) const
+        {
+            const auto lines = section_.mesh_component_vertices(
+                unique_vertex_index, Line2D::component_type_static() );
+            if( lines.empty() )
+            {
+                return true;
+            }
+            if( vertex_is_part_of_not_boundary_nor_internal_line(
+                    unique_vertex_index )
+                || vertex_is_part_of_line_with_invalid_internal_topology(
+                    unique_vertex_index )
+                || vertex_is_part_of_invalid_unique_line( unique_vertex_index )
+                || vertex_has_lines_but_is_not_corner( unique_vertex_index ) )
+            {
+                return false;
+            }
+            return true;
+        }
+
+        bool SectionLinesTopologyImpl::
+            vertex_is_part_of_not_boundary_nor_internal_line(
+                const index_t unique_vertex_index ) const
+        {
+            for( const auto line : section_.mesh_component_vertices(
+                     unique_vertex_index, Line2D::component_type_static() ) )
+            {
+                if( section_.nb_embeddings( line.component_id.id() ) < 1
+                    && section_.nb_incidences( line.component_id.id() ) < 1 )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool SectionLinesTopologyImpl::
+            vertex_is_part_of_line_with_invalid_internal_topology(
+                const index_t unique_vertex_index ) const
+        {
+            for( const auto line : section_.mesh_component_vertices(
+                     unique_vertex_index, Line2D::component_type_static() ) )
+            {
+                if( section_.nb_embeddings( line.component_id.id() ) < 1 )
+                {
+                    return false;
+                }
+                else if( section_.nb_embeddings( line.component_id.id() ) > 1
+                         || section_.nb_incidences( line.component_id.id() )
+                                > 0 )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool SectionLinesTopologyImpl::vertex_is_part_of_invalid_unique_line(
+            index_t unique_vertex_index ) const
+        {
+            const auto lines = section_.mesh_component_vertices(
+                unique_vertex_index, Line2D::component_type_static() );
+            if( lines.size() != 1 )
+            {
+                return false;
+            }
+            const auto& line_id = lines[0].component_id.id();
+            const auto surfaces = section_.mesh_component_vertices(
+                unique_vertex_index, Surface2D::component_type_static() );
+            if( surfaces.size() > 2 )
+            {
+                return true;
+            }
+            if( section_.nb_embeddings( line_id ) > 0 )
+            {
+                if( section_surfaces_are_meshed( section_ )
+                    && ( surfaces.size() != 1
+                         || !section_.Relationships::is_internal(
+                             line_id, surfaces[0].component_id.id() ) ) )
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                for( const auto& surface : surfaces )
+                {
+                    if( !section_.Relationships::is_boundary(
+                            line_id, surface.component_id.id() ) )
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        bool SectionLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
+            index_t unique_vertex_index ) const
+        {
+            return section_.mesh_component_vertices( unique_vertex_index,
+                               Line2D::component_type_static() )
+                           .size()
+                       > 1
+                   && section_
+                          .mesh_component_vertices( unique_vertex_index,
+                              Corner2D::component_type_static() )
+                          .empty();
+        }
+    } // namespace detail
+} // namespace geode

@@ -85,3 +85,19 @@ add_geode_binary(
         OpenGeode-IO::model
         ${PROJECT_NAME}::inspector
 )
+
+add_geode_binary(
+    SOURCE "geode-inspector-section-topology.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        OpenGeode-IO::mesh
+        OpenGeode-IO::model
+        ${PROJECT_NAME}::inspector
+)
