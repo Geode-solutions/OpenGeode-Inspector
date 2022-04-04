@@ -43,9 +43,6 @@
         .def( "nb_surfaces_meshed_but_not_linked_to_a_unique_vertex",          \
             &SectionTopologyInspector::                                        \
                 nb_surfaces_meshed_but_not_linked_to_a_unique_vertex )         \
-        .def( "nb_blocks_meshed_but_not_linked_to_a_unique_vertex",            \
-            &SectionTopologyInspector::                                        \
-                nb_blocks_meshed_but_not_linked_to_a_unique_vertex )           \
         .def( "invalid_components_topology_unique_vertices",                   \
             &SectionTopologyInspector::                                        \
                 invalid_components_topology_unique_vertices )                  \
