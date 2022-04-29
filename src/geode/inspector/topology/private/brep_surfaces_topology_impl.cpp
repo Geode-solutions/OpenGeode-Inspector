@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
 
+#include <geode/basic/logger.h>
+
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/model/mixin/core/block.h>
@@ -34,7 +36,7 @@
 
 namespace
 {
-    bool line_is_boundary_of_at_least_two_surfaces_or_one_embedded_surface(
+    bool line_is_boundary_of_at_least_two_surfaces_or_one_embedding_surface(
         const geode::BRep& brep,
         const geode::MeshComponentVertex& line,
         const std::vector< geode::MeshComponentVertex >& surfaces )
@@ -85,9 +87,9 @@ namespace geode
         bool BRepSurfacesTopologyImpl::brep_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto lines = brep_.mesh_component_vertices(
-                unique_vertex_index, Line3D::component_type_static() );
-            if( lines.empty() )
+            const auto surfaces = brep_.mesh_component_vertices(
+                unique_vertex_index, Surface3D::component_type_static() );
+            if( surfaces.empty() )
             {
                 return true;
             }
@@ -107,7 +109,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_not_boundary_nor_internal_surface(
-                const index_t unique_vertex_index ) const
+                const index_t unique_vertex_index, bool verbose ) const
         {
             for( const auto surface : brep_.mesh_component_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
@@ -115,6 +117,15 @@ namespace geode
                 if( brep_.nb_embeddings( surface.component_id.id() ) < 1
                     && brep_.nb_incidences( surface.component_id.id() ) < 1 )
                 {
+                    if( verbose )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is part of surface with uuid '",
+                            surface.component_id.id().string(),
+                            "', which is neither internal to a block nor a "
+                            "boundary of a block." );
+                    }
                     return true;
                 }
             }
@@ -123,7 +134,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_surface_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const
+                const index_t unique_vertex_index, bool verbose ) const
         {
             for( const auto surface : brep_.mesh_component_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
@@ -136,6 +147,16 @@ namespace geode
                     if( brep_.Relationships::is_boundary(
                             surface.component_id.id(), embedding.id() ) )
                     {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of surface with uuid '",
+                                surface.component_id.id().string(),
+                                "', which is both internal and boundary of "
+                                "block with uuid '",
+                                embedding.id().string(), "'." );
+                        }
                         return true;
                     }
                 }
@@ -144,7 +165,7 @@ namespace geode
         }
 
         bool BRepSurfacesTopologyImpl::vertex_is_part_of_invalid_unique_surface(
-            index_t unique_vertex_index ) const
+            index_t unique_vertex_index, bool verbose ) const
         {
             const auto surfaces = brep_.mesh_component_vertices(
                 unique_vertex_index, Surface3D::component_type_static() );
@@ -157,16 +178,43 @@ namespace geode
                 unique_vertex_index, Block3D::component_type_static() );
             if( blocks.size() > 2 )
             {
+                if( verbose )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of only one surface, but is part of more "
+                        "than two blocks." );
+                }
                 return true;
             }
             if( brep_.nb_embeddings( surface_id ) > 0 )
             {
-                if( brep_blocks_are_meshed( brep_ )
-                    && ( blocks.size() != 1
-                         || !brep_.Relationships::is_internal(
-                             surface_id, blocks[0].component_id.id() ) ) )
+                if( brep_blocks_are_meshed( brep_ ) )
                 {
-                    return true;
+                    if( blocks.size() != 1 )
+                    {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of only one surface, which is "
+                                "embedded, but not part of only one block." );
+                        }
+                        return true;
+                    }
+                    else if( !brep_.Relationships::is_internal(
+                                 surface_id, blocks[0].component_id.id() ) )
+                    {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of only one surface, which is "
+                                "embedded, and one block, but the surface is "
+                                "not internal to the block." );
+                        }
+                        return true;
+                    }
                 }
             }
             else
@@ -176,6 +224,17 @@ namespace geode
                     if( !brep_.Relationships::is_boundary(
                             surface_id, block.component_id.id() ) )
                     {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of only one surface, with uuid'",
+                                surface_id.string(),
+                                "' which is not embedded, but not boundary "
+                                "either of block with uuid '",
+                                block.component_id.id().string(),
+                                "', in which the vertex is." );
+                        }
                         return true;
                     }
                 }
@@ -185,7 +244,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_invalid_multiple_surfaces(
-                index_t unique_vertex_index ) const
+                index_t unique_vertex_index, bool verbose ) const
         {
             const auto surfaces = brep_.mesh_component_vertices(
                 unique_vertex_index, Surface3D::component_type_static() );
@@ -197,6 +256,13 @@ namespace geode
                 unique_vertex_index, Line3D::component_type_static() );
             if( lines.empty() )
             {
+                if( verbose )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of multiple surfaces, but not part of any "
+                        "line." );
+                }
                 return true;
             }
             if( lines.size() == 1 )
@@ -206,6 +272,13 @@ namespace geode
                              Corner3D::component_type_static() )
                          .empty() )
                 {
+                    if( verbose )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is part of multiple surfaces and only one line, "
+                            "but is a corner." );
+                    }
                     return true;
                 }
                 for( const auto& surface : surfaces )
@@ -217,6 +290,18 @@ namespace geode
                             lines[0].component_id.id(),
                             surface.component_id.id() ) )
                     {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of multiple surfaces and only one "
+                                "line, with uuid'",
+                                lines[0].component_id.id().string(),
+                                "', but surface with uuid '",
+                                surface.component_id.id().string(),
+                                "', in which the vertex is, is neither "
+                                "incident nor embedding of the line." );
+                        }
                         return true;
                     }
                 }
@@ -226,9 +311,20 @@ namespace geode
                 for( const auto& line : lines )
                 {
                     if( brep_.nb_embeddings( line.component_id.id() ) < 1
-                        && !line_is_boundary_of_at_least_two_surfaces_or_one_embedded_surface(
+                        && !line_is_boundary_of_at_least_two_surfaces_or_one_embedding_surface(
                             brep_, line, surfaces ) )
                     {
+                        if( verbose )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of multiple surfaces and multiple "
+                                "lines, but line with uuid'",
+                                lines[0].component_id.id().string(),
+                                "' is neither internal, nor a boundary of at "
+                                "least two surfaces or one embedding "
+                                "surface." );
+                        }
                         return true;
                     }
                 }

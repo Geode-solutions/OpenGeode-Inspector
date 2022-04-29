@@ -52,7 +52,7 @@ namespace geode
              * either a corner, or not a corner but part of only one line).
              */
             bool brep_vertex_blocks_topology_is_valid(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
         private:
             const BRep& brep_;
