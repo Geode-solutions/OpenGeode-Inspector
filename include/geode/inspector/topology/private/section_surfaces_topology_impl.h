@@ -50,7 +50,7 @@ namespace geode
              * one line which is boundary of the two blocks.
              */
             bool section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
         private:
             const Section& section_;

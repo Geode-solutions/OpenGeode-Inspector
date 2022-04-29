@@ -51,19 +51,19 @@ namespace geode
                 index_t unique_vertex_index ) const;
 
             bool unique_vertex_has_multiple_corners(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
             bool corner_has_multiple_embeddings(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
             bool corner_is_not_internal_nor_boundary(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
             bool corner_is_internal_with_multiple_incidences(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
             bool corner_is_part_of_line_but_not_boundary(
-                index_t unique_vertex_index ) const;
+                index_t unique_vertex_index, bool verbose = false ) const;
 
         private:
             const Section& section_;

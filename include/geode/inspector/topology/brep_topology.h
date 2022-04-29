@@ -53,55 +53,68 @@ namespace geode
 
         bool brep_meshed_components_are_linked_to_a_unique_vertex() const;
 
-        index_t nb_corners_not_linked_to_a_unique_vertex() const;
+        index_t nb_corners_not_linked_to_a_unique_vertex(
+            bool verbose = false ) const;
 
-        index_t nb_lines_meshed_but_not_linked_to_a_unique_vertex() const;
+        index_t nb_lines_meshed_but_not_linked_to_a_unique_vertex(
+            bool verbose = false ) const;
 
-        index_t nb_surfaces_meshed_but_not_linked_to_a_unique_vertex() const;
+        index_t nb_surfaces_meshed_but_not_linked_to_a_unique_vertex(
+            bool verbose = false ) const;
 
-        index_t nb_blocks_meshed_but_not_linked_to_a_unique_vertex() const;
+        index_t nb_blocks_meshed_but_not_linked_to_a_unique_vertex(
+            bool verbose = false ) const;
 
         std::vector< index_t >
             invalid_components_topology_unique_vertices() const;
 
-        std::vector< index_t > multiple_corners_unique_vertices() const;
+        std::vector< index_t > multiple_corners_unique_vertices(
+            bool verbose = false ) const;
 
-        std::vector< index_t > multiple_internals_corner_vertices() const;
+        std::vector< index_t > multiple_internals_corner_vertices(
+            bool verbose = false ) const;
 
-        std::vector< index_t >
-            not_internal_nor_boundary_corner_vertices() const;
-
-        std::vector< index_t >
-            internal_with_multiple_incidences_corner_vertices() const;
-
-        std::vector< index_t > line_corners_without_boundary_status() const;
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices(
+            bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices() const;
+            internal_with_multiple_incidences_corner_vertices(
+                bool verbose = false ) const;
+
+        std::vector< index_t > line_corners_without_boundary_status(
+            bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices() const;
+            part_of_not_boundary_nor_internal_line_unique_vertices(
+                bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_invalid_unique_line_unique_vertices() const;
+            part_of_line_with_invalid_internal_topology_unique_vertices(
+                bool verbose = false ) const;
+
+        std::vector< index_t > part_of_invalid_unique_line_unique_vertices(
+            bool verbose = false ) const;
+
+        std::vector< index_t > part_of_lines_but_not_corner_unique_vertices(
+            bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_lines_but_not_corner_unique_vertices() const;
+            part_of_not_boundary_nor_internal_surface_unique_vertices(
+                bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_not_boundary_nor_internal_surface_unique_vertices() const;
+            part_of_surface_with_invalid_internal_topology_unique_vertices(
+                bool verbose = false ) const;
+
+        std::vector< index_t > part_of_invalid_unique_surface_unique_vertices(
+            bool verbose = false ) const;
 
         std::vector< index_t >
-            part_of_surface_with_invalid_internal_topology_unique_vertices()
-                const;
+            part_of_invalid_multiple_surfaces_unique_vertices(
+                bool verbose = false ) const;
 
-        std::vector< index_t >
-            part_of_invalid_unique_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_multiple_surfaces_unique_vertices() const;
-
-        std::vector< index_t > part_of_invalid_blocks_unique_vertices() const;
+        std::vector< index_t > part_of_invalid_blocks_unique_vertices(
+            bool verbose = false ) const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

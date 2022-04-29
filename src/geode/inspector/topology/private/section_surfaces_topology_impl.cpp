@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/section_surfaces_topology_impl.h>
 
+#include <geode/basic/logger.h>
+
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
 #include <geode/model/mixin/core/relationships.h>
@@ -41,7 +43,7 @@ namespace geode
 
         bool SectionSurfacesTopologyImpl::
             section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index ) const
+                index_t unique_vertex_index, bool verbose ) const
         {
             const auto surfaces = section_.mesh_component_vertices(
                 unique_vertex_index, Surface2D::component_type_static() );
@@ -60,6 +62,13 @@ namespace geode
                     {
                         return true;
                     }
+                }
+                if( verbose )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of two surfaces, but is associated to no "
+                        "line boundary of the two surfaces." );
                 }
                 return false;
             }

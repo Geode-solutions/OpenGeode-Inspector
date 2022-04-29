@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/brep_blocks_topology_impl.h>
 
+#include <geode/basic/logger.h>
+
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/relationships.h>
 #include <geode/model/mixin/core/surface.h>
@@ -38,7 +40,7 @@ namespace geode
         }
 
         bool BRepBlocksTopologyImpl::brep_vertex_blocks_topology_is_valid(
-            index_t unique_vertex_index ) const
+            index_t unique_vertex_index, bool verbose ) const
         {
             const auto blocks = brep_.mesh_component_vertices(
                 unique_vertex_index, Block3D::component_type_static() );
@@ -57,6 +59,13 @@ namespace geode
                     {
                         return true;
                     }
+                }
+                if( verbose )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of two blocks, but not of a surface boundary "
+                        "to the two blocks." );
                 }
                 return false;
             }
