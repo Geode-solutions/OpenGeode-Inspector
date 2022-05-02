@@ -25,6 +25,7 @@
 
 #include <absl/container/flat_hash_map.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
@@ -61,13 +62,19 @@ namespace
 
     template < geode::index_t dimension >
     std::vector< Edge > mesh_non_manifold_edges(
-        const geode::SurfaceMesh< dimension >& mesh )
+        const geode::SurfaceMesh< dimension >& mesh, bool verbose )
     {
         std::vector< Edge > non_manifold_edges;
         for( const auto& edge : edge_to_polygons_around( mesh ) )
         {
             if( edge.second > 2 )
             {
+                if( verbose )
+                {
+                    geode::Logger::info( "Edge between vertices with index ",
+                        edge.first.vertices()[0], " and index ",
+                        edge.first.vertices()[1], ", is not manifold." );
+                }
                 non_manifold_edges.push_back( edge.first );
             }
         }
@@ -81,9 +88,9 @@ namespace geode
     class SurfaceMeshEdgeManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
+        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
             : non_manifold_edges_{ mesh_non_manifold_edges< dimension >(
-                mesh ) }
+                mesh, verbose ) }
         {
         }
 
@@ -113,7 +120,14 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshEdgeManifold< dimension >::SurfaceMeshEdgeManifold(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SurfaceMeshEdgeManifold< dimension >::SurfaceMeshEdgeManifold(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

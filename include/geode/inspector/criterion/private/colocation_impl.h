@@ -38,7 +38,7 @@ namespace geode
         class ColocationImpl
         {
         protected:
-            ColocationImpl( const Mesh& mesh );
+            ColocationImpl( const Mesh& mesh, bool verbose );
 
         public:
             bool mesh_has_colocated_points() const;
@@ -51,6 +51,7 @@ namespace geode
         private:
             const typename NNSearch< dimension >::ColocatedInfo
                 mesh_colocation_info_;
+            const bool verbose_;
         };
     } // namespace detail
 } // namespace geode

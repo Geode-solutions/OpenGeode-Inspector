@@ -43,6 +43,8 @@ namespace geode
         public:
             SectionSurfacesTopologyImpl( const Section& section );
 
+            SectionSurfacesTopologyImpl( const Section& section, bool verbose );
+
             /*!
              * Checks if the section unique vertices are parts of valid
              * surfaces, i.e. verify:
@@ -50,10 +52,11 @@ namespace geode
              * one line which is boundary of the two blocks.
              */
             bool section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index, bool verbose = false ) const;
+                index_t unique_vertex_index ) const;
 
         private:
             const Section& section_;
+            const bool verbose_;
         };
     } // namespace detail
 } // namespace geode

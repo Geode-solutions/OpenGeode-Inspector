@@ -25,7 +25,10 @@
 
 #include <absl/algorithm/container.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+
+#include <geode/geometry/point.h>
 
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -51,7 +54,7 @@ namespace
 
     template < geode::index_t dimension >
     std::vector< geode::index_t > mesh_non_manifold_vertices(
-        const geode::SurfaceMesh< dimension >& mesh )
+        const geode::SurfaceMesh< dimension >& mesh, bool verbose )
     {
         std::vector< geode::index_t > non_manifold_vertices;
         std::vector< geode::PolygonsAroundVertex > polygons_around_vertices(
@@ -72,6 +75,12 @@ namespace
                     polygons_around_vertices[vertex_id],
                     mesh.polygons_around_vertex( vertex_id ) ) )
             {
+                if( verbose )
+                {
+                    geode::Logger::info( "Vertex with index ", vertex_id,
+                        ", at position ", mesh.point( vertex_id ).string(),
+                        ", is not manifold." );
+                }
                 non_manifold_vertices.push_back( vertex_id );
             }
         }
@@ -85,9 +94,9 @@ namespace geode
     class SurfaceMeshVertexManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
+        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
             : non_manifold_vertices_{ mesh_non_manifold_vertices< dimension >(
-                mesh ) }
+                mesh, verbose ) }
         {
         }
 
@@ -113,7 +122,14 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshVertexManifold< dimension >::SurfaceMeshVertexManifold(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SurfaceMeshVertexManifold< dimension >::SurfaceMeshVertexManifold(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

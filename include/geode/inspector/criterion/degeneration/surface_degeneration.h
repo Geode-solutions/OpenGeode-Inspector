@@ -44,6 +44,10 @@ namespace geode
 
     public:
         SurfaceMeshDegeneration( const SurfaceMesh< dimension >& mesh );
+
+        SurfaceMeshDegeneration(
+            const SurfaceMesh< dimension >& mesh, bool verbose );
+
         ~SurfaceMeshDegeneration();
 
         bool is_mesh_degenerated() const;

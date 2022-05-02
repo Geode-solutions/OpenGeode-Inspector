@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/solid_mesh.h>
@@ -35,8 +36,9 @@ namespace geode
         : public detail::DegenerationImpl< SolidMesh< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh }
+        Impl( const SolidMesh< dimension >& mesh, bool verbose )
+            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh,
+                  verbose }
         {
         }
     };
@@ -44,7 +46,14 @@ namespace geode
     template < index_t dimension >
     SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
+        const SolidMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

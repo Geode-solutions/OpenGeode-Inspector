@@ -79,8 +79,13 @@ namespace geode
 {
     namespace detail
     {
+        BRepSurfacesTopologyImpl::BRepSurfacesTopologyImpl(
+            const BRep& brep, bool verbose )
+            : brep_( brep ), verbose_( verbose )
+        {
+        }
         BRepSurfacesTopologyImpl::BRepSurfacesTopologyImpl( const BRep& brep )
-            : brep_( brep )
+            : BRepSurfacesTopologyImpl( brep, false )
         {
         }
 
@@ -109,7 +114,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_not_boundary_nor_internal_surface(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto surface : brep_.mesh_component_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
@@ -117,7 +122,7 @@ namespace geode
                 if( brep_.nb_embeddings( surface.component_id.id() ) < 1
                     && brep_.nb_incidences( surface.component_id.id() ) < 1 )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index,
@@ -134,7 +139,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_surface_with_invalid_internal_topology(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto surface : brep_.mesh_component_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
@@ -147,7 +152,7 @@ namespace geode
                     if( brep_.Relationships::is_boundary(
                             surface.component_id.id(), embedding.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -165,7 +170,7 @@ namespace geode
         }
 
         bool BRepSurfacesTopologyImpl::vertex_is_part_of_invalid_unique_surface(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto surfaces = brep_.mesh_component_vertices(
                 unique_vertex_index, Surface3D::component_type_static() );
@@ -178,7 +183,7 @@ namespace geode
                 unique_vertex_index, Block3D::component_type_static() );
             if( blocks.size() > 2 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -193,7 +198,7 @@ namespace geode
                 {
                     if( blocks.size() != 1 )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -205,7 +210,7 @@ namespace geode
                     else if( !brep_.Relationships::is_internal(
                                  surface_id, blocks[0].component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -224,7 +229,7 @@ namespace geode
                     if( !brep_.Relationships::is_boundary(
                             surface_id, block.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -244,7 +249,7 @@ namespace geode
 
         bool BRepSurfacesTopologyImpl::
             vertex_is_part_of_invalid_multiple_surfaces(
-                index_t unique_vertex_index, bool verbose ) const
+                index_t unique_vertex_index ) const
         {
             const auto surfaces = brep_.mesh_component_vertices(
                 unique_vertex_index, Surface3D::component_type_static() );
@@ -256,7 +261,7 @@ namespace geode
                 unique_vertex_index, Line3D::component_type_static() );
             if( lines.empty() )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -272,7 +277,7 @@ namespace geode
                              Corner3D::component_type_static() )
                          .empty() )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index,
@@ -290,7 +295,7 @@ namespace geode
                             lines[0].component_id.id(),
                             surface.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -314,7 +319,7 @@ namespace geode
                         && !line_is_boundary_of_at_least_two_surfaces_or_one_embedding_surface(
                             brep_, line, surfaces ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,

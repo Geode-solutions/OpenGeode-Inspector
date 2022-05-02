@@ -45,6 +45,10 @@ namespace geode
 
     public:
         SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+
+        SurfaceMeshAdjacency(
+            const SurfaceMesh< dimension >& mesh, bool verbose );
+
         ~SurfaceMeshAdjacency();
 
         bool mesh_has_wrong_adjacencies() const;

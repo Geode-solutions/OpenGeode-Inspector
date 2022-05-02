@@ -34,8 +34,13 @@ namespace geode
 {
     namespace detail
     {
+        BRepCornersTopologyImpl::BRepCornersTopologyImpl(
+            const BRep& brep, bool verbose )
+            : brep_( brep ), verbose_( verbose )
+        {
+        }
         BRepCornersTopologyImpl::BRepCornersTopologyImpl( const BRep& brep )
-            : brep_( brep )
+            : BRepCornersTopologyImpl( brep, false )
         {
         }
 
@@ -81,7 +86,7 @@ namespace geode
         }
 
         bool BRepCornersTopologyImpl::unique_vertex_has_multiple_corners(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             if( brep_
                     .mesh_component_vertices(
@@ -89,7 +94,7 @@ namespace geode
                     .size()
                 > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index, " is part of several corners." );
@@ -100,14 +105,14 @@ namespace geode
         }
 
         bool BRepCornersTopologyImpl::corner_has_multiple_embeddings(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto corners = brep_.mesh_component_vertices(
                 unique_vertex_index, Corner3D::component_type_static() );
             if( !corners.empty()
                 && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -121,7 +126,7 @@ namespace geode
         }
 
         bool BRepCornersTopologyImpl::corner_is_not_internal_nor_boundary(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto corners = brep_.mesh_component_vertices(
                 unique_vertex_index, Corner3D::component_type_static() );
@@ -129,7 +134,7 @@ namespace geode
                 && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
                 && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -144,7 +149,7 @@ namespace geode
 
         bool BRepCornersTopologyImpl::
             corner_is_internal_with_multiple_incidences(
-                index_t unique_vertex_index, bool verbose ) const
+                index_t unique_vertex_index ) const
         {
             const auto corners = brep_.mesh_component_vertices(
                 unique_vertex_index, Corner3D::component_type_static() );
@@ -152,7 +157,7 @@ namespace geode
                 && brep_.nb_embeddings( corners[0].component_id.id() ) == 1
                 && brep_.nb_incidences( corners[0].component_id.id() ) > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -166,7 +171,7 @@ namespace geode
         }
 
         bool BRepCornersTopologyImpl::corner_is_part_of_line_but_not_boundary(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto corners = brep_.mesh_component_vertices(
                 unique_vertex_index, Corner3D::component_type_static() );
@@ -180,7 +185,7 @@ namespace geode
                     if( !brep_.Relationships::is_boundary(
                             corner_uuid, line.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,

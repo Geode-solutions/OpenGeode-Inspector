@@ -56,8 +56,13 @@ namespace geode
     namespace detail
     {
         SectionLinesTopologyImpl::SectionLinesTopologyImpl(
+            const Section& section, bool verbose )
+            : section_( section ), verbose_( verbose )
+        {
+        }
+        SectionLinesTopologyImpl::SectionLinesTopologyImpl(
             const Section& section )
-            : section_( section )
+            : SectionLinesTopologyImpl( section, false )
         {
         }
 
@@ -84,7 +89,7 @@ namespace geode
 
         bool SectionLinesTopologyImpl::
             vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto line : section_.mesh_component_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
@@ -92,7 +97,7 @@ namespace geode
                 if( section_.nb_embeddings( line.component_id.id() ) < 1
                     && section_.nb_incidences( line.component_id.id() ) < 1 )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index, " is part of line with uuid '",
@@ -107,7 +112,7 @@ namespace geode
 
         bool SectionLinesTopologyImpl::
             vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto line : section_.mesh_component_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
@@ -118,7 +123,7 @@ namespace geode
                 }
                 else if( section_.nb_embeddings( line.component_id.id() ) > 1 )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index, " is part of line with uuid '",
@@ -129,7 +134,7 @@ namespace geode
                 }
                 else if( section_.nb_incidences( line.component_id.id() ) > 0 )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index, " is part of line with uuid '",
@@ -144,7 +149,7 @@ namespace geode
         }
 
         bool SectionLinesTopologyImpl::vertex_is_part_of_invalid_unique_line(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto lines = section_.mesh_component_vertices(
                 unique_vertex_index, Line2D::component_type_static() );
@@ -157,7 +162,7 @@ namespace geode
                 unique_vertex_index, Surface2D::component_type_static() );
             if( surfaces.size() > 2 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -174,7 +179,7 @@ namespace geode
                          || !section_.Relationships::is_internal(
                              line_id, surfaces[0].component_id.id() ) ) )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index,
@@ -195,7 +200,7 @@ namespace geode
                     if( !section_.Relationships::is_boundary(
                             line_id, surface.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -213,7 +218,7 @@ namespace geode
         }
 
         bool SectionLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             if( section_.mesh_component_vertices( unique_vertex_index,
                             Line2D::component_type_static() )
@@ -224,7 +229,7 @@ namespace geode
                            Corner2D::component_type_static() )
                        .empty() )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,

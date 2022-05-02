@@ -36,14 +36,19 @@ namespace geode
     namespace detail
     {
         SectionSurfacesTopologyImpl::SectionSurfacesTopologyImpl(
+            const Section& section, bool verbose )
+            : section_( section ), verbose_( verbose )
+        {
+        }
+        SectionSurfacesTopologyImpl::SectionSurfacesTopologyImpl(
             const Section& section )
-            : section_( section )
+            : SectionSurfacesTopologyImpl( section, false )
         {
         }
 
         bool SectionSurfacesTopologyImpl::
             section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index, bool verbose ) const
+                index_t unique_vertex_index ) const
         {
             const auto surfaces = section_.mesh_component_vertices(
                 unique_vertex_index, Surface2D::component_type_static() );
@@ -63,7 +68,7 @@ namespace geode
                         return true;
                     }
                 }
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,

@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
 #include <geode/inspector/criterion/private/colocation_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/surface_mesh.h>
@@ -35,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
+        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
             : detail::ColocationImpl< dimension, SurfaceMesh< dimension > >(
-                mesh )
+                mesh, verbose )
         {
         }
     };
@@ -45,7 +46,14 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 
