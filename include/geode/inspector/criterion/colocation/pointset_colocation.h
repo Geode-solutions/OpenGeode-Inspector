@@ -44,6 +44,9 @@ namespace geode
 
     public:
         PointSetColocation( const PointSet< dimension >& mesh );
+
+        PointSetColocation( const PointSet< dimension >& mesh, bool verbose );
+
         ~PointSetColocation();
 
         bool mesh_has_colocated_points() const;

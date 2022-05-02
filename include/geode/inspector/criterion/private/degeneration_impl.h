@@ -36,7 +36,7 @@ namespace geode
         class DegenerationImpl
         {
         protected:
-            DegenerationImpl( const Mesh& mesh );
+            DegenerationImpl( const Mesh& mesh, bool verbose );
 
         public:
             bool is_mesh_degenerated() const;
@@ -50,6 +50,7 @@ namespace geode
 
         private:
             const Mesh& mesh_;
+            const bool verbose_;
         };
     } // namespace detail
 } // namespace geode

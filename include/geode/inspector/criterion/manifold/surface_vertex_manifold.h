@@ -44,6 +44,10 @@ namespace geode
 
     public:
         SurfaceMeshVertexManifold( const SurfaceMesh< dimension >& mesh );
+
+        SurfaceMeshVertexManifold(
+            const SurfaceMesh< dimension >& mesh, bool verbose );
+
         ~SurfaceMeshVertexManifold();
 
         bool mesh_vertices_are_manifold() const;

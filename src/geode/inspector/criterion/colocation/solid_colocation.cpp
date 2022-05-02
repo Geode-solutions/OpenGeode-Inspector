@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/colocation/solid_colocation.h>
 #include <geode/inspector/criterion/private/colocation_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/solid_mesh.h>
@@ -35,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, SolidMesh< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
+        Impl( const SolidMesh< dimension >& mesh, bool verbose )
             : detail::ColocationImpl< dimension, SolidMesh< dimension > >(
-                mesh )
+                mesh, verbose )
         {
         }
     };
@@ -45,7 +46,14 @@ namespace geode
     template < index_t dimension >
     SolidMeshColocation< dimension >::SolidMeshColocation(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SolidMeshColocation< dimension >::SolidMeshColocation(
+        const SolidMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

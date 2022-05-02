@@ -45,6 +45,10 @@ namespace geode
 
     public:
         SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
+
+        SolidMeshDegeneration(
+            const SolidMesh< dimension >& mesh, bool verbose );
+
         ~SolidMeshDegeneration();
 
         bool is_mesh_degenerated() const;

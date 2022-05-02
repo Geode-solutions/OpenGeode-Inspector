@@ -34,13 +34,19 @@ namespace geode
 {
     namespace detail
     {
+        BRepBlocksTopologyImpl::BRepBlocksTopologyImpl(
+            const BRep& brep, bool verbose )
+            : brep_( brep ), verbose_( verbose )
+        {
+        }
+
         BRepBlocksTopologyImpl::BRepBlocksTopologyImpl( const BRep& brep )
-            : brep_( brep )
+            : BRepBlocksTopologyImpl( brep, false )
         {
         }
 
         bool BRepBlocksTopologyImpl::brep_vertex_blocks_topology_is_valid(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto blocks = brep_.mesh_component_vertices(
                 unique_vertex_index, Block3D::component_type_static() );
@@ -60,7 +66,7 @@ namespace geode
                         return true;
                     }
                 }
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,

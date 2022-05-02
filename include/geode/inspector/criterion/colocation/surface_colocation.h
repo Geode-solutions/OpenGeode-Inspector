@@ -44,6 +44,10 @@ namespace geode
 
     public:
         SurfaceMeshColocation( const SurfaceMesh< dimension >& mesh );
+
+        SurfaceMeshColocation(
+            const SurfaceMesh< dimension >& mesh, bool verbose );
+
         ~SurfaceMeshColocation();
 
         bool mesh_has_colocated_points() const;

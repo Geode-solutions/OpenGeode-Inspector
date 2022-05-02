@@ -24,7 +24,10 @@
 #include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+
+#include <geode/geometry/point.h>
 
 #include <geode/mesh/core/edged_curve.h>
 
@@ -34,7 +37,10 @@ namespace geode
     class EdgedCurveDegeneration< dimension >::Impl
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh ) : mesh_( mesh ) {}
+        Impl( const EdgedCurve< dimension >& mesh, bool verbose )
+            : mesh_( mesh ), verbose_( verbose )
+        {
+        }
 
         bool is_mesh_degenerated() const
         {
@@ -68,6 +74,13 @@ namespace geode
             {
                 if( mesh_.edge_length( edge_index ) < global_epsilon )
                 {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Edge with index ", edge_index,
+                            ", at position [",
+                            mesh_.edge_barycenter( edge_index ).string(),
+                            "], is degenerated." );
+                    }
                     degenerated_edges_index.push_back( edge_index );
                 }
             }
@@ -76,12 +89,20 @@ namespace geode
 
     private:
         const EdgedCurve< dimension >& mesh_;
+        const bool verbose_;
     };
 
     template < index_t dimension >
     EdgedCurveDegeneration< dimension >::EdgedCurveDegeneration(
         const EdgedCurve< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    EdgedCurveDegeneration< dimension >::EdgedCurveDegeneration(
+        const EdgedCurve< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

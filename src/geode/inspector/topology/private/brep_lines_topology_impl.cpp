@@ -54,8 +54,13 @@ namespace geode
 {
     namespace detail
     {
+        BRepLinesTopologyImpl::BRepLinesTopologyImpl(
+            const BRep& brep, bool verbose )
+            : brep_( brep ), verbose_( verbose )
+        {
+        }
         BRepLinesTopologyImpl::BRepLinesTopologyImpl( const BRep& brep )
-            : brep_( brep )
+            : BRepLinesTopologyImpl( brep, false )
         {
         }
 
@@ -82,7 +87,7 @@ namespace geode
 
         bool BRepLinesTopologyImpl::
             vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto line : brep_.mesh_component_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
@@ -90,7 +95,7 @@ namespace geode
                 if( brep_.nb_embeddings( line.component_id.id() ) < 1
                     && brep_.nb_incidences( line.component_id.id() ) < 1 )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index, " is part of line with uuid '",
@@ -105,7 +110,7 @@ namespace geode
 
         bool BRepLinesTopologyImpl::
             vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index, bool verbose ) const
+                const index_t unique_vertex_index ) const
         {
             for( const auto line : brep_.mesh_component_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
@@ -118,7 +123,7 @@ namespace geode
                     if( brep_.Relationships::is_boundary(
                             line.component_id.id(), embedding.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -136,7 +141,7 @@ namespace geode
         }
 
         bool BRepLinesTopologyImpl::vertex_is_part_of_invalid_unique_line(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto lines = brep_.mesh_component_vertices(
                 unique_vertex_index, Line3D::component_type_static() );
@@ -159,7 +164,7 @@ namespace geode
                           && brep_.Relationships::is_boundary(
                               line_id, surfaces[0].component_id.id() ) ) )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index,
@@ -181,7 +186,7 @@ namespace geode
                           && brep_.Relationships::is_internal(
                               line_id, blocks[0].component_id.id() ) ) )
                 {
-                    if( verbose )
+                    if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index,
@@ -203,7 +208,7 @@ namespace geode
                         && !brep_.Relationships::is_internal(
                             line_id, surface.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
@@ -223,7 +228,7 @@ namespace geode
         }
 
         bool BRepLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             if( brep_.mesh_component_vertices(
                          unique_vertex_index, Line3D::component_type_static() )
@@ -234,7 +239,7 @@ namespace geode
                            Corner3D::component_type_static() )
                        .empty() )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,

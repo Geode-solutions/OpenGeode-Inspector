@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/surface_mesh.h>
@@ -35,8 +36,9 @@ namespace geode
         : public detail::DegenerationImpl< SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
+        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
+            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh,
+                  verbose }
         {
         }
     };
@@ -44,7 +46,14 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

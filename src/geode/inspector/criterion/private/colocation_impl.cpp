@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/private/colocation_impl.h>
 
+#include <geode/basic/logger.h>
+
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -53,11 +55,11 @@ namespace geode
     namespace detail
     {
         template < index_t dimension, typename Mesh >
-        ColocationImpl< dimension, Mesh >::ColocationImpl( const Mesh& mesh )
-            : mesh_colocation_info_{
-                  mesh_points_colocated_info< dimension, Mesh >(
-                      mesh, global_epsilon )
-              }
+        ColocationImpl< dimension, Mesh >::ColocationImpl(
+            const Mesh& mesh, bool verbose )
+            : mesh_colocation_info_{ mesh_points_colocated_info< dimension,
+                Mesh >( mesh, global_epsilon ) },
+              verbose_( verbose )
         {
         }
 
@@ -95,6 +97,28 @@ namespace geode
                     } );
             colocated_points_indices.erase(
                 colocated_points_groups_end, colocated_points_indices.end() );
+            if( verbose_ )
+            {
+                for( const auto colocated_points_group :
+                    colocated_points_indices )
+                {
+                    for( const auto point_index :
+                        Range{ 1, colocated_points_group.size() } )
+                    {
+                        Logger::info( "Vertex with index ",
+                            colocated_points_group[0],
+                            " is colocated with vertex with index ",
+                            colocated_points_group[point_index],
+                            ", at position [",
+                            mesh_colocation_info_
+                                .unique_points
+                                    [mesh_colocation_info_.colocated_mapping
+                                            [colocated_points_group[0]]]
+                                .string(),
+                            "]." );
+                    }
+                }
+            }
             return colocated_points_indices;
         }
 

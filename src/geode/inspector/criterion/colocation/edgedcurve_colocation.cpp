@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
 #include <geode/inspector/criterion/private/colocation_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/edged_curve.h>
@@ -35,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, EdgedCurve< dimension > >
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh )
+        Impl( const EdgedCurve< dimension >& mesh, bool verbose )
             : detail::ColocationImpl< dimension, EdgedCurve< dimension > >(
-                mesh )
+                mesh, verbose )
         {
         }
     };
@@ -45,7 +46,14 @@ namespace geode
     template < index_t dimension >
     EdgedCurveColocation< dimension >::EdgedCurveColocation(
         const EdgedCurve< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    EdgedCurveColocation< dimension >::EdgedCurveColocation(
+        const EdgedCurve< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

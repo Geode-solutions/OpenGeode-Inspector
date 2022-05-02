@@ -43,6 +43,8 @@ namespace geode
         public:
             BRepBlocksTopologyImpl( const BRep& brep );
 
+            BRepBlocksTopologyImpl( const BRep& brep, bool verbose );
+
             /*!
              * Checks if the brep unique vertices are parts of valid blocks,
              * i.e. verify:
@@ -52,10 +54,11 @@ namespace geode
              * either a corner, or not a corner but part of only one line).
              */
             bool brep_vertex_blocks_topology_is_valid(
-                index_t unique_vertex_index, bool verbose = false ) const;
+                index_t unique_vertex_index ) const;
 
         private:
             const BRep& brep_;
+            const bool verbose_;
         };
     } // namespace detail
 } // namespace geode

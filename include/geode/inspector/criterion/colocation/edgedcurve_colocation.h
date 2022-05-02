@@ -44,6 +44,10 @@ namespace geode
 
     public:
         EdgedCurveColocation( const EdgedCurve< dimension >& mesh );
+
+        EdgedCurveColocation(
+            const EdgedCurve< dimension >& mesh, bool verbose );
+
         ~EdgedCurveColocation();
 
         bool mesh_has_colocated_points() const;

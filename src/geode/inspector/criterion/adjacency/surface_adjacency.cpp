@@ -23,6 +23,7 @@
 
 #include <geode/inspector/criterion/adjacency/surface_adjacency.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/surface_mesh.h>
@@ -33,7 +34,7 @@ namespace geode
     class SurfaceMeshAdjacency< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
+        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
         {
             for( const auto polygon_id : Range{ mesh.nb_polygons() } )
             {
@@ -45,6 +46,12 @@ namespace geode
                         && !mesh_polygon_edge_has_right_adjacency(
                             mesh, polygon_edge ) )
                     {
+                        if( verbose )
+                        {
+                            Logger::info( "Local edge ", edge_id,
+                                " of polygon ", polygon_id,
+                                " has wrong adjacencies." );
+                        }
                         polygons_wrong_adjacency_edges_.push_back(
                             polygon_edge );
                     }
@@ -103,7 +110,14 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshAdjacency< dimension >::SurfaceMeshAdjacency(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    SurfaceMeshAdjacency< dimension >::SurfaceMeshAdjacency(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 

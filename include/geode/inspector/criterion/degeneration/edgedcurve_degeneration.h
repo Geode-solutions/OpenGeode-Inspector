@@ -44,6 +44,10 @@ namespace geode
 
     public:
         EdgedCurveDegeneration( const EdgedCurve< dimension >& mesh );
+
+        EdgedCurveDegeneration(
+            const EdgedCurve< dimension >& mesh, bool verbose );
+
         ~EdgedCurveDegeneration();
 
         bool is_mesh_degenerated() const;

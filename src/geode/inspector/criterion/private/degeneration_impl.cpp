@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
+#include <geode/basic/logger.h>
+
 #include <geode/mesh/core/solid_edges.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_edges.h>
@@ -36,8 +38,9 @@ namespace geode
     namespace detail
     {
         template < class MeshType >
-        DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
-            : mesh_( mesh )
+        DegenerationImpl< MeshType >::DegenerationImpl(
+            const MeshType& mesh, bool verbose )
+            : mesh_( mesh ), verbose_( verbose )
         {
             mesh_.enable_edges();
         }
@@ -92,7 +95,15 @@ namespace geode
                 mesh_.edges().edge_vertices( edge_index );
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
-            return point_point_distance( p1, p2 ) < global_epsilon;
+            const auto degenerated =
+                point_point_distance( p1, p2 ) < global_epsilon;
+            if( degenerated && verbose_ )
+            {
+                Logger::info( "Edge between vertices with index ",
+                    edge_vertices[0], " and index ", edge_vertices[1],
+                    ", at position [", p1.string(), "], is degenerated." );
+            }
+            return degenerated;
         }
 
         template class opengeode_inspector_inspector_api

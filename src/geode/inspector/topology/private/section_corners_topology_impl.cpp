@@ -35,8 +35,13 @@ namespace geode
     namespace detail
     {
         SectionCornersTopologyImpl::SectionCornersTopologyImpl(
+            const Section& section, bool verbose )
+            : section_( section ), verbose_( verbose )
+        {
+        }
+        SectionCornersTopologyImpl::SectionCornersTopologyImpl(
             const Section& section )
-            : section_( section )
+            : SectionCornersTopologyImpl( section, false )
         {
         }
 
@@ -82,7 +87,7 @@ namespace geode
         }
 
         bool SectionCornersTopologyImpl::unique_vertex_has_multiple_corners(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             if( section_
                     .mesh_component_vertices(
@@ -90,7 +95,7 @@ namespace geode
                     .size()
                 > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -102,14 +107,14 @@ namespace geode
         }
 
         bool SectionCornersTopologyImpl::corner_has_multiple_embeddings(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto corners = section_.mesh_component_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
             if( !corners.empty()
                 && section_.nb_embeddings( corners[0].component_id.id() ) > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -123,7 +128,7 @@ namespace geode
         }
 
         bool SectionCornersTopologyImpl::corner_is_not_internal_nor_boundary(
-            index_t unique_vertex_index, bool verbose ) const
+            index_t unique_vertex_index ) const
         {
             const auto corners = section_.mesh_component_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
@@ -131,7 +136,7 @@ namespace geode
                 && section_.nb_embeddings( corners[0].component_id.id() ) < 1
                 && section_.nb_incidences( corners[0].component_id.id() ) < 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -146,7 +151,7 @@ namespace geode
 
         bool SectionCornersTopologyImpl::
             corner_is_internal_with_multiple_incidences(
-                index_t unique_vertex_index, bool verbose ) const
+                index_t unique_vertex_index ) const
         {
             const auto corners = section_.mesh_component_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
@@ -154,7 +159,7 @@ namespace geode
                 && section_.nb_embeddings( corners[0].component_id.id() ) == 1
                 && section_.nb_incidences( corners[0].component_id.id() ) > 1 )
             {
-                if( verbose )
+                if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
@@ -169,7 +174,7 @@ namespace geode
 
         bool
             SectionCornersTopologyImpl::corner_is_part_of_line_but_not_boundary(
-                index_t unique_vertex_index, bool verbose ) const
+                index_t unique_vertex_index ) const
         {
             const auto corners = section_.mesh_component_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
@@ -183,7 +188,7 @@ namespace geode
                     if( !section_.Relationships::is_boundary(
                             corner_uuid, line.component_id.id() ) )
                     {
-                        if( verbose )
+                        if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,

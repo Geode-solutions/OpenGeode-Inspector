@@ -24,6 +24,7 @@
 #include <geode/inspector/criterion/colocation/pointset_colocation.h>
 #include <geode/inspector/criterion/private/colocation_impl.h>
 
+#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/point_set.h>
@@ -35,8 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, PointSet< dimension > >
     {
     public:
-        Impl( const PointSet< dimension >& mesh )
-            : detail::ColocationImpl< dimension, PointSet< dimension > >( mesh )
+        Impl( const PointSet< dimension >& mesh, bool verbose )
+            : detail::ColocationImpl< dimension, PointSet< dimension > >(
+                mesh, verbose )
         {
         }
     };
@@ -44,7 +46,14 @@ namespace geode
     template < index_t dimension >
     PointSetColocation< dimension >::PointSetColocation(
         const PointSet< dimension >& mesh )
-        : impl_( mesh )
+        : impl_( mesh, false )
+    {
+    }
+
+    template < index_t dimension >
+    PointSetColocation< dimension >::PointSetColocation(
+        const PointSet< dimension >& mesh, bool verbose )
+        : impl_( mesh, verbose )
     {
     }
 
