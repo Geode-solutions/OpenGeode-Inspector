@@ -49,9 +49,8 @@ namespace geode
                 colocated_points_groups() const;
 
         private:
-            const typename NNSearch< dimension >::ColocatedInfo
-                mesh_colocation_info_;
-            const bool verbose_;
+            typename NNSearch< dimension >::ColocatedInfo mesh_colocation_info_;
+            bool verbose_;
         };
     } // namespace detail
 } // namespace geode

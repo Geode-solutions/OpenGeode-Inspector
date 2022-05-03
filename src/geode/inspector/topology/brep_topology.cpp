@@ -478,7 +478,7 @@ namespace geode
 
     private:
         const BRep& brep_;
-        const bool verbose_;
+        bool verbose_;
     };
 
     BRepTopologyInspector::BRepTopologyInspector( const BRep& brep )

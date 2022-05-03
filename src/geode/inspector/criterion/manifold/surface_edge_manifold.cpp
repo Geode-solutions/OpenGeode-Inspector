@@ -112,7 +112,7 @@ namespace geode
         }
 
     private:
-        const std::vector<
+        std::vector<
             geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >
             non_manifold_edges_;
     };

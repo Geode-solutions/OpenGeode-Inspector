@@ -116,7 +116,7 @@ namespace geode
         }
 
     private:
-        const std::vector< index_t > non_manifold_vertices_;
+        std::vector< index_t > non_manifold_vertices_;
     };
 
     template < index_t dimension >

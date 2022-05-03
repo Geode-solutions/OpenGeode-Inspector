@@ -74,7 +74,7 @@ namespace geode
 
         private:
             const Section& section_;
-            const bool verbose_;
+            bool verbose_;
         };
     } // namespace detail
 } // namespace geode
