@@ -72,7 +72,7 @@ namespace geode
 
         private:
             const BRep& brep_;
-            const bool verbose_;
+            bool verbose_;
         };
     } // namespace detail
 } // namespace geode
