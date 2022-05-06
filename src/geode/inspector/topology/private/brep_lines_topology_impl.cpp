@@ -40,8 +40,7 @@ namespace
     {
         for( const auto& block : brep.blocks() )
         {
-            if( brep.block( block.component_id().id() ).mesh().nb_vertices()
-                == 0 )
+            if( block.mesh().nb_vertices() == 0 )
             {
                 return false;
             }
