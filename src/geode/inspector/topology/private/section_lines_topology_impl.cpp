@@ -39,10 +39,7 @@ namespace
     {
         for( const auto& surface : section.surfaces() )
         {
-            if( section.surface( surface.component_id().id() )
-                    .mesh()
-                    .nb_vertices()
-                == 0 )
+            if( surface.mesh().nb_vertices() == 0 )
             {
                 return false;
             }
