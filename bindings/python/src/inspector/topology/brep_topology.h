@@ -29,6 +29,7 @@
     pybind11::class_< BRepTopologyInspector >(                                   \
         module, "BRepTopologyInspector" )                                        \
         .def( pybind11::init< const BRep& >() )                                  \
+        .def( pybind11::init< const BRep&, bool >() )                            \
         .def( "brep_topology_is_valid",                                          \
             &BRepTopologyInspector::brep_topology_is_valid )                     \
         .def( "brep_meshed_components_are_linked_to_a_unique_vertex",            \

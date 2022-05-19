@@ -29,6 +29,7 @@
     pybind11::class_< SectionTopologyInspector >(                              \
         module, "SectionTopologyInspector" )                                   \
         .def( pybind11::init< const Section& >() )                             \
+        .def( pybind11::init< const Section&, bool >() )                       \
         .def( "section_topology_is_valid",                                     \
             &SectionTopologyInspector::section_topology_is_valid )             \
         .def( "section_meshed_components_are_linked_to_a_unique_vertex",       \

@@ -31,6 +31,7 @@
     pybind11::class_< SurfaceMeshAdjacency##dimension##D >(                    \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
         .def( "mesh_has_wrong_adjacencies",                                    \
             &SurfaceMeshAdjacency##dimension##D::mesh_has_wrong_adjacencies )  \
         .def( "nb_edges_with_wrong_adjacency",                                 \

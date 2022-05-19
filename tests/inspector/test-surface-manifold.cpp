@@ -126,8 +126,7 @@ void check_edge_non_manifold2D()
         "[Test] Surface is shown manifold through edges whereas it is not." );
     OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_edges() == 1,
         "[Test] Surface has wrong number of non manifold edges." );
-    const geode::detail::VertexCycle< std::array< geode::index_t, 2 > >
-        pt1_pt2_edge{ { { 1, 2 } } };
+    const std::array< geode::index_t, 2 > pt1_pt2_edge{ 1, 2 };
     OPENGEODE_EXCEPTION(
         manifold_inspector.non_manifold_edges()[0] == pt1_pt2_edge,
         "[Test] Surface edges are shown non manifold whereas they are." );

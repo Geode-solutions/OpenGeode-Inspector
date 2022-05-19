@@ -46,7 +46,7 @@ add_geode_test(
 )
 
 add_geode_test(
-    SOURCE "test-pointset-colocation.cpp"
+    SOURCE "test-pointset.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

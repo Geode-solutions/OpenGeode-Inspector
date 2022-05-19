@@ -23,42 +23,23 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+#include <geode/inspector/topology/section_topology.h>
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
+     * Class for inspecting a Section model
+     * @extends SectionTopologyInspector
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    class opengeode_inspector_inspector_api SectionInspector
+        : public SectionTopologyInspector
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( SectionInspector );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        SectionInspector( const Section& section );
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        SectionInspector( const Section& section, bool verbose );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
 } // namespace geode

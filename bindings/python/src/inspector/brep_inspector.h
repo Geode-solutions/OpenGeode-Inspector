@@ -21,44 +21,20 @@
  *
  */
 
-#pragma once
+#include <geode/model/representation/core/brep.h>
 
-#include <geode/basic/pimpl.h>
+#include <geode/inspector/brep_inspector.h>
 
-#include <geode/inspector/common.h>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+#define PYTHON_BREP_INSPECTOR()                                                \
+    pybind11::class_< BRepInspector, BRepTopologyInspector >(                  \
+        module, "BRepInspector" )                                              \
+        .def( pybind11::init< const BRep& >() )                                \
+        .def( pybind11::init< const BRep&, bool >() )
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
-     */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    void define_brep_inspector( pybind11::module& module )
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
-
-    public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
-
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+        PYTHON_BREP_INSPECTOR();
+    }
 } // namespace geode

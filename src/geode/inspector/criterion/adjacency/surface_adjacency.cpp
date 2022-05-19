@@ -35,65 +35,101 @@ namespace geode
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
+            : mesh_( mesh ), verbose_( verbose )
         {
-            for( const auto polygon_id : Range{ mesh.nb_polygons() } )
+        }
+
+        bool mesh_has_wrong_adjacencies() const
+        {
+            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
                 for( const auto edge_id :
-                    LRange{ mesh.nb_polygon_edges( polygon_id ) } )
+                    LRange{ mesh_.nb_polygon_edges( polygon_id ) } )
                 {
                     const PolygonEdge polygon_edge{ polygon_id, edge_id };
-                    if( !mesh.is_edge_on_border( polygon_edge )
+                    if( !mesh_.is_edge_on_border( polygon_edge )
                         && !mesh_polygon_edge_has_right_adjacency(
-                            mesh, polygon_edge ) )
+                            polygon_edge ) )
                     {
-                        if( verbose )
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        index_t nb_edges_with_wrong_adjacency() const
+        {
+            index_t nb_wrong_adjacency_edges{ 0 };
+            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
+            {
+                for( const auto edge_id :
+                    LRange{ mesh_.nb_polygon_edges( polygon_id ) } )
+                {
+                    const PolygonEdge polygon_edge{ polygon_id, edge_id };
+                    if( !mesh_.is_edge_on_border( polygon_edge )
+                        && !mesh_polygon_edge_has_right_adjacency(
+                            polygon_edge ) )
+                    {
+                        if( verbose_ )
                         {
                             Logger::info( "Local edge ", edge_id,
                                 " of polygon ", polygon_id,
                                 " has wrong adjacencies." );
                         }
-                        polygons_wrong_adjacency_edges_.push_back(
-                            polygon_edge );
+                        nb_wrong_adjacency_edges++;
                     }
                 }
             }
+            return nb_wrong_adjacency_edges;
         }
 
-        bool mesh_has_wrong_adjacencies() const
+        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const
         {
-            return polygons_wrong_adjacency_edges_.size() > 0;
-        }
-
-        index_t nb_edges_with_wrong_adjacency() const
-        {
-            return polygons_wrong_adjacency_edges_.size();
-        }
-
-        const std::vector< PolygonEdge >&
-            polygon_edges_with_wrong_adjacency() const
-        {
-            return polygons_wrong_adjacency_edges_;
+            std::vector< PolygonEdge > wrong_adjacency_edges;
+            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
+            {
+                for( const auto edge_id :
+                    LRange{ mesh_.nb_polygon_edges( polygon_id ) } )
+                {
+                    const PolygonEdge polygon_edge{ polygon_id, edge_id };
+                    if( !mesh_.is_edge_on_border( polygon_edge )
+                        && !mesh_polygon_edge_has_right_adjacency(
+                            polygon_edge ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Local edge ", edge_id,
+                                " of polygon ", polygon_id,
+                                " has wrong adjacencies." );
+                        }
+                        wrong_adjacency_edges.push_back( polygon_edge );
+                    }
+                }
+            }
+            return wrong_adjacency_edges;
         }
 
     private:
         bool mesh_polygon_edge_has_right_adjacency(
-            const SurfaceMesh< dimension >& mesh,
-            const PolygonEdge& polygon_edge )
+            const PolygonEdge& polygon_edge ) const
         {
-            const auto adjacent_polygon = mesh.polygon_adjacent( polygon_edge );
+            const auto adjacent_polygon =
+                mesh_.polygon_adjacent( polygon_edge );
             const auto polygon_adj_id = adjacent_polygon.value();
-            const auto v0 = mesh.polygon_vertex( polygon_edge );
-            const auto v1 = mesh.polygon_edge_vertex( polygon_edge, 1 );
+            const auto v0 = mesh_.polygon_vertex( polygon_edge );
+            const auto v1 = mesh_.polygon_edge_vertex( polygon_edge, 1 );
             for( const auto e :
-                LRange{ mesh.nb_polygon_edges( polygon_adj_id ) } )
+                LRange{ mesh_.nb_polygon_edges( polygon_adj_id ) } )
             {
                 const PolygonEdge adj_edge{ polygon_adj_id, e };
-                const auto adj_v0 = mesh.polygon_vertex( adj_edge );
+                const auto adj_v0 = mesh_.polygon_vertex( adj_edge );
                 if( adj_v0 == v1 )
                 {
-                    const auto adj_v1 = mesh.polygon_edge_vertex( adj_edge, 1 );
+                    const auto adj_v1 =
+                        mesh_.polygon_edge_vertex( adj_edge, 1 );
                     if( adj_v1 == v0
-                        && mesh.polygon_adjacent( adj_edge )
+                        && mesh_.polygon_adjacent( adj_edge )
                                == polygon_edge.polygon_id )
                     {
                         return true;
@@ -104,7 +140,8 @@ namespace geode
         }
 
     private:
-        std::vector< PolygonEdge > polygons_wrong_adjacency_edges_;
+        const SurfaceMesh< dimension >& mesh_;
+        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
@@ -140,7 +177,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    const std::vector< PolygonEdge >&
+    std::vector< PolygonEdge >
         SurfaceMeshAdjacency< dimension >::polygon_edges_with_wrong_adjacency()
             const
     {

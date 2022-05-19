@@ -18,15 +18,15 @@
 
 #include <geode/io/mesh/detail/common.h>
 
-#include <geode/inspector/criterion/colocation/pointset_colocation.h>
+#include <geode/inspector/pointset_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
 
 template < geode::index_t dimension >
 void inspect_pointset( const geode::PointSet< dimension >& pointset )
 {
-    const geode::PointSetColocation< dimension > colocation{ pointset };
-    const auto nb = colocation.nb_colocated_points();
+    const geode::PointSetInspector< dimension > inspector{ pointset };
+    const auto nb = inspector.nb_colocated_points();
     geode::Logger::info( nb, " colocated points" );
 }
 

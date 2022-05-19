@@ -60,5 +60,5 @@ namespace geode
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SolidMeshDegeneration );
+    ALIAS_3D( SolidMeshDegeneration );
 } // namespace geode

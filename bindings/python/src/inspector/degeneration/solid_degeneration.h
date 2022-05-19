@@ -31,6 +31,7 @@
     pybind11::class_< SolidMeshDegeneration##dimension##D >(                   \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SolidMesh< dimension >& >() )              \
+        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
         .def( "is_mesh_degenerated",                                           \
             &SolidMeshDegeneration##dimension##D::is_mesh_degenerated )        \
         .def( "nb_degenerated_edges",                                          \

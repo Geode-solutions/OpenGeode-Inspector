@@ -59,5 +59,5 @@ namespace geode
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SolidMeshColocation );
+    ALIAS_3D( SolidMeshColocation );
 } // namespace geode

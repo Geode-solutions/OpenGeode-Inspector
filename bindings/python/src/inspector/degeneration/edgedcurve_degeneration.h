@@ -31,6 +31,7 @@
     pybind11::class_< EdgedCurveDegeneration##dimension##D >(                  \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const EdgedCurve< dimension >& >() )             \
+        .def( pybind11::init< const EdgedCurve< dimension >&, bool >() )       \
         .def( "is_mesh_degenerated",                                           \
             &EdgedCurveDegeneration##dimension##D::is_mesh_degenerated )       \
         .def( "nb_degenerated_edges",                                          \

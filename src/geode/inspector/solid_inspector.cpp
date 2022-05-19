@@ -21,44 +21,31 @@
  *
  */
 
-#pragma once
+#include <geode/inspector/solid_inspector.h>
 
-#include <geode/basic/pimpl.h>
-
-#include <geode/inspector/common.h>
+#include <geode/mesh/core/solid_mesh.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
-
-namespace geode
-{
-    /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
-     */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    SolidMeshInspector< dimension >::SolidMeshInspector(
+        const SolidMesh< dimension >& mesh )
+        : AddInspectors< dimension,
+            SolidMesh,
+            SolidMeshColocation,
+            SolidMeshDegeneration >{ mesh }
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+    }
 
-    public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+    template < index_t dimension >
+    SolidMeshInspector< dimension >::SolidMeshInspector(
+        const SolidMesh< dimension >& mesh, bool verbose )
+        : AddInspectors< dimension,
+            SolidMesh,
+            SolidMeshColocation,
+            SolidMeshDegeneration >{ mesh, verbose }
+    {
+    }
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+    template class opengeode_inspector_inspector_api SolidMeshInspector< 3 >;
 } // namespace geode

@@ -18,8 +18,7 @@
 
 #include <geode/io/mesh/detail/common.h>
 
-#include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
-#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
+#include <geode/inspector/edgedcurve_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
@@ -29,23 +28,18 @@ template < geode::index_t dimension >
 void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
 {
     absl::InlinedVector< async::task< void >, 2 > tasks;
+    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve };
     if( absl::GetFlag( FLAGS_colocation ) )
     {
-        tasks.emplace_back( async::spawn( [&edgedcurve] {
-            const geode::EdgedCurveColocation< dimension > colocation{
-                edgedcurve
-            };
-            const auto nb = colocation.nb_colocated_points();
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_colocated_points();
             geode::Logger::info( nb, " colocated points" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_degeneration ) )
     {
-        tasks.emplace_back( async::spawn( [&edgedcurve] {
-            const geode::EdgedCurveDegeneration< dimension > degeneration{
-                edgedcurve
-            };
-            const auto nb = degeneration.nb_degenerated_edges();
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
         } ) );
     }

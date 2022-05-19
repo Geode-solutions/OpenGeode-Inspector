@@ -54,7 +54,7 @@ namespace geode
 
         index_t nb_non_manifold_vertices() const;
 
-        const std::vector< index_t >& non_manifold_vertices() const;
+        std::vector< index_t > non_manifold_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

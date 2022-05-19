@@ -23,42 +23,26 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+#include <geode/inspector/criterion/colocation/pointset_colocation.h>
+#include <geode/inspector/mixin/add_inspectors.h>
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
+     * Class for inspecting a PointSet
+     * @extends PointSetColocation
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    class opengeode_inspector_inspector_api PointSetInspector
+        : public AddInspectors< dimension, PointSet, PointSetColocation >
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( PointSetInspector );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        PointSetInspector( const PointSet< dimension >& mesh );
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        PointSetInspector( const PointSet< dimension >& mesh, bool verbose );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+    ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

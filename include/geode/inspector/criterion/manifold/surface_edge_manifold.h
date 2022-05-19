@@ -60,8 +60,7 @@ namespace geode
 
         index_t nb_non_manifold_edges() const;
 
-        const std::vector< detail::VertexCycle< std::array< index_t, 2 > > >&
-            non_manifold_edges() const;
+        std::vector< std::array< index_t, 2 > > non_manifold_edges() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

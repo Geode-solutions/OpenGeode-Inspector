@@ -31,6 +31,7 @@
     pybind11::class_< PointSetColocation##dimension##D >(                      \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const PointSet< dimension >& >() )               \
+        .def( pybind11::init< const PointSet< dimension >&, bool >() )         \
         .def( "mesh_has_colocated_points",                                     \
             &PointSetColocation##dimension##D::mesh_has_colocated_points )     \
         .def( "nb_colocated_points",                                           \

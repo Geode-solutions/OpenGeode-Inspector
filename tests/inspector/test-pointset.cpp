@@ -28,7 +28,7 @@
 #include <geode/mesh/builder/point_set_builder.h>
 #include <geode/mesh/core/point_set.h>
 
-#include <geode/inspector/criterion/colocation/pointset_colocation.h>
+#include <geode/inspector/pointset_inspector.h>
 
 void check_non_colocation2D()
 {
@@ -40,12 +40,12 @@ void check_non_colocation2D()
     builder->set_point( 2, { { 1., 4. } } );
     builder->set_point( 3, { { 3., 3. } } );
 
-    const geode::PointSetColocation2D colocation_inspector{ *pointset };
-    OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
+    const geode::PointSetInspector2D inspector{ *pointset };
+    OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 0,
         "[Test] PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().empty(),
         "[Test] PointSet points are shown colocated whereas they are not." );
 }
 
@@ -62,19 +62,19 @@ void check_colocation2D()
     builder->set_point( 5, { { 2., geode::global_epsilon / 2 } } );
     builder->set_point( 6, { { geode::global_epsilon / 1.1, 2. } } );
 
-    const geode::PointSetColocation2D colocation_inspector{ *pointset };
-    OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
+    const geode::PointSetInspector2D inspector{ *pointset };
+    OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),
         "[Test] PointSet doesn't have colocated points whereas it should have "
         "several." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 3,
         "[Test] PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
-                             == first_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        inspector.colocated_points_groups()[0] == first_colocated_points_group,
         "[Test] PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
-                             == second_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        inspector.colocated_points_groups()[1] == second_colocated_points_group,
         "[Test] PointSet has wrong second colocated points group." );
 }
 
@@ -88,12 +88,12 @@ void check_non_colocation3D()
     builder->set_point( 2, { { 1., 4., 1. } } );
     builder->set_point( 3, { { 3., 3., 2. } } );
 
-    const geode::PointSetColocation3D colocation_inspector{ *pointset };
-    OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
+    const geode::PointSetInspector3D inspector{ *pointset };
+    OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] (3D) PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 0,
         "[Test] (3D) PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().empty(),
         "[Test] (3D) PointSet points are shown colocated whereas they are "
         "not." );
 }
@@ -112,20 +112,20 @@ void check_colocation3D()
         5, { { 2., geode::global_epsilon / 2, geode::global_epsilon / 2 } } );
     builder->set_point( 6, { { geode::global_epsilon / 1.1, 2., 1. } } );
 
-    const geode::PointSetColocation3D colocation_inspector{ *pointset };
-    OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
+    const geode::PointSetInspector3D inspector{ *pointset };
+    OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),
         "[Test] (3D) PointSet doesn't have colocated points whereas it should "
         "have "
         "several." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 3,
         "[Test] (3D) PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
-                             == first_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        inspector.colocated_points_groups()[0] == first_colocated_points_group,
         "[Test] (3D) PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
-                             == second_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        inspector.colocated_points_groups()[1] == second_colocated_points_group,
         "[Test] (3D) PointSet has wrong second colocated points group." );
 }
 

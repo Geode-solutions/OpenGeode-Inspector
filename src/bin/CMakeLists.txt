@@ -71,7 +71,7 @@ add_geode_binary(
 )
 
 add_geode_binary(
-    SOURCE "geode-inspector-brep-topology.cpp"
+    SOURCE "geode-inspector-brep.cpp"
     DEPENDENCIES
         Async++
         absl::flags
@@ -87,7 +87,7 @@ add_geode_binary(
 )
 
 add_geode_binary(
-    SOURCE "geode-inspector-section-topology.cpp"
+    SOURCE "geode-inspector-section.cpp"
     DEPENDENCIES
         Async++
         absl::flags

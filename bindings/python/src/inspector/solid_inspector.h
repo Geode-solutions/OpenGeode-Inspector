@@ -21,44 +21,24 @@
  *
  */
 
-#pragma once
+#include <geode/mesh/core/solid_mesh.h>
 
-#include <geode/basic/pimpl.h>
+#include <geode/inspector/solid_inspector.h>
 
-#include <geode/inspector/common.h>
+#define PYTHON_SOLID_INSPECTOR( dimension )                                    \
+    const auto name##dimension =                                               \
+        "SolidMeshInspector" + std::to_string( dimension ) + "D";              \
+    pybind11::class_< SolidMeshInspector##dimension##D,                        \
+        SolidMeshColocation##dimension##D,                                     \
+        SolidMeshDegeneration##dimension##D >(                                 \
+        module, name##dimension.c_str() )                                      \
+        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
+        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
-
-namespace geode
-{
-    /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
-     */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    void define_solid_inspector( pybind11::module& module )
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
-
-    public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
-
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+        PYTHON_SOLID_INSPECTOR( 3 );
+    }
 } // namespace geode

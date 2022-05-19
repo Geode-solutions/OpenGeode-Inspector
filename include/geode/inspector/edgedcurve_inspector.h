@@ -23,42 +23,32 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+#include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
+#include <geode/inspector/mixin/add_inspectors.h>
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
+     * Class for inspecting an EdgedCurve
+     * @extends EdgedCurveColocation
+     * @extends EdgedCurveDegeneration
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    class opengeode_inspector_inspector_api EdgedCurveInspector
+        : public AddInspectors< dimension,
+              EdgedCurve,
+              EdgedCurveColocation,
+              EdgedCurveDegeneration >
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        EdgedCurveInspector(
+            const EdgedCurve< dimension >& mesh, bool verbose );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+    ALIAS_2D_AND_3D( EdgedCurveInspector );
 } // namespace geode
