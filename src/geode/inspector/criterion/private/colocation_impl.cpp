@@ -57,9 +57,7 @@ namespace geode
         template < index_t dimension, typename Mesh >
         ColocationImpl< dimension, Mesh >::ColocationImpl(
             const Mesh& mesh, bool verbose )
-            : mesh_colocation_info_{ mesh_points_colocated_info< dimension,
-                Mesh >( mesh, global_epsilon ) },
-              verbose_( verbose )
+            : mesh_( mesh ), verbose_( verbose )
         {
         }
 
@@ -67,25 +65,33 @@ namespace geode
         bool
             ColocationImpl< dimension, Mesh >::mesh_has_colocated_points() const
         {
-            return mesh_colocation_info_.nb_colocated_points() > 0;
+            return mesh_points_colocated_info< dimension, Mesh >(
+                       mesh_, global_epsilon )
+                       .nb_colocated_points()
+                   > 0;
         }
 
         template < index_t dimension, typename Mesh >
         index_t ColocationImpl< dimension, Mesh >::nb_colocated_points() const
         {
-            return mesh_colocation_info_.nb_colocated_points();
+            return mesh_points_colocated_info< dimension, Mesh >(
+                mesh_, global_epsilon )
+                .nb_colocated_points();
         }
 
         template < index_t dimension, typename Mesh >
         std::vector< std::vector< index_t > >
             ColocationImpl< dimension, Mesh >::colocated_points_groups() const
         {
+            const auto mesh_colocation_info =
+                mesh_points_colocated_info< dimension, Mesh >(
+                    mesh_, global_epsilon );
             std::vector< std::vector< index_t > > colocated_points_indices(
-                mesh_colocation_info_.nb_unique_points() );
+                mesh_colocation_info.nb_unique_points() );
             for( const auto point_index :
-                Indices{ mesh_colocation_info_.colocated_mapping } )
+                Indices{ mesh_colocation_info.colocated_mapping } )
             {
-                colocated_points_indices[mesh_colocation_info_
+                colocated_points_indices[mesh_colocation_info
                                              .colocated_mapping[point_index]]
                     .push_back( point_index );
             }
@@ -110,9 +116,9 @@ namespace geode
                             " is colocated with vertex with index ",
                             colocated_points_group[point_index],
                             ", at position [",
-                            mesh_colocation_info_
+                            mesh_colocation_info
                                 .unique_points
-                                    [mesh_colocation_info_.colocated_mapping
+                                    [mesh_colocation_info.colocated_mapping
                                             [colocated_points_group[0]]]
                                 .string(),
                             "]." );

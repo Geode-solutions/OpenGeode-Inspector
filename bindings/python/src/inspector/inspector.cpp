@@ -42,6 +42,13 @@
 #include "topology/brep_topology.h"
 #include "topology/section_topology.h"
 
+#include "brep_inspector.h"
+#include "edgedcurve_inspector.h"
+#include "pointset_inspector.h"
+#include "section_inspector.h"
+#include "solid_inspector.h"
+#include "surface_inspector.h"
+
 PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
 {
     module.doc() = "OpenGeode-Inspector Python binding";
@@ -57,4 +64,10 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_surface_vertex_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
+    geode::define_brep_inspector( module );
+    geode::define_section_inspector( module );
+    geode::define_pointset_inspector( module );
+    geode::define_edgedcurve_inspector( module );
+    geode::define_surface_inspector( module );
+    geode::define_solid_inspector( module );
 }

@@ -61,6 +61,13 @@ namespace geode
             {
                 if( mesh_.edge_length( edge_index ) < global_epsilon )
                 {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Edge with index ", edge_index,
+                            ", at position [",
+                            mesh_.edge_barycenter( edge_index ).string(),
+                            "], is degenerated." );
+                    }
                     nb_degeneration++;
                 }
             }
@@ -89,7 +96,7 @@ namespace geode
 
     private:
         const EdgedCurve< dimension >& mesh_;
-        bool verbose_;
+        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >

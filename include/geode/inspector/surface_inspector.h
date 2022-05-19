@@ -23,42 +23,41 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+#include <geode/inspector/criterion/adjacency/surface_adjacency.h>
+#include <geode/inspector/criterion/colocation/surface_colocation.h>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
+#include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
+#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/mixin/add_inspectors.h>
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
+     * Class for inspecting a SurfaceMesh
+     * @extends SurfaceMeshAdjacency
+     * @extends SurfaceMeshColocation
+     * @extends SurfaceMeshDegeneration
+     * @extends SurfaceMeshEdgeManifold
+     * @extends SurfaceMeshVertexManifold
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    class opengeode_inspector_inspector_api SurfaceMeshInspector
+        : public AddInspectors< dimension,
+              SurfaceMesh,
+              SurfaceMeshAdjacency,
+              SurfaceMeshColocation,
+              SurfaceMeshDegeneration,
+              SurfaceMeshEdgeManifold,
+              SurfaceMeshVertexManifold >
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        SurfaceMeshInspector( const SurfaceMesh< dimension >& mesh );
 
-        SurfaceMeshAdjacency(
+        SurfaceMeshInspector(
             const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+    ALIAS_2D_AND_3D( SurfaceMeshInspector );
 } // namespace geode

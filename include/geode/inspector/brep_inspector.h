@@ -23,42 +23,28 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
-
 #include <geode/inspector/common.h>
+#include <geode/inspector/topology/brep_topology.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
+    class BRep;
+}
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
+     * Class for inspecting a BRep model
+     * @extends BRepTopologyInspector
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    class opengeode_inspector_inspector_api BRepInspector
+        : public BRepTopologyInspector
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( BRepInspector );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        BRepInspector( const BRep& brep );
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        BRepInspector( const BRep& brep, bool verbose );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
 } // namespace geode

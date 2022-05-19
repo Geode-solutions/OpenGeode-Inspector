@@ -31,6 +31,7 @@
     pybind11::class_< SurfaceMeshColocation##dimension##D >(                   \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
         .def( "mesh_has_colocated_points",                                     \
             &SurfaceMeshColocation##dimension##D::mesh_has_colocated_points )  \
         .def( "nb_colocated_points",                                           \

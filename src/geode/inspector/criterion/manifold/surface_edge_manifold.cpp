@@ -59,27 +59,6 @@ namespace
         }
         return polygons_around_edges;
     }
-
-    template < geode::index_t dimension >
-    std::vector< Edge > mesh_non_manifold_edges(
-        const geode::SurfaceMesh< dimension >& mesh, bool verbose )
-    {
-        std::vector< Edge > non_manifold_edges;
-        for( const auto& edge : edge_to_polygons_around( mesh ) )
-        {
-            if( edge.second > 2 )
-            {
-                if( verbose )
-                {
-                    geode::Logger::info( "Edge between vertices with index ",
-                        edge.first.vertices()[0], " and index ",
-                        edge.first.vertices()[1], ", is not manifold." );
-                }
-                non_manifold_edges.push_back( edge.first );
-            }
-        }
-        return non_manifold_edges;
-    }
 } // namespace
 
 namespace geode
@@ -89,32 +68,63 @@ namespace geode
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
-            : non_manifold_edges_{ mesh_non_manifold_edges< dimension >(
-                mesh, verbose ) }
+            : mesh_( mesh ), verbose_( verbose )
         {
         }
 
         bool mesh_edges_are_manifold() const
         {
-            return non_manifold_edges_.empty();
+            for( const auto& edge : edge_to_polygons_around( mesh_ ) )
+            {
+                if( edge.second > 2 )
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         index_t nb_non_manifold_edges() const
         {
-            return non_manifold_edges_.size();
+            index_t nb_non_manifold_edges{ 0 };
+            for( const auto& edge : edge_to_polygons_around( mesh_ ) )
+            {
+                if( edge.second > 2 )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Edge between vertices with index ",
+                            edge.first.vertices()[0], " and index ",
+                            edge.first.vertices()[1], ", is not manifold." );
+                    }
+                    nb_non_manifold_edges++;
+                }
+            }
+            return nb_non_manifold_edges;
         }
 
-        const std::vector<
-            geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >&
-            non_manifold_edges() const
+        std::vector< std::array< index_t, 2 > > non_manifold_edges() const
         {
-            return non_manifold_edges_;
+            std::vector< std::array< index_t, 2 > > non_manifold_edges;
+            for( const auto& edge : edge_to_polygons_around( mesh_ ) )
+            {
+                if( edge.second > 2 )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Edge between vertices with index ",
+                            edge.first.vertices()[0], " and index ",
+                            edge.first.vertices()[1], ", is not manifold." );
+                    }
+                    non_manifold_edges.push_back( edge.first.vertices() );
+                }
+            }
+            return non_manifold_edges;
         }
 
     private:
-        std::vector<
-            geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >
-            non_manifold_edges_;
+        const SurfaceMesh< dimension >& mesh_;
+        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
@@ -149,8 +159,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    const std::vector<
-        geode::detail::VertexCycle< std::array< geode::index_t, 2 > > >&
+    std::vector< std::array< index_t, 2 > >
         SurfaceMeshEdgeManifold< dimension >::non_manifold_edges() const
     {
         return impl_->non_manifold_edges();

@@ -50,7 +50,7 @@ namespace geode
 
         private:
             const Mesh& mesh_;
-            bool verbose_;
+            DEBUG_CONST bool verbose_;
         };
     } // namespace detail
 } // namespace geode

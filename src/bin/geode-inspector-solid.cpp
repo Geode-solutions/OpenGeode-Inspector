@@ -22,8 +22,7 @@
 
 #include <geode/io/mesh/detail/common.h>
 
-#include <geode/inspector/criterion/colocation/solid_colocation.h>
-#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/solid_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
@@ -33,21 +32,18 @@ template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
     absl::InlinedVector< async::task< void >, 2 > tasks;
+    const geode::SolidMeshInspector< dimension > inspector{ solid };
     if( absl::GetFlag( FLAGS_colocation ) )
     {
-        tasks.emplace_back( async::spawn( [&solid] {
-            const geode::SolidMeshColocation< dimension > colocation{ solid };
-            const auto nb = colocation.nb_colocated_points();
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_colocated_points();
             geode::Logger::info( nb, " colocated points" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_degeneration ) )
     {
-        tasks.emplace_back( async::spawn( [&solid] {
-            const geode::SolidMeshDegeneration< dimension > degeneration{
-                solid
-            };
-            const auto nb = degeneration.nb_degenerated_edges();
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
         } ) );
     }

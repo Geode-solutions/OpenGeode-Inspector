@@ -23,27 +23,26 @@
 
 #include <geode/mesh/core/surface_mesh.h>
 
-#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
+#include <geode/inspector/surface_inspector.h>
 
-#define PYTHON_SURFACE_DEGENERATION( dimension )                               \
+#define PYTHON_SURFACE_INSPECTOR( dimension )                                  \
     const auto name##dimension =                                               \
-        "SurfaceMeshDegeneration" + std::to_string( dimension ) + "D";         \
-    pybind11::class_< SurfaceMeshDegeneration##dimension##D >(                 \
+        "SurfaceMeshInspector" + std::to_string( dimension ) + "D";            \
+    pybind11::class_< SurfaceMeshInspector##dimension##D,                      \
+        SurfaceMeshAdjacency##dimension##D,                                    \
+        SurfaceMeshColocation##dimension##D,                                   \
+        SurfaceMeshDegeneration##dimension##D,                                 \
+        SurfaceMeshEdgeManifold##dimension##D,                                 \
+        SurfaceMeshVertexManifold##dimension##D >(                             \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "is_mesh_degenerated",                                           \
-            &SurfaceMeshDegeneration##dimension##D::is_mesh_degenerated )      \
-        .def( "nb_degenerated_edges",                                          \
-            &SurfaceMeshDegeneration##dimension##D::nb_degenerated_edges )     \
-        .def( "degenerated_edges",                                             \
-            &SurfaceMeshDegeneration##dimension##D::degenerated_edges )
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )
 
 namespace geode
 {
-    void define_surface_degeneration( pybind11::module& module )
+    void define_surface_inspector( pybind11::module& module )
     {
-        PYTHON_SURFACE_DEGENERATION( 2 );
-        PYTHON_SURFACE_DEGENERATION( 3 );
+        PYTHON_SURFACE_INSPECTOR( 2 );
+        PYTHON_SURFACE_INSPECTOR( 3 );
     }
 } // namespace geode

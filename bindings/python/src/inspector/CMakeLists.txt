@@ -34,6 +34,12 @@ add_geode_python_binding(
         "topology/brep_topology.h"
         "topology/section_topology.h"
         "inspector.cpp"
+        "edgedcurve_inspector.h"
+        "brep_inspector.h"
+        "pointset_inspector.h"
+        "section_inspector.h"
+        "solid_inspector.h"
+        "surface_inspector.h"
     DEPENDENCIES
         ${PROJECT_NAME}::inspector
 )

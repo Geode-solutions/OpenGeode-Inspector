@@ -21,44 +21,38 @@
  *
  */
 
-#pragma once
+#include <geode/inspector/surface_inspector.h>
 
-#include <geode/basic/pimpl.h>
-
-#include <geode/inspector/common.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
-    struct PolygonEdge;
-} // namespace geode
-
-namespace geode
-{
-    /*!
-     * Class for inspecting the adjacency on the edges of a SurfaceMesh
-     */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshAdjacency
+    SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
+        const SurfaceMesh< dimension >& mesh )
+        : AddInspectors< dimension,
+            SurfaceMesh,
+            SurfaceMeshAdjacency,
+            SurfaceMeshColocation,
+            SurfaceMeshDegeneration,
+            SurfaceMeshEdgeManifold,
+            SurfaceMeshVertexManifold >{ mesh }
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
+    }
 
-    public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+    template < index_t dimension >
+    SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
+        const SurfaceMesh< dimension >& mesh, bool verbose )
+        : AddInspectors< dimension,
+            SurfaceMesh,
+            SurfaceMeshAdjacency,
+            SurfaceMeshColocation,
+            SurfaceMeshDegeneration,
+            SurfaceMeshEdgeManifold,
+            SurfaceMeshVertexManifold >{ mesh, verbose }
+    {
+    }
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
-        ~SurfaceMeshAdjacency();
-
-        bool mesh_has_wrong_adjacencies() const;
-
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
-
-    private:
-        IMPLEMENTATION_MEMBER( impl_ );
-    };
-    ALIAS_2D_AND_3D( SurfaceMeshAdjacency );
+    template class opengeode_inspector_inspector_api SurfaceMeshInspector< 2 >;
+    template class opengeode_inspector_inspector_api SurfaceMeshInspector< 3 >;
 } // namespace geode

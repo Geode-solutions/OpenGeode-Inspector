@@ -373,7 +373,7 @@ namespace geode
 
     private:
         const Section& section_;
-        bool verbose_;
+        DEBUG_CONST bool verbose_;
     };
 
     SectionTopologyInspector::SectionTopologyInspector( const Section& section )

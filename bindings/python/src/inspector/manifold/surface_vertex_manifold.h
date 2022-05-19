@@ -31,6 +31,7 @@
     pybind11::class_< SurfaceMeshVertexManifold##dimension##D >(               \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
         .def( "mesh_vertices_are_manifold",                                    \
             &SurfaceMeshVertexManifold##dimension##D::                         \
                 mesh_vertices_are_manifold )                                   \
