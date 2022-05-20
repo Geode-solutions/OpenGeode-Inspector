@@ -37,10 +37,9 @@ namespace geode
      */
     template < index_t dimension >
     class opengeode_inspector_inspector_api EdgedCurveInspector
-        : public AddInspectors< dimension,
-              EdgedCurve,
-              EdgedCurveColocation,
-              EdgedCurveDegeneration >
+        : public AddInspectors< EdgedCurve< dimension >,
+              EdgedCurveColocation< dimension >,
+              EdgedCurveDegeneration< dimension > >
     {
         OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 

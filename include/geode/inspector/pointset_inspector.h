@@ -35,7 +35,8 @@ namespace geode
      */
     template < index_t dimension >
     class opengeode_inspector_inspector_api PointSetInspector
-        : public AddInspectors< dimension, PointSet, PointSetColocation >
+        : public AddInspectors< PointSet< dimension >,
+              PointSetColocation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( PointSetInspector );
 

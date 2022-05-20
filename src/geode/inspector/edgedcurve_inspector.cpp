@@ -30,20 +30,18 @@ namespace geode
     template < index_t dimension >
     EdgedCurveInspector< dimension >::EdgedCurveInspector(
         const EdgedCurve< dimension >& mesh )
-        : AddInspectors< dimension,
-            EdgedCurve,
-            EdgedCurveColocation,
-            EdgedCurveDegeneration >{ mesh }
+        : AddInspectors< EdgedCurve< dimension >,
+            EdgedCurveColocation< dimension >,
+            EdgedCurveDegeneration< dimension > >{ mesh }
     {
     }
 
     template < index_t dimension >
     EdgedCurveInspector< dimension >::EdgedCurveInspector(
         const EdgedCurve< dimension >& mesh, bool verbose )
-        : AddInspectors< dimension,
-            EdgedCurve,
-            EdgedCurveColocation,
-            EdgedCurveDegeneration >{ mesh, verbose }
+        : AddInspectors< EdgedCurve< dimension >,
+            EdgedCurveColocation< dimension >,
+            EdgedCurveDegeneration< dimension > >{ mesh, verbose }
     {
     }
 

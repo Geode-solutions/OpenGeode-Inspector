@@ -30,20 +30,18 @@ namespace geode
     template < index_t dimension >
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )
-        : AddInspectors< dimension,
-            SolidMesh,
-            SolidMeshColocation,
-            SolidMeshDegeneration >{ mesh }
+        : AddInspectors< SolidMesh< dimension >,
+            SolidMeshColocation< dimension >,
+            SolidMeshDegeneration< dimension > >{ mesh }
     {
     }
 
     template < index_t dimension >
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh, bool verbose )
-        : AddInspectors< dimension,
-            SolidMesh,
-            SolidMeshColocation,
-            SolidMeshDegeneration >{ mesh, verbose }
+        : AddInspectors< SolidMesh< dimension >,
+            SolidMeshColocation< dimension >,
+            SolidMeshDegeneration< dimension > >{ mesh, verbose }
     {
     }
 
