@@ -30,15 +30,16 @@ namespace geode
     template < index_t dimension >
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh )
-        : AddInspectors< dimension, PointSet, PointSetColocation >{ mesh }
+        : AddInspectors< PointSet< dimension >,
+            PointSetColocation< dimension > >{ mesh }
     {
     }
 
     template < index_t dimension >
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh, bool verbose )
-        : AddInspectors< dimension, PointSet, PointSetColocation >{ mesh,
-              verbose }
+        : AddInspectors< PointSet< dimension >,
+            PointSetColocation< dimension > >{ mesh, verbose }
     {
     }
 

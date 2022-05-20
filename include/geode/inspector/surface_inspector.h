@@ -43,13 +43,12 @@ namespace geode
      */
     template < index_t dimension >
     class opengeode_inspector_inspector_api SurfaceMeshInspector
-        : public AddInspectors< dimension,
-              SurfaceMesh,
-              SurfaceMeshAdjacency,
-              SurfaceMeshColocation,
-              SurfaceMeshDegeneration,
-              SurfaceMeshEdgeManifold,
-              SurfaceMeshVertexManifold >
+        : public AddInspectors< SurfaceMesh< dimension >,
+              SurfaceMeshAdjacency< dimension >,
+              SurfaceMeshColocation< dimension >,
+              SurfaceMeshDegeneration< dimension >,
+              SurfaceMeshEdgeManifold< dimension >,
+              SurfaceMeshVertexManifold< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 

@@ -34,20 +34,13 @@ namespace geode
      * InspectorClassA, InspectorClassB, InspectorClassC >, public
      * OtherOptionalMixins
      */
-    template < index_t dimension,
-        template < index_t >
-        class Mesh,
-        template < index_t >
-        class... Inspectors >
-    class AddInspectors : public Inspectors< dimension >...
+    template < class Mesh, class... Inspectors >
+    class AddInspectors : public Inspectors...
     {
     protected:
-        AddInspectors( const Mesh< dimension >& mesh )
-            : Inspectors< dimension >{ mesh }...
-        {
-        }
-        AddInspectors( const Mesh< dimension >& mesh, bool verbose )
-            : Inspectors< dimension >{ mesh, verbose }...
+        AddInspectors( const Mesh& mesh ) : Inspectors{ mesh }... {}
+        AddInspectors( const Mesh& mesh, bool verbose )
+            : Inspectors{ mesh, verbose }...
         {
         }
         AddInspectors( AddInspectors&& ) = default;

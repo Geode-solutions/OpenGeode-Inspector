@@ -30,26 +30,24 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh )
-        : AddInspectors< dimension,
-            SurfaceMesh,
-            SurfaceMeshAdjacency,
-            SurfaceMeshColocation,
-            SurfaceMeshDegeneration,
-            SurfaceMeshEdgeManifold,
-            SurfaceMeshVertexManifold >{ mesh }
+        : AddInspectors< SurfaceMesh< dimension >,
+            SurfaceMeshAdjacency< dimension >,
+            SurfaceMeshColocation< dimension >,
+            SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshEdgeManifold< dimension >,
+            SurfaceMeshVertexManifold< dimension > >{ mesh }
     {
     }
 
     template < index_t dimension >
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh, bool verbose )
-        : AddInspectors< dimension,
-            SurfaceMesh,
-            SurfaceMeshAdjacency,
-            SurfaceMeshColocation,
-            SurfaceMeshDegeneration,
-            SurfaceMeshEdgeManifold,
-            SurfaceMeshVertexManifold >{ mesh, verbose }
+        : AddInspectors< SurfaceMesh< dimension >,
+            SurfaceMeshAdjacency< dimension >,
+            SurfaceMeshColocation< dimension >,
+            SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshEdgeManifold< dimension >,
+            SurfaceMeshVertexManifold< dimension > >{ mesh, verbose }
     {
     }
 

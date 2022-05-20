@@ -37,10 +37,9 @@ namespace geode
      */
     template < index_t dimension >
     class opengeode_inspector_inspector_api SolidMeshInspector
-        : public AddInspectors< dimension,
-              SolidMesh,
-              SolidMeshColocation,
-              SolidMeshDegeneration >
+        : public AddInspectors< SolidMesh< dimension >,
+              SolidMeshColocation< dimension >,
+              SolidMeshDegeneration< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SolidMeshInspector );
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
