@@ -23,12 +23,19 @@
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
+ABSL_FLAG( bool,
+    verbose,
+    false,
+    "Toggle verbose mode for the inspection of topology through unique "
+    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
 {
+    const auto verbose = absl::GetFlag( FLAGS_verbose );
     absl::InlinedVector< async::task< void >, 2 > tasks;
-    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve };
+    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve,
+        verbose };
     if( absl::GetFlag( FLAGS_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {

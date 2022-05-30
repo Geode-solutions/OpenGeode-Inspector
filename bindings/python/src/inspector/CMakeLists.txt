@@ -22,6 +22,7 @@ add_geode_python_binding(
     NAME "py_inspector"
     SOURCES
         "adjacency/surface_adjacency.h"
+        "adjacency/solid_adjacency"
         "colocation/edgedcurve_colocation.h"
         "colocation/pointset_colocation.h"
         "colocation/surface_colocation.h"
@@ -31,6 +32,9 @@ add_geode_python_binding(
         "degeneration/surface_degeneration.h"
         "manifold/surface_edge_manifold.h"
         "manifold/surface_vertex_manifold.h"
+        "manifold/solid_vertex_manifold.h"
+        "manifold/solid_edge_manifold.h"
+        "manifold/solid_facet_manifold.h"
         "topology/brep_topology.h"
         "topology/section_topology.h"
         "inspector.cpp"

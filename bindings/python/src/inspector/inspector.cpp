@@ -25,6 +25,7 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
+#include "adjacency/solid_adjacency.h"
 #include "adjacency/surface_adjacency.h"
 
 #include "colocation/edgedcurve_colocation.h"
@@ -36,6 +37,9 @@
 #include "degeneration/solid_degeneration.h"
 #include "degeneration/surface_degeneration.h"
 
+#include "manifold/solid_edge_manifold.h"
+#include "manifold/solid_facet_manifold.h"
+#include "manifold/solid_vertex_manifold.h"
 #include "manifold/surface_edge_manifold.h"
 #include "manifold/surface_vertex_manifold.h"
 
@@ -53,6 +57,7 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
 {
     module.doc() = "OpenGeode-Inspector Python binding";
     geode::define_surface_adjacency( module );
+    geode::define_solid_adjacency( module );
     geode::define_edgedcurve_colocation( module );
     geode::define_pointset_colocation( module );
     geode::define_solid_colocation( module );
@@ -62,6 +67,9 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_surface_degeneration( module );
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );
+    geode::define_solid_edge_manifold( module );
+    geode::define_solid_vertex_manifold( module );
+    geode::define_solid_facet_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
     geode::define_brep_inspector( module );

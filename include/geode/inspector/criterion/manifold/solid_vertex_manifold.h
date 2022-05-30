@@ -21,27 +21,44 @@
  *
  */
 
-#include <geode/mesh/core/solid_mesh.h>
+#pragma once
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/basic/pimpl.h>
 
-#define PYTHON_SOLID_INSPECTOR( dimension )                                    \
-    const auto name##dimension =                                               \
-        "SolidMeshInspector" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< SolidMeshInspector##dimension##D,                        \
-        SolidMeshAdjacency##dimension##D, SolidMeshColocation##dimension##D,   \
-        SolidMeshDegeneration##dimension##D,                                   \
-        SolidMeshVertexManifold##dimension##D,                                 \
-        SolidMeshEdgeManifold##dimension##D,                                   \
-        SolidMeshFacetManifold##dimension##D >(                                \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )
+#include <geode/inspector/common.h>
 
 namespace geode
 {
-    void define_solid_inspector( pybind11::module& module )
+    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the manifold property of a SolidMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SolidMeshVertexManifold
     {
-        PYTHON_SOLID_INSPECTOR( 3 );
-    }
+        OPENGEODE_DISABLE_COPY( SolidMeshVertexManifold );
+        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
+
+    public:
+        SolidMeshVertexManifold( const SolidMesh< dimension >& mesh );
+
+        SolidMeshVertexManifold(
+            const SolidMesh< dimension >& mesh, bool verbose );
+
+        ~SolidMeshVertexManifold();
+
+        bool mesh_vertices_are_manifold() const;
+
+        index_t nb_non_manifold_vertices() const;
+
+        std::vector< index_t > non_manifold_vertices() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_3D( SolidMeshVertexManifold );
 } // namespace geode

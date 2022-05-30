@@ -21,27 +21,50 @@
  *
  */
 
-#include <geode/mesh/core/solid_mesh.h>
+#pragma once
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/basic/pimpl.h>
 
-#define PYTHON_SOLID_INSPECTOR( dimension )                                    \
-    const auto name##dimension =                                               \
-        "SolidMeshInspector" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< SolidMeshInspector##dimension##D,                        \
-        SolidMeshAdjacency##dimension##D, SolidMeshColocation##dimension##D,   \
-        SolidMeshDegeneration##dimension##D,                                   \
-        SolidMeshVertexManifold##dimension##D,                                 \
-        SolidMeshEdgeManifold##dimension##D,                                   \
-        SolidMeshFacetManifold##dimension##D >(                                \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )
+#include <geode/inspector/common.h>
 
 namespace geode
 {
-    void define_solid_inspector( pybind11::module& module )
+    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+
+    namespace detail
     {
-        PYTHON_SOLID_INSPECTOR( 3 );
+        template < typename Container >
+        class VertexCycle;
     }
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the manifold property of a SolidMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SolidMeshEdgeManifold
+    {
+        OPENGEODE_DISABLE_COPY( SolidMeshEdgeManifold );
+        OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
+
+    public:
+        SolidMeshEdgeManifold( const SolidMesh< dimension >& mesh );
+
+        SolidMeshEdgeManifold(
+            const SolidMesh< dimension >& mesh, bool verbose );
+
+        ~SolidMeshEdgeManifold();
+
+        bool mesh_edges_are_manifold() const;
+
+        index_t nb_non_manifold_edges() const;
+
+        std::vector< std::array< index_t, 2 > > non_manifold_edges() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_3D( SolidMeshEdgeManifold );
 } // namespace geode

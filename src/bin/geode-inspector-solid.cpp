@@ -27,12 +27,21 @@
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
+ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
+ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
+ABSL_FLAG( bool, manifold_facet, true, "Toggle manifold facet criterion" );
+ABSL_FLAG( bool,
+    verbose,
+    false,
+    "Toggle verbose mode for the inspection of topology through unique "
+    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
-    absl::InlinedVector< async::task< void >, 2 > tasks;
-    const geode::SolidMeshInspector< dimension > inspector{ solid };
+    const auto verbose = absl::GetFlag( FLAGS_verbose );
+    absl::InlinedVector< async::task< void >, 5 > tasks;
+    const geode::SolidMeshInspector< dimension > inspector{ solid, verbose };
     if( absl::GetFlag( FLAGS_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {
@@ -45,6 +54,27 @@ void inspect_solid( const geode::SolidMesh< dimension >& solid )
         tasks.emplace_back( async::spawn( [&inspector] {
             const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold_vertex ) )
+    {
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_non_manifold_vertices();
+            geode::Logger::info( nb, " non manifold vertices" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold_edge ) )
+    {
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_non_manifold_edges();
+            geode::Logger::info( nb, " non manifold edges" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold_facet ) )
+    {
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_non_manifold_facets();
+            geode::Logger::info( nb, " non manifold facets" );
         } ) );
     }
     async::when_all( tasks.begin(), tasks.end() ).wait();

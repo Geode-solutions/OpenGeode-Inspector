@@ -21,11 +21,17 @@
 #include <geode/inspector/pointset_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
+ABSL_FLAG( bool,
+    verbose,
+    false,
+    "Toggle verbose mode for the inspection of topology through unique "
+    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_pointset( const geode::PointSet< dimension >& pointset )
 {
-    const geode::PointSetInspector< dimension > inspector{ pointset };
+    const auto verbose = absl::GetFlag( FLAGS_verbose );
+    const geode::PointSetInspector< dimension > inspector{ pointset, verbose };
     const auto nb = inspector.nb_colocated_points();
     geode::Logger::info( nb, " colocated points" );
 }
