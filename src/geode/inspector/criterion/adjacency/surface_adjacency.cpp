@@ -117,12 +117,12 @@ namespace geode
             const auto adjacent_polygon =
                 mesh_.polygon_adjacent( polygon_edge );
             const auto polygon_adj_id = adjacent_polygon.value();
-            const auto v0 = mesh_.polygon_vertex( polygon_edge );
+            const auto v0 = mesh_.polygon_edge_vertex( polygon_edge, 0 );
             const auto v1 = mesh_.polygon_edge_vertex( polygon_edge, 1 );
-            for( const auto e :
+            for( const auto edge_id :
                 LRange{ mesh_.nb_polygon_edges( polygon_adj_id ) } )
             {
-                const PolygonEdge adj_edge{ polygon_adj_id, e };
+                const PolygonEdge adj_edge{ polygon_adj_id, edge_id };
                 const auto adj_v0 = mesh_.polygon_vertex( adj_edge );
                 if( adj_v0 == v1 )
                 {

@@ -31,8 +31,12 @@ namespace geode
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )
         : AddInspectors< SolidMesh< dimension >,
+            SolidMeshAdjacency< dimension >,
             SolidMeshColocation< dimension >,
-            SolidMeshDegeneration< dimension > >{ mesh }
+            SolidMeshDegeneration< dimension >,
+            SolidMeshVertexManifold< dimension >,
+            SolidMeshEdgeManifold< dimension >,
+            SolidMeshFacetManifold< dimension > >{ mesh }
     {
     }
 
@@ -40,8 +44,12 @@ namespace geode
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh, bool verbose )
         : AddInspectors< SolidMesh< dimension >,
+            SolidMeshAdjacency< dimension >,
             SolidMeshColocation< dimension >,
-            SolidMeshDegeneration< dimension > >{ mesh, verbose }
+            SolidMeshDegeneration< dimension >,
+            SolidMeshVertexManifold< dimension >,
+            SolidMeshEdgeManifold< dimension >,
+            SolidMeshFacetManifold< dimension > >{ mesh, verbose }
     {
     }
 

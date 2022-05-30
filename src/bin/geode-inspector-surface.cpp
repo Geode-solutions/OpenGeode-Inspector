@@ -28,12 +28,19 @@ ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
 ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
 ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
+ABSL_FLAG( bool,
+    verbose,
+    false,
+    "Toggle verbose mode for the inspection of topology through unique "
+    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
 {
+    const auto verbose = absl::GetFlag( FLAGS_verbose );
     absl::InlinedVector< async::task< void >, 5 > tasks;
-    const geode::SurfaceMeshInspector< dimension > inspector{ surface };
+    const geode::SurfaceMeshInspector< dimension > inspector{ surface,
+        verbose };
     if( absl::GetFlag( FLAGS_adjacency ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {

@@ -24,8 +24,12 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/criterion/adjacency/solid_adjacency.h>
 #include <geode/inspector/criterion/colocation/solid_colocation.h>
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/criterion/manifold/solid_edge_manifold.h>
+#include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
+#include <geode/inspector/criterion/manifold/solid_vertex_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 
 namespace geode
@@ -38,8 +42,12 @@ namespace geode
     template < index_t dimension >
     class opengeode_inspector_inspector_api SolidMeshInspector
         : public AddInspectors< SolidMesh< dimension >,
+              SolidMeshAdjacency< dimension >,
               SolidMeshColocation< dimension >,
-              SolidMeshDegeneration< dimension > >
+              SolidMeshDegeneration< dimension >,
+              SolidMeshVertexManifold< dimension >,
+              SolidMeshEdgeManifold< dimension >,
+              SolidMeshFacetManifold< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SolidMeshInspector );
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );

@@ -47,7 +47,7 @@ namespace
             {
                 const Edge polygon_edge_vertex_cycle{
                     mesh.polygon_edge_vertices(
-                        { { polygon_id, polygon_edge_id } } )
+                        { polygon_id, polygon_edge_id } )
                 };
                 if( !polygons_around_edges
                          .try_emplace( polygon_edge_vertex_cycle, 1 )

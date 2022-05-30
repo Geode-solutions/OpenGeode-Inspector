@@ -21,27 +21,44 @@
  *
  */
 
-#include <geode/mesh/core/solid_mesh.h>
+#pragma once
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/basic/pimpl.h>
 
-#define PYTHON_SOLID_INSPECTOR( dimension )                                    \
-    const auto name##dimension =                                               \
-        "SolidMeshInspector" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< SolidMeshInspector##dimension##D,                        \
-        SolidMeshAdjacency##dimension##D, SolidMeshColocation##dimension##D,   \
-        SolidMeshDegeneration##dimension##D,                                   \
-        SolidMeshVertexManifold##dimension##D,                                 \
-        SolidMeshEdgeManifold##dimension##D,                                   \
-        SolidMeshFacetManifold##dimension##D >(                                \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )
+#include <geode/inspector/common.h>
 
 namespace geode
 {
-    void define_solid_inspector( pybind11::module& module )
+    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    struct PolyhedronFacet;
+} // namespace geode
+
+namespace geode
+{
+    /*!
+     * Class for inspecting the adjacency on the facets of a SolidMesh
+     */
+    template < index_t dimension >
+    class opengeode_inspector_inspector_api SolidMeshAdjacency
     {
-        PYTHON_SOLID_INSPECTOR( 3 );
-    }
+        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+
+    public:
+        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+
+        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+
+        ~SolidMeshAdjacency();
+
+        bool mesh_has_wrong_adjacencies() const;
+
+        index_t nb_facets_with_wrong_adjacency() const;
+
+        std::vector< PolyhedronFacet >
+            polyhedron_facets_with_wrong_adjacency() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+    ALIAS_2D_AND_3D( SolidMeshAdjacency );
 } // namespace geode
