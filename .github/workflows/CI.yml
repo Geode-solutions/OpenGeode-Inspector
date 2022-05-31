@@ -16,7 +16,7 @@ jobs:
     needs: format
     uses: Geode-solutions/actions/.github/workflows/ci-linux.yml@master
     with:
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -26,7 +26,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/ci-linux-python.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -35,7 +35,7 @@ jobs:
     needs: format
     uses: Geode-solutions/actions/.github/workflows/coverage.yml@master
     with:
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}  
   
@@ -44,7 +44,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/ci-windows.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
