@@ -9,7 +9,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/cd-linux.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
@@ -18,7 +18,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/cd-linux-python.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 
@@ -28,7 +28,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/cd-windows.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -37,7 +37,7 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/cd-windows-python.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO
+      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets:
       TOKEN: ${{ secrets.TOKEN }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

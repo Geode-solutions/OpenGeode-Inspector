@@ -30,6 +30,8 @@ option(OPENGEODE_INSPECTOR_WITH_PYTHON "Compile Python bindings" OFF)
 find_package(OpenGeode REQUIRED)
 find_package(Async++ REQUIRED)
 find_package(OpenGeode-IO REQUIRED)
+find_package(OpenGeode-Geosciences REQUIRED)
+find_package(OpenGeode-GeosciencesIO REQUIRED)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
