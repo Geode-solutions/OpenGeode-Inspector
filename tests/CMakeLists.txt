@@ -24,6 +24,8 @@ if(NOT TARGET OpenGeode-Inspector::inspector)
     project(OpenGeode-Inspector CXX)
     find_package(OpenGeode REQUIRED CONFIG)
     find_package(OpenGeode-Inspector REQUIRED CONFIG)
+    find_package(OpenGeode-Geosciences REQUIRED)
+    find_package(OpenGeode-GeosciencesIO REQUIRED)
     enable_testing()
 endif()
 

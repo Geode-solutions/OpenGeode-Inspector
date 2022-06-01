@@ -23,6 +23,7 @@
 
 #include <geode/inspector/topology/private/section_surfaces_topology_impl.h>
 
+#include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
 #include <geode/model/mixin/core/corner.h>
@@ -30,6 +31,26 @@
 #include <geode/model/mixin/core/relationships.h>
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
+
+namespace
+{
+    std::vector< geode::uuid > section_vertex_component_uuids(
+        const geode::Section& section,
+        geode::index_t unique_vertex_index,
+        const geode::ComponentType& component_type )
+    {
+        const auto components = section.mesh_component_vertices(
+            unique_vertex_index, component_type );
+        std::vector< geode::uuid > component_uuids;
+        component_uuids.reserve( components.size() );
+        for( const auto& mcv : components )
+        {
+            component_uuids.push_back( mcv.component_id.id() );
+        }
+        geode::sort_unique( component_uuids );
+        return component_uuids;
+    }
+} // namespace
 
 namespace geode
 {
@@ -50,20 +71,18 @@ namespace geode
             section_vertex_surfaces_topology_is_valid(
                 index_t unique_vertex_index ) const
         {
-            const auto surfaces = section_.mesh_component_vertices(
+            const auto surface_uuids = section_vertex_component_uuids( section_,
                 unique_vertex_index, Surface2D::component_type_static() );
-            if( surfaces.size() == 2 )
+            if( surface_uuids.size() == 2 )
             {
                 for( const auto line :
                     section_.mesh_component_vertices(
                         unique_vertex_index, Line2D::component_type_static() ) )
                 {
                     if( section_.Relationships::is_boundary(
-                            line.component_id.id(),
-                            surfaces[0].component_id.id() )
+                            line.component_id.id(), surface_uuids[0] )
                         && section_.Relationships::is_boundary(
-                            line.component_id.id(),
-                            surfaces[1].component_id.id() ) )
+                            line.component_id.id(), surface_uuids[1] ) )
                     {
                         return true;
                     }
