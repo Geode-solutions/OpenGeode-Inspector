@@ -124,6 +124,8 @@ add_geode_test(
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model
+        OpenGeode-Geosciences::geosciences
+        OpenGeode-GeosciencesIO::geosciences
         ${PROJECT_NAME}::inspector
 )
 
