@@ -263,22 +263,6 @@ namespace geode
             return invalid_unique_vertices;
         }
 
-        std::vector< index_t >
-            internal_with_multiple_incidences_corner_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( corner_is_internal_with_multiple_incidences(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
         std::vector< index_t > line_corners_without_boundary_status() const
         {
             std::vector< index_t > invalid_unique_vertices;
@@ -442,12 +426,6 @@ namespace geode
             const
     {
         return impl_->not_internal_nor_boundary_corner_vertices();
-    }
-
-    std::vector< index_t > SectionTopologyInspector::
-        internal_with_multiple_incidences_corner_vertices() const
-    {
-        return impl_->internal_with_multiple_incidences_corner_vertices();
     }
 
     std::vector< index_t >

@@ -46,7 +46,7 @@ void inspect_section( const geode::Section& section )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector section_inspector{ section, verbose };
-    absl::InlinedVector< async::task< void >, 13 > tasks;
+    absl::InlinedVector< async::task< void >, 12 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&section_inspector] {
@@ -91,15 +91,6 @@ void inspect_section( const geode::Section& section )
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
-        } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
-            const auto nb =
-                section_inspector
-                    .internal_with_multiple_incidences_corner_vertices()
-                    .size();
-            geode::Logger::info( nb,
-                " unique vertices associated to a corner which is internal "
-                "but has multiple incidences." );
         } ) );
         tasks.emplace_back( async::spawn( [&section_inspector] {
             const auto nb =

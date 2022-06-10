@@ -27,7 +27,6 @@
 
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
 #include <geode/model/representation/core/section.h>
 
 namespace geode
@@ -143,29 +142,6 @@ namespace geode
                         " is associated to corner with uuid '",
                         corners[0].component_id.id().string(),
                         "', which is neither boundary nor internal." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool SectionCornersTopologyImpl::
-            corner_is_internal_with_multiple_incidences(
-                index_t unique_vertex_index ) const
-        {
-            const auto corners = section_.mesh_component_vertices(
-                unique_vertex_index, Corner2D::component_type_static() );
-            if( !corners.empty()
-                && section_.nb_embeddings( corners[0].component_id.id() ) == 1
-                && section_.nb_incidences( corners[0].component_id.id() ) > 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to corner with uuid '",
-                        corners[0].component_id.id().string(),
-                        "', which has an embedding and multiple incidences." );
                 }
                 return true;
             }

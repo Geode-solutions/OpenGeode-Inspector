@@ -74,9 +74,6 @@ namespace geode
         std::vector< index_t >
             not_internal_nor_boundary_corner_vertices() const;
 
-        std::vector< index_t >
-            internal_with_multiple_incidences_corner_vertices() const;
-
         std::vector< index_t > line_corners_without_boundary_status() const;
 
         std::vector< index_t >

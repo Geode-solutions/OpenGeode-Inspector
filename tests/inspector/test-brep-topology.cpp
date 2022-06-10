@@ -119,19 +119,6 @@ geode::index_t check_not_internal_nor_boundary_corner_vertices(
     return nb_issues;
 }
 
-geode::index_t check_internal_with_multiple_incidences_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
-{
-    geode::index_t nb_issues{ 0 };
-    const auto internal_with_multiple_incidences_corner_vertices =
-        brep_inspector.internal_with_multiple_incidences_corner_vertices();
-    geode::Logger::info( "There are ",
-        internal_with_multiple_incidences_corner_vertices.size(),
-        " corner vertices who are internal but have multiple incidences." );
-    nb_issues += internal_with_multiple_incidences_corner_vertices.size();
-    return nb_issues;
-}
-
 geode::index_t check_line_corners_without_boundary_status(
     geode::BRepTopologyInspector& brep_inspector )
 {
@@ -280,8 +267,6 @@ geode::index_t launch_topological_validity_checks(
     nb_issues += check_multiple_internals_corner_vertices( brep_inspector );
     nb_issues +=
         check_not_internal_nor_boundary_corner_vertices( brep_inspector );
-    nb_issues += check_internal_with_multiple_incidences_corner_vertices(
-        brep_inspector );
     nb_issues += check_line_corners_without_boundary_status( brep_inspector );
     nb_issues += check_part_of_not_boundary_nor_internal_line_unique_vertices(
         brep_inspector );
@@ -337,12 +322,27 @@ void check_mss_vertices_topology()
     const auto model_brep = geode::load_structural_model(
         absl::StrCat( geode::data_path, "mss.og_strm" ) );
     geode::BRepTopologyInspector brep_inspector{ model_brep };
-    geode::Logger::info( "model_A1_valid topology is ",
+    geode::Logger::info( "model mss topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_model_issues =
         launch_topological_validity_checks( brep_inspector );
     OPENGEODE_EXCEPTION( nb_model_issues == 0,
         "[Test] model mss.og_strm should have 0 unique "
+        "vertices with topological problems." );
+}
+
+void check_model_D_vertices_topology()
+{
+    geode::detail::initialize_geosciences_io();
+    const auto model_brep = geode::load_structural_model(
+        absl::StrCat( geode::data_path, "model_D.og_brep" ) );
+    geode::BRepTopologyInspector brep_inspector{ model_brep };
+    geode::Logger::info( "model_D topology is ",
+        brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
+    const auto nb_model_issues =
+        launch_topological_validity_checks( brep_inspector );
+    OPENGEODE_EXCEPTION( nb_model_issues == 0,
+        "[Test] model model_D.og_brep should have 0 unique "
         "vertices with topological problems." );
 }
 

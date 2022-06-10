@@ -50,7 +50,7 @@ void inspect_brep( const geode::BRep& brep )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector brep_inspector{ brep, verbose };
-    absl::InlinedVector< async::task< void >, 18 > tasks;
+    absl::InlinedVector< async::task< void >, 17 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -102,15 +102,6 @@ void inspect_brep( const geode::BRep& brep )
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
-        } ) );
-        tasks.emplace_back( async::spawn( [&brep_inspector] {
-            const auto nb =
-                brep_inspector
-                    .internal_with_multiple_incidences_corner_vertices()
-                    .size();
-            geode::Logger::info( nb,
-                " unique vertices associated to a corner which is internal "
-                "but has multiple incidences." );
         } ) );
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb =

@@ -23,50 +23,24 @@
 
 #pragma once
 
+#include <absl/types/span.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
     class BRep;
+    struct uuid;
+    struct MeshComponentVertex;
 } // namespace geode
 
 namespace geode
 {
     namespace detail
     {
-        class BRepCornersTopologyImpl
-        {
-        public:
-            BRepCornersTopologyImpl( const BRep& brep );
+        bool brep_blocks_are_meshed( const geode::BRep& brep );
 
-            BRepCornersTopologyImpl( const BRep& brep, bool verbose );
-
-            /*!
-             * Checks if the brep unique vertices are valid corners, i.e.
-             * corners that verify:
-             * Each unique_vertex can only be associated to one corner.
-             * Each corner can only be internal to one object (surface or
-             * block).
-             * Each corner is a boundary of every line it is associated to.
-             */
-            bool brep_corner_topology_is_valid(
-                index_t unique_vertex_index ) const;
-
-            bool unique_vertex_has_multiple_corners(
-                index_t unique_vertex_index ) const;
-
-            bool corner_has_multiple_embeddings(
-                index_t unique_vertex_index ) const;
-
-            bool corner_is_not_internal_nor_boundary(
-                index_t unique_vertex_index ) const;
-
-            bool corner_is_part_of_line_but_not_boundary(
-                index_t unique_vertex_index ) const;
-
-        private:
-            const BRep& brep_;
-            bool verbose_;
-        };
+        std::vector< uuid > components_uuids(
+            absl::Span< const MeshComponentVertex > components );
     } // namespace detail
 } // namespace geode

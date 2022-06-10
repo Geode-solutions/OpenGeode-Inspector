@@ -59,12 +59,6 @@ def check_not_internal_nor_boundary_corner_vertices( section_inspector ):
     for vertex_index in not_internal_nor_boundary_corner_vertices:
         print( "[Test] Model unique vertex with index ", vertex_index, " is neither internal nor a boundary." )
 
-def check_internal_with_multiple_incidences_corner_vertices( section_inspector ):
-    internal_with_multiple_incidences_corner_vertices = section_inspector.internal_with_multiple_incidences_corner_vertices()
-    print( "There are ", len( internal_with_multiple_incidences_corner_vertices ), " embedded corner vertices with multiple incidences." )
-    for vertex_index in internal_with_multiple_incidences_corner_vertices:
-        print( "[Test] Model unique vertex with index ", vertex_index, " is internal but has multiple incidences." )
-
 def check_line_corners_without_boundary_status( section_inspector ):
     line_corners_without_boundary_status = section_inspector.line_corners_without_boundary_status()
     print( "There are ", len( line_corners_without_boundary_status ), " corner vertices part of a line but not its boundary." )
@@ -107,7 +101,6 @@ def launch_topological_validity_checks( section_inspector ):
     check_multiple_corners_unique_vertices( section_inspector )
     check_multiple_internals_corner_vertices( section_inspector )
     check_not_internal_nor_boundary_corner_vertices( section_inspector )
-    check_internal_with_multiple_incidences_corner_vertices( section_inspector )
     check_line_corners_without_boundary_status( section_inspector )
     check_part_of_not_boundary_nor_internal_line_unique_vertices( section_inspector )
     check_part_of_invalid_unique_line_unique_vertices( section_inspector )
