@@ -114,22 +114,6 @@ void check_not_internal_nor_boundary_corner_vertices(
     }
 }
 
-void check_internal_with_multiple_incidences_corner_vertices(
-    geode::SectionTopologyInspector& section_inspector )
-{
-    const auto internal_with_multiple_incidences_corner_vertices =
-        section_inspector.internal_with_multiple_incidences_corner_vertices();
-    geode::Logger::info( "There are ",
-        internal_with_multiple_incidences_corner_vertices.size(),
-        " corner vertices who are internal but have multiple incidences." );
-    for( const auto vertex_index :
-        internal_with_multiple_incidences_corner_vertices )
-    {
-        geode::Logger::warn( "[Test] Model unique vertex with index ",
-            vertex_index, " is internal but has multiple incidences." );
-    }
-}
-
 void check_line_corners_without_boundary_status(
     geode::SectionTopologyInspector& section_inspector )
 {

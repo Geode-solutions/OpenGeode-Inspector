@@ -47,7 +47,7 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector cross_section_inspector{ cross_section,
         verbose };
-    absl::InlinedVector< async::task< void >, 13 > tasks;
+    absl::InlinedVector< async::task< void >, 12 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
@@ -95,15 +95,6 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
-        } ) );
-        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
-            const auto nb =
-                cross_section_inspector
-                    .internal_with_multiple_incidences_corner_vertices()
-                    .size();
-            geode::Logger::info( nb,
-                " unique vertices associated to a corner which is internal "
-                "but has multiple incidences." );
         } ) );
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
             const auto nb =

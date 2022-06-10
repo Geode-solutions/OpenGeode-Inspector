@@ -48,6 +48,7 @@ add_geode_library(
         "topology/private/section_corners_topology_impl.cpp"
         "topology/private/section_lines_topology_impl.cpp"
         "topology/private/section_surfaces_topology_impl.cpp"
+        "topology/private/topology_helpers.cpp"
         "section_inspector.cpp"
         "brep_inspector.cpp"
         "pointset_inspector.cpp"
@@ -89,6 +90,7 @@ add_geode_library(
         "topology/private/section_corners_topology_impl.h"
         "topology/private/section_lines_topology_impl.h"
         "topology/private/section_surfaces_topology_impl.h"
+        "topology/private/topology_helpers.h"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES

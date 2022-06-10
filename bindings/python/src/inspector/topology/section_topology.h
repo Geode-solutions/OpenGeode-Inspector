@@ -54,9 +54,6 @@
         .def( "not_internal_nor_boundary_corner_vertices",                     \
             &SectionTopologyInspector::                                        \
                 not_internal_nor_boundary_corner_vertices )                    \
-        .def( "internal_with_multiple_incidences_corner_vertices",             \
-            &SectionTopologyInspector::                                        \
-                internal_with_multiple_incidences_corner_vertices )            \
         .def( "line_corners_without_boundary_status",                          \
             &SectionTopologyInspector::line_corners_without_boundary_status )  \
         .def( "part_of_not_boundary_nor_internal_line_unique_vertices",        \

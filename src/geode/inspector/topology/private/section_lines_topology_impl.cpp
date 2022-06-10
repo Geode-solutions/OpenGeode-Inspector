@@ -29,9 +29,10 @@
 
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
+
+#include <geode/inspector/topology/private/topology_helpers.h>
 
 namespace
 {
@@ -148,16 +149,18 @@ namespace geode
         bool SectionLinesTopologyImpl::vertex_is_part_of_invalid_unique_line(
             index_t unique_vertex_index ) const
         {
-            const auto lines = section_.mesh_component_vertices(
-                unique_vertex_index, Line2D::component_type_static() );
-            if( lines.size() != 1 )
+            const auto line_uuids =
+                components_uuids( section_.mesh_component_vertices(
+                    unique_vertex_index, Line2D::component_type_static() ) );
+            if( line_uuids.size() != 1 )
             {
                 return false;
             }
-            const auto& line_id = lines[0].component_id.id();
-            const auto surfaces = section_.mesh_component_vertices(
-                unique_vertex_index, Surface2D::component_type_static() );
-            if( surfaces.size() > 2 )
+            const auto& line_id = line_uuids[0];
+            const auto surface_uuids =
+                components_uuids( section_.mesh_component_vertices(
+                    unique_vertex_index, Surface2D::component_type_static() ) );
+            if( surface_uuids.size() > 2 )
             {
                 if( verbose_ )
                 {
@@ -172,9 +175,9 @@ namespace geode
             if( section_.nb_embeddings( line_id ) > 0 )
             {
                 if( section_surfaces_are_meshed( section_ )
-                    && ( surfaces.size() != 1
+                    && ( surface_uuids.size() != 1
                          || !section_.Relationships::is_internal(
-                             line_id, surfaces[0].component_id.id() ) ) )
+                             line_id, surface_uuids[0] ) ) )
                 {
                     if( verbose_ )
                     {
@@ -192,10 +195,10 @@ namespace geode
             }
             else
             {
-                for( const auto& surface : surfaces )
+                for( const auto& surface_id : surface_uuids )
                 {
                     if( !section_.Relationships::is_boundary(
-                            line_id, surface.component_id.id() ) )
+                            line_id, surface_id ) )
                     {
                         if( verbose_ )
                         {
@@ -205,7 +208,7 @@ namespace geode
                                 line_id.string(),
                                 "', and mutiple surfaces, but the line is not "
                                 "boundary of associated surface with uuid '",
-                                surface.component_id.id().string(), "'." );
+                                surface_id.string(), "'." );
                         }
                         return true;
                     }

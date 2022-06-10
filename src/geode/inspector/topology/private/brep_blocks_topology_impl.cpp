@@ -28,29 +28,10 @@
 
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
-namespace
-{
-    std::vector< geode::uuid > brep_vertex_component_uuids(
-        const geode::BRep& brep,
-        geode::index_t unique_vertex_index,
-        const geode::ComponentType& component_type )
-    {
-        const auto components =
-            brep.mesh_component_vertices( unique_vertex_index, component_type );
-        std::vector< geode::uuid > component_uuids;
-        component_uuids.reserve( components.size() );
-        for( const auto& mcv : components )
-        {
-            component_uuids.push_back( mcv.component_id.id() );
-        }
-        geode::sort_unique( component_uuids );
-        return component_uuids;
-    }
-} // namespace
+#include <geode/inspector/topology/private/topology_helpers.h>
 
 namespace geode
 {
@@ -70,8 +51,9 @@ namespace geode
         bool BRepBlocksTopologyImpl::brep_vertex_blocks_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto block_uuids = brep_vertex_component_uuids(
-                brep_, unique_vertex_index, Block3D::component_type_static() );
+            const auto block_uuids =
+                components_uuids( brep_.mesh_component_vertices(
+                    unique_vertex_index, Block3D::component_type_static() ) );
             if( block_uuids.size() == 2 )
             {
                 for( const auto surface :
