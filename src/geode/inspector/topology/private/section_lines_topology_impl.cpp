@@ -67,7 +67,7 @@ namespace geode
         bool SectionLinesTopologyImpl::section_vertex_lines_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto lines = section_.mesh_component_vertices(
+            const auto lines = section_.component_mesh_vertices(
                 unique_vertex_index, Line2D::component_type_static() );
             if( lines.empty() )
             {
@@ -89,7 +89,7 @@ namespace geode
             vertex_is_part_of_not_boundary_nor_internal_line(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : section_.mesh_component_vertices(
+            for( const auto line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( section_.nb_embeddings( line.component_id.id() ) < 1
@@ -112,7 +112,7 @@ namespace geode
             vertex_is_part_of_line_with_invalid_internal_topology(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : section_.mesh_component_vertices(
+            for( const auto line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( section_.nb_embeddings( line.component_id.id() ) < 1 )
@@ -150,7 +150,7 @@ namespace geode
             index_t unique_vertex_index ) const
         {
             const auto line_uuids =
-                components_uuids( section_.mesh_component_vertices(
+                components_uuids( section_.component_mesh_vertices(
                     unique_vertex_index, Line2D::component_type_static() ) );
             if( line_uuids.size() != 1 )
             {
@@ -158,7 +158,7 @@ namespace geode
             }
             const auto& line_id = line_uuids[0];
             const auto surface_uuids =
-                components_uuids( section_.mesh_component_vertices(
+                components_uuids( section_.component_mesh_vertices(
                     unique_vertex_index, Surface2D::component_type_static() ) );
             if( surface_uuids.size() > 2 )
             {
@@ -220,12 +220,12 @@ namespace geode
         bool SectionLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
             index_t unique_vertex_index ) const
         {
-            if( section_.mesh_component_vertices( unique_vertex_index,
+            if( section_.component_mesh_vertices( unique_vertex_index,
                             Line2D::component_type_static() )
                         .size()
                     > 1
                 && section_
-                       .mesh_component_vertices( unique_vertex_index,
+                       .component_mesh_vertices( unique_vertex_index,
                            Corner2D::component_type_static() )
                        .empty() )
             {

@@ -67,7 +67,7 @@ namespace
         for( const auto unique_vertex_id :
             geode::Range{ brep.nb_unique_vertices() } )
         {
-            if( brep.has_mesh_component_vertices(
+            if( brep.has_component_mesh_vertices(
                     unique_vertex_id, component_id ) )
             {
                 return true;

@@ -80,7 +80,7 @@ namespace geode
         bool BRepSurfacesTopologyImpl::brep_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto surfaces = brep_.mesh_component_vertices(
+            const auto surfaces = brep_.component_mesh_vertices(
                 unique_vertex_index, Surface3D::component_type_static() );
             if( surfaces.empty() )
             {
@@ -105,7 +105,7 @@ namespace geode
                 const index_t unique_vertex_index ) const
         {
             for( const auto surface_id : components_uuids(
-                     brep_.mesh_component_vertices( unique_vertex_index,
+                     brep_.component_mesh_vertices( unique_vertex_index,
                          Surface3D::component_type_static() ) ) )
             {
                 if( brep_.nb_embeddings( surface_id ) < 1
@@ -131,7 +131,7 @@ namespace geode
                 const index_t unique_vertex_index ) const
         {
             for( const auto surface_id : components_uuids(
-                     brep_.mesh_component_vertices( unique_vertex_index,
+                     brep_.component_mesh_vertices( unique_vertex_index,
                          Surface3D::component_type_static() ) ) )
             {
                 const auto embeddings = brep_.embeddings( surface_id );
@@ -162,7 +162,7 @@ namespace geode
             index_t unique_vertex_index ) const
         {
             const auto surface_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Surface3D::component_type_static() ) );
             if( surface_uuids.size() != 1 )
             {
@@ -170,7 +170,7 @@ namespace geode
             }
             const auto& surface_id = surface_uuids[0];
             const auto block_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Block3D::component_type_static() ) );
             if( block_uuids.size() > 2 )
             {
@@ -243,15 +243,15 @@ namespace geode
                 index_t unique_vertex_index ) const
         {
             const auto surface_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Surface3D::component_type_static() ) );
             if( surface_uuids.size() < 2 )
             {
                 return false;
             }
-            const auto line_mcvs = brep_.mesh_component_vertices(
+            const auto line_cmvs = brep_.component_mesh_vertices(
                 unique_vertex_index, Line3D::component_type_static() );
-            const auto line_uuids = components_uuids( line_mcvs );
+            const auto line_uuids = components_uuids( line_cmvs );
             if( line_uuids.empty() )
             {
                 if( verbose_ )
@@ -266,10 +266,10 @@ namespace geode
             if( line_uuids.size() == 1 )
             {
                 if( !brep_
-                         .mesh_component_vertices( unique_vertex_index,
+                         .component_mesh_vertices( unique_vertex_index,
                              Corner3D::component_type_static() )
                          .empty()
-                    && line_mcvs.size() < 2 )
+                    && line_cmvs.size() < 2 )
                 {
                     if( verbose_ )
                     {

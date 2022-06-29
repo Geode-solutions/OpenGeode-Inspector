@@ -52,12 +52,12 @@ namespace geode
             index_t unique_vertex_index ) const
         {
             const auto block_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Block3D::component_type_static() ) );
             if( block_uuids.size() == 2 )
             {
                 for( const auto surface :
-                    brep_.mesh_component_vertices( unique_vertex_index,
+                    brep_.component_mesh_vertices( unique_vertex_index,
                         Surface3D::component_type_static() ) )
                 {
                     if( brep_.Relationships::is_boundary(
@@ -69,11 +69,11 @@ namespace geode
                     }
                 }
                 for( const auto line :
-                    brep_.mesh_component_vertices(
+                    brep_.component_mesh_vertices(
                         unique_vertex_index, Line3D::component_type_static() ) )
                 {
                     for( const auto surface :
-                        brep_.mesh_component_vertices( unique_vertex_index,
+                        brep_.component_mesh_vertices( unique_vertex_index,
                             Surface3D::component_type_static() ) )
                     {
                         if( brep_.Relationships::is_boundary(

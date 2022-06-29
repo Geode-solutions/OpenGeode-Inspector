@@ -47,7 +47,7 @@ namespace geode
         bool SectionCornersTopologyImpl::section_corner_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto corners = section_.mesh_component_vertices(
+            const auto corners = section_.component_mesh_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
             if( corners.empty() )
             {
@@ -73,7 +73,7 @@ namespace geode
             {
                 return false;
             }
-            for( const auto& line : section_.mesh_component_vertices(
+            for( const auto& line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( !section_.Relationships::is_boundary(
@@ -89,7 +89,7 @@ namespace geode
             index_t unique_vertex_index ) const
         {
             if( section_
-                    .mesh_component_vertices(
+                    .component_mesh_vertices(
                         unique_vertex_index, Corner2D::component_type_static() )
                     .size()
                 > 1 )
@@ -108,7 +108,7 @@ namespace geode
         bool SectionCornersTopologyImpl::corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const
         {
-            const auto corners = section_.mesh_component_vertices(
+            const auto corners = section_.component_mesh_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
             if( !corners.empty()
                 && section_.nb_embeddings( corners[0].component_id.id() ) > 1 )
@@ -129,7 +129,7 @@ namespace geode
         bool SectionCornersTopologyImpl::corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const
         {
-            const auto corners = section_.mesh_component_vertices(
+            const auto corners = section_.component_mesh_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
             if( !corners.empty()
                 && section_.nb_embeddings( corners[0].component_id.id() ) < 1
@@ -152,13 +152,13 @@ namespace geode
             SectionCornersTopologyImpl::corner_is_part_of_line_but_not_boundary(
                 index_t unique_vertex_index ) const
         {
-            const auto corners = section_.mesh_component_vertices(
+            const auto corners = section_.component_mesh_vertices(
                 unique_vertex_index, Corner2D::component_type_static() );
             if( !corners.empty() )
             {
                 const auto& corner_uuid = corners[0].component_id.id();
                 for( const auto& line :
-                    section_.mesh_component_vertices(
+                    section_.component_mesh_vertices(
                         unique_vertex_index, Line2D::component_type_static() ) )
                 {
                     if( !section_.Relationships::is_boundary(

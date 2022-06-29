@@ -52,7 +52,7 @@ namespace geode
         bool BRepLinesTopologyImpl::brep_vertex_lines_topology_is_valid(
             index_t unique_vertex_index ) const
         {
-            const auto lines = brep_.mesh_component_vertices(
+            const auto lines = brep_.component_mesh_vertices(
                 unique_vertex_index, Line3D::component_type_static() );
             if( lines.empty() )
             {
@@ -74,7 +74,7 @@ namespace geode
             vertex_is_part_of_not_boundary_nor_internal_line(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : brep_.mesh_component_vertices(
+            for( const auto line : brep_.component_mesh_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
                 if( brep_.nb_embeddings( line.component_id.id() ) < 1
@@ -97,7 +97,7 @@ namespace geode
             vertex_is_part_of_line_with_invalid_internal_topology(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : brep_.mesh_component_vertices(
+            for( const auto line : brep_.component_mesh_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
                 const auto embeddings =
@@ -129,7 +129,7 @@ namespace geode
             index_t unique_vertex_index ) const
         {
             const auto line_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Line3D::component_type_static() ) );
             if( line_uuids.size() != 1 )
             {
@@ -137,10 +137,10 @@ namespace geode
             }
             const auto& line_id = line_uuids[0];
             const auto surface_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Surface3D::component_type_static() ) );
             const auto block_uuids =
-                components_uuids( brep_.mesh_component_vertices(
+                components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Block3D::component_type_static() ) );
             if( surface_uuids.size() == 1 )
             {
@@ -216,12 +216,12 @@ namespace geode
         bool BRepLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
             index_t unique_vertex_index ) const
         {
-            if( brep_.mesh_component_vertices(
+            if( brep_.component_mesh_vertices(
                          unique_vertex_index, Line3D::component_type_static() )
                         .size()
                     > 1
                 && brep_
-                       .mesh_component_vertices( unique_vertex_index,
+                       .component_mesh_vertices( unique_vertex_index,
                            Corner3D::component_type_static() )
                        .empty() )
             {

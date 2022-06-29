@@ -54,12 +54,12 @@ namespace geode
                 index_t unique_vertex_index ) const
         {
             const auto surface_uuids =
-                components_uuids( section_.mesh_component_vertices(
+                components_uuids( section_.component_mesh_vertices(
                     unique_vertex_index, Surface2D::component_type_static() ) );
             if( surface_uuids.size() == 2 )
             {
                 for( const auto line :
-                    section_.mesh_component_vertices(
+                    section_.component_mesh_vertices(
                         unique_vertex_index, Line2D::component_type_static() ) )
                 {
                     if( section_.Relationships::is_boundary(

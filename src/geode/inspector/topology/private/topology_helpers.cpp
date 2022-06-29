@@ -47,13 +47,13 @@ namespace geode
         }
 
         std::vector< uuid > components_uuids(
-            absl::Span< const MeshComponentVertex > components )
+            absl::Span< const ComponentMeshVertex > components )
         {
             std::vector< uuid > component_uuids;
             component_uuids.reserve( components.size() );
-            for( const auto& mcv : components )
+            for( const auto& cmv : components )
             {
-                component_uuids.push_back( mcv.component_id.id() );
+                component_uuids.push_back( cmv.component_id.id() );
             }
             sort_unique( component_uuids );
             return component_uuids;

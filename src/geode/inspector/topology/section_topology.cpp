@@ -58,7 +58,7 @@ namespace
         for( const auto unique_vertex_id :
             geode::Range{ section.nb_unique_vertices() } )
         {
-            if( section.has_mesh_component_vertices(
+            if( section.has_component_mesh_vertices(
                     unique_vertex_id, component_id ) )
             {
                 return true;
