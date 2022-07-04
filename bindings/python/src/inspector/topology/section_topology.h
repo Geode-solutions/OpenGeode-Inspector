@@ -70,7 +70,10 @@
                 part_of_lines_but_not_corner_unique_vertices )                 \
         .def( "part_of_invalid_surfaces_unique_vertices",                      \
             &SectionTopologyInspector::                                        \
-                part_of_invalid_surfaces_unique_vertices )
+                part_of_invalid_surfaces_unique_vertices )                     \
+        .def( "part_of_line_and_not_on_surface_border_unique_vertices",        \
+            &SectionTopologyInspector::                                        \
+                part_of_line_and_not_on_surface_border_unique_vertices )
 
 namespace geode
 {

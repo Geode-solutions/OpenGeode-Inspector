@@ -27,6 +27,7 @@ add_geode_python_binding(
         "colocation/pointset_colocation.h"
         "colocation/surface_colocation.h"
         "colocation/solid_colocation.h"
+        "colocation/unique_vertices_colocation.h"
         "degeneration/edgedcurve_degeneration.h"
         "degeneration/solid_degeneration.h"
         "degeneration/surface_degeneration.h"

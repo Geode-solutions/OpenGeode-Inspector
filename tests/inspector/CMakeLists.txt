@@ -118,7 +118,7 @@ add_geode_test(
 )
 
 add_geode_test(
-    SOURCE "test-brep-topology.cpp"
+    SOURCE "test-brep.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry
@@ -130,7 +130,7 @@ add_geode_test(
 )
 
 add_geode_test(
-    SOURCE "test-section-topology.cpp"
+    SOURCE "test-section.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

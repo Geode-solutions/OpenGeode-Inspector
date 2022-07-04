@@ -346,7 +346,23 @@ namespace geode
             for( const auto unique_vertex_id :
                 Range{ section_.nb_unique_vertices() } )
             {
-                if( !section_vertex_surfaces_topology_is_valid(
+                if( vertex_is_part_of_invalid_surfaces_topology(
+                        unique_vertex_id ) )
+                {
+                    invalid_unique_vertices.push_back( unique_vertex_id );
+                }
+            }
+            return invalid_unique_vertices;
+        }
+
+        std::vector< index_t >
+            part_of_line_and_not_on_surface_border_unique_vertices() const
+        {
+            std::vector< index_t > invalid_unique_vertices;
+            for( const auto unique_vertex_id :
+                Range{ section_.nb_unique_vertices() } )
+            {
+                if( vertex_is_part_of_line_and_not_on_surface_border(
                         unique_vertex_id ) )
                 {
                     invalid_unique_vertices.push_back( unique_vertex_id );
@@ -466,5 +482,11 @@ namespace geode
             const
     {
         return impl_->part_of_invalid_surfaces_unique_vertices();
+    }
+
+    std::vector< index_t > SectionTopologyInspector::
+        part_of_line_and_not_on_surface_border_unique_vertices() const
+    {
+        return impl_->part_of_line_and_not_on_surface_border_unique_vertices();
     }
 } // namespace geode

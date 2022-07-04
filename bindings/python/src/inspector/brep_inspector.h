@@ -26,8 +26,8 @@
 #include <geode/inspector/brep_inspector.h>
 
 #define PYTHON_BREP_INSPECTOR()                                                \
-    pybind11::class_< BRepInspector, BRepTopologyInspector >(                  \
-        module, "BRepInspector" )                                              \
+    pybind11::class_< BRepInspector, BRepTopologyInspector,                    \
+        BRepUniqueVerticesColocation >( module, "BRepInspector" )              \
         .def( pybind11::init< const BRep& >() )                                \
         .def( pybind11::init< const BRep&, bool >() )
 

@@ -35,10 +35,9 @@
 
 #include <geode/geosciences/detail/common.h>
 
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/brep_inspector.h>
 
-geode::index_t check_components_linking(
-    geode::BRepTopologyInspector& brep_inspector )
+geode::index_t check_components_linking( geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto components_are_linked =
@@ -68,8 +67,24 @@ geode::index_t check_components_linking(
     return nb_issues;
 }
 
+geode::index_t check_unique_vertices_colocation(
+    geode::BRepInspector& brep_inspector )
+{
+    const auto nb_unique_vertices_linked_to_different_points =
+        brep_inspector.nb_unique_vertices_linked_to_different_points();
+    geode::Logger::info( "There are ",
+        nb_unique_vertices_linked_to_different_points,
+        " vertices linked to different points in space." );
+    const auto nb_colocated_unique_vertices =
+        brep_inspector.nb_colocated_unique_vertices();
+    geode::Logger::info( "There are ", nb_colocated_unique_vertices,
+        " unique vertices which are colocated in space." );
+    return nb_colocated_unique_vertices
+           + nb_unique_vertices_linked_to_different_points;
+}
+
 geode::index_t check_invalid_components_topology_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto invalid_components_unique_vertices =
@@ -82,7 +97,7 @@ geode::index_t check_invalid_components_topology_unique_vertices(
 }
 
 geode::index_t check_multiple_corners_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto multiple_corners_unique_vertices =
@@ -94,7 +109,7 @@ geode::index_t check_multiple_corners_unique_vertices(
 }
 
 geode::index_t check_multiple_internals_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto multiple_internals_corner_vertices =
@@ -107,7 +122,7 @@ geode::index_t check_multiple_internals_corner_vertices(
 }
 
 geode::index_t check_not_internal_nor_boundary_corner_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto not_internal_nor_boundary_corner_vertices =
@@ -120,7 +135,7 @@ geode::index_t check_not_internal_nor_boundary_corner_vertices(
 }
 
 geode::index_t check_line_corners_without_boundary_status(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto line_corners_without_boundary_status =
@@ -133,7 +148,7 @@ geode::index_t check_line_corners_without_boundary_status(
 }
 
 geode::index_t check_part_of_not_boundary_nor_internal_line_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_not_boundary_nor_internal_line_unique_vertices =
@@ -147,7 +162,7 @@ geode::index_t check_part_of_not_boundary_nor_internal_line_unique_vertices(
 
 geode::index_t
     check_part_of_line_with_invalid_internal_topology_unique_vertices(
-        geode::BRepTopologyInspector& brep_inspector )
+        geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_line_with_invalid_internal_topology_unique_vertices =
@@ -162,7 +177,7 @@ geode::index_t
 }
 
 geode::index_t check_part_of_invalid_unique_line_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_invalid_unique_line_unique_vertices =
@@ -175,7 +190,7 @@ geode::index_t check_part_of_invalid_unique_line_unique_vertices(
 }
 
 geode::index_t check_part_of_lines_but_not_corner_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_lines_but_not_corner_unique_vertices =
@@ -188,7 +203,7 @@ geode::index_t check_part_of_lines_but_not_corner_unique_vertices(
 }
 
 geode::index_t check_part_of_not_boundary_nor_internal_surface_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_not_boundary_nor_internal_surface_unique_vertices =
@@ -204,7 +219,7 @@ geode::index_t check_part_of_not_boundary_nor_internal_surface_unique_vertices(
 
 geode::index_t
     check_part_of_surface_with_invalid_internal_topology_unique_vertices(
-        geode::BRepTopologyInspector& brep_inspector )
+        geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_surface_with_invalid_internal_topology_unique_vertices =
@@ -219,7 +234,7 @@ geode::index_t
 }
 
 geode::index_t check_part_of_invalid_unique_surface_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_invalid_unique_surface_unique_vertices =
@@ -232,7 +247,7 @@ geode::index_t check_part_of_invalid_unique_surface_unique_vertices(
 }
 
 geode::index_t check_part_of_invalid_multiple_surfaces_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_invalid_multiple_surfaces_unique_vertices =
@@ -244,8 +259,22 @@ geode::index_t check_part_of_invalid_multiple_surfaces_unique_vertices(
     return nb_issues;
 }
 
+geode::index_t check_part_of_line_and_not_on_surface_border_unique_vertices(
+    geode::BRepInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto part_of_line_and_not_on_surface_border_unique_vertices =
+        brep_inspector.part_of_line_and_not_on_surface_border_unique_vertices();
+    geode::Logger::info( "There are ",
+        part_of_line_and_not_on_surface_border_unique_vertices.size(),
+        " vertices part of a line and a surface but not on the surface "
+        "border." );
+    nb_issues += part_of_line_and_not_on_surface_border_unique_vertices.size();
+    return nb_issues;
+}
+
 geode::index_t check_part_of_invalid_blocks_unique_vertices(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
     const auto part_of_invalid_blocks_unique_vertices =
@@ -258,11 +287,9 @@ geode::index_t check_part_of_invalid_blocks_unique_vertices(
 }
 
 geode::index_t launch_topological_validity_checks(
-    geode::BRepTopologyInspector& brep_inspector )
+    geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
-    nb_issues += check_components_linking( brep_inspector );
-    check_invalid_components_topology_unique_vertices( brep_inspector );
     nb_issues += check_multiple_corners_unique_vertices( brep_inspector );
     nb_issues += check_multiple_internals_corner_vertices( brep_inspector );
     nb_issues +=
@@ -284,7 +311,17 @@ geode::index_t launch_topological_validity_checks(
         check_part_of_invalid_unique_surface_unique_vertices( brep_inspector );
     nb_issues += check_part_of_invalid_multiple_surfaces_unique_vertices(
         brep_inspector );
+    nb_issues += check_part_of_line_and_not_on_surface_border_unique_vertices(
+        brep_inspector );
     nb_issues += check_part_of_invalid_blocks_unique_vertices( brep_inspector );
+
+    OPENGEODE_EXCEPTION(
+        nb_issues
+            == check_invalid_components_topology_unique_vertices(
+                brep_inspector ),
+        "[Test] Wrong number of issues." );
+    nb_issues += check_components_linking( brep_inspector );
+    nb_issues += check_unique_vertices_colocation( brep_inspector );
     return nb_issues;
 }
 
@@ -292,13 +329,13 @@ void check_a1_vertices_topology()
 {
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::data_path, "model_A1.og_brep" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
+    geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_A1 topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_model_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 263,
-        "[Test] model_A1 should have 263 unique "
+    OPENGEODE_EXCEPTION( nb_model_issues == 1254,
+        "[Test] model_A1 should have 1254 unique "
         "vertices with topological problems." );
 }
 
@@ -306,13 +343,13 @@ void check_a1_valid_vertices_topology()
 {
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::data_path, "model_A1_valid.og_brep" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
+    geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_A1_valid topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_model_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 263,
-        "[Test] model_A1_valid should have 263 unique "
+    OPENGEODE_EXCEPTION( nb_model_issues == 1254,
+        "[Test] model_A1_valid should have 1254 unique "
         "vertices with topological problems." );
 }
 
@@ -321,22 +358,21 @@ void check_mss_vertices_topology()
     geode::detail::initialize_geosciences_io();
     const auto model_brep = geode::load_structural_model(
         absl::StrCat( geode::data_path, "mss.og_strm" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
+    geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model mss topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_model_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 0,
-        "[Test] model mss.og_strm should have 0 unique "
+    OPENGEODE_EXCEPTION( nb_model_issues == 17,
+        "[Test] model mss.og_strm should have 17 unique "
         "vertices with topological problems." );
 }
 
 void check_model_D_vertices_topology()
 {
-    geode::detail::initialize_geosciences_io();
-    const auto model_brep = geode::load_structural_model(
-        absl::StrCat( geode::data_path, "model_D.og_brep" ) );
-    geode::BRepTopologyInspector brep_inspector{ model_brep };
+    const auto model_brep =
+        geode::load_brep( absl::StrCat( geode::data_path, "model_D.og_brep" ) );
+    geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_D topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_model_issues =
@@ -353,6 +389,7 @@ int main()
         check_a1_vertices_topology();
         check_a1_valid_vertices_topology();
         check_mss_vertices_topology();
+        check_model_D_vertices_topology();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
