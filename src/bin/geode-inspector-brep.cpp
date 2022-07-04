@@ -44,6 +44,10 @@ ABSL_FLAG( bool,
     true,
     "Toggle components linking to unique vertices criterion" );
 ABSL_FLAG( bool,
+    unique_vertices_colocation,
+    true,
+    "Toggle inspection of unique vertices colocation" );
+ABSL_FLAG( bool,
     corners,
     true,
     "Toggle inspection of corner topology through unique vertices" );
@@ -69,7 +73,7 @@ void inspect_brep( const geode::BRep& brep )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector brep_inspector{ brep, verbose };
-    absl::InlinedVector< async::task< void >, 17 > tasks;
+    absl::InlinedVector< async::task< void >, 20 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -98,6 +102,22 @@ void inspect_brep( const geode::BRep& brep )
                     .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
                 nb_blocks, " blocks meshed but not linked to a unique vertex" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb_unique_vertices =
+                brep_inspector.nb_unique_vertices_linked_to_different_points();
+            geode::Logger::info( nb_unique_vertices,
+                " unique vertices linked to mesh points at "
+                "different positions" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb_unique_vertices =
+                brep_inspector.nb_colocated_unique_vertices();
+            geode::Logger::info(
+                nb_unique_vertices, " unique vertices which are colocated" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_corners ) )
@@ -194,6 +214,14 @@ void inspect_brep( const geode::BRep& brep )
                     .size();
             geode::Logger::info( nb, " unique vertices part of multiple "
                                      "surfaces with invalid topology." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb =
+                brep_inspector
+                    .part_of_line_and_not_on_surface_border_unique_vertices()
+                    .size();
+            geode::Logger::info( nb,
+                " unique vertices part of line and not on surface border." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_blocks ) )

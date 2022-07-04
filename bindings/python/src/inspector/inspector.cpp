@@ -32,6 +32,7 @@
 #include "colocation/pointset_colocation.h"
 #include "colocation/solid_colocation.h"
 #include "colocation/surface_colocation.h"
+#include "colocation/unique_vertices_colocation.h"
 
 #include "degeneration/edgedcurve_degeneration.h"
 #include "degeneration/solid_degeneration.h"
@@ -72,6 +73,7 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_solid_facet_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
+    geode::define_models_colocation( module );
     geode::define_brep_inspector( module );
     geode::define_section_inspector( module );
     geode::define_pointset_inspector( module );

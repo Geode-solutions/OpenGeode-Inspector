@@ -23,46 +23,53 @@
 
 #pragma once
 
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
     class Section;
+    class BRep;
 } // namespace geode
 
 namespace geode
 {
-    namespace detail
+    /*!
+     * Class for inspecting the colocation of points in a PointSet
+     */
+    template < index_t dimension, typename Model >
+    class opengeode_inspector_inspector_api UniqueVerticesColocation
     {
-        /*!
-         * Class for inspecting the topology of a Section model surfaces through
-         * its unique vertices
-         */
-        class SectionSurfacesTopologyImpl
-        {
-        public:
-            SectionSurfacesTopologyImpl( const Section& section );
+        OPENGEODE_DISABLE_COPY( UniqueVerticesColocation );
 
-            SectionSurfacesTopologyImpl( const Section& section, bool verbose );
+    public:
+        UniqueVerticesColocation( const Model& mesh );
 
-            /*!
-             * Checks if the section unique vertices are parts of valid
-             * surfaces, i.e. verify:
-             * If a unique vertex is part of two surfaces, it is part of a least
-             * one line which is boundary of the two blocks.
-             */
-            bool section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index ) const;
+        UniqueVerticesColocation( const Model& mesh, bool verbose );
 
-            bool vertex_is_part_of_invalid_surfaces_topology(
-                index_t unique_vertex_index ) const;
+        ~UniqueVerticesColocation();
 
-            bool vertex_is_part_of_line_and_not_on_surface_border(
-                index_t unique_vertex_index ) const;
+        bool model_has_unique_vertices_linked_to_different_points() const;
 
-        private:
-            const Section& section_;
-            bool verbose_;
-        };
-    } // namespace detail
+        bool model_has_colocated_unique_vertices() const;
+
+        index_t nb_colocated_unique_vertices() const;
+
+        index_t nb_unique_vertices_linked_to_different_points() const;
+
+        std::vector< std::vector< index_t > >
+            colocated_unique_vertices_groups() const;
+
+        std::vector< index_t >
+            unique_vertices_linked_to_different_points() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
+    };
+
+    using SectionUniqueVerticesColocation =
+        UniqueVerticesColocation< 2, Section >;
+    using BRepUniqueVerticesColocation = UniqueVerticesColocation< 3, BRep >;
 } // namespace geode

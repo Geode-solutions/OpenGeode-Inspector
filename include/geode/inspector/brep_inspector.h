@@ -24,6 +24,8 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
+#include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/brep_topology.h>
 
 namespace geode
@@ -38,7 +40,9 @@ namespace geode
      * @extends BRepTopologyInspector
      */
     class opengeode_inspector_inspector_api BRepInspector
-        : public BRepTopologyInspector
+        : public AddInspectors< BRep,
+              BRepTopologyInspector,
+              BRepUniqueVerticesColocation >
     {
         OPENGEODE_DISABLE_COPY( BRepInspector );
 

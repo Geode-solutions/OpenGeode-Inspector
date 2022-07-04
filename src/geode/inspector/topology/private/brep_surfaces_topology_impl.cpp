@@ -26,7 +26,7 @@
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
@@ -93,6 +93,8 @@ namespace geode
                 || vertex_is_part_of_invalid_unique_surface(
                     unique_vertex_index )
                 || vertex_is_part_of_invalid_multiple_surfaces(
+                    unique_vertex_index )
+                || vertex_is_part_of_line_and_not_on_surface_border(
                     unique_vertex_index ) )
             {
                 return false;
@@ -324,6 +326,38 @@ namespace geode
                         }
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+        bool BRepSurfacesTopologyImpl::
+            vertex_is_part_of_line_and_not_on_surface_border(
+                index_t unique_vertex_index ) const
+        {
+            const auto lines = brep_.mesh_component_vertices(
+                unique_vertex_index, Line3D::component_type_static() );
+            if( lines.empty() )
+            {
+                return false;
+            }
+            for( const auto surface_vertex : brep_.mesh_component_vertices(
+                     unique_vertex_index, Surface3D::component_type_static() ) )
+            {
+                if( !brep_.surface( surface_vertex.component_id.id() )
+                         .mesh()
+                         .is_vertex_on_border( surface_vertex.vertex ) )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is part of a line and of surface with uuid '",
+                            surface_vertex.component_id.id().string(),
+                            "' but the associated vertex in the surface mesh "
+                            "is not on the mesh border." );
+                    }
+                    return true;
                 }
             }
             return false;

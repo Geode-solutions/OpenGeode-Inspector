@@ -30,6 +30,7 @@
 namespace geode
 {
     class BRep;
+    class Section;
     struct uuid;
     struct MeshComponentVertex;
 } // namespace geode
@@ -39,6 +40,8 @@ namespace geode
     namespace detail
     {
         bool brep_blocks_are_meshed( const geode::BRep& brep );
+
+        bool section_surfaces_are_meshed( const geode::Section& section );
 
         std::vector< uuid > components_uuids(
             absl::Span< const MeshComponentVertex > components );

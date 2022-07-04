@@ -34,21 +34,6 @@
 
 #include <geode/inspector/topology/private/topology_helpers.h>
 
-namespace
-{
-    bool section_surfaces_are_meshed( const geode::Section& section )
-    {
-        for( const auto& surface : section.surfaces() )
-        {
-            if( surface.mesh().nb_vertices() == 0 )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-} // namespace
-
 namespace geode
 {
     namespace detail
@@ -174,7 +159,7 @@ namespace geode
             }
             if( section_.nb_embeddings( line_id ) > 0 )
             {
-                if( section_surfaces_are_meshed( section_ )
+                if( detail::section_surfaces_are_meshed( section_ )
                     && ( surface_uuids.size() != 1
                          || !section_.Relationships::is_internal(
                              line_id, surface_uuids[0] ) ) )
