@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
@@ -152,6 +154,27 @@ namespace geode
                                 "', which is both internal and boundary of "
                                 "block with uuid '",
                                 embedding.id().string(), "'." );
+                        }
+                        return true;
+                    }
+                    if( brep_blocks_are_meshed( brep_ )
+                        && !absl::c_any_of(
+                            brep_.mesh_component_vertices( unique_vertex_index,
+                                Block3D::component_type_static() ),
+                            [&embedding]( const MeshComponentVertex& mcv ) {
+                                return mcv.component_id.id() == embedding.id();
+                            } ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of surface with uuid '",
+                                surface_id.string(),
+                                "', which is embedded in block with uuid '",
+                                embedding.id().string(),
+                                "', but the unique vertex is not linked to the "
+                                "block vertices." );
                         }
                         return true;
                     }

@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/section_lines_topology_impl.h>
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/logger.h>
 
 #include <geode/mesh/core/surface_mesh.h>
@@ -126,6 +128,32 @@ namespace geode
                             "incidence(s)." );
                     }
                     return true;
+                }
+                for( const auto& embedding :
+                    section_.embeddings( line.component_id.id() ) )
+                {
+                    if( section_surfaces_are_meshed( section_ )
+                        && !absl::c_any_of(
+                            section_.mesh_component_vertices(
+                                unique_vertex_index,
+                                Surface2D::component_type_static() ),
+                            [&embedding]( const MeshComponentVertex& mcv ) {
+                                return mcv.component_id.id() == embedding.id();
+                            } ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of line with uuid '",
+                                line.component_id.string(),
+                                "', which is embedded in surface with uuid '",
+                                embedding.id().string(),
+                                "', but the unique vertex is not linked to the "
+                                "surface mesh vertices." );
+                        }
+                        return true;
+                    }
                 }
             }
             return false;
