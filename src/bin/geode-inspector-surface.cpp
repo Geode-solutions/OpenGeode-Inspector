@@ -33,8 +33,10 @@
 
 #include <geode/mesh/core/mesh_factory.h>
 #include <geode/mesh/core/polygonal_surface.h>
+#include <geode/mesh/core/regular_grid_surface.h>
 #include <geode/mesh/core/triangulated_surface.h>
 #include <geode/mesh/io/polygonal_surface_input.h>
+#include <geode/mesh/io/regular_grid_input.h>
 #include <geode/mesh/io/triangulated_surface_input.h>
 
 #include <geode/io/mesh/detail/common.h>
@@ -133,6 +135,10 @@ int main( int argc, char* argv[] )
         {
             inspect_surface(
                 *geode::load_triangulated_surface< 2 >( filename ) );
+        }
+        else if( geode::RegularGridInputFactory2D::has_creator( ext ) )
+        {
+            inspect_surface( *geode::load_regular_grid< 2 >( filename ) );
         }
         else
         {

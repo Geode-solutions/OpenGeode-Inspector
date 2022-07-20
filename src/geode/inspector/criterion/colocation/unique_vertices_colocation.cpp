@@ -47,7 +47,7 @@ namespace
 {
     template < geode::index_t dimension, typename Model >
     bool model_cmv_is_colocated_on_point_base( const Model& model,
-        const geode::MeshComponentVertex& cmv,
+        const geode::ComponentMeshVertex& cmv,
         const geode::Point< dimension >& point )
     {
         if( cmv.component_id.type()
@@ -71,14 +71,14 @@ namespace
     }
 
     bool model_cmv_is_colocated_on_point( const geode::Section& model,
-        const geode::MeshComponentVertex& cmv,
+        const geode::ComponentMeshVertex& cmv,
         const geode::Point2D& point )
     {
         return model_cmv_is_colocated_on_point_base( model, cmv, point );
     }
 
     bool model_cmv_is_colocated_on_point( const geode::BRep& model,
-        const geode::MeshComponentVertex& cmv,
+        const geode::ComponentMeshVertex& cmv,
         const geode::Point3D& point )
     {
         if( cmv.component_id.type() == geode::Block3D::component_type_static() )
@@ -92,7 +92,7 @@ namespace
 
     template < geode::index_t dimension, typename Model >
     bool model_cmvs_are_colocated_on_point( const Model& model,
-        const std::vector< geode::MeshComponentVertex >& cmvs,
+        const std::vector< geode::ComponentMeshVertex >& cmvs,
         const geode::Point< dimension >& point )
     {
         for( const auto& cmv : cmvs )
@@ -107,7 +107,7 @@ namespace
 
     template < geode::index_t dimension, typename Model >
     geode::Point< dimension > model_unique_vertex_point_base(
-        const Model& model, const geode::MeshComponentVertex& cmv )
+        const Model& model, const geode::ComponentMeshVertex& cmv )
     {
         if( cmv.component_id.type()
             == geode::Line< dimension >::component_type_static() )
@@ -126,14 +126,14 @@ namespace
     }
 
     geode::Point2D model_unique_vertex_point(
-        const geode::Section& model, const geode::MeshComponentVertex& cmv )
+        const geode::Section& model, const geode::ComponentMeshVertex& cmv )
     {
         return model_unique_vertex_point_base< 2, geode::Section >(
             model, cmv );
     }
 
     geode::Point3D model_unique_vertex_point(
-        const geode::BRep& model, const geode::MeshComponentVertex& cmv )
+        const geode::BRep& model, const geode::ComponentMeshVertex& cmv )
     {
         if( cmv.component_id.type() == geode::Block3D::component_type_static() )
         {
@@ -162,7 +162,7 @@ namespace geode
                 Range{ model.nb_unique_vertices() } )
             {
                 const auto& cmvs =
-                    model.mesh_component_vertices( unique_vertex_id );
+                    model.component_mesh_vertices( unique_vertex_id );
                 if( cmvs.empty() )
                 {
                     continue;
@@ -178,7 +178,7 @@ namespace geode
                 Range{ model_.nb_unique_vertices() } )
             {
                 if( !model_cmvs_are_colocated_on_point( model_,
-                        model_.mesh_component_vertices( unique_vertex_id ),
+                        model_.component_mesh_vertices( unique_vertex_id ),
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
                     if( verbose_ )
@@ -209,7 +209,7 @@ namespace geode
                 Range{ model_.nb_unique_vertices() } )
             {
                 if( !model_cmvs_are_colocated_on_point( model_,
-                        model_.mesh_component_vertices( unique_vertex_id ),
+                        model_.component_mesh_vertices( unique_vertex_id ),
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
                     if( verbose_ )
@@ -241,7 +241,7 @@ namespace geode
                 Range{ model_.nb_unique_vertices() } )
             {
                 if( !model_cmvs_are_colocated_on_point( model_,
-                        model_.mesh_component_vertices( unique_vertex_id ),
+                        model_.component_mesh_vertices( unique_vertex_id ),
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
                     if( verbose_ )

@@ -34,9 +34,11 @@
 #include <geode/mesh/core/hybrid_solid.h>
 #include <geode/mesh/core/mesh_factory.h>
 #include <geode/mesh/core/polyhedral_solid.h>
+#include <geode/mesh/core/regular_grid_solid.h>
 #include <geode/mesh/core/tetrahedral_solid.h>
 #include <geode/mesh/io/hybrid_solid_input.h>
 #include <geode/mesh/io/polyhedral_solid_input.h>
+#include <geode/mesh/io/regular_grid_input.h>
 #include <geode/mesh/io/tetrahedral_solid_input.h>
 
 #include <geode/io/mesh/detail/common.h>
@@ -126,6 +128,10 @@ int main( int argc, char* argv[] )
         else if( geode::HybridSolidInputFactory3D::has_creator( ext ) )
         {
             inspect_solid( *geode::load_hybrid_solid< 3 >( filename ) );
+        }
+        else if( geode::RegularGridInputFactory3D::has_creator( ext ) )
+        {
+            inspect_solid( *geode::load_regular_grid< 3 >( filename ) );
         }
         else
         {

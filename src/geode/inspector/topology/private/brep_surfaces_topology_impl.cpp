@@ -159,9 +159,9 @@ namespace geode
                     }
                     if( brep_blocks_are_meshed( brep_ )
                         && !absl::c_any_of(
-                            brep_.mesh_component_vertices( unique_vertex_index,
+                            brep_.component_mesh_vertices( unique_vertex_index,
                                 Block3D::component_type_static() ),
-                            [&embedding]( const MeshComponentVertex& cmv ) {
+                            [&embedding]( const ComponentMeshVertex& cmv ) {
                                 return cmv.component_id.id() == embedding.id();
                             } ) )
                     {
@@ -358,13 +358,13 @@ namespace geode
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const
         {
-            const auto lines = brep_.mesh_component_vertices(
+            const auto lines = brep_.component_mesh_vertices(
                 unique_vertex_index, Line3D::component_type_static() );
             if( lines.empty() )
             {
                 return false;
             }
-            for( const auto surface_vertex : brep_.mesh_component_vertices(
+            for( const auto surface_vertex : brep_.component_mesh_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
             {
                 if( !brep_.surface( surface_vertex.component_id.id() )

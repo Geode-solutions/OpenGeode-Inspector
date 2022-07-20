@@ -56,7 +56,7 @@ namespace geode
                 index_t unique_vertex_index ) const
         {
             if( section_
-                    .mesh_component_vertices( unique_vertex_index,
+                    .component_mesh_vertices( unique_vertex_index,
                         Surface2D::component_type_static() )
                     .empty() )
             {
@@ -114,13 +114,13 @@ namespace geode
                 return false;
             }
             if( section_
-                    .mesh_component_vertices(
+                    .component_mesh_vertices(
                         unique_vertex_index, Line2D::component_type_static() )
                     .empty() )
             {
                 return false;
             }
-            for( const auto surface_vertex : section_.mesh_component_vertices(
+            for( const auto surface_vertex : section_.component_mesh_vertices(
                      unique_vertex_index, Surface2D::component_type_static() ) )
             {
                 if( !section_.surface( surface_vertex.component_id.id() )

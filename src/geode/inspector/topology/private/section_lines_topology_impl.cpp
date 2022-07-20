@@ -134,10 +134,10 @@ namespace geode
                 {
                     if( section_surfaces_are_meshed( section_ )
                         && !absl::c_any_of(
-                            section_.mesh_component_vertices(
+                            section_.component_mesh_vertices(
                                 unique_vertex_index,
                                 Surface2D::component_type_static() ),
-                            [&embedding]( const MeshComponentVertex& cmv ) {
+                            [&embedding]( const ComponentMeshVertex& cmv ) {
                                 return cmv.component_id.id() == embedding.id();
                             } ) )
                     {
