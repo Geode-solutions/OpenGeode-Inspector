@@ -1,1 +1,4 @@
 OpenGeode-core >= 11.0.1, == 11.*
+OpenGeode-IO >= 5.19.0, == 5.*
+OpenGeode-Geosciences >= 5.5.0, == 5.*
+OpenGeode-GeosciencesIO >= 3.9.0, == 3.*

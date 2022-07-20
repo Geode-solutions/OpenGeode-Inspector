@@ -26,8 +26,8 @@
 #include <geode/inspector/section_inspector.h>
 
 #define PYTHON_SECTION_INSPECTOR()                                             \
-    pybind11::class_< SectionInspector, SectionTopologyInspector >(            \
-        module, "SectionInspector" )                                           \
+    pybind11::class_< SectionInspector, SectionTopologyInspector,              \
+        SectionUniqueVerticesColocation >( module, "SectionInspector" )        \
         .def( pybind11::init< const Section& >() )                             \
         .def( pybind11::init< const Section&, bool >() )
 

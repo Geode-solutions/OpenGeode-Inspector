@@ -76,6 +76,9 @@ namespace geode
             bool vertex_is_part_of_invalid_multiple_surfaces(
                 index_t unique_vertex_index ) const;
 
+            bool vertex_is_part_of_line_and_not_on_surface_border(
+                index_t unique_vertex_index ) const;
+
         private:
             const BRep& brep_;
             bool verbose_;

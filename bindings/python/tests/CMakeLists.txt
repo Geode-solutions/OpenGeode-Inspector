@@ -25,6 +25,12 @@ add_geode_python_test(
 )
 
 add_geode_python_test(
+    SOURCE "test-py-section-topology.py"
+    DEPENDENCIES 
+        ${PROJECT_NAME}::py_inspector
+)
+
+add_geode_python_test(
     SOURCE "test-py-edgedcurve-colocation.py"
     DEPENDENCIES 
         ${PROJECT_NAME}::py_inspector

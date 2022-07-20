@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/brep_lines_topology_impl.h>
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/logger.h>
 
 #include <geode/mesh/core/solid_mesh.h>
@@ -97,26 +99,51 @@ namespace geode
             vertex_is_part_of_line_with_invalid_internal_topology(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : brep_.component_mesh_vertices(
-                     unique_vertex_index, Line3D::component_type_static() ) )
+            for( const auto line_id :
+                components_uuids( brep_.component_mesh_vertices(
+                    unique_vertex_index, Line3D::component_type_static() ) ) )
             {
-                const auto embeddings =
-                    brep_.embeddings( line.component_id.id() );
+                const auto embeddings = brep_.embeddings( line_id );
 
                 for( const auto embedding : embeddings )
                 {
                     if( brep_.Relationships::is_boundary(
-                            line.component_id.id(), embedding.id() ) )
+                            line_id, embedding.id() ) )
                     {
                         if( verbose_ )
                         {
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index,
                                 " is part of line with uuid '",
-                                line.component_id.id().string(),
+                                line_id.string(),
                                 "', which is both boundary and embedded in "
                                 "surface with uuid '",
                                 embedding.id().string(), "'." );
+                        }
+                        return true;
+                    }
+                    if( embedding.type() == Block3D::component_type_static()
+                        && !brep_blocks_are_meshed( brep_ ) )
+                    {
+                        continue;
+                    }
+                    if( !absl::c_any_of(
+                            brep_.component_mesh_vertices(
+                                unique_vertex_index, embedding.type() ),
+                            [&embedding]( const ComponentMeshVertex& cmv ) {
+                                return cmv.component_id.id() == embedding.id();
+                            } ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of line with uuid '",
+                                line_id.string(),
+                                "', which is embedded in surface with uuid '",
+                                embedding.id().string(),
+                                "', but the unique vertex is not linked to the "
+                                "surface mesh vertices." );
                         }
                         return true;
                     }

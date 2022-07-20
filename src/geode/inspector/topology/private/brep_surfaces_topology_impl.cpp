@@ -23,10 +23,12 @@
 
 #include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
@@ -93,6 +95,8 @@ namespace geode
                 || vertex_is_part_of_invalid_unique_surface(
                     unique_vertex_index )
                 || vertex_is_part_of_invalid_multiple_surfaces(
+                    unique_vertex_index )
+                || vertex_is_part_of_line_and_not_on_surface_border(
                     unique_vertex_index ) )
             {
                 return false;
@@ -150,6 +154,27 @@ namespace geode
                                 "', which is both internal and boundary of "
                                 "block with uuid '",
                                 embedding.id().string(), "'." );
+                        }
+                        return true;
+                    }
+                    if( brep_blocks_are_meshed( brep_ )
+                        && !absl::c_any_of(
+                            brep_.mesh_component_vertices( unique_vertex_index,
+                                Block3D::component_type_static() ),
+                            [&embedding]( const MeshComponentVertex& cmv ) {
+                                return cmv.component_id.id() == embedding.id();
+                            } ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of surface with uuid '",
+                                surface_id.string(),
+                                "', which is embedded in block with uuid '",
+                                embedding.id().string(),
+                                "', but the unique vertex is not linked to the "
+                                "block vertices." );
                         }
                         return true;
                     }
@@ -324,6 +349,38 @@ namespace geode
                         }
                         return true;
                     }
+                }
+            }
+            return false;
+        }
+
+        bool BRepSurfacesTopologyImpl::
+            vertex_is_part_of_line_and_not_on_surface_border(
+                index_t unique_vertex_index ) const
+        {
+            const auto lines = brep_.mesh_component_vertices(
+                unique_vertex_index, Line3D::component_type_static() );
+            if( lines.empty() )
+            {
+                return false;
+            }
+            for( const auto surface_vertex : brep_.mesh_component_vertices(
+                     unique_vertex_index, Surface3D::component_type_static() ) )
+            {
+                if( !brep_.surface( surface_vertex.component_id.id() )
+                         .mesh()
+                         .is_vertex_on_border( surface_vertex.vertex ) )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is part of a line and of surface with uuid '",
+                            surface_vertex.component_id.id().string(),
+                            "' but the associated vertex in the surface mesh "
+                            "is not on the mesh border." );
+                    }
+                    return true;
                 }
             }
             return false;

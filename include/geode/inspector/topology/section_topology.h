@@ -88,6 +88,9 @@ namespace geode
 
         std::vector< index_t > part_of_invalid_surfaces_unique_vertices() const;
 
+        std::vector< index_t >
+            part_of_line_and_not_on_surface_border_unique_vertices() const;
+
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };

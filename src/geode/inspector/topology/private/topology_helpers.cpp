@@ -26,9 +26,12 @@
 #include <geode/basic/algorithm.h>
 
 #include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/model/mixin/core/block.h>
+#include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
+#include <geode/model/representation/core/section.h>
 
 namespace geode
 {
@@ -38,7 +41,19 @@ namespace geode
         {
             for( const auto& block : brep.blocks() )
             {
-                if( block.mesh().nb_vertices() == 0 )
+                if( block.mesh().nb_polyhedra() == 0 )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool section_surfaces_are_meshed( const geode::Section& section )
+        {
+            for( const auto& surface : section.surfaces() )
+            {
+                if( surface.mesh().nb_polygons() == 0 )
                 {
                     return false;
                 }

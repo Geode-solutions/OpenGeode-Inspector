@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/private/section_lines_topology_impl.h>
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/logger.h>
 
 #include <geode/mesh/core/surface_mesh.h>
@@ -33,21 +35,6 @@
 #include <geode/model/representation/core/section.h>
 
 #include <geode/inspector/topology/private/topology_helpers.h>
-
-namespace
-{
-    bool section_surfaces_are_meshed( const geode::Section& section )
-    {
-        for( const auto& surface : section.surfaces() )
-        {
-            if( surface.mesh().nb_vertices() == 0 )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-} // namespace
 
 namespace geode
 {
@@ -142,6 +129,32 @@ namespace geode
                     }
                     return true;
                 }
+                for( const auto& embedding :
+                    section_.embeddings( line.component_id.id() ) )
+                {
+                    if( section_surfaces_are_meshed( section_ )
+                        && !absl::c_any_of(
+                            section_.mesh_component_vertices(
+                                unique_vertex_index,
+                                Surface2D::component_type_static() ),
+                            [&embedding]( const MeshComponentVertex& cmv ) {
+                                return cmv.component_id.id() == embedding.id();
+                            } ) )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index,
+                                " is part of line with uuid '",
+                                line.component_id.string(),
+                                "', which is embedded in surface with uuid '",
+                                embedding.id().string(),
+                                "', but the unique vertex is not linked to the "
+                                "surface mesh vertices." );
+                        }
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -174,7 +187,7 @@ namespace geode
             }
             if( section_.nb_embeddings( line_id ) > 0 )
             {
-                if( section_surfaces_are_meshed( section_ )
+                if( detail::section_surfaces_are_meshed( section_ )
                     && ( surface_uuids.size() != 1
                          || !section_.Relationships::is_internal(
                              line_id, surface_uuids[0] ) ) )

@@ -28,12 +28,16 @@
 namespace geode
 {
     SectionInspector::SectionInspector( const Section& section )
-        : SectionTopologyInspector{ section }
+        : AddInspectors< Section,
+            SectionTopologyInspector,
+            SectionUniqueVerticesColocation >{ section }
     {
     }
 
     SectionInspector::SectionInspector( const Section& section, bool verbose )
-        : SectionTopologyInspector{ section, verbose }
+        : AddInspectors< Section,
+            SectionTopologyInspector,
+            SectionUniqueVerticesColocation >{ section, verbose }
     {
     }
 } // namespace geode

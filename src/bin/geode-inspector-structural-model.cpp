@@ -1,5 +1,24 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions. All rights reserved.
+ * Copyright (c) 2019 - 2022 Geode-solutions
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
  */
 
 #include <absl/flags/flag.h>
@@ -24,6 +43,10 @@ ABSL_FLAG( bool,
     component_linking,
     true,
     "Toggle components linking to unique vertices criterion" );
+ABSL_FLAG( bool,
+    unique_vertices_colocation,
+    true,
+    "Toggle inspection of unique vertices colocation" );
 ABSL_FLAG( bool,
     corners,
     true,
@@ -50,7 +73,7 @@ void inspect_model( const geode::StructuralModel& model )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector model_inspector{ model, verbose };
-    absl::InlinedVector< async::task< void >, 17 > tasks;
+    absl::InlinedVector< async::task< void >, 20 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&model_inspector] {
@@ -79,6 +102,22 @@ void inspect_model( const geode::StructuralModel& model )
                     .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
                 nb_blocks, " blocks meshed but not linked to a unique vertex" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb_unique_vertices =
+                model_inspector.nb_unique_vertices_linked_to_different_points();
+            geode::Logger::info( nb_unique_vertices,
+                " unique vertices linked to mesh points at "
+                "different positions" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb_unique_vertices =
+                model_inspector.nb_colocated_unique_vertices();
+            geode::Logger::info(
+                nb_unique_vertices, " unique vertices which are colocated" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_corners ) )
@@ -175,6 +214,14 @@ void inspect_model( const geode::StructuralModel& model )
                     .size();
             geode::Logger::info( nb, " unique vertices part of multiple "
                                      "surfaces with invalid topology." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector
+                    .part_of_line_and_not_on_surface_border_unique_vertices()
+                    .size();
+            geode::Logger::info( nb,
+                " unique vertices part of line and not on surface border." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_blocks ) )

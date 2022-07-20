@@ -83,6 +83,9 @@
         .def( "part_of_invalid_multiple_surfaces_unique_vertices",               \
             &BRepTopologyInspector::                                             \
                 part_of_invalid_multiple_surfaces_unique_vertices )              \
+        .def( "part_of_line_and_not_on_surface_border_unique_vertices",          \
+            &BRepTopologyInspector::                                             \
+                part_of_line_and_not_on_surface_border_unique_vertices )         \
         .def( "part_of_invalid_blocks_unique_vertices",                          \
             &BRepTopologyInspector::part_of_invalid_blocks_unique_vertices )
 
