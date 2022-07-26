@@ -172,6 +172,30 @@ def launch_topological_validity_checks( brep_inspector ):
     nb_invalids += check_unique_vertices_colocation( brep_inspector )
     return nb_invalids
 
+def check_component_meshes_adjacency( brep_inspector ):
+    nb_wrong_adjacencies = 0
+    surfaces_wrong_adjacencies = brep_inspector.surfaces_nb_edges_with_wrong_adjacencies()
+    blocks_wrong_adjacencies = brep_inspector.blocks_nb_facets_with_wrong_adjacencies()
+    for surf in surfaces_wrong_adjacencies:
+        print( "There are ", surf[1], " edges with wrong adjacencies in mesh with id ", surf[0] )
+        nb_wrong_adjacencies += surf[1]
+    for block in blocks_wrong_adjacencies:
+        print( "There are ", block[1], " edges with wrong adjacencies in mesh with id ", block[0] )
+        nb_wrong_adjacencies += block[1]
+    return nb_wrong_adjacencies
+
+def check_component_meshes_colocation( brep_inspector ):
+    nb_colocated = 0
+    components_nb_colocated_points = brep_inspector.components_nb_colocated_points()
+    for colocated in components_nb_colocated_points:
+        print( "There are ", colocated[1], " colocated vertices in mesh with id ", colocated[0] )
+        nb_colocated += colocated[1]
+    return nb_colocated
+
+def launch_component_meshes_validity_checks( brep_inspector ):
+    nb_invalids = check_component_meshes_colocation( brep_inspector )
+    return nb_invalids
+
 def check_a1_vertices_topology():
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
@@ -184,6 +208,9 @@ def check_a1_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 1254:
         raise ValueError( "[Test] model model_A1 should have 1254 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model model_A1 should have 0 component meshes issues." )
 
 def check_a1_valid_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -197,6 +224,9 @@ def check_a1_valid_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 1254:
         raise ValueError( "[Test] model model_A1_valid should have 1254 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model model_A1_valid should have 0 component meshes issues." )
 
 def check_mss_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -210,6 +240,9 @@ def check_mss_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 17:
         raise ValueError( "[Test] model mss.og_strm should have 17 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 148:
+        raise ValueError( "[Test] model mss should have 148 component meshes issues." )
 
 def check_model_D_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -223,6 +256,9 @@ def check_model_D_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 0:
         raise ValueError( "[Test] model model_D.og_brep should have 0 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 2:
+        raise ValueError( "[Test] model_D should have 2 component meshes issues." )
 
 if __name__ == '__main__':
     check_a1_vertices_topology()

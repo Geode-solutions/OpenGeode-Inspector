@@ -25,15 +25,19 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
+#include "adjacency/brep_meshes_adjacency.h"
+#include "adjacency/section_meshes_adjacency.h"
 #include "adjacency/solid_adjacency.h"
 #include "adjacency/surface_adjacency.h"
 
+#include "colocation/component_meshes_colocation.h"
 #include "colocation/edgedcurve_colocation.h"
 #include "colocation/pointset_colocation.h"
 #include "colocation/solid_colocation.h"
 #include "colocation/surface_colocation.h"
 #include "colocation/unique_vertices_colocation.h"
 
+#include "degeneration/component_meshes_degeneration.h"
 #include "degeneration/edgedcurve_degeneration.h"
 #include "degeneration/solid_degeneration.h"
 #include "degeneration/surface_degeneration.h"
@@ -59,13 +63,18 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     module.doc() = "OpenGeode-Inspector Python binding";
     geode::define_surface_adjacency( module );
     geode::define_solid_adjacency( module );
+    geode::define_section_meshes_adjacency( module );
+    geode::define_brep_meshes_adjacency( module );
     geode::define_edgedcurve_colocation( module );
     geode::define_pointset_colocation( module );
-    geode::define_solid_colocation( module );
     geode::define_surface_colocation( module );
+    geode::define_solid_colocation( module );
+    geode::define_models_meshes_colocation( module );
+    geode::define_models_uv_colocation( module );
     geode::define_edgedcurve_degeneration( module );
     geode::define_solid_degeneration( module );
     geode::define_surface_degeneration( module );
+    geode::define_models_meshes_degeneration( module );
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );
     geode::define_solid_edge_manifold( module );
@@ -73,7 +82,6 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_solid_facet_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
-    geode::define_models_colocation( module );
     geode::define_brep_inspector( module );
     geode::define_section_inspector( module );
     geode::define_pointset_inspector( module );

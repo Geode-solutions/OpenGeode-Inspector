@@ -24,7 +24,10 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
+#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
+#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/section_topology.h>
 
@@ -37,7 +40,10 @@ namespace geode
     class opengeode_inspector_inspector_api SectionInspector
         : public AddInspectors< Section,
               SectionTopologyInspector,
-              SectionUniqueVerticesColocation >
+              SectionUniqueVerticesColocation,
+              SectionComponentMeshesAdjacency,
+              SectionComponentMeshesColocation,
+              SectionComponentMeshesDegeneration >
     {
         OPENGEODE_DISABLE_COPY( SectionInspector );
 

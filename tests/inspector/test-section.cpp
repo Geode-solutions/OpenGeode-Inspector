@@ -296,7 +296,78 @@ geode::index_t launch_topological_validity_checks(
     return nb_errors;
 }
 
-void check_section_vertices_topology()
+geode::index_t check_components_adjacency(
+    geode::SectionInspector& section_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto surfaces_wrong_adjacencies =
+        section_inspector.surfaces_nb_edges_with_wrong_adjacencies();
+    if( surfaces_wrong_adjacencies.empty() )
+    {
+        geode::Logger::info(
+            "Section surfaces meshes have no adjacency problems." );
+    }
+    for( const auto& comp_wrong_adj : surfaces_wrong_adjacencies )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            comp_wrong_adj.first.string(), " has ", comp_wrong_adj.second,
+            " edges with adjacency problems." );
+        nb_issues += comp_wrong_adj.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t check_components_colocation(
+    geode::SectionInspector& section_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_colocated_pts =
+        section_inspector.components_nb_colocated_points();
+    if( components_colocated_pts.empty() )
+    {
+        geode::Logger::info(
+            "Section component meshes have no colocated points." );
+    }
+    for( const auto& colocated : components_colocated_pts )
+    {
+        geode::Logger::info( "Mesh of component with uuid ",
+            colocated.first.string(), " has ", colocated.second,
+            " colocated points." );
+        nb_issues += colocated.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t check_components_degeneration(
+    geode::SectionInspector& section_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_degenerated_edges =
+        section_inspector.components_nb_degenerated_edges();
+    if( components_degenerated_edges.empty() )
+    {
+        geode::Logger::info( "Section component meshes are not degenerated." );
+    }
+    for( const auto& degenerated : components_degenerated_edges )
+    {
+        geode::Logger::info( "Mesh of component with uuid ",
+            degenerated.first.string(), " has ", degenerated.second,
+            " degenerated edges." );
+        nb_issues += degenerated.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t launch_component_meshes_validity_checks(
+    geode::SectionInspector& section_inspector )
+{
+    auto nb_issues = check_components_adjacency( section_inspector );
+    nb_issues += check_components_colocation( section_inspector );
+    nb_issues += check_components_degeneration( section_inspector );
+    return nb_issues;
+}
+
+void check_section()
 {
     const auto model_section = geode::load_section(
         absl::StrCat( geode::data_path, "vertical_lines.og_sctn" ) );
@@ -306,14 +377,19 @@ void check_section_vertices_topology()
     const auto nb_invalids =
         launch_topological_validity_checks( section_inspector );
     OPENGEODE_EXCEPTION( nb_invalids == 0,
-        "[Test] Model is supposed to ba valid but is shown as invalid." );
+        "[Test] Model is supposed to be valid but is shown as invalid." );
+    const auto nb_mesh_invalids =
+        launch_component_meshes_validity_checks( section_inspector );
+    OPENGEODE_EXCEPTION(
+        nb_mesh_invalids == 0, "[Test] Model component meshes are supposed to "
+                               "be valid but are shown as invalid." );
 }
 
 int main()
 {
     try
     {
-        check_section_vertices_topology();
+        check_section();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

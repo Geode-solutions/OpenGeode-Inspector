@@ -23,42 +23,51 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
+
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-    struct PolyhedronFacet;
+    class Section;
+    class BRep;
+    struct uuid;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the facets of a SolidMesh
+     * Class for inspecting the degeneration of edges in the Component Meshes of
+     * a Model (BRep or Section).
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshAdjacency
+    template < index_t dimension, typename Model >
+    class opengeode_inspector_inspector_api ComponentMeshesDegeneration
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        ComponentMeshesDegeneration( const Model& model );
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+        ComponentMeshesDegeneration( const Model& model, bool verbose );
 
-        ~SolidMeshAdjacency();
+        ~ComponentMeshesDegeneration();
 
-        bool mesh_has_wrong_adjacencies() const;
+        std::vector< uuid > components_with_degenerated_edges() const;
 
-        index_t nb_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, index_t >
+            components_nb_degenerated_edges() const;
 
-        std::vector< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, std::vector< index_t > >
+            components_degenerated_edges() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_3D( SolidMeshAdjacency );
+
+    using SectionComponentMeshesDegeneration =
+        ComponentMeshesDegeneration< 2, Section >;
+    using BRepComponentMeshesDegeneration =
+        ComponentMeshesDegeneration< 3, BRep >;
 } // namespace geode

@@ -23,42 +23,52 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
+
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
+    class BRep;
+    struct uuid;
+    struct PolygonEdge;
     struct PolyhedronFacet;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the facets of a SolidMesh
+     * Class for inspecting the adjacency of the surface edges and solid facets
+     * in the Component Meshes of a BRep.
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshAdjacency
+    class opengeode_inspector_inspector_api BRepComponentMeshesAdjacency
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( BRepComponentMeshesAdjacency );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        BRepComponentMeshesAdjacency( const BRep& model );
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+        BRepComponentMeshesAdjacency( const BRep& model, bool verbose );
 
-        ~SolidMeshAdjacency();
+        ~BRepComponentMeshesAdjacency();
 
-        bool mesh_has_wrong_adjacencies() const;
+        std::vector< uuid > components_with_wrong_adjacencies() const;
 
-        index_t nb_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, index_t >
+            surfaces_nb_edges_with_wrong_adjacencies() const;
 
-        std::vector< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies() const;
+
+        absl::flat_hash_map< uuid, index_t >
+            blocks_nb_facets_with_wrong_adjacencies() const;
+
+        absl::flat_hash_map< uuid, std::vector< PolyhedronFacet > >
+            blocks_facets_with_wrong_adjacencies() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_3D( SolidMeshAdjacency );
 } // namespace geode

@@ -27,7 +27,9 @@
 
 #define PYTHON_BREP_INSPECTOR()                                                \
     pybind11::class_< BRepInspector, BRepTopologyInspector,                    \
-        BRepUniqueVerticesColocation >( module, "BRepInspector" )              \
+        BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,            \
+        BRepComponentMeshesColocation, BRepComponentMeshesDegeneration >(      \
+        module, "BRepInspector" )                                              \
         .def( pybind11::init< const BRep& >() )                                \
         .def( pybind11::init< const BRep&, bool >() )
 

@@ -29,7 +29,6 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
     class Section;
     class BRep;
 } // namespace geode
@@ -37,7 +36,8 @@ namespace geode
 namespace geode
 {
     /*!
-     * Class for inspecting the colocation of points in a PointSet
+     * Class for inspecting the colocation of unique vertices in a Model (BRep
+     * or Section)
      */
     template < index_t dimension, typename Model >
     class opengeode_inspector_inspector_api UniqueVerticesColocation
@@ -45,9 +45,9 @@ namespace geode
         OPENGEODE_DISABLE_COPY( UniqueVerticesColocation );
 
     public:
-        UniqueVerticesColocation( const Model& mesh );
+        UniqueVerticesColocation( const Model& model );
 
-        UniqueVerticesColocation( const Model& mesh, bool verbose );
+        UniqueVerticesColocation( const Model& model, bool verbose );
 
         ~UniqueVerticesColocation();
 

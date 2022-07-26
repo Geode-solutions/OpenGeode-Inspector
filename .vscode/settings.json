@@ -4,7 +4,8 @@
         "${workspaceFolder}/include",
         "${workspaceFolder}/build",
         "${workspaceFolder:OpenGeode}/build/opengeode/install/include",
-        "${workspaceFolder:OpenGeode-IO}/build/opengeode-io/install/include"
+        "${workspaceFolder:OpenGeode-IO}/build/opengeode-io/install/include",
+        "${workspaceFolder:OpenGeode-Geosciences}/include"
     ],
     "files.watcherExclude": {
         "${workspaceFolder}/build/**": true
