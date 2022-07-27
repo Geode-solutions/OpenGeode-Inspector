@@ -28,6 +28,7 @@
 #include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
 #include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/brep_topology.h>
 
@@ -48,7 +49,8 @@ namespace geode
               BRepUniqueVerticesColocation,
               BRepComponentMeshesAdjacency,
               BRepComponentMeshesColocation,
-              BRepComponentMeshesDegeneration >
+              BRepComponentMeshesDegeneration,
+              BRepComponentMeshesManifold >
     {
         OPENGEODE_DISABLE_COPY( BRepInspector );
 

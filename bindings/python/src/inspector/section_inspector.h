@@ -28,8 +28,8 @@
 #define PYTHON_SECTION_INSPECTOR()                                             \
     pybind11::class_< SectionInspector, SectionTopologyInspector,              \
         SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,      \
-        SectionComponentMeshesColocation,                                      \
-        SectionComponentMeshesDegeneration >( module, "SectionInspector" )     \
+        SectionComponentMeshesColocation, SectionComponentMeshesDegeneration,  \
+        SectionComponentMeshesManifold >( module, "SectionInspector" )         \
         .def( pybind11::init< const Section& >() )                             \
         .def( pybind11::init< const Section&, bool >() )
 

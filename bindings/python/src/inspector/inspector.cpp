@@ -42,6 +42,8 @@
 #include "degeneration/solid_degeneration.h"
 #include "degeneration/surface_degeneration.h"
 
+#include "manifold/brep_meshes_manifold.h"
+#include "manifold/section_meshes_manifold.h"
 #include "manifold/solid_edge_manifold.h"
 #include "manifold/solid_facet_manifold.h"
 #include "manifold/solid_vertex_manifold.h"
@@ -57,6 +59,18 @@
 #include "section_inspector.h"
 #include "solid_inspector.h"
 #include "surface_inspector.h"
+
+namespace pybind11
+{
+    namespace detail
+    {
+        template < typename Key, typename Value >
+        struct type_caster< absl::flat_hash_map< Key, Value > >
+            : map_caster< absl::flat_hash_map< Key, Value >, Key, Value >
+        {
+        };
+    } // namespace detail
+} // namespace pybind11
 
 PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
 {
@@ -80,6 +94,8 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_solid_edge_manifold( module );
     geode::define_solid_vertex_manifold( module );
     geode::define_solid_facet_manifold( module );
+    geode::define_brep_meshes_manifold( module );
+    geode::define_section_meshes_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
     geode::define_brep_inspector( module );

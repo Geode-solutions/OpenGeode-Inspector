@@ -127,15 +127,60 @@ def launch_topological_validity_checks( section_inspector ):
     nb_issues += check_line_corners_without_boundary_status( section_inspector )
     nb_issues += check_part_of_not_boundary_nor_internal_line_unique_vertices( section_inspector )
     nb_issues += check_part_of_invalid_unique_line_unique_vertices( section_inspector )
-    nb_issues += check_part_of_invalid_unique_line_unique_vertices( section_inspector )
     nb_issues += check_part_of_lines_but_not_corner_unique_vertices( section_inspector )
     nb_issues += check_part_of_invalid_surfaces_unique_vertices( section_inspector )
+    nb_issues += check_part_of_line_with_invalid_internal_topology_unique_vertices( section_inspector )
 
     if nb_issues != check_invalid_components_topology_unique_vertices( section_inspector ):
         raise ValueError( "[Test] Wrong number of invalid checks." )
     nb_issues += check_components_linking( section_inspector )
     nb_issues += check_unique_vertices_colocation( section_inspector )
     return nb_issues
+
+def check_component_meshes_adjacency( section_inspector ):
+    nb_wrong_adjacencies = 0
+    surfaces_wrong_adjacencies = section_inspector.surfaces_nb_edges_with_wrong_adjacencies()
+    for surf_id in surfaces_wrong_adjacencies:
+        print( "There are ", surfaces_wrong_adjacencies[surf_id], " edges with wrong adjacencies in mesh with id ", surf_id.string() )
+        nb_wrong_adjacencies += surfaces_wrong_adjacencies[surf_id]
+    return nb_wrong_adjacencies
+
+def check_component_meshes_colocation( section_inspector ):
+    nb_colocated = 0
+    components_nb_colocated_points = section_inspector.components_nb_colocated_points()
+    for comp_id in components_nb_colocated_points:
+        print( "There are ", components_nb_colocated_points[comp_id], " colocated vertices in mesh with id ", comp_id.string() )
+        nb_colocated += components_nb_colocated_points[comp_id]
+    return nb_colocated
+
+def check_component_meshes_degeneration( section_inspector ):
+    nb_degenerated = 0
+    components_nb_degenerated_edges = section_inspector.components_nb_degenerated_edges()
+    for comp_id in components_nb_degenerated_edges:
+        print( "There are ", components_nb_degenerated_edges[comp_id], " degenerated edges in mesh with id ", comp_id.string() )
+        nb_degenerated += components_nb_degenerated_edges[comp_id]
+    return nb_degenerated
+
+def check_components_manifold( section_inspector ):
+    nb_issues = 0
+    components_nb_non_manifold_vertices = section_inspector.component_meshes_nb_non_manifold_vertices()
+    components_nb_non_manifold_edges = section_inspector.component_meshes_nb_non_manifold_edges()
+    if not components_nb_non_manifold_vertices and not components_nb_non_manifold_edges:
+        print( "BRep component meshes are manifold." )
+    for non_manifold_vertices in components_nb_non_manifold_vertices:
+        print( "Mesh of surface with uuid ", non_manifold_vertices.string(), " has ", components_nb_non_manifold_vertices[non_manifold_vertices], " non manifold vertices." )
+        nb_issues += components_nb_non_manifold_vertices[non_manifold_vertices]
+    for non_manifold_edges in components_nb_non_manifold_edges:
+        print( "Mesh of surface with uuid ", non_manifold_edges.string(), " has ", components_nb_non_manifold_edges[non_manifold_edges], " non manifold edges." )
+        nb_issues += components_nb_non_manifold_edges[non_manifold_edges]
+    return nb_issues
+
+def launch_component_meshes_validity_checks( section_inspector ):
+    nb_invalids = check_component_meshes_adjacency( section_inspector )
+    nb_invalids += check_component_meshes_colocation( section_inspector )
+    nb_invalids += check_component_meshes_degeneration( section_inspector )
+    nb_invalids += check_components_manifold( section_inspector )
+    return nb_invalids
 
 def check_vertical_lines_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -148,7 +193,10 @@ def check_vertical_lines_vertices_topology():
         print( "model vertical_lines topology is invalid." )
     nb_issues = launch_topological_validity_checks( section_inspector )
     if nb_issues != 0:
-        raise ValueError( "[Test] There should be no issues with vertical_lines.og_sctn" )
+        raise ValueError( "[Test] There should be no topological issues with vertical_lines.og_sctn" )
+    nb_issues = launch_component_meshes_validity_checks( section_inspector )
+    if nb_issues != 0:
+        raise ValueError( "[Test] There should be no mesh issues with vertical_lines.og_sctn" )
 
 if __name__ == '__main__':
     check_vertical_lines_vertices_topology()

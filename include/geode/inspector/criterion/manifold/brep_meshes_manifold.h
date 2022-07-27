@@ -25,43 +25,55 @@
 
 #include <absl/container/flat_hash_map.h>
 
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
     struct uuid;
-    struct PolygonEdge;
+    class BRep;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency of edges in the Component Meshes of
-     * a Model (BRep or Section).
+     * Class for inspecting the manifold property in the Component Meshes of
+     * a BRep.
      */
-    template < index_t dimension, typename Model >
-    class ComponentMeshesAdjacency
+    class opengeode_inspector_inspector_api BRepComponentMeshesManifold
     {
-        OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
+        OPENGEODE_DISABLE_COPY( BRepComponentMeshesManifold );
 
     public:
-        std::vector< uuid > surfaces_with_wrong_adjacencies() const;
+        BRepComponentMeshesManifold( const BRep& brep );
+
+        BRepComponentMeshesManifold( const BRep& brep, bool verbose );
+
+        ~BRepComponentMeshesManifold();
+
+        std::vector< uuid > components_non_manifold_meshes() const;
 
         absl::flat_hash_map< uuid, index_t >
-            surfaces_nb_edges_with_wrong_adjacencies() const;
+            component_meshes_nb_non_manifold_vertices() const;
 
-        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies() const;
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_edges() const;
 
-    protected:
-        ComponentMeshesAdjacency( const Model& model, bool verbose );
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_facets() const;
 
-        const Model& model() const;
+        absl::flat_hash_map< uuid, std::vector< index_t > >
+            component_meshes_non_manifold_vertices() const;
 
-        bool verbose() const;
+        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+            component_meshes_non_manifold_edges() const;
+
+        absl::flat_hash_map< uuid,
+            std::vector< absl::InlinedVector< index_t, 4 > > >
+            component_meshes_non_manifold_facets() const;
 
     private:
-        const Model& model_;
-        DEBUG_CONST bool verbose_;
+        IMPLEMENTATION_MEMBER( impl_ );
     };
 } // namespace geode

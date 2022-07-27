@@ -40,6 +40,8 @@ add_geode_python_binding(
         "manifold/solid_vertex_manifold.h"
         "manifold/solid_edge_manifold.h"
         "manifold/solid_facet_manifold.h"
+        "manifold/brep_meshes_manifold.h"
+        "manifold/section_meshes_manifold.h"
         "topology/brep_topology.h"
         "topology/section_topology.h"
         "inspector.cpp"

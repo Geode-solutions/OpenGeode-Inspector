@@ -46,12 +46,11 @@ namespace geode
     std::vector< uuid > ComponentMeshesAdjacency< dimension,
         Model >::surfaces_with_wrong_adjacencies() const
     {
-        std::vector< geode::uuid > comps_with_wrong_adjacencies;
+        std::vector< uuid > comps_with_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const geode::SurfaceMeshAdjacency< dimension > inspector{
-                surface.mesh(), verbose_
-            };
+            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
+                verbose_ };
             if( inspector.mesh_has_wrong_adjacencies() )
             {
                 comps_with_wrong_adjacencies.push_back( surface.id() );
@@ -67,9 +66,8 @@ namespace geode
         absl::flat_hash_map< uuid, index_t > components_nb_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const geode::SurfaceMeshAdjacency< dimension > inspector{
-                surface.mesh(), verbose_
-            };
+            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
+                verbose_ };
             const auto nb_wrong_adjacencies =
                 inspector.nb_edges_with_wrong_adjacency();
             if( nb_wrong_adjacencies != 0 )
@@ -90,9 +88,8 @@ namespace geode
             components_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const geode::SurfaceMeshAdjacency< dimension > inspector{
-                surface.mesh(), verbose_
-            };
+            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
+                verbose_ };
             auto wrong_adjacencies =
                 inspector.polygon_edges_with_wrong_adjacency();
             if( !wrong_adjacencies.empty() )

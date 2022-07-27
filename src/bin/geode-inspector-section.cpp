@@ -47,29 +47,22 @@ ABSL_FLAG( bool,
     unique_vertices_colocation,
     true,
     "Toggle inspection of unique vertices colocation" );
-ABSL_FLAG( bool,
-    corners,
-    true,
-    "Toggle inspection of corner topology through unique vertices" );
-ABSL_FLAG( bool,
-    lines,
-    true,
-    "Toggle inspection of lines topology through unique vertices" );
-ABSL_FLAG( bool,
-    surfaces,
-    true,
-    "Toggle inspection of surfaces topology through unique vertices" );
-ABSL_FLAG( bool,
-    verbose,
-    false,
-    "Toggle verbose mode for the inspection of topology through unique "
-    "vertices" );
+ABSL_FLAG( bool, corners, true, "Toggle inspection of corner topology" );
+ABSL_FLAG( bool, lines, true, "Toggle inspection of lines topology" );
+ABSL_FLAG( bool, surfaces, true, "Toggle inspection of surfaces topology" );
+ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion for components" );
+ABSL_FLAG(
+    bool, colocation, true, "Toggle colocation criterion for components" );
+ABSL_FLAG(
+    bool, degeneration, true, "Toggle degeneration criterion for components" );
+ABSL_FLAG( bool, manifold, true, "Toggle manifold criterion for components" );
+ABSL_FLAG( bool, verbose, false, "Toggle verbose mode for the inspection" );
 
 void inspect_section( const geode::Section& section )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector section_inspector{ section, verbose };
-    absl::InlinedVector< async::task< void >, 15 > tasks;
+    absl::InlinedVector< async::task< void >, 20 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&section_inspector] {
@@ -188,8 +181,52 @@ void inspect_section( const geode::Section& section )
                     .size();
             geode::Logger::info( nb,
                 " unique vertices part of a line and a surface but for "
-                "which one of the associated vertex on the surface mesh not on "
-                "the mesh border." );
+                "which one of the associated vertex on the surface mesh is not "
+                "on the mesh border." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_adjacency ) )
+    {
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb =
+                section_inspector.surfaces_nb_edges_with_wrong_adjacencies()
+                    .size();
+            geode::Logger::info(
+                nb, " surfaces with adjacency problems in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb =
+                section_inspector.components_with_colocated_points().size();
+            geode::Logger::info(
+                nb, " components with colocated points in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_degeneration ) )
+    {
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb =
+                section_inspector.components_with_degenerated_edges().size();
+            geode::Logger::info(
+                nb, " components with degenerated edges in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold ) )
+    {
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb =
+                section_inspector.component_meshes_nb_non_manifold_vertices()
+                    .size();
+            geode::Logger::info(
+                nb, " components with non manifold vertices in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb =
+                section_inspector.component_meshes_non_manifold_edges().size();
+            geode::Logger::info(
+                nb, " components with non manifold edges in their mesh." );
         } ) );
     }
     async::when_all( tasks.begin(), tasks.end() ).wait();

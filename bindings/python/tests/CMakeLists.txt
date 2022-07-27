@@ -25,7 +25,7 @@ add_geode_python_test(
 )
 
 add_geode_python_test(
-    SOURCE "test-py-section-topology.py"
+    SOURCE "test-py-section.py"
     DEPENDENCIES 
         ${PROJECT_NAME}::py_inspector
 )

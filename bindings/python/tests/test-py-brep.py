@@ -176,24 +176,53 @@ def check_component_meshes_adjacency( brep_inspector ):
     nb_wrong_adjacencies = 0
     surfaces_wrong_adjacencies = brep_inspector.surfaces_nb_edges_with_wrong_adjacencies()
     blocks_wrong_adjacencies = brep_inspector.blocks_nb_facets_with_wrong_adjacencies()
-    for surf in surfaces_wrong_adjacencies:
-        print( "There are ", surf[1], " edges with wrong adjacencies in mesh with id ", surf[0] )
-        nb_wrong_adjacencies += surf[1]
-    for block in blocks_wrong_adjacencies:
-        print( "There are ", block[1], " edges with wrong adjacencies in mesh with id ", block[0] )
-        nb_wrong_adjacencies += block[1]
+    for surf_id in surfaces_wrong_adjacencies:
+        print( "There are ", surfaces_wrong_adjacencies[surf_id], " edges with wrong adjacencies in mesh with id ", surf_id.string() )
+        nb_wrong_adjacencies += surf_id
+    for block_id in blocks_wrong_adjacencies:
+        print( "There are ", blocks_wrong_adjacencies[block_id], " facets with wrong adjacencies in mesh with id ", block_id.string() )
+        nb_wrong_adjacencies += blocks_wrong_adjacencies[block_id]
     return nb_wrong_adjacencies
 
 def check_component_meshes_colocation( brep_inspector ):
     nb_colocated = 0
     components_nb_colocated_points = brep_inspector.components_nb_colocated_points()
-    for colocated in components_nb_colocated_points:
-        print( "There are ", colocated[1], " colocated vertices in mesh with id ", colocated[0] )
-        nb_colocated += colocated[1]
+    for comp_id in components_nb_colocated_points:
+        print( "There are ", components_nb_colocated_points[comp_id], " colocated vertices in mesh with id ", comp_id.string() )
+        nb_colocated += components_nb_colocated_points[comp_id]
     return nb_colocated
 
+def check_component_meshes_degeneration( brep_inspector ):
+    nb_degenerated = 0
+    components_nb_degenerated_edges = brep_inspector.components_nb_degenerated_edges()
+    for degenerated_id in components_nb_degenerated_edges:
+        print( "There are ", components_nb_degenerated_edges[degenerated_id], " degenerated edges in mesh with id ", degenerated_id.string() )
+        nb_degenerated += components_nb_degenerated_edges[degenerated_id]
+    return nb_degenerated
+
+def check_components_manifold( brep_inspector ):
+    nb_issues = 0
+    components_nb_non_manifold_vertices = brep_inspector.component_meshes_nb_non_manifold_vertices()
+    components_nb_non_manifold_edges = brep_inspector.component_meshes_nb_non_manifold_edges()
+    components_nb_non_manifold_facets = brep_inspector.component_meshes_nb_non_manifold_facets()
+    if not components_nb_non_manifold_vertices and not components_nb_non_manifold_edges and not components_nb_non_manifold_facets:
+        print( "BRep component meshes are manifold." )
+    for non_manifold_vertices in components_nb_non_manifold_vertices:
+        print( "Mesh of surface with uuid ", non_manifold_vertices.string(), " has ", components_nb_non_manifold_vertices[non_manifold_vertices], " non manifold vertices." )
+        nb_issues += components_nb_non_manifold_vertices[non_manifold_vertices]
+    for non_manifold_edges in components_nb_non_manifold_edges:
+        print( "Mesh of surface with uuid ", non_manifold_edges.string(), " has ", components_nb_non_manifold_edges[non_manifold_edges], " non manifold edges." )
+        nb_issues += components_nb_non_manifold_edges[non_manifold_edges]
+    for non_manifold_facets in components_nb_non_manifold_facets:
+        print( "Mesh of surface with uuid ", non_manifold_facets.string(), " has ", components_nb_non_manifold_facets[non_manifold_facets], " non manifold facets." )
+        nb_issues += components_nb_non_manifold_facets[non_manifold_facets]
+    return nb_issues
+
 def launch_component_meshes_validity_checks( brep_inspector ):
-    nb_invalids = check_component_meshes_colocation( brep_inspector )
+    nb_invalids = check_component_meshes_adjacency( brep_inspector )
+    nb_invalids += check_component_meshes_colocation( brep_inspector )
+    nb_invalids += check_component_meshes_degeneration( brep_inspector )
+    nb_invalids += check_components_manifold( brep_inspector )
     return nb_invalids
 
 def check_a1_vertices_topology():

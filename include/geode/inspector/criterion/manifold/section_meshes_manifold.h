@@ -23,35 +23,50 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
+
+#include <geode/basic/pimpl.h>
+
 #include <geode/inspector/common.h>
-#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
-#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
-#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
-#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
-#include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/section_topology.h>
+
+namespace geode
+{
+    struct uuid;
+    class Section;
+} // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting a Section model
-     * @extends SectionTopologyInspector
+     * Class for inspecting the manifold property in the Component Meshes of
+     * a Section.
      */
-    class opengeode_inspector_inspector_api SectionInspector
-        : public AddInspectors< Section,
-              SectionTopologyInspector,
-              SectionUniqueVerticesColocation,
-              SectionComponentMeshesAdjacency,
-              SectionComponentMeshesColocation,
-              SectionComponentMeshesDegeneration,
-              SectionComponentMeshesManifold >
+    class opengeode_inspector_inspector_api SectionComponentMeshesManifold
     {
-        OPENGEODE_DISABLE_COPY( SectionInspector );
+        OPENGEODE_DISABLE_COPY( SectionComponentMeshesManifold );
 
     public:
-        SectionInspector( const Section& section );
+        SectionComponentMeshesManifold( const Section& section );
 
-        SectionInspector( const Section& section, bool verbose );
+        SectionComponentMeshesManifold( const Section& section, bool verbose );
+
+        ~SectionComponentMeshesManifold();
+
+        std::vector< uuid > components_non_manifold_meshes() const;
+
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_vertices() const;
+
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_edges() const;
+
+        absl::flat_hash_map< uuid, std::vector< index_t > >
+            component_meshes_non_manifold_vertices() const;
+
+        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+            component_meshes_non_manifold_edges() const;
+
+    private:
+        IMPLEMENTATION_MEMBER( impl_ );
     };
 } // namespace geode

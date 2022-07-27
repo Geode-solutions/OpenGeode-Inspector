@@ -33,7 +33,8 @@ namespace geode
             BRepUniqueVerticesColocation,
             BRepComponentMeshesAdjacency,
             BRepComponentMeshesColocation,
-            BRepComponentMeshesDegeneration >{ brep }
+            BRepComponentMeshesDegeneration,
+            BRepComponentMeshesManifold >{ brep }
     {
     }
 
@@ -43,7 +44,8 @@ namespace geode
             BRepUniqueVerticesColocation,
             BRepComponentMeshesAdjacency,
             BRepComponentMeshesColocation,
-            BRepComponentMeshesDegeneration >{ brep, verbose }
+            BRepComponentMeshesDegeneration,
+            BRepComponentMeshesManifold >{ brep, verbose }
     {
     }
 } // namespace geode

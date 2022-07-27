@@ -278,13 +278,14 @@ geode::index_t launch_topological_validity_checks(
     nb_errors +=
         check_part_of_invalid_unique_line_unique_vertices( section_inspector );
     nb_errors +=
-        check_part_of_invalid_unique_line_unique_vertices( section_inspector );
-    nb_errors +=
         check_part_of_lines_but_not_corner_unique_vertices( section_inspector );
     nb_errors +=
         check_part_of_invalid_surfaces_unique_vertices( section_inspector );
     nb_errors += check_part_of_line_and_not_on_surface_border_unique_vertices(
         section_inspector );
+    nb_errors +=
+        check_part_of_line_with_invalid_internal_topology_unique_vertices(
+            section_inspector );
 
     OPENGEODE_EXCEPTION(
         nb_errors
@@ -358,12 +359,44 @@ geode::index_t check_components_degeneration(
     return nb_issues;
 }
 
+geode::index_t check_components_manifold(
+    geode::SectionInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_nb_non_manifold_vertices =
+        brep_inspector.component_meshes_nb_non_manifold_vertices();
+    const auto components_nb_non_manifold_edges =
+        brep_inspector.component_meshes_nb_non_manifold_edges();
+    if( components_nb_non_manifold_vertices.empty()
+        && components_nb_non_manifold_edges.empty() )
+    {
+        geode::Logger::info( "Section component meshes are manifold." );
+    }
+    for( const auto& non_manifold_vertices :
+        components_nb_non_manifold_vertices )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            non_manifold_vertices.first.string(), " has ",
+            non_manifold_vertices.second, " non manifold vertices." );
+        nb_issues += non_manifold_vertices.second;
+    }
+    for( const auto& non_manifold_edges : components_nb_non_manifold_edges )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            non_manifold_edges.first.string(), " has ",
+            non_manifold_edges.second, " non manifold edges." );
+        nb_issues += non_manifold_edges.second;
+    }
+    return nb_issues;
+}
+
 geode::index_t launch_component_meshes_validity_checks(
     geode::SectionInspector& section_inspector )
 {
     auto nb_issues = check_components_adjacency( section_inspector );
     nb_issues += check_components_colocation( section_inspector );
     nb_issues += check_components_degeneration( section_inspector );
+    nb_issues += check_components_manifold( section_inspector );
     return nb_issues;
 }
 
@@ -380,9 +413,9 @@ void check_section()
         "[Test] Model is supposed to be valid but is shown as invalid." );
     const auto nb_mesh_invalids =
         launch_component_meshes_validity_checks( section_inspector );
-    OPENGEODE_EXCEPTION(
-        nb_mesh_invalids == 0, "[Test] Model component meshes are supposed to "
-                               "be valid but are shown as invalid." );
+    OPENGEODE_EXCEPTION( nb_mesh_invalids == 0,
+        "[Test] Model component meshes are supposed to "
+        "be valid but are shown as invalid." );
 }
 
 int main()
