@@ -172,6 +172,59 @@ def launch_topological_validity_checks( brep_inspector ):
     nb_invalids += check_unique_vertices_colocation( brep_inspector )
     return nb_invalids
 
+def check_component_meshes_adjacency( brep_inspector ):
+    nb_wrong_adjacencies = 0
+    surfaces_wrong_adjacencies = brep_inspector.surfaces_nb_edges_with_wrong_adjacencies()
+    blocks_wrong_adjacencies = brep_inspector.blocks_nb_facets_with_wrong_adjacencies()
+    for surf_id in surfaces_wrong_adjacencies:
+        print( "There are ", surfaces_wrong_adjacencies[surf_id], " edges with wrong adjacencies in mesh with id ", surf_id.string() )
+        nb_wrong_adjacencies += surf_id
+    for block_id in blocks_wrong_adjacencies:
+        print( "There are ", blocks_wrong_adjacencies[block_id], " facets with wrong adjacencies in mesh with id ", block_id.string() )
+        nb_wrong_adjacencies += blocks_wrong_adjacencies[block_id]
+    return nb_wrong_adjacencies
+
+def check_component_meshes_colocation( brep_inspector ):
+    nb_colocated = 0
+    components_nb_colocated_points = brep_inspector.components_nb_colocated_points()
+    for comp_id in components_nb_colocated_points:
+        print( "There are ", components_nb_colocated_points[comp_id], " colocated vertices in mesh with id ", comp_id.string() )
+        nb_colocated += components_nb_colocated_points[comp_id]
+    return nb_colocated
+
+def check_component_meshes_degeneration( brep_inspector ):
+    nb_degenerated = 0
+    components_nb_degenerated_edges = brep_inspector.components_nb_degenerated_edges()
+    for degenerated_id in components_nb_degenerated_edges:
+        print( "There are ", components_nb_degenerated_edges[degenerated_id], " degenerated edges in mesh with id ", degenerated_id.string() )
+        nb_degenerated += components_nb_degenerated_edges[degenerated_id]
+    return nb_degenerated
+
+def check_components_manifold( brep_inspector ):
+    nb_issues = 0
+    components_nb_non_manifold_vertices = brep_inspector.component_meshes_nb_non_manifold_vertices()
+    components_nb_non_manifold_edges = brep_inspector.component_meshes_nb_non_manifold_edges()
+    components_nb_non_manifold_facets = brep_inspector.component_meshes_nb_non_manifold_facets()
+    if not components_nb_non_manifold_vertices and not components_nb_non_manifold_edges and not components_nb_non_manifold_facets:
+        print( "BRep component meshes are manifold." )
+    for non_manifold_vertices in components_nb_non_manifold_vertices:
+        print( "Mesh of surface with uuid ", non_manifold_vertices.string(), " has ", components_nb_non_manifold_vertices[non_manifold_vertices], " non manifold vertices." )
+        nb_issues += components_nb_non_manifold_vertices[non_manifold_vertices]
+    for non_manifold_edges in components_nb_non_manifold_edges:
+        print( "Mesh of surface with uuid ", non_manifold_edges.string(), " has ", components_nb_non_manifold_edges[non_manifold_edges], " non manifold edges." )
+        nb_issues += components_nb_non_manifold_edges[non_manifold_edges]
+    for non_manifold_facets in components_nb_non_manifold_facets:
+        print( "Mesh of surface with uuid ", non_manifold_facets.string(), " has ", components_nb_non_manifold_facets[non_manifold_facets], " non manifold facets." )
+        nb_issues += components_nb_non_manifold_facets[non_manifold_facets]
+    return nb_issues
+
+def launch_component_meshes_validity_checks( brep_inspector ):
+    nb_invalids = check_component_meshes_adjacency( brep_inspector )
+    nb_invalids += check_component_meshes_colocation( brep_inspector )
+    nb_invalids += check_component_meshes_degeneration( brep_inspector )
+    nb_invalids += check_components_manifold( brep_inspector )
+    return nb_invalids
+
 def check_a1_vertices_topology():
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
@@ -184,6 +237,9 @@ def check_a1_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 1254:
         raise ValueError( "[Test] model model_A1 should have 1254 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model model_A1 should have 0 component meshes issues." )
 
 def check_a1_valid_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -197,6 +253,9 @@ def check_a1_valid_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 1254:
         raise ValueError( "[Test] model model_A1_valid should have 1254 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model model_A1_valid should have 0 component meshes issues." )
 
 def check_mss_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -210,6 +269,9 @@ def check_mss_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 17:
         raise ValueError( "[Test] model mss.og_strm should have 17 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 148:
+        raise ValueError( "[Test] model mss should have 148 component meshes issues." )
 
 def check_model_D_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -223,6 +285,9 @@ def check_model_D_vertices_topology():
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
     if nb_model_issues != 0:
         raise ValueError( "[Test] model model_D.og_brep should have 0 unique vertices with topological problems." )
+    nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
+    if nb_component_meshes_issues != 2:
+        raise ValueError( "[Test] model_D should have 2 component meshes issues." )
 
 if __name__ == '__main__':
     check_a1_vertices_topology()

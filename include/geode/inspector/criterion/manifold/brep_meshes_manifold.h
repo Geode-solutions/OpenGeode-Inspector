@@ -23,42 +23,57 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
+
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-    struct PolyhedronFacet;
+    struct uuid;
+    class BRep;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the facets of a SolidMesh
+     * Class for inspecting the manifold property in the Component Meshes of
+     * a BRep.
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshAdjacency
+    class opengeode_inspector_inspector_api BRepComponentMeshesManifold
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( BRepComponentMeshesManifold );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        BRepComponentMeshesManifold( const BRep& brep );
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+        BRepComponentMeshesManifold( const BRep& brep, bool verbose );
 
-        ~SolidMeshAdjacency();
+        ~BRepComponentMeshesManifold();
 
-        bool mesh_has_wrong_adjacencies() const;
+        std::vector< uuid > components_non_manifold_meshes() const;
 
-        index_t nb_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_vertices() const;
 
-        std::vector< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_edges() const;
+
+        absl::flat_hash_map< uuid, index_t >
+            component_meshes_nb_non_manifold_facets() const;
+
+        absl::flat_hash_map< uuid, std::vector< index_t > >
+            component_meshes_non_manifold_vertices() const;
+
+        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+            component_meshes_non_manifold_edges() const;
+
+        absl::flat_hash_map< uuid,
+            std::vector< absl::InlinedVector< index_t, 4 > > >
+            component_meshes_non_manifold_facets() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_3D( SolidMeshAdjacency );
 } // namespace geode

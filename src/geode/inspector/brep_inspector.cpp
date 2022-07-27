@@ -30,14 +30,22 @@ namespace geode
     BRepInspector::BRepInspector( const BRep& brep )
         : AddInspectors< BRep,
             BRepTopologyInspector,
-            BRepUniqueVerticesColocation >{ brep }
+            BRepUniqueVerticesColocation,
+            BRepComponentMeshesAdjacency,
+            BRepComponentMeshesColocation,
+            BRepComponentMeshesDegeneration,
+            BRepComponentMeshesManifold >{ brep }
     {
     }
 
     BRepInspector::BRepInspector( const BRep& brep, bool verbose )
         : AddInspectors< BRep,
             BRepTopologyInspector,
-            BRepUniqueVerticesColocation >{ brep, verbose }
+            BRepUniqueVerticesColocation,
+            BRepComponentMeshesAdjacency,
+            BRepComponentMeshesColocation,
+            BRepComponentMeshesDegeneration,
+            BRepComponentMeshesManifold >{ brep, verbose }
     {
     }
 } // namespace geode

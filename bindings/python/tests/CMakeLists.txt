@@ -19,13 +19,13 @@
 # SOFTWARE.
 
 add_geode_python_test(
-    SOURCE "test-py-brep-topology.py"
+    SOURCE "test-py-brep.py"
     DEPENDENCIES 
         ${PROJECT_NAME}::py_inspector
 )
 
 add_geode_python_test(
-    SOURCE "test-py-section-topology.py"
+    SOURCE "test-py-section.py"
     DEPENDENCIES 
         ${PROJECT_NAME}::py_inspector
 )

@@ -23,42 +23,45 @@
 
 #pragma once
 
-#include <geode/basic/pimpl.h>
+#include <absl/container/flat_hash_map.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-    struct PolyhedronFacet;
+    struct uuid;
+    struct PolygonEdge;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the facets of a SolidMesh
+     * Class for inspecting the adjacency of edges in the Component Meshes of
+     * a Model (BRep or Section).
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshAdjacency
+    template < index_t dimension, typename Model >
+    class ComponentMeshesAdjacency
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        std::vector< uuid > surfaces_with_wrong_adjacencies() const;
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+        absl::flat_hash_map< uuid, index_t >
+            surfaces_nb_edges_with_wrong_adjacencies() const;
 
-        ~SolidMeshAdjacency();
+        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies() const;
 
-        bool mesh_has_wrong_adjacencies() const;
+    protected:
+        ComponentMeshesAdjacency( const Model& model, bool verbose );
 
-        index_t nb_facets_with_wrong_adjacency() const;
+        const Model& model() const;
 
-        std::vector< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency() const;
+        bool verbose() const;
 
     private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        const Model& model_;
+        DEBUG_CONST bool verbose_;
     };
-    ALIAS_3D( SolidMeshAdjacency );
 } // namespace geode

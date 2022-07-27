@@ -23,42 +23,50 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
+
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-    struct PolyhedronFacet;
+    class Section;
+    class BRep;
+    struct uuid;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the adjacency on the facets of a SolidMesh
+     * Class for inspecting the colocation of points in the Component Meshes of
+     * a Model (BRep or Section).
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SolidMeshAdjacency
+    template < index_t dimension, typename Model >
+    class opengeode_inspector_inspector_api ComponentMeshesColocation
     {
-        OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
+        OPENGEODE_DISABLE_COPY( ComponentMeshesColocation );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        ComponentMeshesColocation( const Model& model );
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
+        ComponentMeshesColocation( const Model& model, bool verbose );
 
-        ~SolidMeshAdjacency();
+        ~ComponentMeshesColocation();
 
-        bool mesh_has_wrong_adjacencies() const;
+        std::vector< uuid > components_with_colocated_points() const;
 
-        index_t nb_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, index_t >
+            components_nb_colocated_points() const;
 
-        std::vector< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency() const;
+        absl::flat_hash_map< uuid, std::vector< std::vector< index_t > > >
+            components_colocated_points_groups() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_3D( SolidMeshAdjacency );
+
+    using SectionComponentMeshesColocation =
+        ComponentMeshesColocation< 2, Section >;
+    using BRepComponentMeshesColocation = ComponentMeshesColocation< 3, BRep >;
 } // namespace geode

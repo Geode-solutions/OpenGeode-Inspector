@@ -23,20 +23,27 @@
 
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/section_inspector.h>
+#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
 
-#define PYTHON_SECTION_INSPECTOR()                                             \
-    pybind11::class_< SectionInspector, SectionTopologyInspector,              \
-        SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,      \
-        SectionComponentMeshesColocation, SectionComponentMeshesDegeneration,  \
-        SectionComponentMeshesManifold >( module, "SectionInspector" )         \
+#define PYTHON_SECTION_COMPONENTS_ADJACENCY()                                  \
+    pybind11::class_< SectionComponentMeshesAdjacency >(                       \
+        module, "SectionComponentMeshesAdjacency" )                            \
         .def( pybind11::init< const Section& >() )                             \
-        .def( pybind11::init< const Section&, bool >() )
+        .def( pybind11::init< const Section&, bool >() )                       \
+        .def( "components_with_wrong_adjacencies",                             \
+            &SectionComponentMeshesAdjacency::                                 \
+                components_with_wrong_adjacencies )                            \
+        .def( "surfaces_nb_edges_with_wrong_adjacencies",                      \
+            &SectionComponentMeshesAdjacency::                                 \
+                surfaces_nb_edges_with_wrong_adjacencies )                     \
+        .def( "surfaces_edges_with_wrong_adjacencies",                         \
+            &SectionComponentMeshesAdjacency::                                 \
+                surfaces_edges_with_wrong_adjacencies )
 
 namespace geode
 {
-    void define_section_inspector( pybind11::module& module )
+    void define_section_meshes_adjacency( pybind11::module& module )
     {
-        PYTHON_SECTION_INSPECTOR();
+        PYTHON_SECTION_COMPONENTS_ADJACENCY();
     }
 } // namespace geode

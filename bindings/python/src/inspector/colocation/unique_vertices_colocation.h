@@ -73,7 +73,7 @@
 
 namespace geode
 {
-    void define_models_colocation( pybind11::module& module )
+    void define_models_uv_colocation( pybind11::module& module )
     {
         PYTHON_SECTION_UV_COLOCATION();
         PYTHON_BREP_UV_COLOCATION();

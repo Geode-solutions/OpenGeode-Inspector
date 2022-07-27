@@ -325,35 +325,166 @@ geode::index_t launch_topological_validity_checks(
     return nb_issues;
 }
 
-void check_a1_vertices_topology()
+geode::index_t check_components_adjacency(
+    geode::BRepInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto surfaces_wrong_adjacencies =
+        brep_inspector.surfaces_nb_edges_with_wrong_adjacencies();
+    const auto blocks_wrong_adjacencies =
+        brep_inspector.blocks_nb_facets_with_wrong_adjacencies();
+    if( surfaces_wrong_adjacencies.empty() && blocks_wrong_adjacencies.empty() )
+    {
+        geode::Logger::info(
+            "BRep component meshes have no adjacency problems." );
+    }
+    for( const auto& comp_wrong_adj : surfaces_wrong_adjacencies )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            comp_wrong_adj.first.string(), " has ", comp_wrong_adj.second,
+            " edges with adjacency problems." );
+        nb_issues += comp_wrong_adj.second;
+    }
+    for( const auto& comp_wrong_adj : blocks_wrong_adjacencies )
+    {
+        geode::Logger::info( "Mesh of block with uuid ",
+            comp_wrong_adj.first.string(), " has ", comp_wrong_adj.second,
+            " facets with adjacency problems." );
+        nb_issues += comp_wrong_adj.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t check_components_colocation(
+    geode::BRepInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_colocated_pts =
+        brep_inspector.components_nb_colocated_points();
+    if( components_colocated_pts.empty() )
+    {
+        geode::Logger::info(
+            "BRep component meshes have no colocated points." );
+    }
+    for( const auto& colocated : components_colocated_pts )
+    {
+        geode::Logger::info( "Mesh of component with uuid ",
+            colocated.first.string(), " has ", colocated.second,
+            " colocated points." );
+        nb_issues += colocated.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t check_components_degeneration(
+    geode::BRepInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_degenerated_edges =
+        brep_inspector.components_nb_degenerated_edges();
+    if( components_degenerated_edges.empty() )
+    {
+        geode::Logger::info( "BRep component meshes are not degenerated." );
+    }
+    for( const auto& degenerated : components_degenerated_edges )
+    {
+        geode::Logger::info( "Mesh of component with uuid ",
+            degenerated.first.string(), " has ", degenerated.second,
+            " degenerated edges." );
+        nb_issues += degenerated.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t check_components_manifold( geode::BRepInspector& brep_inspector )
+{
+    geode::index_t nb_issues{ 0 };
+    const auto components_nb_non_manifold_vertices =
+        brep_inspector.component_meshes_nb_non_manifold_vertices();
+    const auto components_nb_non_manifold_edges =
+        brep_inspector.component_meshes_nb_non_manifold_edges();
+    const auto components_nb_non_manifold_facets =
+        brep_inspector.component_meshes_nb_non_manifold_facets();
+    if( components_nb_non_manifold_vertices.empty()
+        && components_nb_non_manifold_edges.empty()
+        && components_nb_non_manifold_facets.empty() )
+    {
+        geode::Logger::info( "BRep component meshes are manifold." );
+    }
+    for( const auto& non_manifold_vertices :
+        components_nb_non_manifold_vertices )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            non_manifold_vertices.first.string(), " has ",
+            non_manifold_vertices.second, " non manifold vertices." );
+        nb_issues += non_manifold_vertices.second;
+    }
+    for( const auto& non_manifold_edges : components_nb_non_manifold_edges )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            non_manifold_edges.first.string(), " has ",
+            non_manifold_edges.second, " non manifold edges." );
+        nb_issues += non_manifold_edges.second;
+    }
+    for( const auto& non_manifold_facets : components_nb_non_manifold_facets )
+    {
+        geode::Logger::info( "Mesh of surface with uuid ",
+            non_manifold_facets.first.string(), " has ",
+            non_manifold_facets.second, " non manifold facets." );
+        nb_issues += non_manifold_facets.second;
+    }
+    return nb_issues;
+}
+
+geode::index_t launch_component_meshes_validity_checks(
+    geode::BRepInspector& brep_inspector )
+{
+    auto nb_issues = check_components_adjacency( brep_inspector );
+    nb_issues += check_components_colocation( brep_inspector );
+    nb_issues += check_components_degeneration( brep_inspector );
+    nb_issues += check_components_manifold( brep_inspector );
+    return nb_issues;
+}
+
+void check_model_a1()
 {
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::data_path, "model_A1.og_brep" ) );
     geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_A1 topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    const auto nb_model_issues =
+    const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 1254,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 1254,
         "[Test] model_A1 should have 1254 unique "
         "vertices with topological problems." );
+    const auto nb_component_meshes_issues =
+        launch_component_meshes_validity_checks( brep_inspector );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
+        "[Test] model_A1 should have "
+        "0 issues in its component meshes." );
 }
 
-void check_a1_valid_vertices_topology()
+void check_model_a1_valid()
 {
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::data_path, "model_A1_valid.og_brep" ) );
     geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_A1_valid topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    const auto nb_model_issues =
+    const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 1254,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 1254,
         "[Test] model_A1_valid should have 1254 unique "
         "vertices with topological problems." );
+    const auto nb_component_meshes_issues =
+        launch_component_meshes_validity_checks( brep_inspector );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
+        "[Test] model_A1_valid should have "
+        "0 issues in its component meshes." );
 }
 
-void check_mss_vertices_topology()
+void check_model_mss()
 {
     geode::detail::initialize_geosciences_io();
     const auto model_brep = geode::load_structural_model(
@@ -361,35 +492,45 @@ void check_mss_vertices_topology()
     geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model mss topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    const auto nb_model_issues =
+    const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 17,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 17,
         "[Test] model mss.og_strm should have 17 unique "
         "vertices with topological problems." );
+    const auto nb_component_meshes_issues =
+        launch_component_meshes_validity_checks( brep_inspector );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 148,
+        "[Test] model mss.og_strm should have 148 issues in its component "
+        "meshes." );
 }
 
-void check_model_D_vertices_topology()
+void check_model_D()
 {
     const auto model_brep =
         geode::load_brep( absl::StrCat( geode::data_path, "model_D.og_brep" ) );
     geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model_D topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
-    const auto nb_model_issues =
+    const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_model_issues == 0,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 0,
         "[Test] model model_D.og_brep should have 0 unique "
         "vertices with topological problems." );
+    const auto nb_component_meshes_issues =
+        launch_component_meshes_validity_checks( brep_inspector );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 2,
+        "[Test] model_D should have "
+        "2 issues in its component meshes." );
 }
 
 int main()
 {
     try
     {
-        check_a1_vertices_topology();
-        check_a1_valid_vertices_topology();
-        check_mss_vertices_topology();
-        check_model_D_vertices_topology();
+        check_model_a1();
+        check_model_a1_valid();
+        check_model_mss();
+        check_model_D();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

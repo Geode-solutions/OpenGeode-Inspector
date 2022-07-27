@@ -30,14 +30,22 @@ namespace geode
     SectionInspector::SectionInspector( const Section& section )
         : AddInspectors< Section,
             SectionTopologyInspector,
-            SectionUniqueVerticesColocation >{ section }
+            SectionUniqueVerticesColocation,
+            SectionComponentMeshesAdjacency,
+            SectionComponentMeshesColocation,
+            SectionComponentMeshesDegeneration,
+            SectionComponentMeshesManifold >{ section }
     {
     }
 
     SectionInspector::SectionInspector( const Section& section, bool verbose )
         : AddInspectors< Section,
             SectionTopologyInspector,
-            SectionUniqueVerticesColocation >{ section, verbose }
+            SectionUniqueVerticesColocation,
+            SectionComponentMeshesAdjacency,
+            SectionComponentMeshesColocation,
+            SectionComponentMeshesDegeneration,
+            SectionComponentMeshesManifold >{ section, verbose }
     {
     }
 } // namespace geode
