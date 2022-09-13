@@ -25,6 +25,7 @@
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -50,21 +51,31 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh(), false
             };
             if( inspector.mesh_has_colocated_points() )
             {
                 components_with_colocation.push_back( line.id() );
+                if( verbose )
+                {
+                    geode::Logger::info( "Line with uuid ", line.id().string(),
+                        " has colocated points." );
+                }
             }
         }
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh(), false
             };
             if( inspector.mesh_has_colocated_points() )
             {
                 components_with_colocation.push_back( surface.id() );
+                if( verbose )
+                {
+                    geode::Logger::info( "Surface with uuid ",
+                        surface.id().string(), " has colocated points." );
+                }
             }
         }
         return components_with_colocation;
@@ -85,11 +96,15 @@ namespace
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshColocation3D inspector{ block.mesh(), false };
             if( inspector.mesh_has_colocated_points() )
             {
                 components_with_colocation.push_back( block.id() );
+                if( verbose )
+                {
+                    geode::Logger::info( "Block with uuid ",
+                        block.id().string(), " has colocated points." );
+                }
             }
         }
         return components_with_colocation;
@@ -105,25 +120,36 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh(), false
             };
             const auto nb_colocated = inspector.nb_colocated_points();
             if( nb_colocated > 0 )
             {
                 components_nb_colocated_points.emplace(
                     line.id(), nb_colocated );
+                if( verbose )
+                {
+                    geode::Logger::info( "Line with uuid ", line.id().string(),
+                        " has ", nb_colocated, " colocated points." );
+                }
             }
         }
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh(), false
             };
             const auto nb_colocated = inspector.nb_colocated_points();
             if( nb_colocated > 0 )
             {
                 components_nb_colocated_points.emplace(
                     surface.id(), nb_colocated );
+                if( verbose )
+                {
+                    geode::Logger::info( "Surface with uuid ",
+                        surface.id().string(), " has ", nb_colocated,
+                        " colocated points." );
+                }
             }
         }
         return components_nb_colocated_points;
@@ -146,13 +172,18 @@ namespace
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshColocation3D inspector{ block.mesh(), false };
             const auto nb_colocated = inspector.nb_colocated_points();
             if( nb_colocated > 0 )
             {
                 components_nb_colocated_points.emplace(
                     block.id(), nb_colocated );
+                if( verbose )
+                {
+                    geode::Logger::info( "Block with uuid ",
+                        block.id().string(), " has ", nb_colocated,
+                        " colocated points." );
+                }
             }
         }
         return components_nb_colocated_points;

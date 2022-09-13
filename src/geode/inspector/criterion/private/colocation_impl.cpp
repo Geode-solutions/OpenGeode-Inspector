@@ -74,9 +74,14 @@ namespace geode
         template < index_t dimension, typename Mesh >
         index_t ColocationImpl< dimension, Mesh >::nb_colocated_points() const
         {
-            return mesh_points_colocated_info< dimension, Mesh >(
+            auto nb_colocated = mesh_points_colocated_info< dimension, Mesh >(
                 mesh_, global_epsilon )
-                .nb_colocated_points();
+                                    .nb_colocated_points();
+            if( nb_colocated > 0 && verbose_ )
+            {
+                Logger::info( "Mesh has ", nb_colocated, " colocated points" );
+            }
+            return nb_colocated;
         }
 
         template < index_t dimension, typename Mesh >
