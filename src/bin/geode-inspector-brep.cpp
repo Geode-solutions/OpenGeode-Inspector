@@ -245,7 +245,7 @@ void inspect_brep( const geode::BRep& brep )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb =
-                brep_inspector.components_with_colocated_points().size();
+                brep_inspector.components_nb_colocated_points().size();
             geode::Logger::info(
                 nb, " components with colocated points in their mesh." );
         } ) );
