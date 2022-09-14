@@ -63,7 +63,7 @@ void inspect_brep( const geode::BRep& brep )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector brep_inspector{ brep, verbose };
-    absl::InlinedVector< async::task< void >, 27 > tasks;
+    absl::InlinedVector< async::task< void >, 28 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -92,6 +92,13 @@ void inspect_brep( const geode::BRep& brep )
                     .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
                 nb_blocks, " blocks meshed but not linked to a unique vertex" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb_unlinked_uv =
+                brep_inspector
+                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+            geode::Logger::info( nb_unlinked_uv,
+                " unique vertices not linked to a component mesh vertex" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )

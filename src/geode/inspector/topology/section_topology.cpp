@@ -95,6 +95,10 @@ namespace geode
             {
                 return false;
             }
+            if( !section_unique_vertices_are_linked_to_a_component_vertex() )
+            {
+                return false;
+            }
             for( const auto unique_vertex_id :
                 Range{ section_.nb_unique_vertices() } )
             {
@@ -134,6 +138,18 @@ namespace geode
                 if( section_surface_is_meshed( section_, surface.id() )
                     && !section_has_unique_vertex_associated_to_component(
                         section_, surface.id() ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        bool section_unique_vertices_are_linked_to_a_component_vertex() const
+        {
+            for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
+            {
+                if( section_.component_mesh_vertices( uv_id ).empty() )
                 {
                     return false;
                 }
@@ -200,6 +216,43 @@ namespace geode
                 }
             }
             return counter;
+        }
+
+        index_t nb_unique_vertices_not_linked_to_a_component_vertex() const
+        {
+            index_t nb_unlinked{ 0 };
+            for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
+            {
+                if( section_.component_mesh_vertices( uv_id ).empty() )
+                {
+                    nb_unlinked++;
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with id ", uv_id,
+                            " is not linked to any component mesh vertex." );
+                    }
+                }
+            }
+            return nb_unlinked;
+        }
+
+        std::vector< index_t >
+            unique_vertices_not_linked_to_a_component_vertex() const
+        {
+            std::vector< index_t > unlinked_uv;
+            for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
+            {
+                if( section_.component_mesh_vertices( uv_id ).empty() )
+                {
+                    unlinked_uv.push_back( uv_id );
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with id ", uv_id,
+                            " is not linked to any component mesh vertex." );
+                    }
+                }
+            }
+            return unlinked_uv;
         }
 
         std::vector< index_t >
@@ -400,6 +453,13 @@ namespace geode
         return impl_->section_meshed_components_are_linked_to_a_unique_vertex();
     }
 
+    bool SectionTopologyInspector::
+        section_unique_vertices_are_linked_to_a_component_vertex() const
+    {
+        return impl_
+            ->section_unique_vertices_are_linked_to_a_component_vertex();
+    }
+
     index_t SectionTopologyInspector::nb_corners_not_linked_to_a_unique_vertex()
         const
     {
@@ -416,6 +476,18 @@ namespace geode
         nb_surfaces_meshed_but_not_linked_to_a_unique_vertex() const
     {
         return impl_->nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
+    }
+
+    index_t SectionTopologyInspector::
+        nb_unique_vertices_not_linked_to_a_component_vertex() const
+    {
+        return impl_->nb_unique_vertices_not_linked_to_a_component_vertex();
+    }
+
+    std::vector< index_t > SectionTopologyInspector::
+        unique_vertices_not_linked_to_a_component_vertex() const
+    {
+        return impl_->unique_vertices_not_linked_to_a_component_vertex();
     }
 
     std::vector< index_t >

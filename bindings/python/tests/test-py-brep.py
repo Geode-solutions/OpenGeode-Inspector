@@ -235,8 +235,8 @@ def check_a1_vertices_topology():
     else:
         print( "model_A1 topology is invalid." )
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
-    if nb_model_issues != 1254:
-        raise ValueError( "[Test] model model_A1 should have 1254 unique vertices with topological problems." )
+    if nb_model_issues != 1998:
+        raise ValueError( "[Test] model model_A1 should have 1998 unique vertices with topological problems." )
     nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
     if nb_component_meshes_issues != 0:
         raise ValueError( "[Test] model model_A1 should have 0 component meshes issues." )
@@ -251,8 +251,8 @@ def check_a1_valid_vertices_topology():
     else:
         print( "model_A1_valid topology is invalid." )
     nb_model_issues = launch_topological_validity_checks( brep_inspector )
-    if nb_model_issues != 1254:
-        raise ValueError( "[Test] model model_A1_valid should have 1254 unique vertices with topological problems." )
+    if nb_model_issues != 1998:
+        raise ValueError( "[Test] model model_A1_valid should have 1998 unique vertices with topological problems." )
     nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
     if nb_component_meshes_issues != 0:
         raise ValueError( "[Test] model model_A1_valid should have 0 component meshes issues." )
@@ -270,8 +270,8 @@ def check_mss_vertices_topology():
     if nb_model_issues != 17:
         raise ValueError( "[Test] model mss.og_strm should have 17 unique vertices with topological problems." )
     nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
-    if nb_component_meshes_issues != 148:
-        raise ValueError( "[Test] model mss should have 148 component meshes issues." )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model mss should have no component meshes issues." )
 
 def check_model_D_vertices_topology():
     test_dir = os.path.dirname(__file__)
@@ -286,8 +286,8 @@ def check_model_D_vertices_topology():
     if nb_model_issues != 0:
         raise ValueError( "[Test] model model_D.og_brep should have 0 unique vertices with topological problems." )
     nb_component_meshes_issues = launch_component_meshes_validity_checks( brep_inspector )
-    if nb_component_meshes_issues != 2:
-        raise ValueError( "[Test] model_D should have 2 component meshes issues." )
+    if nb_component_meshes_issues != 0:
+        raise ValueError( "[Test] model_D should have no component meshes issues." )
 
 if __name__ == '__main__':
     check_a1_vertices_topology()

@@ -69,7 +69,7 @@ void check_colocation()
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
         "[Test] Solid doesn't have colocated points whereas it should have "
         "several." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 3,
+    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 5,
         "[Test] Solid has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]

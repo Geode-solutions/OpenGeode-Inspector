@@ -197,9 +197,16 @@ namespace geode
         bool model_has_colocated_unique_vertices() const
         {
             const PointSetColocation< dimension > pointset_inspector{
-                *unique_vertices_, verbose_
+                *unique_vertices_, false
             };
-            return pointset_inspector.mesh_has_colocated_points();
+            const auto has_colocation =
+                pointset_inspector.mesh_has_colocated_points();
+            if( verbose_ )
+            {
+                Logger::info(
+                    "Model has unique vertices which are colocated." );
+            }
+            return has_colocation;
         }
 
         index_t nb_unique_vertices_linked_to_different_points() const
@@ -228,9 +235,43 @@ namespace geode
         index_t nb_colocated_unique_vertices() const
         {
             const PointSetColocation< dimension > pointset_inspector{
-                *unique_vertices_, verbose_
+                *unique_vertices_, false
             };
-            return pointset_inspector.nb_colocated_points();
+            index_t nb_colocated{ 0 };
+            for( const auto& point_group :
+                pointset_inspector.colocated_points_groups() )
+            {
+                index_t counter{ 0 };
+                std::string point_group_string{ "" };
+                for( const auto point_index : Indices{ point_group } )
+                {
+                    if( model_
+                            .component_mesh_vertices( point_group[point_index] )
+                            .empty() )
+                    {
+                        continue;
+                    }
+                    counter++;
+                    if( verbose_ )
+                    {
+                        point_group_string += " ";
+                        point_group_string +=
+                            std::to_string( point_group[point_index] );
+                    }
+                }
+                if( counter > 0 )
+                {
+                    nb_colocated += counter;
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertices with indices",
+                            point_group_string, " are colocated at position [",
+                            unique_vertices_->point( point_group[0] ).string(),
+                            "]." );
+                    }
+                }
+            }
+            return nb_colocated;
         }
 
         std::vector< index_t >
@@ -261,9 +302,44 @@ namespace geode
             colocated_unique_vertices_groups() const
         {
             const PointSetColocation< dimension > pointset_inspector{
-                *unique_vertices_, verbose_
+                *unique_vertices_, false
             };
-            return pointset_inspector.colocated_points_groups();
+            std::vector< std::vector< index_t > > colocated_points_groups;
+            for( const auto& point_group :
+                pointset_inspector.colocated_points_groups() )
+            {
+                std::vector< index_t > fixed_point_group;
+                std::string point_group_string{ "" };
+                for( const auto point_index : Indices{ point_group } )
+                {
+                    if( model_
+                            .component_mesh_vertices( point_group[point_index] )
+                            .empty() )
+                    {
+                        continue;
+                    }
+                    fixed_point_group.push_back( point_group[point_index] );
+                    if( verbose_ )
+                    {
+                        point_group_string += " ";
+                        point_group_string +=
+                            std::to_string( point_group[point_index] );
+                    }
+                }
+                if( !fixed_point_group.empty() )
+                {
+                    colocated_points_groups.push_back( fixed_point_group );
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertices with indices",
+                            point_group_string, " are colocated at position [",
+                            unique_vertices_->point( fixed_point_group[0] )
+                                .string(),
+                            "]." );
+                    }
+                }
+            }
+            return colocated_points_groups;
         }
 
     private:
