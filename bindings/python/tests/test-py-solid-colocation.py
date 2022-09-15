@@ -61,7 +61,7 @@ def check_colocation():
     colocation_inspector = inspector.SolidMeshColocation3D( solid )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Solid doesn't have colocated points whereas it should have several." )
-    if not colocation_inspector.nb_colocated_points() == 3:
+    if not colocation_inspector.nb_colocated_points() == 5:
         raise ValueError( "[Test] Solid has wrong number of colocated points." )
     first_colocated_points_group = [ 0, 1, 6 ]
     if not colocation_inspector.colocated_points_groups()[0] == first_colocated_points_group:

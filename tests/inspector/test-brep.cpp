@@ -64,6 +64,11 @@ geode::index_t check_components_linking( geode::BRepInspector& brep_inspector )
     nb_issues += nb_unlinked_blocks;
     geode::Logger::info( "There are ", nb_unlinked_blocks,
         " blocks not linked to a unique vertex." );
+    const auto nb_unlinked_uv =
+        brep_inspector.nb_unique_vertices_not_linked_to_a_component_vertex();
+    nb_issues += nb_unlinked_uv;
+    geode::Logger::info( "There are ", nb_unlinked_uv,
+        " unique vertices not linked to a component mesh vertex." );
     return nb_issues;
 }
 
@@ -455,9 +460,9 @@ void check_model_a1()
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 1254,
-        "[Test] model_A1 should have 1254 unique "
-        "vertices with topological problems." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 1998, "[Test] model_A1 has ",
+        nb_topological_issues,
+        " instead of 1998 unique vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
@@ -474,9 +479,9 @@ void check_model_a1_valid()
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 1254,
-        "[Test] model_A1_valid should have 1254 unique "
-        "vertices with topological problems." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 1998,
+        "[Test] model_A1_valid has ", nb_topological_issues,
+        " instead of 1998 unique vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
@@ -499,8 +504,8 @@ void check_model_mss()
         "vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 148,
-        "[Test] model mss.og_strm should have 148 issues in its component "
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
+        "[Test] model mss.og_strm should have no issues in its component "
         "meshes." );
 }
 
@@ -518,9 +523,8 @@ void check_model_D()
         "vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 2,
-        "[Test] model_D should have "
-        "2 issues in its component meshes." );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
+        "[Test] model_D should have no issues in its component meshes." );
 }
 
 int main()

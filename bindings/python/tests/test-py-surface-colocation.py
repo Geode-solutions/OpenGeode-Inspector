@@ -59,7 +59,7 @@ def check_colocation2D():
     colocation_inspector = inspector.SurfaceMeshColocation2D( surface )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] Surface doesn't have colocated points whereas it should have several." )
-    if not colocation_inspector.nb_colocated_points() == 3:
+    if not colocation_inspector.nb_colocated_points() == 5:
         raise ValueError( "[Test] Surface has wrong number of colocated points." )
     first_colocated_points_group = [ 0, 1, 6 ]
     if not colocation_inspector.colocated_points_groups()[0] == first_colocated_points_group:
@@ -101,7 +101,7 @@ def check_colocation3D():
     colocation_inspector = inspector.SurfaceMeshColocation3D( surface )
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError( "[Test] (3D) Surface doesn't have colocated points whereas it should have several." )
-    if not colocation_inspector.nb_colocated_points() == 3:
+    if not colocation_inspector.nb_colocated_points() == 5:
         raise ValueError( "[Test] (3D) Surface has wrong number of colocated points." )
     first_colocated_points_group = [ 0, 1, 6 ]
     if not colocation_inspector.colocated_points_groups()[0] == first_colocated_points_group:

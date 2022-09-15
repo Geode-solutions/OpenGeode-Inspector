@@ -62,7 +62,7 @@ void inspect_section( const geode::Section& section )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector section_inspector{ section, verbose };
-    absl::InlinedVector< async::task< void >, 20 > tasks;
+    absl::InlinedVector< async::task< void >, 21 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&section_inspector] {
@@ -84,6 +84,13 @@ void inspect_section( const geode::Section& section )
                     .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info( nb_surfaces,
                 " surfaces meshed but not linked to a unique vertex" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&section_inspector] {
+            const auto nb_unlinked_uv =
+                section_inspector
+                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+            geode::Logger::info( nb_unlinked_uv,
+                " unique vertices not linked to a component mesh vertex" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
@@ -199,7 +206,7 @@ void inspect_section( const geode::Section& section )
     {
         tasks.emplace_back( async::spawn( [&section_inspector] {
             const auto nb =
-                section_inspector.components_with_colocated_points().size();
+                section_inspector.components_nb_colocated_points().size();
             geode::Logger::info(
                 nb, " components with colocated points in their mesh." );
         } ) );

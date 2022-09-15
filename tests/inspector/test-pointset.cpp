@@ -66,7 +66,7 @@ void check_colocation2D()
     OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),
         "[Test] PointSet doesn't have colocated points whereas it should have "
         "several." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 3,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 5,
         "[Test] PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(
@@ -117,7 +117,7 @@ void check_colocation3D()
         "[Test] (3D) PointSet doesn't have colocated points whereas it should "
         "have "
         "several." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 3,
+    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 5,
         "[Test] (3D) PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(

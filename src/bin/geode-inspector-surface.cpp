@@ -72,7 +72,11 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
     if( absl::GetFlag( FLAGS_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_colocated_points();
+            geode::index_t nb{ 0 };
+            for( const auto& pt_group : inspector.colocated_points_groups() )
+            {
+                nb += pt_group.size();
+            }
             geode::Logger::info( nb, " colocated points" );
         } ) );
     }
