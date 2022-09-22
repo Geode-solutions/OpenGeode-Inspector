@@ -422,6 +422,7 @@ int main()
 {
     try
     {
+        geode::OpenGeodeInspectorInspector::initialize();
         check_section();
 
         geode::Logger::info( "TEST SUCCESS" );

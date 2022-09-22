@@ -75,6 +75,9 @@ namespace pybind11
 PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
 {
     module.doc() = "OpenGeode-Inspector Python binding";
+    pybind11::class_< geode::OpenGeodeInspectorInspector >(
+        module, "OpenGeodeInspectorInspector" )
+        .def( "initialize", &geode::OpenGeodeInspectorInspector::initialize );
     geode::define_surface_adjacency( module );
     geode::define_solid_adjacency( module );
     geode::define_section_meshes_adjacency( module );

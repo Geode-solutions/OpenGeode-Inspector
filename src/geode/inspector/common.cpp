@@ -23,11 +23,12 @@
 
 #include <geode/inspector/common.h>
 
-namespace
+#include <geode/model/common.h>
+
+namespace geode
 {
-    OPENGEODE_LIBRARY_INITIALIZE( OpenGeode_Inspector_inspector )
+    OPENGEODE_LIBRARY_IMPLEMENTATION( OpenGeodeInspectorInspector )
     {
-        /* Here the functions to call when initializing the library
-         */
+        OpenGeodeModel::initialize();
     }
-} // namespace
+} // namespace geode

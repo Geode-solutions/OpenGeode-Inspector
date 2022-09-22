@@ -30,10 +30,9 @@
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/io/brep_input.h>
 
+#include <geode/geosciences/common.h>
 #include <geode/geosciences/representation/core/structural_model.h>
 #include <geode/geosciences/representation/io/structural_model_input.h>
-
-#include <geode/geosciences/detail/common.h>
 
 #include <geode/inspector/brep_inspector.h>
 
@@ -491,7 +490,6 @@ void check_model_a1_valid()
 
 void check_model_mss()
 {
-    geode::detail::initialize_geosciences_io();
     const auto model_brep = geode::load_structural_model(
         absl::StrCat( geode::data_path, "mss.og_strm" ) );
     geode::BRepInspector brep_inspector{ model_brep };
@@ -531,6 +529,8 @@ int main()
 {
     try
     {
+        geode::OpenGeodeInspectorInspector::initialize();
+        geode::OpenGeodeGeosciencesGeosciences::initialize();
         check_model_a1();
         check_model_a1_valid();
         check_model_mss();

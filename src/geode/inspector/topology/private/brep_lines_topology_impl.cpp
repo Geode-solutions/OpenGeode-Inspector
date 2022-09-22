@@ -76,7 +76,7 @@ namespace geode
             vertex_is_part_of_not_boundary_nor_internal_line(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : brep_.component_mesh_vertices(
+            for( const auto& line : brep_.component_mesh_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
                 if( brep_.nb_embeddings( line.component_id.id() ) < 1
@@ -103,9 +103,7 @@ namespace geode
                 components_uuids( brep_.component_mesh_vertices(
                     unique_vertex_index, Line3D::component_type_static() ) ) )
             {
-                const auto embeddings = brep_.embeddings( line_id );
-
-                for( const auto embedding : embeddings )
+                for( const auto& embedding : brep_.embeddings( line_id ) )
                 {
                     if( brep_.Relationships::is_boundary(
                             line_id, embedding.id() ) )

@@ -290,6 +290,7 @@ int main()
 {
     try
     {
+        geode::OpenGeodeInspectorInspector::initialize();
         check_adjacency2D();
         check_non_adjacency_no_bijection2D();
         check_non_adjacency_wrong_edge2D();

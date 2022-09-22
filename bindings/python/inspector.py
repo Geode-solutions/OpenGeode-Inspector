@@ -8,4 +8,4 @@ import opengeode_geosciences
 import opengeode_geosciencesio
 
 from .opengeode_inspector_py_inspector import *
-
+OpenGeodeInspectorInspector.initialize()

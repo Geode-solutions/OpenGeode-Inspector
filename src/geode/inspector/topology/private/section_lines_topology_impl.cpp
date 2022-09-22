@@ -76,7 +76,7 @@ namespace geode
             vertex_is_part_of_not_boundary_nor_internal_line(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : section_.component_mesh_vertices(
+            for( const auto& line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( section_.nb_embeddings( line.component_id.id() ) < 1
@@ -99,7 +99,7 @@ namespace geode
             vertex_is_part_of_line_with_invalid_internal_topology(
                 const index_t unique_vertex_index ) const
         {
-            for( const auto line : section_.component_mesh_vertices(
+            for( const auto& line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( section_.nb_embeddings( line.component_id.id() ) < 1 )

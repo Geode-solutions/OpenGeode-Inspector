@@ -138,9 +138,7 @@ namespace geode
                      brep_.component_mesh_vertices( unique_vertex_index,
                          Surface3D::component_type_static() ) ) )
             {
-                const auto embeddings = brep_.embeddings( surface_id );
-
-                for( const auto embedding : embeddings )
+                for( const auto& embedding : brep_.embeddings( surface_id ) )
                 {
                     if( brep_.Relationships::is_boundary(
                             surface_id, embedding.id() ) )
@@ -364,7 +362,7 @@ namespace geode
             {
                 return false;
             }
-            for( const auto surface_vertex : brep_.component_mesh_vertices(
+            for( const auto& surface_vertex : brep_.component_mesh_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
             {
                 if( !brep_.surface( surface_vertex.component_id.id() )

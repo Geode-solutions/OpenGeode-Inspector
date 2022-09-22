@@ -35,7 +35,7 @@
 #include <geode/mesh/core/point_set.h>
 #include <geode/mesh/io/point_set_input.h>
 
-#include <geode/io/mesh/detail/common.h>
+#include <geode/io/mesh/common.h>
 
 #include <geode/inspector/pointset_inspector.h>
 
@@ -68,7 +68,7 @@ int main( int argc, char* argv[] )
             argv[0], " --input my_pointset.og_pts3d\n" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::detail::initialize_mesh_io();
+        geode::OpenGeodeIOMesh::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
         const auto ext =
             geode::to_string( geode::extension_from_filename( filename ) );
