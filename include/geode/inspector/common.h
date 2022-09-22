@@ -24,5 +24,12 @@
 #pragma once
 
 #include <geode/basic/common.h>
+#include <geode/basic/library.h>
 
 #include <geode/inspector/opengeode_inspector_inspector_export.h>
+
+namespace geode
+{
+    OPENGEODE_LIBRARY(
+        opengeode_inspector_inspector_api, OpenGeodeInspectorInspector );
+} // namespace geode

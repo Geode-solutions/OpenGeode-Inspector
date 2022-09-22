@@ -56,7 +56,7 @@ namespace geode
                     unique_vertex_index, Block3D::component_type_static() ) );
             if( block_uuids.size() == 2 )
             {
-                for( const auto surface :
+                for( const auto& surface :
                     brep_.component_mesh_vertices( unique_vertex_index,
                         Surface3D::component_type_static() ) )
                 {
@@ -68,11 +68,11 @@ namespace geode
                         return true;
                     }
                 }
-                for( const auto line :
+                for( const auto& line :
                     brep_.component_mesh_vertices(
                         unique_vertex_index, Line3D::component_type_static() ) )
                 {
-                    for( const auto surface :
+                    for( const auto& surface :
                         brep_.component_mesh_vertices( unique_vertex_index,
                             Surface3D::component_type_static() ) )
                     {

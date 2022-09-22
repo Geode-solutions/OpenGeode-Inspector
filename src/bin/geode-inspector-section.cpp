@@ -34,7 +34,7 @@
 #include <geode/model/representation/core/section.h>
 #include <geode/model/representation/io/section_input.h>
 
-#include <geode/io/model/detail/common.h>
+#include <geode/io/model/common.h>
 
 #include <geode/inspector/section_inspector.h>
 
@@ -250,7 +250,7 @@ int main( int argc, char* argv[] )
                 "use --noXXX, e.g. --nocomponent_linking" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::detail::initialize_model_io();
+        geode::OpenGeodeIOModel::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
 
         inspect_section( geode::load_section( filename ) );

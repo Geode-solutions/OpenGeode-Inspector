@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include <absl/container/inlined_vector.h>
+
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
