@@ -35,6 +35,9 @@
         .def( "section_meshed_components_are_linked_to_a_unique_vertex",       \
             &SectionTopologyInspector::                                        \
                 section_meshed_components_are_linked_to_a_unique_vertex )      \
+        .def( "section_unique_vertices_are_linked_to_a_component_vertex",      \
+            &SectionTopologyInspector::                                        \
+                section_unique_vertices_are_linked_to_a_component_vertex )     \
         .def( "nb_corners_not_linked_to_a_unique_vertex",                      \
             &SectionTopologyInspector::                                        \
                 nb_corners_not_linked_to_a_unique_vertex )                     \
@@ -44,6 +47,12 @@
         .def( "nb_surfaces_meshed_but_not_linked_to_a_unique_vertex",          \
             &SectionTopologyInspector::                                        \
                 nb_surfaces_meshed_but_not_linked_to_a_unique_vertex )         \
+        .def( "nb_unique_vertices_not_linked_to_a_component_vertex",           \
+            &SectionTopologyInspector::                                        \
+                nb_unique_vertices_not_linked_to_a_component_vertex )          \
+        .def( "unique_vertices_not_linked_to_a_component_vertex",              \
+            &SectionTopologyInspector::                                        \
+                unique_vertices_not_linked_to_a_component_vertex )             \
         .def( "invalid_components_topology_unique_vertices",                   \
             &SectionTopologyInspector::                                        \
                 invalid_components_topology_unique_vertices )                  \

@@ -35,6 +35,9 @@
         .def( "brep_meshed_components_are_linked_to_a_unique_vertex",            \
             &BRepTopologyInspector::                                             \
                 brep_meshed_components_are_linked_to_a_unique_vertex )           \
+        .def( "brep_unique_vertices_are_linked_to_a_component_vertex",           \
+            &BRepTopologyInspector::                                             \
+                brep_unique_vertices_are_linked_to_a_component_vertex )          \
         .def( "nb_corners_not_linked_to_a_unique_vertex",                        \
             &BRepTopologyInspector::nb_corners_not_linked_to_a_unique_vertex )   \
         .def( "nb_lines_meshed_but_not_linked_to_a_unique_vertex",               \
@@ -46,6 +49,12 @@
         .def( "nb_blocks_meshed_but_not_linked_to_a_unique_vertex",              \
             &BRepTopologyInspector::                                             \
                 nb_blocks_meshed_but_not_linked_to_a_unique_vertex )             \
+        .def( "nb_unique_vertices_not_linked_to_a_component_vertex",             \
+            &BRepTopologyInspector::                                             \
+                nb_unique_vertices_not_linked_to_a_component_vertex )            \
+        .def( "unique_vertices_not_linked_to_a_component_vertex",                \
+            &BRepTopologyInspector::                                             \
+                unique_vertices_not_linked_to_a_component_vertex )               \
         .def( "invalid_components_topology_unique_vertices",                     \
             &BRepTopologyInspector::                                             \
                 invalid_components_topology_unique_vertices )                    \
