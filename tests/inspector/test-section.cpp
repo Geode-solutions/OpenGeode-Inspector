@@ -53,7 +53,12 @@ geode::index_t check_components_linking(
             .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
     geode::Logger::info( "There are ", nb_unlinked_surfaces,
         " surfaces not linked to a unique vertex." );
-    return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces;
+    const auto nb_unlinked_uv =
+        section_inspector.nb_unique_vertices_not_linked_to_a_component_vertex();
+    geode::Logger::info( "There are ", nb_unlinked_uv,
+        " unique vertices not linked to a component mesh vertex." );
+    return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces
+           + nb_unlinked_uv;
 }
 
 geode::index_t check_unique_vertices_colocation(
