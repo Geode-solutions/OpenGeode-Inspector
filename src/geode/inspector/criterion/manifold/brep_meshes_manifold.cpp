@@ -175,12 +175,10 @@ namespace geode
             return components_non_manifold_edges;
         }
 
-        absl::flat_hash_map< uuid,
-            std::vector< absl::InlinedVector< index_t, 4 > > >
+        absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
             component_meshes_non_manifold_facets() const
         {
-            absl::flat_hash_map< uuid,
-                std::vector< absl::InlinedVector< index_t, 4 > > >
+            absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
                 components_non_manifold_facets;
             for( const auto& block : model().blocks() )
             {
@@ -251,8 +249,7 @@ namespace geode
         return impl_->component_meshes_non_manifold_edges();
     }
 
-    absl::flat_hash_map< uuid,
-        std::vector< absl::InlinedVector< index_t, 4 > > >
+    absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
         BRepComponentMeshesManifold::component_meshes_non_manifold_facets()
             const
     {
