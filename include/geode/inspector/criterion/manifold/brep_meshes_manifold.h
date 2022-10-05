@@ -24,9 +24,10 @@
 #pragma once
 
 #include <absl/container/flat_hash_map.h>
-#include <absl/container/inlined_vector.h>
 
 #include <geode/basic/pimpl.h>
+
+#include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/common.h>
 
@@ -70,8 +71,7 @@ namespace geode
         absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
             component_meshes_non_manifold_edges() const;
 
-        absl::flat_hash_map< uuid,
-            std::vector< absl::InlinedVector< index_t, 4 > > >
+        absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
             component_meshes_non_manifold_facets() const;
 
     private:

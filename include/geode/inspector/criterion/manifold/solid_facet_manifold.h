@@ -27,12 +27,9 @@
 
 #include <geode/basic/pimpl.h>
 
-#include <geode/inspector/common.h>
+#include <geode/mesh/core/solid_mesh.h>
 
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( SolidMesh );
-} // namespace geode
+#include <geode/inspector/common.h>
 
 namespace geode
 {
@@ -57,8 +54,7 @@ namespace geode
 
         index_t nb_non_manifold_facets() const;
 
-        std::vector< absl::InlinedVector< index_t, 4 > >
-            non_manifold_facets() const;
+        std::vector< PolyhedronFacetVertices > non_manifold_facets() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
