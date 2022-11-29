@@ -23,12 +23,16 @@
 
 #include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
 
+#include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
+#include <geode/mesh/core/detail/vertex_cycle.h>
 #include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/model/mixin/core/block.h>
+#include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
 #include <geode/inspector/criterion/manifold/solid_edge_manifold.h>
@@ -74,6 +78,18 @@ namespace geode
                     non_manifold_components.push_back( block.id() );
                 }
             }
+            const auto& model_edges = model_non_manifold_edges();
+            if( !model_edges.empty() )
+            {
+                for( const auto& model_edge : model_edges )
+                {
+                    for( const auto& component_id : model_edge.second )
+                    {
+                        non_manifold_components.push_back( component_id );
+                    }
+                }
+            }
+            sort_unique( non_manifold_components );
             return non_manifold_components;
         }
 
@@ -193,6 +209,54 @@ namespace geode
             }
             return components_non_manifold_facets;
         }
+
+        absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+            model_non_manifold_edges() const
+        {
+            using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
+            absl::flat_hash_map< Edge, std::vector< uuid > > edges;
+            for( const auto& surface : model().surfaces() )
+            {
+                const auto& mesh = surface.mesh();
+                for( const auto p : Range{ mesh.nb_polygons() } )
+                {
+                    const auto vertices = mesh.polygon_vertices( p );
+                    for( const auto e : LIndices{ vertices } )
+                    {
+                        const auto adj = mesh.polygon_adjacent( { p, e } );
+                        if( !adj || adj.value() < p )
+                        {
+                            continue;
+                        }
+                        const auto v0 = model().unique_vertex(
+                            { surface.component_id(), vertices[e] } );
+                        const auto v1 =
+                            model().unique_vertex( { surface.component_id(),
+                                vertices[e == vertices.size() - 1 ? 0
+                                                                  : e + 1] } );
+                        const auto info = edges.try_emplace(
+                            std::array< index_t, 2 >{ v0, v1 },
+                            std::vector< uuid >{ surface.id() } );
+                        if( !info.second )
+                        {
+                            info.first->second.push_back( surface.id() );
+                        }
+                    }
+                }
+            }
+            absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+                result;
+            for( auto& edge : edges )
+            {
+                sort_unique( edge.second );
+                if( edge.second.size() > 1 )
+                {
+                    result.emplace( std::move( edge.first.vertices() ),
+                        std::move( edge.second ) );
+                }
+            }
+            return result;
+        }
     };
 
     BRepComponentMeshesManifold::BRepComponentMeshesManifold(
@@ -254,5 +318,11 @@ namespace geode
             const
     {
         return impl_->component_meshes_non_manifold_facets();
+    }
+
+    absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+        BRepComponentMeshesManifold::model_non_manifold_edges() const
+    {
+        return impl_->model_non_manifold_edges();
     }
 } // namespace geode

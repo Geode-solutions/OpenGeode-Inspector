@@ -74,6 +74,9 @@ namespace geode
         absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
             component_meshes_non_manifold_facets() const;
 
+        absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+            model_non_manifold_edges() const;
+
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
