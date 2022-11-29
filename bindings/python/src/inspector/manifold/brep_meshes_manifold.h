@@ -49,7 +49,9 @@
                 component_meshes_non_manifold_edges )                          \
         .def( "component_meshes_non_manifold_facets",                          \
             &BRepComponentMeshesManifold::                                     \
-                component_meshes_non_manifold_facets )
+                component_meshes_non_manifold_facets )                         \
+        .def( "model_non_manifold_edges",                                      \
+            &BRepComponentMeshesManifold::model_non_manifold_edges )
 
 namespace geode
 {

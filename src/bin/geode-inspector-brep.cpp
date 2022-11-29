@@ -63,7 +63,7 @@ void inspect_brep( const geode::BRep& brep )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector brep_inspector{ brep, verbose };
-    absl::InlinedVector< async::task< void >, 28 > tasks;
+    absl::InlinedVector< async::task< void >, 29 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -286,6 +286,11 @@ void inspect_brep( const geode::BRep& brep )
                 brep_inspector.component_meshes_nb_non_manifold_facets().size();
             geode::Logger::info(
                 nb, " components with non manifold facets in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb = brep_inspector.model_non_manifold_edges().size();
+            geode::Logger::info(
+                nb, " components with non manifold model edges." );
         } ) );
     }
     async::when_all( tasks.begin(), tasks.end() ).wait();
