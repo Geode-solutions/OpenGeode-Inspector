@@ -63,6 +63,12 @@ ABSL_FLAG( bool,
     blocks,
     true,
     "Toggle inspection of block topology through unique vertices" );
+ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion for components" );
+ABSL_FLAG(
+    bool, colocation, true, "Toggle colocation criterion for components" );
+ABSL_FLAG(
+    bool, degeneration, true, "Toggle degeneration criterion for components" );
+ABSL_FLAG( bool, manifold, true, "Toggle manifold criterion for components" );
 ABSL_FLAG( bool,
     verbose,
     false,
@@ -73,7 +79,7 @@ void inspect_model( const geode::StructuralModel& model )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector model_inspector{ model, verbose };
-    absl::InlinedVector< async::task< void >, 20 > tasks;
+    absl::InlinedVector< async::task< void >, 29 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&model_inspector] {
@@ -102,6 +108,13 @@ void inspect_model( const geode::StructuralModel& model )
                     .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
             geode::Logger::info(
                 nb_blocks, " blocks meshed but not linked to a unique vertex" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb_unlinked_uv =
+                model_inspector
+                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+            geode::Logger::info( nb_unlinked_uv,
+                " unique vertices not linked to a component mesh vertex" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
@@ -221,7 +234,9 @@ void inspect_model( const geode::StructuralModel& model )
                     .part_of_line_and_not_on_surface_border_unique_vertices()
                     .size();
             geode::Logger::info( nb,
-                " unique vertices part of line and not on surface border." );
+                " unique vertices part of a line and a surface but for "
+                "which one of the associated vertex on the surface mesh is not "
+                "on the mesh border." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_blocks ) )
@@ -231,6 +246,69 @@ void inspect_model( const geode::StructuralModel& model )
                 model_inspector.part_of_invalid_blocks_unique_vertices().size();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_adjacency ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.surfaces_nb_edges_with_wrong_adjacencies()
+                    .size();
+            geode::Logger::info(
+                nb, " surfaces with adjacency problems in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.blocks_nb_facets_with_wrong_adjacencies()
+                    .size();
+            geode::Logger::info(
+                nb, " blocks with adjacency problems in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.components_nb_colocated_points().size();
+            geode::Logger::info(
+                nb, " components with colocated points in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_degeneration ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.components_with_degenerated_edges().size();
+            geode::Logger::info(
+                nb, " components with degenerated edges in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.component_meshes_nb_non_manifold_vertices()
+                    .size();
+            geode::Logger::info(
+                nb, " components with non manifold vertices in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.component_meshes_non_manifold_edges().size();
+            geode::Logger::info(
+                nb, " components with non manifold edges in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.component_meshes_nb_non_manifold_facets()
+                    .size();
+            geode::Logger::info(
+                nb, " components with non manifold facets in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb = model_inspector.model_non_manifold_edges().size();
+            geode::Logger::info(
+                nb, " components with non manifold model edges." );
         } ) );
     }
     async::when_all( tasks.begin(), tasks.end() ).wait();
