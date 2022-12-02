@@ -27,6 +27,8 @@
 #include <geode/basic/pimpl_impl.h>
 #include <geode/basic/uuid.h>
 
+#include <geode/geometry/point.h>
+
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_mesh.h>
@@ -190,7 +192,7 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh(), false
             };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -210,7 +212,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh(), false
             };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -248,8 +250,7 @@ namespace
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshColocation3D inspector{ block.mesh(), false };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< 3, geode::BRep >( model,
                     block.component_id(),
@@ -281,7 +282,7 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh(), false
             };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -291,12 +292,32 @@ namespace
             {
                 components_colocated_points.emplace(
                     line.id(), std::move( colocated_pts ) );
+                if( verbose )
+                {
+                    const auto& line_mesh = line.mesh();
+                    for( const auto& colocated_points_group : colocated_pts )
+                    {
+                        std::string point_group_string{ "" };
+                        for( const auto point_index : colocated_points_group )
+                        {
+                            absl::StrAppend(
+                                &point_group_string, " ", point_index );
+                        }
+                        geode::Logger::info( "Line with uuid ",
+                            line.id().string(), " has vertices with indices",
+                            point_group_string,
+                            " which are colocated at position [",
+                            line_mesh.point( colocated_points_group[0] )
+                                .string(),
+                            "]." );
+                    }
+                }
             }
         }
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh(), false
             };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -306,6 +327,26 @@ namespace
             {
                 components_colocated_points.emplace(
                     surface.id(), std::move( colocated_pts ) );
+                if( verbose )
+                {
+                    const auto& surface_mesh = surface.mesh();
+                    for( const auto& colocated_points_group : colocated_pts )
+                    {
+                        std::string point_group_string{ "" };
+                        for( const auto point_index : colocated_points_group )
+                        {
+                            absl::StrAppend(
+                                &point_group_string, " ", point_index );
+                        }
+                        geode::Logger::info( "Surface with uuid ",
+                            surface.id().string(), " has vertices with indices",
+                            point_group_string,
+                            " which are colocated at position [",
+                            surface_mesh.point( colocated_points_group[0] )
+                                .string(),
+                            "]." );
+                    }
+                }
             }
         }
         return components_colocated_points;
@@ -327,7 +368,7 @@ namespace
     {
         auto components_colocated_points =
             model_components_colocated_points_groups_base< 3, geode::BRep >(
-                model, verbose );
+                model, false );
         for( const auto& block : model.blocks() )
         {
             const geode::SolidMeshColocation3D inspector{ block.mesh(),
@@ -339,6 +380,26 @@ namespace
             {
                 components_colocated_points.emplace(
                     block.id(), std::move( colocated_pts ) );
+                if( verbose )
+                {
+                    const auto& block_mesh = block.mesh();
+                    for( const auto& colocated_points_group : colocated_pts )
+                    {
+                        std::string point_group_string{ "" };
+                        for( const auto point_index : colocated_points_group )
+                        {
+                            absl::StrAppend(
+                                &point_group_string, " ", point_index );
+                        }
+                        geode::Logger::info( "Block with uuid ",
+                            block.id().string(), " has vertices with indices",
+                            point_group_string,
+                            " which are colocated at position [",
+                            block_mesh.point( colocated_points_group[0] )
+                                .string(),
+                            "]." );
+                    }
+                }
             }
         }
         return components_colocated_points;

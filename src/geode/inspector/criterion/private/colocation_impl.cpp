@@ -77,12 +77,9 @@ namespace
             for( const auto& colocated_points_group : colocated_points_indices )
             {
                 std::string point_group_string{ "" };
-                for( const auto point_index :
-                    geode::Indices{ colocated_points_group } )
+                for( const auto point_index : colocated_points_group )
                 {
-                    point_group_string += " ";
-                    point_group_string +=
-                        std::to_string( colocated_points_group[point_index] );
+                    absl::StrAppend( &point_group_string, " ", point_index );
                 }
                 geode::Logger::info( "Vertices with indices",
                     point_group_string, " are colocated at position [",
