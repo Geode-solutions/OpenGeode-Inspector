@@ -102,7 +102,10 @@ void inspect_solid( const geode::SolidMesh< dimension >& solid )
             geode::Logger::info( nb, " non manifold facets" );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )

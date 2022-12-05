@@ -311,7 +311,10 @@ void inspect_model( const geode::StructuralModel& model )
                 nb, " components with non manifold model edges." );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )

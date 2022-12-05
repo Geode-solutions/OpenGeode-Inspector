@@ -166,7 +166,10 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
                 " unique vertices part of surfaces with invalid topology." );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )
