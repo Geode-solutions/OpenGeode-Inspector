@@ -73,7 +73,10 @@ void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
             geode::Logger::info( nb, " degenerated edges" );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )

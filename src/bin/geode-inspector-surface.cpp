@@ -101,7 +101,10 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
             geode::Logger::info( nb, " non manifold edges" );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )

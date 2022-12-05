@@ -236,7 +236,10 @@ void inspect_section( const geode::Section& section )
                 nb, " components with non manifold edges in their mesh." );
         } ) );
     }
-    async::when_all( tasks.begin(), tasks.end() ).wait();
+    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
+    {
+        task.get();
+    }
 }
 
 int main( int argc, char* argv[] )
