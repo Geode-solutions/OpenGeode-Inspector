@@ -43,7 +43,7 @@
 namespace
 {
     template < geode::index_t dimension, typename Model >
-    std::vector< geode::uuid > model_components_with_degenerated_edges_base(
+    std::vector< geode::uuid > model_degenerated_component_meshes_base(
         const Model& model, bool verbose )
     {
         std::vector< geode::uuid > components_with_degeneration;
@@ -70,18 +70,18 @@ namespace
         return components_with_degeneration;
     }
 
-    std::vector< geode::uuid > model_components_with_degenerated_edges(
+    std::vector< geode::uuid > model_degenerated_component_meshes(
         const geode::Section& model, bool verbose )
     {
-        return model_components_with_degenerated_edges_base< 2,
-            geode::Section >( model, verbose );
+        return model_degenerated_component_meshes_base< 2, geode::Section >(
+            model, verbose );
     }
 
-    std::vector< geode::uuid > model_components_with_degenerated_edges(
+    std::vector< geode::uuid > model_degenerated_component_meshes(
         const geode::BRep& model, bool verbose )
     {
         auto components_with_degeneration =
-            model_components_with_degenerated_edges_base< 3, geode::BRep >(
+            model_degenerated_component_meshes_base< 3, geode::BRep >(
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
@@ -97,21 +97,21 @@ namespace
 
     template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_edges_base(
+        model_components_nb_degenerated_elements_base(
             const Model& model, bool verbose )
     {
         absl::flat_hash_map< geode::uuid, geode::index_t >
-            components_nb_degenerated_edges;
+            components_nb_degenerated_elements;
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveDegeneration< dimension > inspector{
                 line.mesh(), verbose
             };
-            const auto nb_colocated = inspector.nb_degenerated_edges();
-            if( nb_colocated > 0 )
+            const auto nb_degenerated = inspector.nb_degenerated_edges();
+            if( nb_degenerated > 0 )
             {
-                components_nb_degenerated_edges.emplace(
-                    line.id(), nb_colocated );
+                components_nb_degenerated_elements.emplace(
+                    line.id(), nb_degenerated );
             }
         }
         for( const auto& surface : model.surfaces() )
@@ -119,52 +119,54 @@ namespace
             const geode::SurfaceMeshDegeneration< dimension > inspector{
                 surface.mesh(), verbose
             };
-            const auto nb_colocated = inspector.nb_degenerated_edges();
-            if( nb_colocated > 0 )
+            const auto nb_degenerated = inspector.nb_degenerated_edges()
+                                        + inspector.nb_degenerated_polygons();
+            if( nb_degenerated > 0 )
             {
-                components_nb_degenerated_edges.emplace(
-                    surface.id(), nb_colocated );
+                components_nb_degenerated_elements.emplace(
+                    surface.id(), nb_degenerated );
             }
         }
-        return components_nb_degenerated_edges;
+        return components_nb_degenerated_elements;
     }
 
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_edges(
+        model_components_nb_degenerated_elements(
             const geode::Section& model, bool verbose )
     {
-        return model_components_nb_degenerated_edges_base< 2, geode::Section >(
-            model, verbose );
+        return model_components_nb_degenerated_elements_base< 2,
+            geode::Section >( model, verbose );
     }
 
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_edges(
+        model_components_nb_degenerated_elements(
             const geode::BRep& model, bool verbose )
     {
-        auto components_nb_degenerated_edges =
-            model_components_nb_degenerated_edges_base< 3, geode::BRep >(
+        auto components_nb_degenerated_elements =
+            model_components_nb_degenerated_elements_base< 3, geode::BRep >(
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
             const geode::SolidMeshDegeneration3D inspector{ block.mesh(),
                 verbose };
-            const auto nb_colocated = inspector.nb_degenerated_edges();
-            if( nb_colocated > 0 )
+            const auto nb_degenerated = inspector.nb_degenerated_edges()
+                                        + inspector.nb_degenerated_polyhedra();
+            if( nb_degenerated > 0 )
             {
-                components_nb_degenerated_edges.emplace(
-                    block.id(), nb_colocated );
+                components_nb_degenerated_elements.emplace(
+                    block.id(), nb_degenerated );
             }
         }
-        return components_nb_degenerated_edges;
+        return components_nb_degenerated_elements;
     }
 
     template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< geode::uuid, std::vector< geode::index_t > >
-        model_components_degenerated_edges_base(
+    absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
+        model_components_degenerated_elements_base(
             const Model& model, bool verbose )
     {
-        absl::flat_hash_map< geode::uuid, std::vector< geode::index_t > >
-            components_degenerated_edges;
+        absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
+            components_degenerated_elements;
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveDegeneration< dimension > inspector{
@@ -173,8 +175,11 @@ namespace
             auto degenerated_edges = inspector.degenerated_edges();
             if( !degenerated_edges.empty() )
             {
-                components_degenerated_edges.emplace(
-                    line.id(), std::move( degenerated_edges ) );
+                geode::DegeneratedElements elements{
+                    std::move( degenerated_edges ), {}, {}
+                };
+                components_degenerated_elements.emplace(
+                    line.id(), std::move( elements ) );
             }
         }
         for( const auto& surface : model.surfaces() )
@@ -183,42 +188,50 @@ namespace
                 surface.mesh(), verbose
             };
             auto degenerated_edges = inspector.degenerated_edges();
-            if( !degenerated_edges.empty() )
+            auto degenerated_polygons = inspector.degenerated_polygons();
+            if( !degenerated_edges.empty() || !degenerated_polygons.empty() )
             {
-                components_degenerated_edges.emplace(
-                    surface.id(), std::move( degenerated_edges ) );
+                geode::DegeneratedElements elements{ std::move(
+                                                         degenerated_edges ),
+                    std::move( degenerated_polygons ), {} };
+                components_degenerated_elements.emplace(
+                    surface.id(), std::move( elements ) );
             }
         }
-        return components_degenerated_edges;
+        return components_degenerated_elements;
     }
 
-    absl::flat_hash_map< geode::uuid, std::vector< geode::index_t > >
-        model_components_degenerated_edges(
+    absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
+        model_components_degenerated_elements(
             const geode::Section& model, bool verbose )
     {
-        return model_components_degenerated_edges_base< 2, geode::Section >(
+        return model_components_degenerated_elements_base< 2, geode::Section >(
             model, verbose );
     }
 
-    absl::flat_hash_map< geode::uuid, std::vector< geode::index_t > >
-        model_components_degenerated_edges(
+    absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
+        model_components_degenerated_elements(
             const geode::BRep& model, bool verbose )
     {
-        auto components_degenerated_edges =
-            model_components_degenerated_edges_base< 3, geode::BRep >(
+        auto components_degenerated_elements =
+            model_components_degenerated_elements_base< 3, geode::BRep >(
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
             const geode::SolidMeshDegeneration3D inspector{ block.mesh(),
                 verbose };
             auto degenerated_edges = inspector.degenerated_edges();
-            if( !degenerated_edges.empty() )
+            auto degenerated_polyhedra = inspector.degenerated_polyhedra();
+            if( !degenerated_edges.empty() || !degenerated_polyhedra.empty() )
             {
-                components_degenerated_edges.emplace(
-                    block.id(), std::move( degenerated_edges ) );
+                geode::DegeneratedElements elements{ std::move(
+                                                         degenerated_edges ),
+                    {}, std::move( degenerated_polyhedra ) };
+                components_degenerated_elements.emplace(
+                    block.id(), std::move( elements ) );
             }
         }
-        return components_degenerated_edges;
+        return components_degenerated_elements;
     }
 } // namespace
 
@@ -233,21 +246,21 @@ namespace geode
         {
         }
 
-        std::vector< uuid > components_with_degenerated_edges() const
+        std::vector< uuid > degenerated_component_meshes() const
         {
-            return model_components_with_degenerated_edges( model_, verbose_ );
+            return model_degenerated_component_meshes( model_, verbose_ );
         }
 
         absl::flat_hash_map< uuid, index_t >
-            components_nb_degenerated_edges() const
+            components_nb_degenerated_elements() const
         {
-            return model_components_nb_degenerated_edges( model_, verbose_ );
+            return model_components_nb_degenerated_elements( model_, verbose_ );
         }
 
-        absl::flat_hash_map< uuid, std::vector< index_t > >
-            components_degenerated_edges() const
+        absl::flat_hash_map< uuid, DegeneratedElements >
+            components_degenerated_elements() const
         {
-            return model_components_degenerated_edges( model_, verbose_ );
+            return model_components_degenerated_elements( model_, verbose_ );
         }
 
     private:
@@ -277,24 +290,24 @@ namespace geode
 
     template < geode::index_t dimension, typename Model >
     std::vector< uuid > ComponentMeshesDegeneration< dimension,
-        Model >::components_with_degenerated_edges() const
+        Model >::degenerated_component_meshes() const
     {
-        return impl_->components_with_degenerated_edges();
+        return impl_->degenerated_component_meshes();
     }
 
     template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< uuid, index_t > ComponentMeshesDegeneration< dimension,
-        Model >::components_nb_degenerated_edges() const
+        Model >::components_nb_degenerated_elements() const
     {
-        return impl_->components_nb_degenerated_edges();
+        return impl_->components_nb_degenerated_elements();
     }
 
     template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, std::vector< index_t > >
+    absl::flat_hash_map< uuid, DegeneratedElements >
         ComponentMeshesDegeneration< dimension,
-            Model >::components_degenerated_edges() const
+            Model >::components_degenerated_elements() const
     {
-        return impl_->components_degenerated_edges();
+        return impl_->components_degenerated_elements();
     }
 
     template class opengeode_inspector_inspector_api

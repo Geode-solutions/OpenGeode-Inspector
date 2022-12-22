@@ -46,6 +46,11 @@ namespace geode
         }
 
         template < class MeshType >
+        DegenerationImpl< MeshType >::~DegenerationImpl()
+        {
+        }
+
+        template < class MeshType >
         bool DegenerationImpl< MeshType >::is_mesh_degenerated() const
         {
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
@@ -104,6 +109,18 @@ namespace geode
                     ", at position [", p1.string(), "], is degenerated." );
             }
             return degenerated;
+        }
+
+        template < class MeshType >
+        const MeshType& DegenerationImpl< MeshType >::mesh() const
+        {
+            return mesh_;
+        }
+
+        template < class MeshType >
+        bool DegenerationImpl< MeshType >::verbose() const
+        {
+            return verbose_;
         }
 
         template class opengeode_inspector_inspector_api

@@ -211,11 +211,11 @@ def check_component_meshes_colocation(section_inspector):
 
 def check_component_meshes_degeneration(section_inspector):
     nb_degenerated = 0
-    components_nb_degenerated_edges = section_inspector.components_nb_degenerated_edges()
-    for comp_id in components_nb_degenerated_edges:
-        print("There are ", components_nb_degenerated_edges[comp_id],
+    components_nb_degenerated_elements = section_inspector.components_nb_degenerated_elements()
+    for comp_id in components_nb_degenerated_elements:
+        print("There are ", components_nb_degenerated_elements[comp_id],
               " degenerated edges in mesh with id ", comp_id.string())
-        nb_degenerated += components_nb_degenerated_edges[comp_id]
+        nb_degenerated += components_nb_degenerated_elements[comp_id]
     return nb_degenerated
 
 

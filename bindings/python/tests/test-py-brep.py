@@ -267,11 +267,11 @@ def check_component_meshes_colocation(brep_inspector):
 
 def check_component_meshes_degeneration(brep_inspector):
     nb_degenerated = 0
-    components_nb_degenerated_edges = brep_inspector.components_nb_degenerated_edges()
-    for degenerated_id in components_nb_degenerated_edges:
-        print("There are ", components_nb_degenerated_edges[degenerated_id],
+    components_nb_degenerated_elements = brep_inspector.components_nb_degenerated_elements()
+    for degenerated_id in components_nb_degenerated_elements:
+        print("There are ", components_nb_degenerated_elements[degenerated_id],
               " degenerated edges in mesh with id ", degenerated_id.string())
-        nb_degenerated += components_nb_degenerated_edges[degenerated_id]
+        nb_degenerated += components_nb_degenerated_elements[degenerated_id]
     return nb_degenerated
 
 

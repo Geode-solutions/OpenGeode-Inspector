@@ -215,9 +215,9 @@ void inspect_section( const geode::Section& section )
     {
         tasks.emplace_back( async::spawn( [&section_inspector] {
             const auto nb =
-                section_inspector.components_with_degenerated_edges().size();
+                section_inspector.components_nb_degenerated_elements().size();
             geode::Logger::info(
-                nb, " components with degenerated edges in their mesh." );
+                nb, " components with degenerated elements in their mesh." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_manifold ) )

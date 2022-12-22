@@ -38,9 +38,16 @@ namespace geode
 
 namespace geode
 {
+    struct DegeneratedElements
+    {
+        std::vector< index_t > degenerated_edges;
+        std::vector< index_t > degenerated_polygons;
+        std::vector< index_t > degenerated_polyhedra;
+    };
+
     /*!
-     * Class for inspecting the degeneration of edges in the Component Meshes of
-     * a Model (BRep or Section).
+     * Class for inspecting the degeneration of elements in the Component Meshes
+     * of a Model (BRep or Section).
      */
     template < index_t dimension, typename Model >
     class opengeode_inspector_inspector_api ComponentMeshesDegeneration
@@ -54,13 +61,13 @@ namespace geode
 
         ~ComponentMeshesDegeneration();
 
-        std::vector< uuid > components_with_degenerated_edges() const;
+        std::vector< uuid > degenerated_component_meshes() const;
 
         absl::flat_hash_map< uuid, index_t >
-            components_nb_degenerated_edges() const;
+            components_nb_degenerated_elements() const;
 
-        absl::flat_hash_map< uuid, std::vector< index_t > >
-            components_degenerated_edges() const;
+        absl::flat_hash_map< uuid, DegeneratedElements >
+            components_degenerated_elements() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

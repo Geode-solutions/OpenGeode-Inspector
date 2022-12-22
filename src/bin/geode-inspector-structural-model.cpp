@@ -278,7 +278,7 @@ void inspect_model( const geode::StructuralModel& model )
     {
         tasks.emplace_back( async::spawn( [&model_inspector] {
             const auto nb =
-                model_inspector.components_with_degenerated_edges().size();
+                model_inspector.components_nb_degenerated_elements().size();
             geode::Logger::info(
                 nb, " components with degenerated edges in their mesh." );
         } ) );

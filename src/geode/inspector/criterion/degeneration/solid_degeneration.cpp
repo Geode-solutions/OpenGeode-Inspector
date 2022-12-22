@@ -27,6 +27,9 @@
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
+#include <geode/geometry/basic_objects/tetrahedron.h>
+#include <geode/geometry/mensuration.h>
+
 #include <geode/mesh/core/solid_mesh.h>
 
 namespace geode
@@ -40,6 +43,69 @@ namespace geode
             : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh,
                   verbose }
         {
+        }
+
+        bool is_mesh_degenerated() const final
+        {
+            if( this->detail::DegenerationImpl<
+                    SolidMesh< dimension > >::is_mesh_degenerated() )
+            {
+                return true;
+            }
+            for( const auto polyhedron_id :
+                Range{ this->mesh().nb_polyhedra() } )
+            {
+                if( polyhedron_is_degenerated( polyhedron_id ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        index_t nb_degenerated_polyhedra() const
+        {
+            index_t counter{ 0 };
+            for( const auto polyhedron_id :
+                Range{ this->mesh().nb_polyhedra() } )
+            {
+                if( polyhedron_is_degenerated( polyhedron_id ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        std::vector< index_t > degenerated_polyhedra() const
+        {
+            std::vector< index_t > wrong_polyhedra;
+            for( const auto polyhedron_id :
+                Range{ this->mesh().nb_polyhedra() } )
+            {
+                if( polyhedron_is_degenerated( polyhedron_id ) )
+                {
+                    wrong_polyhedra.push_back( polyhedron_id );
+                }
+            }
+            return wrong_polyhedra;
+        }
+
+    private:
+        bool polyhedron_is_degenerated( index_t polyhedron_id ) const
+        {
+            const auto& mesh = this->mesh();
+            if( std::abs( mesh.polyhedron_volume( polyhedron_id ) )
+                > global_epsilon )
+            {
+                return false;
+            }
+            if( this->verbose() )
+            {
+                Logger::info(
+                    "Polyhedron ", polyhedron_id, " is degenerated." );
+            }
+            return true;
         }
     };
 
@@ -75,10 +141,23 @@ namespace geode
     }
 
     template < index_t dimension >
+    index_t SolidMeshDegeneration< dimension >::nb_degenerated_polyhedra() const
+    {
+        return impl_->nb_degenerated_polyhedra();
+    }
+
+    template < index_t dimension >
     std::vector< index_t >
         SolidMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
+    }
+
+    template < index_t dimension >
+    std::vector< index_t >
+        SolidMeshDegeneration< dimension >::degenerated_polyhedra() const
+    {
+        return impl_->degenerated_polyhedra();
     }
 
     template class opengeode_inspector_inspector_api SolidMeshDegeneration< 3 >;
