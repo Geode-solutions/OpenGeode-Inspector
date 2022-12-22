@@ -261,9 +261,9 @@ void inspect_brep( const geode::BRep& brep )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb =
-                brep_inspector.components_with_degenerated_edges().size();
+                brep_inspector.components_nb_degenerated_elements().size();
             geode::Logger::info(
-                nb, " components with degenerated edges in their mesh." );
+                nb, " components with degenerated elements in their mesh." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_manifold ) )

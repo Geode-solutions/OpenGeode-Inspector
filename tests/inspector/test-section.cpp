@@ -349,7 +349,7 @@ geode::index_t check_components_degeneration(
 {
     geode::index_t nb_issues{ 0 };
     const auto components_degenerated_edges =
-        section_inspector.components_nb_degenerated_edges();
+        section_inspector.components_nb_degenerated_elements();
     if( components_degenerated_edges.empty() )
     {
         geode::Logger::info( "Section component meshes are not degenerated." );

@@ -54,7 +54,11 @@ namespace geode
 
         index_t nb_degenerated_edges() const;
 
+        index_t nb_degenerated_polygons() const;
+
         std::vector< index_t > degenerated_edges() const;
+
+        std::vector< index_t > degenerated_polygons() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

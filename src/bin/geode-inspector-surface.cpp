@@ -59,7 +59,7 @@ template < geode::index_t dimension >
 void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 5 > tasks;
+    absl::InlinedVector< async::task< void >, 6 > tasks;
     const geode::SurfaceMeshInspector< dimension > inspector{ surface,
         verbose };
     if( absl::GetFlag( FLAGS_adjacency ) )
@@ -85,6 +85,10 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
         tasks.emplace_back( async::spawn( [&inspector] {
             const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_degenerated_polygons();
+            geode::Logger::info( nb, " degenerated polygons" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_manifold_vertex ) )
