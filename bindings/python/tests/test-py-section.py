@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,8 @@ def check_components_linking(section_inspector):
     print("There are ", nb_unlinked_surfaces,
           " surfaces meshed but not linked to a unique vertex.")
     nb_unlinked_uv = section_inspector.nb_unique_vertices_not_linked_to_a_component_vertex()
-    print( "There are ", nb_unlinked_uv, " unique vertices not linked to a component mesh vertex." )
+    print("There are ", nb_unlinked_uv,
+          " unique vertices not linked to a component mesh vertex.")
     return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces + nb_unlinked_uv
 
 
