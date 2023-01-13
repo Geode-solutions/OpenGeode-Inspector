@@ -365,20 +365,32 @@ namespace geode
             for( const auto& surface_vertex : brep_.component_mesh_vertices(
                      unique_vertex_index, Surface3D::component_type_static() ) )
             {
-                if( !brep_.surface( surface_vertex.component_id.id() )
-                         .mesh()
-                         .is_vertex_on_border( surface_vertex.vertex ) )
+                const auto& surface =
+                    brep_.surface( surface_vertex.component_id.id() );
+                if( !surface.mesh().is_vertex_on_border(
+                        surface_vertex.vertex ) )
                 {
-                    if( verbose_ )
+                    for( const auto& cmv_line : lines )
                     {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is part of a line and of surface with uuid '",
-                            surface_vertex.component_id.id().string(),
-                            "' but the associated vertex in the surface mesh "
-                            "is not on the mesh border." );
+                        const auto& line =
+                            brep_.line( cmv_line.component_id.id() );
+                        if( brep_.is_boundary( line, surface )
+                            || brep_.is_internal( line, surface ) )
+                        {
+                            if( verbose_ )
+                            {
+                                Logger::info( "Unique vertex with index ",
+                                    unique_vertex_index,
+                                    " is part of a line and of surface with "
+                                    "uuid '",
+                                    surface_vertex.component_id.id().string(),
+                                    "' but the associated vertex in the "
+                                    "surface mesh "
+                                    "is not on the mesh border." );
+                            }
+                            return true;
+                        }
                     }
-                    return true;
                 }
             }
             return false;
