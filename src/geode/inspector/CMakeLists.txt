@@ -40,6 +40,7 @@ add_geode_library(
         "criterion/degeneration/surface_degeneration.cpp"
         "criterion/degeneration/solid_degeneration.cpp"
         "criterion/degeneration/component_meshes_degeneration.cpp"
+        "criterion/intersections/surface_intersections.cpp"
         "criterion/manifold/surface_vertex_manifold.cpp"
         "criterion/manifold/surface_edge_manifold.cpp"
         "criterion/manifold/solid_vertex_manifold.cpp"
@@ -80,6 +81,7 @@ add_geode_library(
         "criterion/degeneration/surface_degeneration.h"
         "criterion/degeneration/solid_degeneration.h"
         "criterion/degeneration/component_meshes_degeneration.h"
+        "criterion/intersections/surface_intersections.h"
         "criterion/manifold/surface_vertex_manifold.h"
         "criterion/manifold/surface_edge_manifold.h"
         "criterion/manifold/solid_vertex_manifold.h"
@@ -96,7 +98,7 @@ add_geode_library(
         "edgedcurve_inspector.h"
         "surface_inspector.h"
         "solid_inspector.h"
-        PRIVATE_HEADERS
+    PRIVATE_HEADERS
         "criterion/private/component_meshes_adjacency.h"
         "criterion/private/colocation_impl.h"
         "criterion/private/degeneration_impl.h"

@@ -27,6 +27,7 @@
 #include <geode/inspector/criterion/adjacency/surface_adjacency.h>
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
+#include <geode/inspector/criterion/intersections/surface_intersections.h>
 #include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
 #include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
@@ -38,6 +39,7 @@ namespace geode
      * @extends SurfaceMeshAdjacency
      * @extends SurfaceMeshColocation
      * @extends SurfaceMeshDegeneration
+     * @extends SurfaceMeshIntersections
      * @extends SurfaceMeshEdgeManifold
      * @extends SurfaceMeshVertexManifold
      */
@@ -47,6 +49,7 @@ namespace geode
               SurfaceMeshAdjacency< dimension >,
               SurfaceMeshColocation< dimension >,
               SurfaceMeshDegeneration< dimension >,
+              SurfaceMeshIntersections< dimension >,
               SurfaceMeshEdgeManifold< dimension >,
               SurfaceMeshVertexManifold< dimension > >
     {

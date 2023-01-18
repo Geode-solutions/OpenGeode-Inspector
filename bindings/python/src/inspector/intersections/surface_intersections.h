@@ -23,27 +23,29 @@
 
 #include <geode/mesh/core/surface_mesh.h>
 
-#include <geode/inspector/surface_inspector.h>
+#include <geode/inspector/criterion/intersections/surface_intersections.h>
 
-#define PYTHON_SURFACE_INSPECTOR( dimension )                                  \
+#define PYTHON_SURFACE_INTERSECTIONS( dimension )                              \
     const auto name##dimension =                                               \
-        "SurfaceMeshInspector" + std::to_string( dimension ) + "D";            \
-    pybind11::class_< SurfaceMeshInspector##dimension##D,                      \
-        SurfaceMeshAdjacency##dimension##D,                                    \
-        SurfaceMeshColocation##dimension##D,                                   \
-        SurfaceMeshDegeneration##dimension##D,                                 \
-        SurfaceMeshIntersections##dimension##D,                                \
-        SurfaceMeshEdgeManifold##dimension##D,                                 \
-        SurfaceMeshVertexManifold##dimension##D >(                             \
+        "SurfaceMeshIntersections" + std::to_string( dimension ) + "D";        \
+    pybind11::class_< SurfaceMeshIntersections##dimension##D >(                \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
+        .def( "mesh_has_self_intersections",                                   \
+            &SurfaceMeshIntersections##dimension##D::                          \
+                mesh_has_self_intersections )                                  \
+        .def( "nb_intersecting_elements_pair",                                 \
+            &SurfaceMeshIntersections##dimension##D::                          \
+                nb_intersecting_elements_pair )                                \
+        .def( "intersecting_elements",                                         \
+            &SurfaceMeshIntersections##dimension##D::intersecting_elements )
 
 namespace geode
 {
-    void define_surface_inspector( pybind11::module& module )
+    void define_surface_intersections( pybind11::module& module )
     {
-        PYTHON_SURFACE_INSPECTOR( 2 );
-        PYTHON_SURFACE_INSPECTOR( 3 );
+        PYTHON_SURFACE_INTERSECTIONS( 2 );
+        PYTHON_SURFACE_INTERSECTIONS( 3 );
     }
 } // namespace geode
