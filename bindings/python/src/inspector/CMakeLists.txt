@@ -35,6 +35,7 @@ add_geode_python_binding(
         "degeneration/solid_degeneration.h"
         "degeneration/surface_degeneration.h"
         "degeneration/component_meshes_degeneration.h"
+        "intersections/surface_intersections.h"
         "manifold/surface_edge_manifold.h"
         "manifold/surface_vertex_manifold.h"
         "manifold/solid_vertex_manifold.h"

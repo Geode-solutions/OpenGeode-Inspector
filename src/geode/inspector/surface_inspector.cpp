@@ -34,6 +34,7 @@ namespace geode
             SurfaceMeshAdjacency< dimension >,
             SurfaceMeshColocation< dimension >,
             SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshIntersections< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension > >{ mesh }
     {
@@ -46,6 +47,7 @@ namespace geode
             SurfaceMeshAdjacency< dimension >,
             SurfaceMeshColocation< dimension >,
             SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshIntersections< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension > >{ mesh, verbose }
     {

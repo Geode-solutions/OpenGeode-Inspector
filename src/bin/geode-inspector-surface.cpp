@@ -50,6 +50,10 @@ ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
 ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
 ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
 ABSL_FLAG( bool,
+    intersection,
+    true,
+    "Toggle self intersection criterion (only for triangulated surfaces)" );
+ABSL_FLAG( bool,
     verbose,
     false,
     "Toggle verbose mode for the inspection of topology through unique "
@@ -59,7 +63,7 @@ template < geode::index_t dimension >
 void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 6 > tasks;
+    absl::InlinedVector< async::task< void >, 7 > tasks;
     const geode::SurfaceMeshInspector< dimension > inspector{ surface,
         verbose };
     if( absl::GetFlag( FLAGS_adjacency ) )
@@ -103,6 +107,15 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
         tasks.emplace_back( async::spawn( [&inspector] {
             const auto nb = inspector.nb_non_manifold_edges();
             geode::Logger::info( nb, " non manifold edges" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_intersection )
+        && surface.type_name()
+               == geode::TriangulatedSurface< dimension >::type_name_static() )
+    {
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_intersecting_elements_pair();
+            geode::Logger::info( nb, " pairs of intersecting triangles" );
         } ) );
     }
     for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )

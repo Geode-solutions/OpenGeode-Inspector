@@ -79,6 +79,12 @@ add_geode_python_test(
 )
 
 add_geode_python_test(
+    SOURCE "test-py-surface-intersections.py"
+    DEPENDENCIES 
+        ${PROJECT_NAME}::py_inspector
+)
+
+add_geode_python_test(
     SOURCE "test-py-surface-manifold.py"
     DEPENDENCIES 
         ${PROJECT_NAME}::py_inspector
