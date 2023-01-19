@@ -134,8 +134,7 @@ int main( int argc, char* argv[] )
         }
         else if( geode::PolygonalSurfaceInputFactory3D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 3 >( filename ) );
+            inspect_surface( *geode::load_polygonal_surface< 3 >( filename ) );
         }
         else if( geode::TriangulatedSurfaceInputFactory2D::has_creator( ext ) )
         {
@@ -144,8 +143,7 @@ int main( int argc, char* argv[] )
         }
         else if( geode::PolygonalSurfaceInputFactory2D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 2 >( filename ) );
+            inspect_surface( *geode::load_polygonal_surface< 2 >( filename ) );
         }
         else if( geode::RegularGridInputFactory2D::has_creator( ext ) )
         {
