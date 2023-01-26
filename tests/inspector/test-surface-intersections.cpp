@@ -57,10 +57,10 @@ void check_intersections2D()
     bool right_intersections{ true };
     const auto triangles_inter =
         intersections_inspector.intersecting_elements();
-    if( triangles_inter.size() != 3 || triangles_inter[0][0] != 2
-        || triangles_inter[0][1] != 0 || triangles_inter[1][0] != 2
-        || triangles_inter[1][1] != 1 || triangles_inter[2][0] != 0
-        || triangles_inter[2][1] != 1 )
+    if( triangles_inter.size() != 3 || triangles_inter[0].first != 2
+        || triangles_inter[0].second != 0 || triangles_inter[1].first != 2
+        || triangles_inter[1].second != 1 || triangles_inter[2].first != 0
+        || triangles_inter[2].second != 1 )
     {
         right_intersections = false;
     }
@@ -103,9 +103,9 @@ void check_intersections3D()
     bool right_intersections{ true };
     const auto triangles_inter =
         intersections_inspector.intersecting_elements();
-    if( triangles_inter.size() != 2 || triangles_inter[0][0] != 0
-        || triangles_inter[0][1] != 4 || triangles_inter[1][0] != 2
-        || triangles_inter[1][1] != 4 )
+    if( triangles_inter.size() != 2 || triangles_inter[0].first != 0
+        || triangles_inter[0].second != 4 || triangles_inter[1].first != 2
+        || triangles_inter[1].second != 4 )
     {
         right_intersections = false;
     }

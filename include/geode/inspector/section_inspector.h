@@ -28,6 +28,7 @@
 #include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
 #include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/intersections/model_intersections.h>
 #include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/section_topology.h>
@@ -45,7 +46,8 @@ namespace geode
               SectionComponentMeshesAdjacency,
               SectionComponentMeshesColocation,
               SectionComponentMeshesDegeneration,
-              SectionComponentMeshesManifold >
+              SectionComponentMeshesManifold,
+              SectionMeshesIntersections >
     {
         OPENGEODE_DISABLE_COPY( SectionInspector );
 

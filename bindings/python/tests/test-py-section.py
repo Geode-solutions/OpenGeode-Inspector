@@ -236,6 +236,14 @@ def check_components_manifold(section_inspector):
         nb_issues += components_nb_non_manifold_edges[non_manifold_edges]
     return nb_issues
 
+def check_components_intersections( section_inspector ):
+    nb_surfaces_intersections = section_inspector.nb_intersecting_surfaces_elements_pair()
+    if nb_surfaces_intersections == 0:
+        print( "Section meshes have no intersection problems." )
+    else:
+        print( "There are ", nb_surfaces_intersections, " pairs of intersecting triangles in the Section." )
+    return nb_surfaces_intersections
+
 
 def launch_component_meshes_validity_checks(section_inspector):
     nb_invalids = check_component_meshes_adjacency(section_inspector)

@@ -23,44 +23,45 @@
 
 #pragma once
 
-#include <absl/types/span.h>
-
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
+    class Section;
+    class BRep;
+    struct ComponentMeshElement;
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the intersections of SurfaceMeshes
+     * Class for inspecting the intersections of a Model meshes
      */
-    template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshIntersections
+    template < index_t dimension, typename Model >
+    class opengeode_inspector_inspector_api ModelMeshesIntersections
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshIntersections );
+        OPENGEODE_DISABLE_COPY( ModelMeshesIntersections );
 
     public:
-        SurfaceMeshIntersections( const SurfaceMesh< dimension >& mesh );
+        ModelMeshesIntersections( const Model& model );
 
-        SurfaceMeshIntersections(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
+        ModelMeshesIntersections( const Model& model, bool verbose );
 
-        ~SurfaceMeshIntersections();
+        ~ModelMeshesIntersections();
 
-        bool mesh_has_self_intersections() const;
+        bool model_has_intersecting_surfaces() const;
 
-        index_t nb_intersecting_elements_pair() const;
+        index_t nb_intersecting_surfaces_elements_pair() const;
 
-        std::vector< std::pair< index_t, index_t > >
-            intersecting_elements() const;
+        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
+            intersecting_surfaces_elements() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshIntersections );
+
+    using SectionMeshesIntersections = ModelMeshesIntersections< 2, Section >;
+    using BRepMeshesIntersections = ModelMeshesIntersections< 3, BRep >;
 } // namespace geode

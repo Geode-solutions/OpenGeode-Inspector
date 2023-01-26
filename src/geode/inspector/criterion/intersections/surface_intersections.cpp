@@ -81,11 +81,12 @@ namespace
                 || triangles_intersect(
                     t1_id, t2_id, t1_vertices, t2_vertices, common_points ) )
             {
-                intersecting_triangles_.push_back( { t1_id, t2_id } );
+                intersecting_triangles_.emplace_back( t1_id, t2_id );
             }
         }
 
-        std::vector< std::array< geode::index_t, 2 > > intersecting_triangles()
+        std::vector< std::pair< geode::index_t, geode::index_t > >
+            intersecting_triangles()
         {
             return std::move( intersecting_triangles_ );
         }
@@ -115,7 +116,8 @@ namespace
 
     private:
         const geode::TriangulatedSurface< dimension >& mesh_;
-        std::vector< std::array< geode::index_t, 2 > > intersecting_triangles_;
+        std::vector< std::pair< geode::index_t, geode::index_t > >
+            intersecting_triangles_;
     };
 
     geode::index_t third_point_index( const geode::PolygonVertices& vertices,
@@ -323,31 +325,33 @@ namespace geode
             const auto intersections = intersecting_triangles();
             if( verbose_ )
             {
-                for( const auto triangle_pair : intersections )
+                for( const auto& triangle_pair : intersections )
                 {
-                    Logger::info( "Triangles ", triangle_pair[0], " and ",
-                        triangle_pair[1], " intersect each other." );
+                    Logger::info( "Triangles ", triangle_pair.first, " and ",
+                        triangle_pair.second, " intersect each other." );
                 }
             }
             return intersections.size();
         }
 
-        std::vector< std::array< index_t, 2 > > intersecting_elements() const
+        std::vector< std::pair< index_t, index_t > >
+            intersecting_elements() const
         {
             const auto intersections = intersecting_triangles();
             if( verbose_ )
             {
-                for( const auto triangle_pair : intersections )
+                for( const auto& triangle_pair : intersections )
                 {
-                    Logger::info( "Triangles ", triangle_pair[0], " and ",
-                        triangle_pair[1], " intersect each other." );
+                    Logger::info( "Triangles ", triangle_pair.first, " and ",
+                        triangle_pair.second, " intersect each other." );
                 }
             }
             return intersections;
         }
 
     private:
-        std::vector< std::array< index_t, 2 > > intersecting_triangles() const
+        std::vector< std::pair< index_t, index_t > >
+            intersecting_triangles() const
         {
             const auto surface_aabb = create_aabb_tree( mesh_ );
             TriangleTriangleIntersection< dimension > action{ mesh_ };
@@ -395,7 +399,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    std::vector< std::array< index_t, 2 > >
+    std::vector< std::pair< index_t, index_t > >
         SurfaceMeshIntersections< dimension >::intersecting_elements() const
     {
         return impl_->intersecting_elements();

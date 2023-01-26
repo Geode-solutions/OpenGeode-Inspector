@@ -297,12 +297,21 @@ def check_components_manifold(brep_inspector):
         nb_issues += components_nb_non_manifold_facets[non_manifold_facets]
     return nb_issues
 
+def check_components_intersections( brep_inspector ):
+    nb_surfaces_intersections = brep_inspector.nb_intersecting_surfaces_elements_pair()
+    if nb_surfaces_intersections == 0:
+        print( "BRep meshes have no intersection problems." )
+    else:
+        print( "There are ", nb_surfaces_intersections, " pairs of intersecting triangles in the BRep." )
+    return nb_surfaces_intersections
+
 
 def launch_component_meshes_validity_checks(brep_inspector):
     nb_invalids = check_component_meshes_adjacency(brep_inspector)
     nb_invalids += check_component_meshes_colocation(brep_inspector)
     nb_invalids += check_component_meshes_degeneration(brep_inspector)
     nb_invalids += check_components_manifold(brep_inspector)
+    nb_invalids += check_components_intersections(brep_inspector)
     return nb_invalids
 
 
@@ -321,9 +330,9 @@ def check_a1_vertices_topology():
             "[Test] model model_A1 should have 1998 unique vertices with topological problems.")
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         brep_inspector)
-    if nb_component_meshes_issues != 0:
+    if nb_component_meshes_issues != 11759:
         raise ValueError(
-            "[Test] model model_A1 should have 0 component meshes issues.")
+            "[Test] model model_A1_valid should have 11759 component meshes issues (pairs of component meshes triangles intersecting).")
 
 
 def check_a1_valid_vertices_topology():
@@ -341,9 +350,9 @@ def check_a1_valid_vertices_topology():
             "[Test] model model_A1_valid should have 1998 unique vertices with topological problems.")
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         brep_inspector)
-    if nb_component_meshes_issues != 0:
+    if nb_component_meshes_issues != 11759:
         raise ValueError(
-            "[Test] model model_A1_valid should have 0 component meshes issues.")
+            "[Test] model model_A1_valid should have 11759 component meshes issues (pairs of component meshes triangles intersecting).")
 
 
 def check_mss_vertices_topology():
