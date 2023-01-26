@@ -440,6 +440,23 @@ geode::index_t check_components_manifold( geode::BRepInspector& brep_inspector )
     return nb_issues;
 }
 
+geode::index_t check_components_intersections(
+    geode::BRepInspector& brep_inspector )
+{
+    const auto nb_surfaces_intersections =
+        brep_inspector.nb_intersecting_surfaces_elements_pair();
+    if( nb_surfaces_intersections == 0 )
+    {
+        geode::Logger::info( "BRep meshes have no intersection problems." );
+    }
+    else
+    {
+        geode::Logger::info( "There are ", nb_surfaces_intersections,
+            " pairs of intersecting triangles in the BRep." );
+    }
+    return nb_surfaces_intersections;
+}
+
 geode::index_t launch_component_meshes_validity_checks(
     geode::BRepInspector& brep_inspector )
 {
@@ -447,6 +464,8 @@ geode::index_t launch_component_meshes_validity_checks(
     nb_issues += check_components_colocation( brep_inspector );
     nb_issues += check_components_degeneration( brep_inspector );
     nb_issues += check_components_manifold( brep_inspector );
+    nb_issues += check_components_intersections( brep_inspector );
+
     return nb_issues;
 }
 
@@ -464,9 +483,9 @@ void check_model_a1()
         " instead of 1998 unique vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
-        "[Test] model_A1 should have "
-        "0 issues in its component meshes." );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 11759,
+        "[Test] model_A1 should have 11759 issues in its component meshes "
+        "(pairs of component meshes triangles intersecting)." );
 }
 
 void check_model_a1_valid()
@@ -483,9 +502,9 @@ void check_model_a1_valid()
         " instead of 1998 unique vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
-        "[Test] model_A1_valid should have "
-        "0 issues in its component meshes." );
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 11759,
+        "[Test] model_A1 should have 11759 issues in its component meshes "
+        "(pairs of component meshes triangles intersecting)." );
 }
 
 void check_model_mss()

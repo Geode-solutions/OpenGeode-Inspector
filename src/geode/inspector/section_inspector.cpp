@@ -34,7 +34,8 @@ namespace geode
             SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold >{ section }
+            SectionComponentMeshesManifold,
+            SectionMeshesIntersections >{ section }
     {
     }
 
@@ -45,7 +46,8 @@ namespace geode
             SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold >{ section, verbose }
+            SectionComponentMeshesManifold,
+            SectionMeshesIntersections >{ section, verbose }
     {
     }
 } // namespace geode

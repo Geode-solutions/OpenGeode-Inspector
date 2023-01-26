@@ -57,13 +57,17 @@ ABSL_FLAG(
 ABSL_FLAG(
     bool, degeneration, true, "Toggle degeneration criterion for components" );
 ABSL_FLAG( bool, manifold, true, "Toggle manifold criterion for components" );
+ABSL_FLAG( bool,
+    intersection,
+    true,
+    "Toggle intersection criterion (only between triangulated surfaces)" );
 ABSL_FLAG( bool, verbose, false, "Toggle verbose mode for the inspection" );
 
 void inspect_brep( const geode::BRep& brep )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector brep_inspector{ brep, verbose };
-    absl::InlinedVector< async::task< void >, 29 > tasks;
+    absl::InlinedVector< async::task< void >, 30 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -291,6 +295,15 @@ void inspect_brep( const geode::BRep& brep )
             const auto nb = brep_inspector.model_non_manifold_edges().size();
             geode::Logger::info(
                 nb, " components with non manifold model edges." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_intersection ) )
+    {
+        tasks.emplace_back( async::spawn( [&brep_inspector] {
+            const auto nb =
+                brep_inspector.nb_intersecting_surfaces_elements_pair();
+            geode::Logger::info(
+                nb, " pairs of component triangles intersecting each other." );
         } ) );
     }
     for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
