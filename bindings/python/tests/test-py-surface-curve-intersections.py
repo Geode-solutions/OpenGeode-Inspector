@@ -65,7 +65,7 @@ def check_intersections2D():
     builder_curve.create_edge_with_vertices( 5, 6 )
     builder_curve.create_edge_with_vertices( 6, 7 )
 
-    intersections_inspector = inspector.SurfaceCurveIntersections2D( surface, curve)
+    intersections_inspector = inspector.SurfaceCurveIntersections2D( surface, curve )
     if not intersections_inspector.meshes_have_intersections():
         raise ValueError( "[Test] 2D Surface and Curve should have intersections." )
     if not intersections_inspector.nb_intersecting_elements_pair() == 7:
@@ -109,7 +109,7 @@ def check_intersections3D():
     builder_curve.create_edge_with_vertices( 6, 7 )
     builder_curve.create_edge_with_vertices( 7, 8 )
 
-    intersections_inspector = inspector.SurfaceMeshIntersections3D(surface)
+    intersections_inspector = inspector.SurfaceCurveIntersections3D(surface, curve )
     if not intersections_inspector.meshes_have_intersections():
         raise ValueError( "[Test] 3D Surface and Curve should have intersections." )
     if not intersections_inspector.nb_intersecting_elements_pair() == 6:
