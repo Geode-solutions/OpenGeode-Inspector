@@ -109,6 +109,15 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-surface-curve-intersections.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_test(
     SOURCE "test-surface-manifold.cpp"
     DEPENDENCIES
         OpenGeode::basic

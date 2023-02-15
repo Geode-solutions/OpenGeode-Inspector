@@ -41,31 +41,33 @@ namespace geode
      * Class for inspecting the intersections of SurfaceMeshes
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshToEdgedCurveIntersections
+    class opengeode_inspector_inspector_api SurfaceCurveIntersections
     {
-        OPENGEODE_DISABLE_COPY( SurfaceMeshToEdgedCurveIntersections );
+        OPENGEODE_DISABLE_COPY( SurfaceCurveIntersections );
 
     public:
-        SurfaceMeshToEdgedCurveIntersections(
-            const SurfaceMesh< dimension >& surface,
+        SurfaceCurveIntersections( const SurfaceMesh< dimension >& surface,
             const EdgedCurve< dimension >& curve );
 
-        SurfaceMeshToEdgedCurveIntersections(
-            const SurfaceMesh< dimension >& mesh,
+        SurfaceCurveIntersections( const SurfaceMesh< dimension >& mesh,
             const EdgedCurve< dimension >& curve,
             bool verbose );
 
-        ~SurfaceMeshToEdgedCurveIntersections();
+        ~SurfaceCurveIntersections();
 
         bool meshes_have_intersections() const;
 
         index_t nb_intersecting_elements_pair() const;
 
+        /* Returns all pairs of intersecting triangles and edges.
+         * First element of each pair is a triangle index in the SurfaceMesh,
+         * second element of each pair is an edge index in the EdgedCurve.
+         */
         std::vector< std::pair< index_t, index_t > >
             intersecting_elements() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( SurfaceMeshToEdgedCurveIntersections );
+    ALIAS_2D_AND_3D( SurfaceCurveIntersections );
 } // namespace geode

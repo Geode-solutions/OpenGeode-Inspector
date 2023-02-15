@@ -55,7 +55,7 @@ namespace
 
         void operator()( geode::index_t triangle_id, geode::index_t edge_id )
         {
-            if( triangle_edge_intersect( triangle_id, edge_id ) )
+            if( edge_intersects_triangle( triangle_id, edge_id ) )
             {
                 intersecting_elements_.emplace_back( triangle_id, edge_id );
             }
@@ -68,7 +68,7 @@ namespace
         }
 
     private:
-        bool triangle_edge_intersect(
+        bool edge_intersects_triangle(
             geode::index_t triangle_id, geode::index_t edge_id ) const;
 
     private:
@@ -79,10 +79,20 @@ namespace
     };
 
     template <>
-    bool TriangleEdgeIntersection< 2 >::triangle_edge_intersect(
+    bool TriangleEdgeIntersection< 2 >::edge_intersects_triangle(
         geode::index_t triangle_id, geode::index_t edge_id ) const
     {
+        const auto triangle = surface_.triangle( triangle_id );
         const auto segment = curve_.segment( edge_id );
+        for( const auto ev : geode::LRange{ 2 } )
+        {
+            if( geode::point_triangle_position(
+                    segment.vertices()[ev].get(), triangle )
+                == geode::Position::inside )
+            {
+                return true;
+            }
+        }
         for( const auto e : geode::LRange{ 3 } )
         {
             const auto edge_vertices =
@@ -99,28 +109,25 @@ namespace
             {
                 return true;
             }
-            if( result.first == geode::Position::parallel
-                && result.second == geode::Position::parallel )
-            {
-                const auto result_colinear =
-                    geode::colinear_segment_segment_intersection_detection(
-                        segment, edge );
-                if( result_colinear.first != geode::Position::outside
-                    || result_colinear.second != geode::Position::outside )
-                {
-                    return true;
-                }
-            }
         }
         return false;
     }
 
     template <>
-    bool TriangleEdgeIntersection< 3 >::triangle_edge_intersect(
+    bool TriangleEdgeIntersection< 3 >::edge_intersects_triangle(
         geode::index_t triangle_id, geode::index_t edge_id ) const
     {
         const auto triangle = surface_.triangle( triangle_id );
         const auto segment = curve_.segment( edge_id );
+        for( const auto ev : geode::LRange{ 2 } )
+        {
+            if( geode::point_triangle_position(
+                    segment.vertices()[ev].get(), triangle )
+                == geode::Position::inside )
+            {
+                return true;
+            }
+        }
         const auto result =
             geode::segment_triangle_intersection_detection( segment, triangle );
         if( result.first == geode::Position::outside
@@ -129,8 +136,7 @@ namespace
             return false;
         }
 
-        if( result.first == geode::Position::inside
-            || result.first == geode::Position::parallel )
+        if( result.first == geode::Position::inside )
         {
             return true;
         }
@@ -138,10 +144,24 @@ namespace
         if( result.second == geode::Position::inside
             || result.second == geode::Position::edge0
             || result.second == geode::Position::edge1
-            || result.second == geode::Position::edge2
-            || result.first == geode::Position::parallel )
+            || result.second == geode::Position::edge2 )
         {
             return true;
+        }
+
+        if( result.first == geode::Position::parallel )
+        {
+            for( const auto ev : geode::LRange{ 2 } )
+            {
+                const auto position = geode::point_triangle_position(
+                    segment.vertices()[ev].get(), triangle );
+                if( position != geode::Position::vertex0
+                    && position != geode::Position::vertex1
+                    && position != geode::Position::vertex2 )
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -150,7 +170,7 @@ namespace
 namespace geode
 {
     template < index_t dimension >
-    class SurfaceMeshToEdgedCurveIntersections< dimension >::Impl
+    class SurfaceCurveIntersections< dimension >::Impl
     {
     public:
         Impl( const SurfaceMesh< dimension >& surface,
@@ -180,7 +200,7 @@ namespace geode
             {
                 for( const auto& pair : intersections )
                 {
-                    Logger::info( "Triangle ", pair.first, " and edge",
+                    Logger::info( "Triangle ", pair.first, " and edge ",
                         pair.second, " intersect each other." );
                 }
             }
@@ -221,54 +241,51 @@ namespace geode
     };
 
     template < index_t dimension >
-    SurfaceMeshToEdgedCurveIntersections< dimension >::
-        SurfaceMeshToEdgedCurveIntersections(
-            const SurfaceMesh< dimension >& surface,
-            const EdgedCurve< dimension >& curve )
+    SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
+        const SurfaceMesh< dimension >& surface,
+        const EdgedCurve< dimension >& curve )
         : impl_( surface, curve, false )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshToEdgedCurveIntersections< dimension >::
-        SurfaceMeshToEdgedCurveIntersections(
-            const SurfaceMesh< dimension >& surface,
-            const EdgedCurve< dimension >& curve,
-            bool verbose )
+    SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
+        const SurfaceMesh< dimension >& surface,
+        const EdgedCurve< dimension >& curve,
+        bool verbose )
         : impl_( surface, curve, verbose )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshToEdgedCurveIntersections<
-        dimension >::~SurfaceMeshToEdgedCurveIntersections()
+    SurfaceCurveIntersections< dimension >::~SurfaceCurveIntersections()
     {
     }
 
     template < index_t dimension >
-    bool SurfaceMeshToEdgedCurveIntersections<
-        dimension >::meshes_have_intersections() const
+    bool SurfaceCurveIntersections< dimension >::meshes_have_intersections()
+        const
     {
         return impl_->meshes_have_intersections();
     }
 
     template < index_t dimension >
-    index_t SurfaceMeshToEdgedCurveIntersections<
-        dimension >::nb_intersecting_elements_pair() const
+    index_t
+        SurfaceCurveIntersections< dimension >::nb_intersecting_elements_pair()
+            const
     {
         return impl_->nb_intersecting_elements_pair();
     }
 
     template < index_t dimension >
     std::vector< std::pair< index_t, index_t > >
-        SurfaceMeshToEdgedCurveIntersections<
-            dimension >::intersecting_elements() const
+        SurfaceCurveIntersections< dimension >::intersecting_elements() const
     {
         return impl_->intersecting_elements();
     }
 
     template class opengeode_inspector_inspector_api
-        SurfaceMeshToEdgedCurveIntersections< 2 >;
+        SurfaceCurveIntersections< 2 >;
     template class opengeode_inspector_inspector_api
-        SurfaceMeshToEdgedCurveIntersections< 3 >;
+        SurfaceCurveIntersections< 3 >;
 } // namespace geode

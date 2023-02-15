@@ -131,3 +131,16 @@ add_geode_binary(
         OpenGeode-IO::mesh
         ${PROJECT_NAME}::inspector
 )
+
+add_geode_binary(
+    SOURCE "geode-inspector-surface-curve-intersections.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
