@@ -43,6 +43,7 @@
 #include "degeneration/surface_degeneration.h"
 
 #include "intersections/model_intersections.h"
+#include "intersections/surface_curve_intersections.h"
 #include "intersections/surface_intersections.h"
 
 #include "manifold/brep_meshes_manifold.h"
@@ -96,6 +97,7 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_surface_degeneration( module );
     geode::define_models_meshes_degeneration( module );
     geode::define_surface_intersections( module );
+    geode::define_surface_curve_intersections( module );
     geode::define_model_intersections( module );
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );

@@ -43,7 +43,7 @@
 
 #include <geode/inspector/surface_inspector.h>
 
-ABSL_FLAG( std::string, input, "/path/my/surface.og_tfs3d", "Input surface" );
+ABSL_FLAG( std::string, input, "/path/my/surface.og_tsf3d", "Input surface" );
 ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
