@@ -300,13 +300,11 @@ namespace
 namespace geode
 {
     template < index_t dimension >
-    class SurfaceMeshIntersections< dimension >::Impl
+    class TriangulatedSurfaceIntersections< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
-            : mesh_( dynamic_cast< const TriangulatedSurface< dimension >& >(
-                mesh ) ),
-              verbose_( verbose )
+        Impl( const TriangulatedSurface< dimension >& mesh, bool verbose )
+            : mesh_( mesh ), verbose_( verbose )
         {
         }
 
@@ -365,48 +363,51 @@ namespace geode
     };
 
     template < index_t dimension >
-    SurfaceMeshIntersections< dimension >::SurfaceMeshIntersections(
-        const SurfaceMesh< dimension >& mesh )
+    TriangulatedSurfaceIntersections< dimension >::
+        TriangulatedSurfaceIntersections(
+            const TriangulatedSurface< dimension >& mesh )
         : impl_( mesh, false )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshIntersections< dimension >::SurfaceMeshIntersections(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
+    TriangulatedSurfaceIntersections< dimension >::
+        TriangulatedSurfaceIntersections(
+            const TriangulatedSurface< dimension >& mesh, bool verbose )
         : impl_( mesh, verbose )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshIntersections< dimension >::~SurfaceMeshIntersections()
+    TriangulatedSurfaceIntersections<
+        dimension >::~TriangulatedSurfaceIntersections()
     {
     }
 
     template < index_t dimension >
-    bool SurfaceMeshIntersections< dimension >::mesh_has_self_intersections()
-        const
+    bool TriangulatedSurfaceIntersections<
+        dimension >::mesh_has_self_intersections() const
     {
         return impl_->mesh_has_self_intersections();
     }
 
     template < index_t dimension >
-    index_t
-        SurfaceMeshIntersections< dimension >::nb_intersecting_elements_pair()
-            const
+    index_t TriangulatedSurfaceIntersections<
+        dimension >::nb_intersecting_elements_pair() const
     {
         return impl_->nb_intersecting_elements_pair();
     }
 
     template < index_t dimension >
     std::vector< std::pair< index_t, index_t > >
-        SurfaceMeshIntersections< dimension >::intersecting_elements() const
+        TriangulatedSurfaceIntersections< dimension >::intersecting_elements()
+            const
     {
         return impl_->intersecting_elements();
     }
 
     template class opengeode_inspector_inspector_api
-        SurfaceMeshIntersections< 2 >;
+        TriangulatedSurfaceIntersections< 2 >;
     template class opengeode_inspector_inspector_api
-        SurfaceMeshIntersections< 3 >;
+        TriangulatedSurfaceIntersections< 3 >;
 } // namespace geode

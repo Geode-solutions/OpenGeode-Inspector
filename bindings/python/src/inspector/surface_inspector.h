@@ -32,12 +32,21 @@
         SurfaceMeshAdjacency##dimension##D,                                    \
         SurfaceMeshColocation##dimension##D,                                   \
         SurfaceMeshDegeneration##dimension##D,                                 \
-        SurfaceMeshIntersections##dimension##D,                                \
         SurfaceMeshEdgeManifold##dimension##D,                                 \
         SurfaceMeshVertexManifold##dimension##D >(                             \
         module, name##dimension.c_str() )                                      \
         .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )
+        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() );     \
+                                                                               \
+    const auto trgl_name##dimension =                                          \
+        "TriangulatedSurfaceInspector" + std::to_string( dimension ) + "D";    \
+    pybind11::class_< TriangulatedSurfaceInspector##dimension##D,              \
+        SurfaceMeshInspector##dimension##D,                                    \
+        TriangulatedSurfaceIntersections##dimension##D >(                      \
+        module, trgl_name##dimension.c_str() )                                 \
+        .def( pybind11::init< const TriangulatedSurface< dimension >& >() )    \
+        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
+            bool >() )
 
 namespace geode
 {

@@ -113,8 +113,16 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
         && surface.type_name()
                == geode::TriangulatedSurface< dimension >::type_name_static() )
     {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_intersecting_elements_pair();
+        tasks.emplace_back( async::spawn( [&surface, verbose] {
+            const geode::TriangulatedSurfaceInspector< dimension >
+                triangulated_inspector{
+                    dynamic_cast<
+                        const geode::TriangulatedSurface< dimension >& >(
+                        surface ),
+                    verbose
+                };
+            const auto nb =
+                triangulated_inspector.nb_intersecting_elements_pair();
             geode::Logger::info( nb, " pairs of intersecting triangles" );
         } ) );
     }

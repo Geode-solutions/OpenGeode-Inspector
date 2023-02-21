@@ -21,25 +21,27 @@
  *
  */
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/triangulated_surface.h>
 
 #include <geode/inspector/criterion/intersections/surface_intersections.h>
 
 #define PYTHON_SURFACE_INTERSECTIONS( dimension )                              \
-    const auto name##dimension =                                               \
-        "SurfaceMeshIntersections" + std::to_string( dimension ) + "D";        \
-    pybind11::class_< SurfaceMeshIntersections##dimension##D >(                \
+    const auto name##dimension = "TriangulatedSurfaceIntersections"            \
+                                 + std::to_string( dimension ) + "D";          \
+    pybind11::class_< TriangulatedSurfaceIntersections##dimension##D >(        \
         module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
+        .def( pybind11::init< const TriangulatedSurface< dimension >& >() )    \
+        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
+            bool >() )                                                         \
         .def( "mesh_has_self_intersections",                                   \
-            &SurfaceMeshIntersections##dimension##D::                          \
+            &TriangulatedSurfaceIntersections##dimension##D::                  \
                 mesh_has_self_intersections )                                  \
         .def( "nb_intersecting_elements_pair",                                 \
-            &SurfaceMeshIntersections##dimension##D::                          \
+            &TriangulatedSurfaceIntersections##dimension##D::                  \
                 nb_intersecting_elements_pair )                                \
         .def( "intersecting_elements",                                         \
-            &SurfaceMeshIntersections##dimension##D::intersecting_elements )
+            &TriangulatedSurfaceIntersections##dimension##D::                  \
+                intersecting_elements )
 
 namespace geode
 {

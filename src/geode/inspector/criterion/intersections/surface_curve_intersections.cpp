@@ -173,13 +173,10 @@ namespace geode
     class SurfaceCurveIntersections< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& surface,
+        Impl( const TriangulatedSurface< dimension >& surface,
             const EdgedCurve< dimension >& curve,
             bool verbose )
-            : surface_( dynamic_cast< const TriangulatedSurface< dimension >& >(
-                surface ) ),
-              curve_( curve ),
-              verbose_( verbose )
+            : surface_( surface ), curve_( curve ), verbose_( verbose )
         {
         }
 
@@ -242,7 +239,7 @@ namespace geode
 
     template < index_t dimension >
     SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
-        const SurfaceMesh< dimension >& surface,
+        const TriangulatedSurface< dimension >& surface,
         const EdgedCurve< dimension >& curve )
         : impl_( surface, curve, false )
     {
@@ -250,7 +247,7 @@ namespace geode
 
     template < index_t dimension >
     SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
-        const SurfaceMesh< dimension >& surface,
+        const TriangulatedSurface< dimension >& surface,
         const EdgedCurve< dimension >& curve,
         bool verbose )
         : impl_( surface, curve, verbose )

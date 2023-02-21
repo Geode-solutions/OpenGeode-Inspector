@@ -23,7 +23,7 @@
 
 #include <geode/inspector/surface_inspector.h>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/triangulated_surface.h>
 
 namespace geode
 {
@@ -34,7 +34,6 @@ namespace geode
             SurfaceMeshAdjacency< dimension >,
             SurfaceMeshColocation< dimension >,
             SurfaceMeshDegeneration< dimension >,
-            SurfaceMeshIntersections< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension > >{ mesh }
     {
@@ -47,12 +46,34 @@ namespace geode
             SurfaceMeshAdjacency< dimension >,
             SurfaceMeshColocation< dimension >,
             SurfaceMeshDegeneration< dimension >,
-            SurfaceMeshIntersections< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension > >{ mesh, verbose }
     {
     }
 
+    template < index_t dimension >
+    TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
+        const TriangulatedSurface< dimension >& mesh )
+        : SurfaceMeshInspector< dimension >{ mesh },
+          AddInspectors< TriangulatedSurface< dimension >,
+              TriangulatedSurfaceIntersections< dimension > >{ mesh }
+    {
+    }
+
+    template < index_t dimension >
+    TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
+        const TriangulatedSurface< dimension >& mesh, bool verbose )
+        : SurfaceMeshInspector< dimension >{ mesh, verbose },
+          AddInspectors< TriangulatedSurface< dimension >,
+              TriangulatedSurfaceIntersections< dimension > >{ mesh, verbose }
+    {
+    }
+
     template class opengeode_inspector_inspector_api SurfaceMeshInspector< 2 >;
     template class opengeode_inspector_inspector_api SurfaceMeshInspector< 3 >;
+
+    template class opengeode_inspector_inspector_api
+        TriangulatedSurfaceInspector< 2 >;
+    template class opengeode_inspector_inspector_api
+        TriangulatedSurfaceInspector< 3 >;
 } // namespace geode

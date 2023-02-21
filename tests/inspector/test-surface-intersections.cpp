@@ -48,7 +48,9 @@ void check_intersections2D()
     builder->set_polygon_adjacent( { { 1, 1 } }, 2 );
     builder->set_polygon_adjacent( { { 2, 0 } }, 1 );
 
-    const geode::SurfaceMeshIntersections2D intersections_inspector{ *surface };
+    const geode::TriangulatedSurfaceIntersections2D intersections_inspector{
+        *surface
+    };
     OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
         "[Test] 2D Surface should have intersections." );
     OPENGEODE_EXCEPTION(
@@ -92,7 +94,9 @@ void check_intersections3D()
     builder->set_polygon_adjacent( { { 2, 1 } }, 3 );
     builder->set_polygon_adjacent( { { 3, 0 } }, 2 );
 
-    const geode::SurfaceMeshIntersections3D intersections_inspector{ *surface };
+    const geode::TriangulatedSurfaceIntersections3D intersections_inspector{
+        *surface
+    };
     OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
         "[Test] 3D Surface should have intersections." );
     const auto nb_intersections =
