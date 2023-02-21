@@ -39,19 +39,16 @@ namespace geode
      * @extends SurfaceMeshAdjacency
      * @extends SurfaceMeshColocation
      * @extends SurfaceMeshDegeneration
-     * @extends SurfaceMeshIntersections
      * @extends SurfaceMeshEdgeManifold
      * @extends SurfaceMeshVertexManifold
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshInspector
-        : public AddInspectors< SurfaceMesh< dimension >,
-              SurfaceMeshAdjacency< dimension >,
-              SurfaceMeshColocation< dimension >,
-              SurfaceMeshDegeneration< dimension >,
-              SurfaceMeshIntersections< dimension >,
-              SurfaceMeshEdgeManifold< dimension >,
-              SurfaceMeshVertexManifold< dimension > >
+    class SurfaceMeshInspector : public AddInspectors< SurfaceMesh< dimension >,
+                                     SurfaceMeshAdjacency< dimension >,
+                                     SurfaceMeshColocation< dimension >,
+                                     SurfaceMeshDegeneration< dimension >,
+                                     SurfaceMeshEdgeManifold< dimension >,
+                                     SurfaceMeshVertexManifold< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 
@@ -62,4 +59,24 @@ namespace geode
             const SurfaceMesh< dimension >& mesh, bool verbose );
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
+
+    /*!
+     * Class for inspecting a TriangulatedSurface
+     * @extends SurfaceMeshInspector
+     * @extends TriangulatedSurfaceIntersections
+     */
+    template < index_t dimension >
+    class TriangulatedSurfaceInspector
+        : public SurfaceMeshInspector< dimension >,
+          public AddInspectors< TriangulatedSurface< dimension >,
+              TriangulatedSurfaceIntersections< dimension > >
+    {
+    public:
+        TriangulatedSurfaceInspector(
+            const TriangulatedSurface< dimension >& mesh );
+
+        TriangulatedSurfaceInspector(
+            const TriangulatedSurface< dimension >& mesh, bool verbose );
+    };
+    ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

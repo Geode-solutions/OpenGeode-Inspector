@@ -22,7 +22,7 @@
  */
 
 #include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/triangulated_surface.h>
 
 #include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
 
@@ -31,9 +31,9 @@
         "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";       \
     pybind11::class_< SurfaceCurveIntersections##dimension##D >(               \
         module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >&,                 \
+        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
             const EdgedCurve< dimension >& >() )                               \
-        .def( pybind11::init< const SurfaceMesh< dimension >&,                 \
+        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
             const EdgedCurve< dimension >&, bool >() )                         \
         .def( "meshes_have_intersections",                                     \
             &SurfaceCurveIntersections##dimension##D::                         \

@@ -53,7 +53,8 @@ ABSL_FLAG( std::string, curve, "/path/my/curve.og_edc3d", "Input curve" );
 ABSL_FLAG( bool, verbose, false, "Toggle verbose mode" );
 
 template < geode::index_t dimension >
-void inspect_surface_curve( const geode::SurfaceMesh< dimension >& surface,
+void inspect_surface_curve(
+    const geode::TriangulatedSurface< dimension >& surface,
     const geode::EdgedCurve< dimension >& curve )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );

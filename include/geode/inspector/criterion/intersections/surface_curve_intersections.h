@@ -31,14 +31,14 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
+    FORWARD_DECLARATION_DIMENSION_CLASS( TriangulatedSurface );
     FORWARD_DECLARATION_DIMENSION_CLASS( EdgedCurve );
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the intersections of SurfaceMeshes
+     * Class for inspecting the intersections of TriangulatedSurfacees
      */
     template < index_t dimension >
     class opengeode_inspector_inspector_api SurfaceCurveIntersections
@@ -46,10 +46,11 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceCurveIntersections );
 
     public:
-        SurfaceCurveIntersections( const SurfaceMesh< dimension >& surface,
+        SurfaceCurveIntersections(
+            const TriangulatedSurface< dimension >& surface,
             const EdgedCurve< dimension >& curve );
 
-        SurfaceCurveIntersections( const SurfaceMesh< dimension >& mesh,
+        SurfaceCurveIntersections( const TriangulatedSurface< dimension >& mesh,
             const EdgedCurve< dimension >& curve,
             bool verbose );
 
@@ -60,8 +61,9 @@ namespace geode
         index_t nb_intersecting_elements_pair() const;
 
         /* Returns all pairs of intersecting triangles and edges.
-         * First element of each pair is a triangle index in the SurfaceMesh,
-         * second element of each pair is an edge index in the EdgedCurve.
+         * First element of each pair is a triangle index in the
+         * TriangulatedSurface, second element of each pair is an edge index in
+         * the EdgedCurve.
          */
         std::vector< std::pair< index_t, index_t > >
             intersecting_elements() const;
