@@ -408,10 +408,21 @@ namespace geode
         std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_triangles() const
         {
-            const auto model_tree = create_surface_meshes_aabb_trees( model_ );
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
+            for( const auto& surface : model_.surfaces() )
+            {
+                if( surface.mesh().nb_polygons() == 0 )
+                {
+                    geode::Logger::warn(
+                        "One of the surface meshes has an empty mesh, cannot "
+                        "compute the AABBTree used for detecting the mesh "
+                        "intersections, no intersections will be computed." );
+                    return component_intersections;
+                }
+            }
+            const auto model_tree = create_surface_meshes_aabb_trees( model_ );
             for( const auto& surface : model_.surfaces() )
             {
                 if( surface.mesh().type_name()
