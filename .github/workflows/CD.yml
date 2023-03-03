@@ -24,6 +24,7 @@ jobs:
     with:
       name: OPENGEODE_INSPECTOR
       repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
+      config: RelWithDebInfo
     secrets: inherit
 
   release-windows-python:

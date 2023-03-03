@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,8 @@
     pybind11::class_< BRepInspector, BRepTopologyInspector,                    \
         BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,            \
         BRepComponentMeshesColocation, BRepComponentMeshesDegeneration,        \
-        BRepComponentMeshesManifold >( module, "BRepInspector" )               \
+        BRepComponentMeshesManifold, BRepMeshesIntersections >(                \
+        module, "BRepInspector" )                                              \
         .def( pybind11::init< const BRep& >() )                                \
         .def( pybind11::init< const BRep&, bool >() )
 

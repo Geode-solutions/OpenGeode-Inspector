@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -121,6 +121,19 @@ add_geode_binary(
 
 add_geode_binary(
     SOURCE "geode-inspector-surface.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-surface-curve-intersections.cpp"
     DEPENDENCIES
         Async++
         absl::flags

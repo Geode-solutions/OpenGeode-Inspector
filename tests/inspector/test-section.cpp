@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -349,7 +349,7 @@ geode::index_t check_components_degeneration(
 {
     geode::index_t nb_issues{ 0 };
     const auto components_degenerated_edges =
-        section_inspector.components_nb_degenerated_edges();
+        section_inspector.components_nb_degenerated_elements();
     if( components_degenerated_edges.empty() )
     {
         geode::Logger::info( "Section component meshes are not degenerated." );
@@ -395,6 +395,23 @@ geode::index_t check_components_manifold(
     return nb_issues;
 }
 
+geode::index_t check_components_intersections(
+    geode::SectionInspector& section_inspector )
+{
+    const auto nb_surfaces_intersections =
+        section_inspector.nb_intersecting_surfaces_elements_pair();
+    if( nb_surfaces_intersections == 0 )
+    {
+        geode::Logger::info( "Section meshes have no intersection problems." );
+    }
+    else
+    {
+        geode::Logger::info( "There are ", nb_surfaces_intersections,
+            " pairs of intersecting triangles in the Section." );
+    }
+    return nb_surfaces_intersections;
+}
+
 geode::index_t launch_component_meshes_validity_checks(
     geode::SectionInspector& section_inspector )
 {
@@ -402,6 +419,7 @@ geode::index_t launch_component_meshes_validity_checks(
     nb_issues += check_components_colocation( section_inspector );
     nb_issues += check_components_degeneration( section_inspector );
     nb_issues += check_components_manifold( section_inspector );
+    nb_issues += check_components_intersections( section_inspector );
     return nb_issues;
 }
 

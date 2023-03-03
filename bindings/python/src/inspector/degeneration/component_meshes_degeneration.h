@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,15 +33,15 @@
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
         .def( pybind11::init< const type&, bool >() )                          \
-        .def( "components_with_degenerated_edges",                             \
+        .def( "degenerated_component_meshes",                                  \
             &suffix##ComponentMeshesDegeneration::                             \
-                components_with_degenerated_edges )                            \
-        .def( "components_nb_degenerated_edges",                               \
+                degenerated_component_meshes )                                 \
+        .def( "components_nb_degenerated_elements",                            \
             &suffix##ComponentMeshesDegeneration::                             \
-                components_nb_degenerated_edges )                              \
-        .def( "components_degenerated_edges",                                  \
+                components_nb_degenerated_elements )                           \
+        .def( "components_degenerated_elements",                               \
             &suffix##ComponentMeshesDegeneration::                             \
-                components_degenerated_edges )
+                components_degenerated_elements )
 
 namespace geode
 {

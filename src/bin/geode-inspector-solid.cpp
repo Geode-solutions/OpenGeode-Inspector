@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 5 > tasks;
+    absl::InlinedVector< async::task< void >, 6 > tasks;
     const geode::SolidMeshInspector< dimension > inspector{ solid, verbose };
     if( absl::GetFlag( FLAGS_colocation ) )
     {
@@ -79,6 +79,10 @@ void inspect_solid( const geode::SolidMesh< dimension >& solid )
         tasks.emplace_back( async::spawn( [&inspector] {
             const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
+        } ) );
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_degenerated_polyhedra();
+            geode::Logger::info( nb, " degenerated polyhedra" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_manifold_vertex ) )

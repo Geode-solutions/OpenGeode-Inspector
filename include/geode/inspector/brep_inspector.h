@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@
 #include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
 #include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/intersections/model_intersections.h>
 #include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/brep_topology.h>
@@ -50,7 +51,8 @@ namespace geode
               BRepComponentMeshesAdjacency,
               BRepComponentMeshesColocation,
               BRepComponentMeshesDegeneration,
-              BRepComponentMeshesManifold >
+              BRepComponentMeshesManifold,
+              BRepMeshesIntersections >
     {
         OPENGEODE_DISABLE_COPY( BRepInspector );
 

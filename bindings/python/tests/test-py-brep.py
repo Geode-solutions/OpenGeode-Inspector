@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,8 @@ def check_components_linking(brep_inspector):
     print("There are ", nb_unlinked_blocks,
           " blocks meshed but not linked to a unique vertex.")
     nb_unlinked_uv = brep_inspector.nb_unique_vertices_not_linked_to_a_component_vertex()
-    print( "There are ", nb_unlinked_uv, " unique vertices not linked to a component mesh vertex." )
+    print("There are ", nb_unlinked_uv,
+          " unique vertices not linked to a component mesh vertex.")
     return nb_unlinked_blocks + nb_unlinked_surfaces + nb_unlinked_lines + nb_unlinked_corners + nb_unlinked_uv
 
 
@@ -267,11 +268,11 @@ def check_component_meshes_colocation(brep_inspector):
 
 def check_component_meshes_degeneration(brep_inspector):
     nb_degenerated = 0
-    components_nb_degenerated_edges = brep_inspector.components_nb_degenerated_edges()
-    for degenerated_id in components_nb_degenerated_edges:
-        print("There are ", components_nb_degenerated_edges[degenerated_id],
+    components_nb_degenerated_elements = brep_inspector.components_nb_degenerated_elements()
+    for degenerated_id in components_nb_degenerated_elements:
+        print("There are ", components_nb_degenerated_elements[degenerated_id],
               " degenerated edges in mesh with id ", degenerated_id.string())
-        nb_degenerated += components_nb_degenerated_edges[degenerated_id]
+        nb_degenerated += components_nb_degenerated_elements[degenerated_id]
     return nb_degenerated
 
 
@@ -296,12 +297,21 @@ def check_components_manifold(brep_inspector):
         nb_issues += components_nb_non_manifold_facets[non_manifold_facets]
     return nb_issues
 
+def check_components_intersections( brep_inspector ):
+    nb_surfaces_intersections = brep_inspector.nb_intersecting_surfaces_elements_pair()
+    if nb_surfaces_intersections == 0:
+        print( "BRep meshes have no intersection problems." )
+    else:
+        print( "There are ", nb_surfaces_intersections, " pairs of intersecting triangles in the BRep." )
+    return nb_surfaces_intersections
+
 
 def launch_component_meshes_validity_checks(brep_inspector):
     nb_invalids = check_component_meshes_adjacency(brep_inspector)
     nb_invalids += check_component_meshes_colocation(brep_inspector)
     nb_invalids += check_component_meshes_degeneration(brep_inspector)
     nb_invalids += check_components_manifold(brep_inspector)
+    nb_invalids += check_components_intersections(brep_inspector)
     return nb_invalids
 
 
@@ -320,9 +330,9 @@ def check_a1_vertices_topology():
             "[Test] model model_A1 should have 1998 unique vertices with topological problems.")
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         brep_inspector)
-    if nb_component_meshes_issues != 0:
+    if nb_component_meshes_issues != 11759:
         raise ValueError(
-            "[Test] model model_A1 should have 0 component meshes issues.")
+            "[Test] model model_A1_valid should have 11759 component meshes issues (pairs of component meshes triangles intersecting).")
 
 
 def check_a1_valid_vertices_topology():
@@ -340,9 +350,9 @@ def check_a1_valid_vertices_topology():
             "[Test] model model_A1_valid should have 1998 unique vertices with topological problems.")
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         brep_inspector)
-    if nb_component_meshes_issues != 0:
+    if nb_component_meshes_issues != 11759:
         raise ValueError(
-            "[Test] model model_A1_valid should have 0 component meshes issues.")
+            "[Test] model model_A1_valid should have 11759 component meshes issues (pairs of component meshes triangles intersecting).")
 
 
 def check_mss_vertices_topology():

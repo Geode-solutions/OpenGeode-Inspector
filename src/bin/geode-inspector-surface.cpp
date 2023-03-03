@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +43,16 @@
 
 #include <geode/inspector/surface_inspector.h>
 
-ABSL_FLAG( std::string, input, "/path/my/surface.og_tfs3d", "Input surface" );
+ABSL_FLAG( std::string, input, "/path/my/surface.og_tsf3d", "Input surface" );
 ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
 ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
 ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
+ABSL_FLAG( bool,
+    intersection,
+    true,
+    "Toggle self intersection criterion (only for triangulated surfaces)" );
 ABSL_FLAG( bool,
     verbose,
     false,
@@ -59,7 +63,7 @@ template < geode::index_t dimension >
 void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 5 > tasks;
+    absl::InlinedVector< async::task< void >, 7 > tasks;
     const geode::SurfaceMeshInspector< dimension > inspector{ surface,
         verbose };
     if( absl::GetFlag( FLAGS_adjacency ) )
@@ -86,6 +90,10 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
             const auto nb = inspector.nb_degenerated_edges();
             geode::Logger::info( nb, " degenerated edges" );
         } ) );
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_degenerated_polygons();
+            geode::Logger::info( nb, " degenerated polygons" );
+        } ) );
     }
     if( absl::GetFlag( FLAGS_manifold_vertex ) )
     {
@@ -99,6 +107,23 @@ void inspect_surface( const geode::SurfaceMesh< dimension >& surface )
         tasks.emplace_back( async::spawn( [&inspector] {
             const auto nb = inspector.nb_non_manifold_edges();
             geode::Logger::info( nb, " non manifold edges" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_intersection )
+        && surface.type_name()
+               == geode::TriangulatedSurface< dimension >::type_name_static() )
+    {
+        tasks.emplace_back( async::spawn( [&surface, verbose] {
+            const geode::TriangulatedSurfaceInspector< dimension >
+                triangulated_inspector{
+                    dynamic_cast<
+                        const geode::TriangulatedSurface< dimension >& >(
+                        surface ),
+                    verbose
+                };
+            const auto nb =
+                triangulated_inspector.nb_intersecting_elements_pair();
+            geode::Logger::info( nb, " pairs of intersecting triangles" );
         } ) );
     }
     for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
@@ -130,8 +155,7 @@ int main( int argc, char* argv[] )
         }
         else if( geode::PolygonalSurfaceInputFactory3D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 3 >( filename ) );
+            inspect_surface( *geode::load_polygonal_surface< 3 >( filename ) );
         }
         else if( geode::TriangulatedSurfaceInputFactory2D::has_creator( ext ) )
         {
@@ -140,8 +164,7 @@ int main( int argc, char* argv[] )
         }
         else if( geode::PolygonalSurfaceInputFactory2D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 2 >( filename ) );
+            inspect_surface( *geode::load_polygonal_surface< 2 >( filename ) );
         }
         else if( geode::RegularGridInputFactory2D::has_creator( ext ) )
         {

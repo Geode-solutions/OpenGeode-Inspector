@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,11 +35,10 @@ namespace geode
         template < typename Mesh >
         class DegenerationImpl
         {
-        protected:
-            DegenerationImpl( const Mesh& mesh, bool verbose );
-
         public:
-            bool is_mesh_degenerated() const;
+            virtual ~DegenerationImpl();
+
+            virtual bool is_mesh_degenerated() const;
 
             index_t nb_degenerated_edges() const;
 
@@ -47,6 +46,13 @@ namespace geode
 
         private:
             bool edge_is_degenerated( index_t edge_index ) const;
+
+        protected:
+            DegenerationImpl( const Mesh& mesh, bool verbose );
+
+            const Mesh& mesh() const;
+
+            bool verbose() const;
 
         private:
             const Mesh& mesh_;

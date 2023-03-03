@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,10 @@
 #include "degeneration/edgedcurve_degeneration.h"
 #include "degeneration/solid_degeneration.h"
 #include "degeneration/surface_degeneration.h"
+
+#include "intersections/model_intersections.h"
+#include "intersections/surface_curve_intersections.h"
+#include "intersections/surface_intersections.h"
 
 #include "manifold/brep_meshes_manifold.h"
 #include "manifold/section_meshes_manifold.h"
@@ -92,6 +96,9 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_solid_degeneration( module );
     geode::define_surface_degeneration( module );
     geode::define_models_meshes_degeneration( module );
+    geode::define_surface_intersections( module );
+    geode::define_surface_curve_intersections( module );
+    geode::define_model_intersections( module );
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );
     geode::define_solid_edge_manifold( module );

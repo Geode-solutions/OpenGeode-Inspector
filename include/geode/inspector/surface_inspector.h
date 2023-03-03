@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 #include <geode/inspector/criterion/adjacency/surface_adjacency.h>
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
+#include <geode/inspector/criterion/intersections/surface_intersections.h>
 #include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
 #include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
 #include <geode/inspector/mixin/add_inspectors.h>
@@ -42,13 +43,12 @@ namespace geode
      * @extends SurfaceMeshVertexManifold
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api SurfaceMeshInspector
-        : public AddInspectors< SurfaceMesh< dimension >,
-              SurfaceMeshAdjacency< dimension >,
-              SurfaceMeshColocation< dimension >,
-              SurfaceMeshDegeneration< dimension >,
-              SurfaceMeshEdgeManifold< dimension >,
-              SurfaceMeshVertexManifold< dimension > >
+    class SurfaceMeshInspector : public AddInspectors< SurfaceMesh< dimension >,
+                                     SurfaceMeshAdjacency< dimension >,
+                                     SurfaceMeshColocation< dimension >,
+                                     SurfaceMeshDegeneration< dimension >,
+                                     SurfaceMeshEdgeManifold< dimension >,
+                                     SurfaceMeshVertexManifold< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 
@@ -59,4 +59,24 @@ namespace geode
             const SurfaceMesh< dimension >& mesh, bool verbose );
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
+
+    /*!
+     * Class for inspecting a TriangulatedSurface
+     * @extends SurfaceMeshInspector
+     * @extends TriangulatedSurfaceIntersections
+     */
+    template < index_t dimension >
+    class TriangulatedSurfaceInspector
+        : public SurfaceMeshInspector< dimension >,
+          public AddInspectors< TriangulatedSurface< dimension >,
+              TriangulatedSurfaceIntersections< dimension > >
+    {
+    public:
+        TriangulatedSurfaceInspector(
+            const TriangulatedSurface< dimension >& mesh );
+
+        TriangulatedSurfaceInspector(
+            const TriangulatedSurface< dimension >& mesh, bool verbose );
+    };
+    ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

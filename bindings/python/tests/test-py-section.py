@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,8 @@ def check_components_linking(section_inspector):
     print("There are ", nb_unlinked_surfaces,
           " surfaces meshed but not linked to a unique vertex.")
     nb_unlinked_uv = section_inspector.nb_unique_vertices_not_linked_to_a_component_vertex()
-    print( "There are ", nb_unlinked_uv, " unique vertices not linked to a component mesh vertex." )
+    print("There are ", nb_unlinked_uv,
+          " unique vertices not linked to a component mesh vertex.")
     return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces + nb_unlinked_uv
 
 
@@ -211,11 +212,11 @@ def check_component_meshes_colocation(section_inspector):
 
 def check_component_meshes_degeneration(section_inspector):
     nb_degenerated = 0
-    components_nb_degenerated_edges = section_inspector.components_nb_degenerated_edges()
-    for comp_id in components_nb_degenerated_edges:
-        print("There are ", components_nb_degenerated_edges[comp_id],
+    components_nb_degenerated_elements = section_inspector.components_nb_degenerated_elements()
+    for comp_id in components_nb_degenerated_elements:
+        print("There are ", components_nb_degenerated_elements[comp_id],
               " degenerated edges in mesh with id ", comp_id.string())
-        nb_degenerated += components_nb_degenerated_edges[comp_id]
+        nb_degenerated += components_nb_degenerated_elements[comp_id]
     return nb_degenerated
 
 
@@ -234,6 +235,14 @@ def check_components_manifold(section_inspector):
               components_nb_non_manifold_edges[non_manifold_edges], " non manifold edges.")
         nb_issues += components_nb_non_manifold_edges[non_manifold_edges]
     return nb_issues
+
+def check_components_intersections( section_inspector ):
+    nb_surfaces_intersections = section_inspector.nb_intersecting_surfaces_elements_pair()
+    if nb_surfaces_intersections == 0:
+        print( "Section meshes have no intersection problems." )
+    else:
+        print( "There are ", nb_surfaces_intersections, " pairs of intersecting triangles in the Section." )
+    return nb_surfaces_intersections
 
 
 def launch_component_meshes_validity_checks(section_inspector):

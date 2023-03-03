@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -253,6 +253,23 @@ namespace geode
                 {
                     result.emplace( std::move( edge.first.vertices() ),
                         std::move( edge.second ) );
+                }
+            }
+            if( verbose() )
+            {
+                for( const auto& edge : result )
+                {
+                    std::string uuid_group_string{ "" };
+                    for( const auto surface_uuid : edge.second )
+                    {
+                        absl::StrAppend(
+                            &uuid_group_string, " ", surface_uuid.string() );
+                    }
+                    geode::Logger::info( "Model edge between unique vertices ",
+                        edge.first[0], " and ", edge.first[1],
+                        " is not manifold: it does not belong to a line but "
+                        "belongs to surfaces",
+                        uuid_group_string );
                 }
             }
             return result;

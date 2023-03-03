@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,11 @@ namespace geode
             : mesh_( mesh ), verbose_( verbose )
         {
             mesh_.enable_edges();
+        }
+
+        template < class MeshType >
+        DegenerationImpl< MeshType >::~DegenerationImpl()
+        {
         }
 
         template < class MeshType >
@@ -104,6 +109,18 @@ namespace geode
                     ", at position [", p1.string(), "], is degenerated." );
             }
             return degenerated;
+        }
+
+        template < class MeshType >
+        const MeshType& DegenerationImpl< MeshType >::mesh() const
+        {
+            return mesh_;
+        }
+
+        template < class MeshType >
+        bool DegenerationImpl< MeshType >::verbose() const
+        {
+            return verbose_;
         }
 
         template class opengeode_inspector_inspector_api

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
+#include <geode/geometry/basic_objects/triangle.h>
+#include <geode/geometry/mensuration.h>
+
 #include <geode/mesh/core/surface_mesh.h>
 
 namespace geode
@@ -40,6 +43,64 @@ namespace geode
             : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh,
                   verbose }
         {
+        }
+
+        bool is_mesh_degenerated() const final
+        {
+            if( this->detail::DegenerationImpl<
+                    SurfaceMesh< dimension > >::is_mesh_degenerated() )
+            {
+                return true;
+            }
+            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            {
+                if( polygon_is_degenerated( polygon_id ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        index_t nb_degenerated_polygons() const
+        {
+            index_t counter{ 0 };
+            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            {
+                if( polygon_is_degenerated( polygon_id ) )
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        std::vector< index_t > degenerated_polygons() const
+        {
+            std::vector< index_t > wrong_polygons;
+            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            {
+                if( polygon_is_degenerated( polygon_id ) )
+                {
+                    wrong_polygons.push_back( polygon_id );
+                }
+            }
+            return wrong_polygons;
+        }
+
+    private:
+        bool polygon_is_degenerated( index_t polygon_id ) const
+        {
+            const auto& mesh = this->mesh();
+            if( std::abs( mesh.polygon_area( polygon_id ) ) > global_epsilon )
+            {
+                return false;
+            }
+            if( this->verbose() )
+            {
+                Logger::info( "Polygon ", polygon_id, " is degenerated." );
+            }
+            return true;
         }
     };
 
@@ -75,10 +136,24 @@ namespace geode
     }
 
     template < index_t dimension >
+    index_t
+        SurfaceMeshDegeneration< dimension >::nb_degenerated_polygons() const
+    {
+        return impl_->nb_degenerated_polygons();
+    }
+
+    template < index_t dimension >
     std::vector< index_t >
         SurfaceMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
+    }
+
+    template < index_t dimension >
+    std::vector< index_t >
+        SurfaceMeshDegeneration< dimension >::degenerated_polygons() const
+    {
+        return impl_->degenerated_polygons();
     }
 
     template class opengeode_inspector_inspector_api

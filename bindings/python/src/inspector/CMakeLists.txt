@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - 2022 Geode-solutions
+# Copyright (c) 2019 - 2023 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,9 @@ add_geode_python_binding(
         "degeneration/solid_degeneration.h"
         "degeneration/surface_degeneration.h"
         "degeneration/component_meshes_degeneration.h"
+        "intersections/surface_intersections.h"
+        "intersections/surface_curve_intersections.h"
+        "intersections/model_intersections.h"
         "manifold/surface_edge_manifold.h"
         "manifold/surface_vertex_manifold.h"
         "manifold/solid_vertex_manifold.h"

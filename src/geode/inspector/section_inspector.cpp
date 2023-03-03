@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2022 Geode-solutions
+ * Copyright (c) 2019 - 2023 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,8 @@ namespace geode
             SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold >{ section }
+            SectionComponentMeshesManifold,
+            SectionMeshesIntersections >{ section }
     {
     }
 
@@ -45,7 +46,8 @@ namespace geode
             SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold >{ section, verbose }
+            SectionComponentMeshesManifold,
+            SectionMeshesIntersections >{ section, verbose }
     {
     }
 } // namespace geode
