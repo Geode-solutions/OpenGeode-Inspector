@@ -58,32 +58,19 @@ namespace
     }
 
     template < geode::index_t dimension >
-    class TriangleTriangleIntersection
+    class TriangleTriangleIntersectionBase
     {
     public:
-        TriangleTriangleIntersection(
+        TriangleTriangleIntersectionBase(
             const geode::TriangulatedSurface< dimension >& mesh )
             : mesh_( mesh )
         {
         }
 
-        void operator()( geode::index_t t1_id, geode::index_t t2_id )
-        {
-            if( t1_id == t2_id )
-            {
-                return;
-            }
-            const auto t1_vertices = mesh_.polygon_vertices( t1_id );
-            const auto t2_vertices = mesh_.polygon_vertices( t2_id );
-            const auto common_points =
-                triangles_common_points( t1_vertices, t2_vertices );
-            if( common_points.size() == 3
-                || triangles_intersect(
-                    t1_id, t2_id, t1_vertices, t2_vertices, common_points ) )
-            {
-                intersecting_triangles_.emplace_back( t1_id, t2_id );
-            }
-        }
+        virtual ~TriangleTriangleIntersectionBase() = default;
+
+        virtual bool operator()(
+            geode::index_t t1_id, geode::index_t t2_id ) = 0;
 
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_triangles()
@@ -91,7 +78,17 @@ namespace
             return std::move( intersecting_triangles_ );
         }
 
-    private:
+    protected:
+        void emplace( geode::index_t t1_id, geode::index_t t2_id )
+        {
+            intersecting_triangles_.emplace_back( t1_id, t2_id );
+        }
+
+        const geode::TriangulatedSurface< dimension >& mesh() const
+        {
+            return mesh_;
+        }
+
         geode::PolygonVertices triangles_common_points(
             const geode::PolygonVertices& t1_vertices,
             const geode::PolygonVertices& t2_vertices ) const
@@ -120,6 +117,69 @@ namespace
             intersecting_triangles_;
     };
 
+    template < geode::index_t dimension >
+    class OneTriangleTriangleIntersection
+        : public TriangleTriangleIntersectionBase< dimension >
+    {
+    public:
+        OneTriangleTriangleIntersection(
+            const geode::TriangulatedSurface< dimension >& surface )
+            : TriangleTriangleIntersectionBase< dimension >( surface )
+        {
+        }
+
+        bool operator()( geode::index_t t1_id, geode::index_t t2_id ) override
+        {
+            if( t1_id == t2_id )
+            {
+                return false;
+            }
+            const auto t1_vertices = this->mesh().polygon_vertices( t1_id );
+            const auto t2_vertices = this->mesh().polygon_vertices( t2_id );
+            const auto common_points =
+                this->triangles_common_points( t1_vertices, t2_vertices );
+            if( common_points.size() == 3
+                || this->triangles_intersect(
+                    t1_id, t2_id, t1_vertices, t2_vertices, common_points ) )
+            {
+                this->emplace( t1_id, t2_id );
+                return true;
+            }
+            return false;
+        }
+    };
+
+    template < geode::index_t dimension >
+    class AllTriangleTriangleIntersection
+        : public TriangleTriangleIntersectionBase< dimension >
+    {
+    public:
+        AllTriangleTriangleIntersection(
+            const geode::TriangulatedSurface< dimension >& surface )
+            : TriangleTriangleIntersectionBase< dimension >( surface )
+        {
+        }
+
+        bool operator()( geode::index_t t1_id, geode::index_t t2_id ) override
+        {
+            if( t1_id == t2_id )
+            {
+                return false;
+            }
+            const auto t1_vertices = this->mesh().polygon_vertices( t1_id );
+            const auto t2_vertices = this->mesh().polygon_vertices( t2_id );
+            const auto common_points =
+                this->triangles_common_points( t1_vertices, t2_vertices );
+            if( common_points.size() == 3
+                || this->triangles_intersect(
+                    t1_id, t2_id, t1_vertices, t2_vertices, common_points ) )
+            {
+                this->emplace( t1_id, t2_id );
+            }
+            return false;
+        }
+    };
+
     geode::index_t third_point_index( const geode::PolygonVertices& vertices,
         const geode::PolygonVertices& vertices_to_avoid )
     {
@@ -137,7 +197,7 @@ namespace
     }
 
     template <>
-    bool TriangleTriangleIntersection< 2 >::triangles_intersect(
+    bool TriangleTriangleIntersectionBase< 2 >::triangles_intersect(
         geode::index_t t1_id,
         geode::index_t t2_id,
         const geode::PolygonVertices& t1_vertices,
@@ -260,7 +320,7 @@ namespace
     }
 
     template <>
-    bool TriangleTriangleIntersection< 3 >::triangles_intersect(
+    bool TriangleTriangleIntersectionBase< 3 >::triangles_intersect(
         geode::index_t t1_id,
         geode::index_t t2_id,
         const geode::PolygonVertices& t1_vertices,
@@ -310,7 +370,8 @@ namespace geode
 
         bool mesh_has_self_intersections() const
         {
-            const auto intersections = intersecting_triangles();
+            const auto intersections = intersecting_triangles<
+                OneTriangleTriangleIntersection< dimension > >();
             if( intersections.empty() )
             {
                 return false;
@@ -320,7 +381,8 @@ namespace geode
 
         index_t nb_intersecting_elements_pair() const
         {
-            const auto intersections = intersecting_triangles();
+            const auto intersections = intersecting_triangles<
+                AllTriangleTriangleIntersection< dimension > >();
             if( verbose_ )
             {
                 for( const auto& triangle_pair : intersections )
@@ -335,7 +397,8 @@ namespace geode
         std::vector< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
-            const auto intersections = intersecting_triangles();
+            const auto intersections = intersecting_triangles<
+                AllTriangleTriangleIntersection< dimension > >();
             if( verbose_ )
             {
                 for( const auto& triangle_pair : intersections )
@@ -348,11 +411,12 @@ namespace geode
         }
 
     private:
+        template < typename Action >
         std::vector< std::pair< index_t, index_t > >
             intersecting_triangles() const
         {
             const auto surface_aabb = create_aabb_tree( mesh_ );
-            TriangleTriangleIntersection< dimension > action{ mesh_ };
+            Action action{ mesh_ };
             surface_aabb.compute_self_element_bbox_intersections( action );
             return action.intersecting_triangles();
         }
