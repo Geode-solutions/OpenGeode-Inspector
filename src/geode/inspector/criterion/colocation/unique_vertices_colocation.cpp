@@ -53,21 +53,19 @@ namespace
         if( cmv.component_id.type()
             == geode::Line< dimension >::component_type_static() )
         {
-            return point.inexact_equal(
-                model.line( cmv.component_id.id() ).mesh().point( cmv.vertex ),
-                geode::global_epsilon );
+            return point.inexact_equal( model.line( cmv.component_id.id() )
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         else if( cmv.component_id.type()
                  == geode::Surface< dimension >::component_type_static() )
         {
             return point.inexact_equal( model.surface( cmv.component_id.id() )
                                             .mesh()
-                                            .point( cmv.vertex ),
-                geode::global_epsilon );
+                                            .point( cmv.vertex ) );
         }
         return point.inexact_equal(
-            model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex ),
-            geode::global_epsilon );
+            model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex ) );
     }
 
     bool model_cmv_is_colocated_on_point( const geode::Section& model,
@@ -83,9 +81,9 @@ namespace
     {
         if( cmv.component_id.type() == geode::Block3D::component_type_static() )
         {
-            return point.inexact_equal(
-                model.block( cmv.component_id.id() ).mesh().point( cmv.vertex ),
-                geode::global_epsilon );
+            return point.inexact_equal( model.block( cmv.component_id.id() )
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         return model_cmv_is_colocated_on_point_base( model, cmv, point );
     }
