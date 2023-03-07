@@ -53,11 +53,6 @@ namespace
         {
         }
 
-        virtual ~TriangleEdgeIntersectionBase() = default;
-
-        virtual bool operator()(
-            geode::index_t triangle_id, geode::index_t edge_id ) = 0;
-
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_elements()
         {
@@ -92,8 +87,7 @@ namespace
         {
         }
 
-        bool operator()(
-            geode::index_t triangle_id, geode::index_t edge_id ) override
+        bool operator()( geode::index_t triangle_id, geode::index_t edge_id )
         {
             if( this->edge_intersects_triangle( triangle_id, edge_id ) )
             {

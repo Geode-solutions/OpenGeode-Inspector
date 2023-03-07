@@ -1,4 +1,4 @@
 OpenGeode-core >= 13.0.0, == 13.*
-OpenGeode-IO >= 5.23.1, == 5.*
-OpenGeode-Geosciences >= 6,0.0 == 6.*
-OpenGeode-GeosciencesIO >= 3.12.0, == 3.*
+OpenGeode-IO >= 5.24.0, == 5.*
+OpenGeode-Geosciences >= 6.0.0, == 6.*
+OpenGeode-GeosciencesIO >= 3.13.0, == 3.*

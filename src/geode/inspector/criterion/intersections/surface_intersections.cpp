@@ -67,11 +67,6 @@ namespace
         {
         }
 
-        virtual ~TriangleTriangleIntersectionBase() = default;
-
-        virtual bool operator()(
-            geode::index_t t1_id, geode::index_t t2_id ) = 0;
-
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_triangles()
         {
@@ -128,7 +123,7 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t t1_id, geode::index_t t2_id ) override
+        bool operator()( geode::index_t t1_id, geode::index_t t2_id )
         {
             if( t1_id == t2_id )
             {
@@ -160,7 +155,7 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t t1_id, geode::index_t t2_id ) override
+        bool operator()( geode::index_t t1_id, geode::index_t t2_id )
         {
             if( t1_id == t2_id )
             {
