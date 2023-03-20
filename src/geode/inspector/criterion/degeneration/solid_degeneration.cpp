@@ -95,8 +95,7 @@ namespace geode
         bool polyhedron_is_degenerated( index_t polyhedron_id ) const
         {
             const auto& mesh = this->mesh();
-            if( std::abs( mesh.polyhedron_volume( polyhedron_id ) )
-                > global_epsilon )
+            if( mesh.polyhedron_volume( polyhedron_id ) > global_epsilon )
             {
                 return false;
             }

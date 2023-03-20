@@ -92,7 +92,7 @@ namespace geode
         bool polygon_is_degenerated( index_t polygon_id ) const
         {
             const auto& mesh = this->mesh();
-            if( std::abs( mesh.polygon_area( polygon_id ) ) > global_epsilon )
+            if( mesh.polygon_area( polygon_id ) > global_epsilon )
             {
                 return false;
             }

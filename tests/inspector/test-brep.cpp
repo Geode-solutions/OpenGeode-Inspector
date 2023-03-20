@@ -384,17 +384,17 @@ geode::index_t check_components_degeneration(
     geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
-    const auto components_degenerated_edges =
+    const auto components_degenerated_elements =
         brep_inspector.components_nb_degenerated_elements();
-    if( components_degenerated_edges.empty() )
+    if( components_degenerated_elements.empty() )
     {
         geode::Logger::info( "BRep component meshes are not degenerated." );
     }
-    for( const auto& degenerated : components_degenerated_edges )
+    for( const auto& degenerated : components_degenerated_elements )
     {
         geode::Logger::info( "Mesh of component with uuid ",
             degenerated.first.string(), " has ", degenerated.second,
-            " degenerated edges." );
+            " degenerated elements." );
         nb_issues += degenerated.second;
     }
     return nb_issues;
