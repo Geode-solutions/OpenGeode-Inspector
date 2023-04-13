@@ -30,9 +30,9 @@
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/io/brep_input.h>
 
-#include <geode/geosciences/common.h>
-#include <geode/geosciences/representation/core/structural_model.h>
-#include <geode/geosciences/representation/io/structural_model_input.h>
+#include <geode/geosciences/explicit/common.h>
+#include <geode/geosciences/explicit/representation/core/structural_model.h>
+#include <geode/geosciences/explicit/representation/io/structural_model_input.h>
 
 #include <geode/inspector/brep_inspector.h>
 
@@ -548,8 +548,8 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
-        geode::OpenGeodeGeosciencesGeosciences::initialize();
+        geode::InspectorInspectorLibrary::initialize();
+        geode::GeosciencesExplicitLibrary::initialize();
         check_model_a1();
         check_model_a1_valid();
         check_model_mss();

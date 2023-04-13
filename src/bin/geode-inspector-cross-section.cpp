@@ -31,10 +31,10 @@
 #include <geode/basic/filename.h>
 #include <geode/basic/logger.h>
 
-#include <geode/geosciences/representation/core/cross_section.h>
-#include <geode/geosciences/representation/io/cross_section_input.h>
+#include <geode/geosciences/explicit/representation/core/cross_section.h>
+#include <geode/geosciences/explicit/representation/io/cross_section_input.h>
 
-#include <geode/io/geosciences/common.h>
+#include <geode/geosciences_io/common.h>
 
 #include <geode/inspector/section_inspector.h>
 
@@ -183,7 +183,7 @@ int main( int argc, char* argv[] )
             "use --noXXX, e.g. --nocomponent_linking" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::OpenGeodeGeosciencesGeosciences::initialize();
+        geode::GeosciencesIOModelLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
 
         inspect_cross_section( geode::load_cross_section( filename ) );

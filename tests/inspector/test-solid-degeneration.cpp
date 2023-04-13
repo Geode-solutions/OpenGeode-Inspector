@@ -107,7 +107,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_non_degeneration();
         check_degeneration_by_colocalisation();
         check_degeneration_by_point_multiple_presence();

@@ -44,8 +44,8 @@ add_geode_binary(
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model
-        OpenGeode-Geosciences::geosciences
-        OpenGeode-GeosciencesIO::geosciences
+        OpenGeode-Geosciences::explicit
+        OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspector
 )
 
@@ -114,8 +114,8 @@ add_geode_binary(
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model
-        OpenGeode-Geosciences::geosciences
-        OpenGeode-GeosciencesIO::geosciences
+        OpenGeode-Geosciences::explicit
+        OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspector
 )
 

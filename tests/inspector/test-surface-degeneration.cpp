@@ -173,7 +173,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_non_degeneration2D();
         check_degeneration_by_colocalisation2D();
         check_degeneration_by_point_multiple_presence2D();

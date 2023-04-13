@@ -132,7 +132,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_non_colocation2D();
         check_colocation2D();
         check_non_colocation3D();

@@ -148,7 +148,7 @@ def check_non_adjacency_inversed_tetrahedron():
 
 
 if not __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_adjacency()
     check_non_adjacency_no_bijection()
     check_non_adjacency_wrong_facet()

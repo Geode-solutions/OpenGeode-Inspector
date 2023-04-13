@@ -180,7 +180,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_vertex_manifold();
         check_vertex_non_manifold();
         check_edge_manifold();

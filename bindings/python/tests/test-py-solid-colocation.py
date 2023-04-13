@@ -83,6 +83,6 @@ def check_colocation():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_non_colocation()
     check_colocation()

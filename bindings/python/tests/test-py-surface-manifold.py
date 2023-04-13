@@ -132,7 +132,7 @@ def check_edge_non_manifold2D():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_vertex_manifold2D()
     check_vertex_non_manifold2D()
     check_edge_manifold2D()

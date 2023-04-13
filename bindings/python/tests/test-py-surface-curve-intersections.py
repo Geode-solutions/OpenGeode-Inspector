@@ -116,6 +116,6 @@ def check_intersections3D():
         raise ValueError( "[Test] 3D Surface and Curve should have 6 intersecting elements pair." )
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_intersections2D()
     check_intersections3D()

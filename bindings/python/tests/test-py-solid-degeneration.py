@@ -104,7 +104,7 @@ def check_degeneration_by_point_multiple_presence():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_non_degeneration()
     check_degeneration_by_colocalisation()
     check_degeneration_by_point_multiple_presence()

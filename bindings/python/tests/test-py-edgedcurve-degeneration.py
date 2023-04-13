@@ -126,7 +126,7 @@ def check_degeneration_by_colocalisation3D():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_non_degeneration2D()
     check_degeneration_by_colocalisation2D()
     check_non_degeneration3D()

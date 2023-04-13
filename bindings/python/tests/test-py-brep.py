@@ -397,7 +397,7 @@ def check_model_D_vertices_topology():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_a1_vertices_topology()
     check_a1_valid_vertices_topology()
     check_mss_vertices_topology()
