@@ -136,7 +136,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_vertex_manifold2D();
         check_vertex_non_manifold2D();
         check_edge_manifold2D();

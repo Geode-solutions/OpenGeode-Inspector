@@ -85,7 +85,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_non_colocation();
         check_colocation();
 

@@ -156,7 +156,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_intersections2D();
         check_intersections3D();
 

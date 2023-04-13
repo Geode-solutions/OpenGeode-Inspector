@@ -98,6 +98,6 @@ def check_intersections3D():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_intersections2D()
     check_intersections3D()

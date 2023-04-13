@@ -74,7 +74,7 @@ int main( int argc, char* argv[] )
             " --surface my_surface.og_tsf3d --curve my_curve.og_edc3d\n" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::OpenGeodeIOMesh::initialize();
+        geode::IOMeshLibrary::initialize();
         const auto filename_surf = absl::GetFlag( FLAGS_surface );
         const auto filename_curv = absl::GetFlag( FLAGS_curve );
         const auto ext_surf =

@@ -445,7 +445,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_section();
 
         geode::Logger::info( "TEST SUCCESS" );

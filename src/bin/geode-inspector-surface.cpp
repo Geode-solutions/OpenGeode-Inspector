@@ -143,7 +143,7 @@ int main( int argc, char* argv[] )
                 "use --noXXX, e.g. --noadjacency" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::OpenGeodeIOMesh::initialize();
+        geode::IOMeshLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
         const auto ext =
             geode::to_string( geode::extension_from_filename( filename ) );

@@ -177,7 +177,7 @@ def check_facet_non_manifold():
 
 
 if not __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_vertex_manifold()
     check_vertex_non_manifold()
     check_edge_manifold()

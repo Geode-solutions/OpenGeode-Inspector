@@ -132,7 +132,7 @@ def check_colocation3D():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_non_colocation2D()
     check_colocation2D()
     check_non_colocation3D()

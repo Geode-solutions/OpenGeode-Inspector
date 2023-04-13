@@ -274,5 +274,5 @@ def check_vertical_lines_vertices_topology():
 
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_vertical_lines_vertices_topology()

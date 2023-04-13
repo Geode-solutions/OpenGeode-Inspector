@@ -249,7 +249,7 @@ def check_non_adjacency_inversed_triangle3D():
             "[Test] 3D Surface shows wrong second edge with adjacency problems due to an inversed triangle..")
 
 if __name__ == '__main__':
-    inspector.OpenGeodeInspectorInspector.initialize()
+    inspector.InspectorInspectorLibrary.initialize()
     check_adjacency2D()
     check_non_adjacency_no_bijection2D()
     check_non_adjacency_wrong_edge2D()

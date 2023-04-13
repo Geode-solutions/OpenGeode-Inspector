@@ -30,6 +30,5 @@
 
 namespace geode
 {
-    OPENGEODE_LIBRARY(
-        opengeode_inspector_inspector_api, OpenGeodeInspectorInspector );
+    OPENGEODE_LIBRARY( opengeode_inspector_inspector_api, InspectorInspector );
 } // namespace geode

@@ -31,10 +31,10 @@
 #include <geode/basic/filename.h>
 #include <geode/basic/logger.h>
 
-#include <geode/geosciences/representation/core/structural_model.h>
-#include <geode/geosciences/representation/io/structural_model_input.h>
+#include <geode/geosciences/explicit/representation/core/structural_model.h>
+#include <geode/geosciences/explicit/representation/io/structural_model_input.h>
 
-#include <geode/io/geosciences/common.h>
+#include <geode/geosciences_io/common.h>
 
 #include <geode/inspector/brep_inspector.h>
 
@@ -329,7 +329,7 @@ int main( int argc, char* argv[] )
                 "use --noXXX, e.g. --nocomponent_linking" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::OpenGeodeGeosciencesIOGeosciences::initialize();
+        geode::GeosciencesIOModelLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
 
         inspect_model( geode::load_structural_model( filename ) );

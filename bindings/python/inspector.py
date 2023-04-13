@@ -7,5 +7,5 @@ import opengeode_io
 import opengeode_geosciences
 import opengeode_geosciencesio
 
-from .opengeode_inspector_py_inspector import *
-OpenGeodeInspectorInspector.initialize()
+from opengeode_inspector_py_inspector import *
+InspectorInspectorLibrary.initialize()

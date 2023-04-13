@@ -167,7 +167,7 @@ int main()
 {
     try
     {
-        geode::OpenGeodeInspectorInspector::initialize();
+        geode::InspectorInspectorLibrary::initialize();
         check_adjacency();
         check_non_adjacency_no_bijection();
         check_non_adjacency_wrong_facet();
