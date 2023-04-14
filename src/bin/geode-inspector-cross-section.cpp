@@ -34,7 +34,7 @@
 #include <geode/geosciences/explicit/representation/core/cross_section.h>
 #include <geode/geosciences/explicit/representation/io/cross_section_input.h>
 
-#include <geode/geosciences_io/common.h>
+#include <geode/geosciences_io/model/common.h>
 
 #include <geode/inspector/section_inspector.h>
 

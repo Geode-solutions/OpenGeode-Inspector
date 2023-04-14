@@ -34,7 +34,7 @@
 #include <geode/geosciences/explicit/representation/core/structural_model.h>
 #include <geode/geosciences/explicit/representation/io/structural_model_input.h>
 
-#include <geode/geosciences_io/common.h>
+#include <geode/geosciences_io/model/common.h>
 
 #include <geode/inspector/brep_inspector.h>
 
