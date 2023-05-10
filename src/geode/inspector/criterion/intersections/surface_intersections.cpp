@@ -344,7 +344,7 @@ namespace
         if( triangle_intersects_other(
                 t1, t2, t1_vertices, t2_vertices, common_points )
             || triangle_intersects_other(
-                t1, t2, t1_vertices, t2_vertices, common_points ) )
+                t2, t1, t2_vertices, t1_vertices, common_points ) )
         {
             return true;
         }
