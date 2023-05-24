@@ -26,6 +26,7 @@
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/geometry/basic_objects/tetrahedron.h>
 #include <geode/geometry/mensuration.h>
@@ -101,8 +102,8 @@ namespace geode
             }
             if( this->verbose() )
             {
-                Logger::info(
-                    "Polyhedron ", polyhedron_id, " is degenerated." );
+                Logger::info( "Polyhedron ", polyhedron_id, " of Solid ",
+                    mesh.id().string(), " is degenerated." );
             }
             return true;
         }

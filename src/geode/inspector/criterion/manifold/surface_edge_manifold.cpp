@@ -27,6 +27,7 @@
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
 #include <geode/mesh/core/surface_mesh.h>
@@ -95,7 +96,9 @@ namespace geode
                     {
                         Logger::info( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
-                            edge.first.vertices()[1], ", is not manifold." );
+                            edge.first.vertices()[1],
+                            ", is not manifold (Surface ", mesh_.id().string(),
+                            ")." );
                     }
                     nb_non_manifold_edges++;
                 }
@@ -114,7 +117,9 @@ namespace geode
                     {
                         Logger::info( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
-                            edge.first.vertices()[1], ", is not manifold." );
+                            edge.first.vertices()[1],
+                            ", is not manifold (Surface ", mesh_.id().string(),
+                            ")." );
                     }
                     non_manifold_edges.push_back( edge.first.vertices() );
                 }

@@ -26,6 +26,7 @@
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/geometry/basic_objects/triangle.h>
 #include <geode/geometry/mensuration.h>
@@ -98,7 +99,8 @@ namespace geode
             }
             if( this->verbose() )
             {
-                Logger::info( "Polygon ", polygon_id, " is degenerated." );
+                Logger::info( "Polygon ", polygon_id, " of Surface ",
+                    mesh.id().string(), " is degenerated." );
             }
             return true;
         }
