@@ -141,7 +141,7 @@ namespace geode
                             Logger::info( "Unique vertex with index ",
                                 unique_vertex_index, " is part of the block ",
                                 block_uuid.string(),
-                                " and no internal surface with ", nb_block_cmvs,
+                                " and none of its internal surfaces but has ", nb_block_cmvs,
                                 " component mesh vertices (should be 1)." );
                         }
                         return false;
