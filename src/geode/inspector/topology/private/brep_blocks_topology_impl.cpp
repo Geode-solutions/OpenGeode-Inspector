@@ -36,6 +36,25 @@
 
 #include <geode/inspector/topology/private/topology_helpers.h>
 
+namespace
+{
+    template < typename Condition >
+    geode::index_t count_cmvs(
+        absl::Span< const geode::ComponentMeshVertex > cmvs,
+        const Condition& condition )
+    {
+        geode::index_t counter{ 0 };
+        for( const auto& cmv : cmvs )
+        {
+            if( condition( cmv ) )
+            {
+                counter++;
+            }
+        }
+        return counter;
+    }
+} // namespace
+
 namespace geode
 {
     namespace detail
@@ -57,106 +76,6 @@ namespace geode
             const auto block_cmvs = brep_.component_mesh_vertices(
                 unique_vertex_index, Block3D::component_type_static() );
             const auto block_uuids = components_uuids( block_cmvs );
-            if( block_uuids.size() == 1 )
-            {
-                const auto line_cmvs = brep_.component_mesh_vertices(
-                    unique_vertex_index, Line3D::component_type_static() );
-                const auto surface_cmvs = brep_.component_mesh_vertices(
-                    unique_vertex_index, Surface3D::component_type_static() );
-                absl::flat_hash_set< uuid > internal_surfaces;
-                for( const auto& surface_cmv : surface_cmvs )
-                {
-                    if( brep_.is_internal(
-                            brep_.surface( surface_cmv.component_id.id() ),
-                            brep_.block( block_uuids.front() ) ) )
-                    {
-                        if( !internal_surfaces
-                                 .emplace( surface_cmv.component_id.id() )
-                                 .second
-                            && line_cmvs.empty() )
-                        {
-                            if( verbose_ )
-                            {
-                                Logger::info( "Unique vertex with index ",
-                                    unique_vertex_index,
-                                    " is part of one block (",
-                                    block_uuids.front().string(),
-                                    "), and an internal surface (",
-                                    surface_cmv.component_id.id().string(),
-                                    ") but no line, with several component "
-                                    "mesh vertices along the surface." );
-                            }
-                            return false;
-                        }
-                    }
-                }
-                if( line_cmvs.empty() )
-                {
-                    if( line_cmvs.empty() && internal_surfaces.size() == 1
-                        && block_cmvs.size() != 2 )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index, " is part of one block (",
-                                block_uuids.front().string(),
-                                "), and one internal surface (",
-                                internal_surfaces.begin()->string(),
-                                ") but no line, with ", block_cmvs.size(),
-                                " component mesh vertices in the block (should "
-                                "be 2)." );
-                        }
-                        return false;
-                    }
-                    return true;
-                }
-                if( brep_.has_component_mesh_vertices( unique_vertex_index,
-                        Corner3D::component_type_static() ) )
-                {
-                    // Skip since it requires to implement a local radial sort
-                    // to count number of block components
-                    return true;
-                }
-                absl::flat_hash_set< uuid > incident_surfaces_of_free_lines;
-                bool inside_free_line{ false };
-                for( const auto& line_cmv : line_cmvs )
-                {
-                    const auto& line = brep_.line( line_cmv.component_id.id() );
-                    if( brep_.nb_incidences( line_cmv.component_id.id() ) == 1
-                        && brep_.nb_embedding_surfaces( line ) == 0 )
-                    {
-                        inside_free_line = true;
-                        for( const auto& line_incidence :
-                            brep_.incidences( line ) )
-                        {
-                            incident_surfaces_of_free_lines.emplace(
-                                line_incidence.id() );
-                        }
-                    }
-                }
-                if( !inside_free_line )
-                {
-                    // Skip since it requires to implement a local radial sort
-                    // to count number of block components
-                    return true;
-                }
-                if( block_cmvs.size() != 1 )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index, " is part of one block (",
-                            block_uuids.front().string(),
-                            "), one internal surfaces, and on a free line, "
-                            "with ",
-                            block_cmvs.size(),
-                            " component mesh vertices in the block (should "
-                            "be 1)." );
-                    }
-                    return false;
-                }
-                return true;
-            }
             if( block_uuids.size() == 2 )
             {
                 for( const auto& surface :
@@ -196,6 +115,70 @@ namespace geode
                         "of the blocks incident surfaces." );
                 }
                 return false;
+            }
+            const auto line_cmvs = brep_.component_mesh_vertices(
+                unique_vertex_index, Line3D::component_type_static() );
+            const auto surface_cmvs = brep_.component_mesh_vertices(
+                unique_vertex_index, Surface3D::component_type_static() );
+            for( const auto& block_uuid : block_uuids )
+            {
+                const auto nb_block_cmvs = count_cmvs( block_cmvs,
+                    [&block_uuid]( const ComponentMeshVertex& cmv ) {
+                        return cmv.component_id.id() == block_uuid;
+                    } );
+                const auto nb_internal_surface_cmvs = count_cmvs( surface_cmvs,
+                    [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+                        return this->brep_.is_internal(
+                            brep_.surface( cmv.component_id.id() ),
+                            brep_.block( block_uuid ) );
+                    } );
+                if( nb_internal_surface_cmvs == 0 )
+                {
+                    if( nb_block_cmvs != 1 )
+                    {
+                        if( verbose_ )
+                        {
+                            Logger::info( "Unique vertex with index ",
+                                unique_vertex_index, " is part of the block ",
+                                block_uuid.string(),
+                                " and no internal surface with ", nb_block_cmvs,
+                                " component mesh vertices (should be 1)." );
+                        }
+                        return false;
+                    }
+                    continue;
+                }
+                const auto nb_free_line_cmvs = count_cmvs( line_cmvs,
+                    [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+                        return this->brep_.nb_incidences(
+                                   cmv.component_id.id() )
+                                   == 1
+                               && this->brep_.nb_embedding_surfaces(
+                                      brep_.line( cmv.component_id.id() ) )
+                                      == 0;
+                    } );
+                auto predicted_nb_block_cmvs =
+                    std::max( static_cast< index_t >( 1 ),
+                        nb_internal_surface_cmvs - nb_free_line_cmvs );
+                if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
+                {
+                    predicted_nb_block_cmvs = 2;
+                }
+                if( nb_block_cmvs != predicted_nb_block_cmvs )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index, " is part of the block ",
+                            block_uuid.string(), ", of ",
+                            nb_internal_surface_cmvs,
+                            " internal surface(s), and of ", nb_free_line_cmvs,
+                            " free line(s), with ", nb_block_cmvs,
+                            " component mesh vertices in the block (should be ",
+                            predicted_nb_block_cmvs, ")." );
+                    }
+                    return false;
+                }
             }
             return true;
         }
