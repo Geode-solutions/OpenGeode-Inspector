@@ -14,7 +14,7 @@ opengeode-geosciences==7.*,>=7.0.12rc1
     # via
     #   -r bindings/python/requirements.in
     #   opengeode-geosciencesio
-opengeode-geosciencesio==4.*,>=4.1.4
+opengeode-geosciencesio==4.*,>=4.1.5rc1
     # via -r bindings/python/requirements.in
 opengeode-io==6.*,>=6.0.7
     # via -r bindings/python/requirements.in
