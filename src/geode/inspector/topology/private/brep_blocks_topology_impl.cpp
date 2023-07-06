@@ -169,8 +169,6 @@ namespace geode
                         }
                         return false;
                     } );
-                OPENGEODE_EXCEPTION(
-                    corner_cmvs.size() <= 1, "[] Several corner at same UV" );
                 if( corner_cmvs.size() == 1 )
                 {
                     if( nb_boundary_line_cmvs == 1 )
@@ -225,9 +223,6 @@ namespace geode
                     continue;
                 }
 
-                OPENGEODE_EXCEPTION( nb_boundary_line_cmvs == 0
-                                         || nb_boundary_surface_cmvs % 2 == 0,
-                    "[] Should be pair on line" );
                 if( nb_internal_surface_cmvs == 0 )
                 {
                     const auto predicted_nb_block_cmvs =
