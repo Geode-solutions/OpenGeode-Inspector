@@ -169,7 +169,7 @@ namespace geode
                         }
                         return false;
                     } );
-                if( corner_cmvs.size() == 1 && nb_internal_surface_cmvs != 0 )
+                if( corner_cmvs.size() == 1 && nb_internal_surface_cmvs == 0 )
                 {
                     if( nb_boundary_line_cmvs == 1 )
                     {
