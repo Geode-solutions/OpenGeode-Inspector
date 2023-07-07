@@ -28,6 +28,9 @@
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
+#include <geode/geometry/point.h>
+#include <geode/mesh/core/solid_mesh.h>
+
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
@@ -169,6 +172,15 @@ namespace geode
                         }
                         return false;
                     } );
+                const auto nb_free_line_cmvs = count_cmvs( line_cmvs,
+                    [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+                        return this->brep_.nb_incidences(
+                                   cmv.component_id.id() )
+                                   == 1
+                               && this->brep_.nb_embedding_surfaces(
+                                      brep_.line( cmv.component_id.id() ) )
+                                      == 0;
+                    } );
                 if( corner_cmvs.size() == 1 && nb_internal_surface_cmvs == 0 )
                 {
                     if( nb_boundary_line_cmvs == 1 )
@@ -240,23 +252,14 @@ namespace geode
                     }
                     continue;
                 }
-                const auto nb_free_line_cmvs = count_cmvs( line_cmvs,
-                    [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
-                        return this->brep_.nb_incidences(
-                                   cmv.component_id.id() )
-                                   == 1
-                               && this->brep_.nb_embedding_surfaces(
-                                      brep_.line( cmv.component_id.id() ) )
-                                      == 0;
-                    } );
                 auto predicted_nb_block_cmvs =
                     std::max( static_cast< index_t >( 1 ),
                         nb_internal_surface_cmvs - nb_free_line_cmvs );
                 if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
                 {
-                    predicted_nb_block_cmvs = 2;
+                    predicted_nb_block_cmvs++;
                 }
-                if( nb_boundary_surface_cmvs > 0 )
+                if( nb_boundary_surface_cmvs > 0 && corner_cmvs.empty() )
                 {
                     predicted_nb_block_cmvs +=
                         ( nb_boundary_surface_cmvs - 2 ) / 2;
