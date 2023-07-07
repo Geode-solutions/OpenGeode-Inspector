@@ -169,7 +169,7 @@ namespace geode
                         }
                         return false;
                     } );
-                if( corner_cmvs.size() == 1 )
+                if( corner_cmvs.size() == 1 && nb_internal_surface_cmvs != 0 )
                 {
                     if( nb_boundary_line_cmvs == 1 )
                     {
@@ -189,11 +189,6 @@ namespace geode
                             }
                             return false;
                         }
-                        continue;
-                    }
-
-                    if( nb_internal_surface_cmvs != 0 )
-                    {
                         continue;
                     }
 
