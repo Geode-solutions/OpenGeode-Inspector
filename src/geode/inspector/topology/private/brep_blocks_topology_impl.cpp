@@ -276,8 +276,7 @@ namespace geode
                             nb_boundary_surface_cmvs,
                             " boundary surface(s), and of ", nb_free_line_cmvs,
                             " free line(s), with ", nb_block_cmvs,
-                            " block component mesh vertices "
-                            "(should be ",
+                            " block component mesh vertices (should be ",
                             predicted_nb_block_cmvs, ")." );
                     }
                     return false;
