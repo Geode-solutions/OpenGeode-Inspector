@@ -46,6 +46,7 @@
 #include <geode/inspector/solid_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
+ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion" );
 ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
 ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
 ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
@@ -61,8 +62,16 @@ template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 6 > tasks;
+    absl::InlinedVector< async::task< void >, 7 > tasks;
     const geode::SolidMeshInspector< dimension > inspector{ solid, verbose };
+
+    if( absl::GetFlag( FLAGS_adjacency ) )
+    {
+        tasks.emplace_back( async::spawn( [&inspector] {
+            const auto nb = inspector.nb_facets_with_wrong_adjacency();
+            geode::Logger::info( nb, " facets with wrong adjacency" );
+        } ) );
+    }
     if( absl::GetFlag( FLAGS_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {
