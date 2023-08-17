@@ -62,14 +62,15 @@ template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 7 > tasks;
+    constexpr auto nb_tasks = 7;
+    absl::InlinedVector< async::task< void >, nb_tasks > tasks;
     const geode::SolidMeshInspector< dimension > inspector{ solid, verbose };
 
     if( absl::GetFlag( FLAGS_adjacency ) )
     {
         tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_facets_with_wrong_adjacency();
-            geode::Logger::info( nb, " facets with wrong adjacency" );
+            const auto nb_facets = inspector.nb_facets_with_wrong_adjacency();
+            geode::Logger::info( nb_facets, " facets with wrong adjacency" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_colocation ) )
