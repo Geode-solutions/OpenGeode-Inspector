@@ -27,6 +27,7 @@
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -43,6 +44,12 @@
 
 namespace
 {
+    bool brep_corner_is_meshed(
+        const geode::BRep& brep, const geode::uuid& corner_id )
+    {
+        return brep.corner( corner_id ).mesh().nb_vertices() != 0;
+    }
+
     bool brep_line_is_meshed(
         const geode::BRep& brep, const geode::uuid& line_id )
     {
@@ -182,7 +189,8 @@ namespace geode
             index_t counter{ 0 };
             for( const auto& corner : brep_.corners() )
             {
-                if( !brep_has_unique_vertex_associated_to_component(
+                if( brep_corner_is_meshed( brep_, corner.id() )
+                    && !brep_has_unique_vertex_associated_to_component(
                         brep_, corner.id() ) )
                 {
                     if( verbose_ )
