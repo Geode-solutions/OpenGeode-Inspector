@@ -32,21 +32,21 @@
         .def( pybind11::init< const Section&, bool >() )                       \
         .def( "section_topology_is_valid",                                     \
             &SectionTopologyInspector::section_topology_is_valid )             \
-        .def( "section_meshed_components_are_linked_to_a_unique_vertex",       \
+        .def( "section_meshed_components_are_linked_to_unique_vertices",       \
             &SectionTopologyInspector::                                        \
-                section_meshed_components_are_linked_to_a_unique_vertex )      \
+                section_meshed_components_are_linked_to_unique_vertices )      \
         .def( "section_unique_vertices_are_linked_to_a_component_vertex",      \
             &SectionTopologyInspector::                                        \
                 section_unique_vertices_are_linked_to_a_component_vertex )     \
         .def( "nb_corners_not_linked_to_a_unique_vertex",                      \
             &SectionTopologyInspector::                                        \
                 nb_corners_not_linked_to_a_unique_vertex )                     \
-        .def( "nb_lines_meshed_but_not_linked_to_a_unique_vertex",             \
+        .def( "nb_lines_meshed_but_not_linked_to_unique_vertices",             \
             &SectionTopologyInspector::                                        \
-                nb_lines_meshed_but_not_linked_to_a_unique_vertex )            \
-        .def( "nb_surfaces_meshed_but_not_linked_to_a_unique_vertex",          \
+                nb_lines_meshed_but_not_linked_to_unique_vertices )            \
+        .def( "nb_surfaces_meshed_but_not_linked_to_unique_vertices",          \
             &SectionTopologyInspector::                                        \
-                nb_surfaces_meshed_but_not_linked_to_a_unique_vertex )         \
+                nb_surfaces_meshed_but_not_linked_to_unique_vertices )         \
         .def( "nb_unique_vertices_not_linked_to_a_component_vertex",           \
             &SectionTopologyInspector::                                        \
                 nb_unique_vertices_not_linked_to_a_component_vertex )          \

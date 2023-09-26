@@ -68,19 +68,48 @@ namespace
         return brep.block( block_id ).mesh().nb_vertices() != 0;
     }
 
-    bool brep_has_unique_vertex_associated_to_component(
-        const geode::BRep& brep, const geode::uuid& component_id )
+    bool brep_component_vertices_are_associated_to_unique_vertices(
+        const geode::BRep& brep,
+        const geode::ComponentID& component_id,
+        const geode::VertexSet& component_mesh )
     {
-        for( const auto unique_vertex_id :
-            geode::Range{ brep.nb_unique_vertices() } )
+        for( const auto component_vertex :
+            geode::Range{ component_mesh.nb_vertices() } )
         {
-            if( brep.has_component_mesh_vertices(
-                    unique_vertex_id, component_id ) )
+            if( brep.unique_vertex( { component_id, component_vertex } )
+                == geode::NO_ID )
             {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    std::vector< geode::ComponentMeshVertex >
+        brep_component_vertices_not_associated_to_unique_vertices(
+            const geode::BRep& brep,
+            const geode::ComponentID& component_id,
+            const geode::VertexSet& component_mesh,
+            bool verbose )
+    {
+        std::vector< geode::ComponentMeshVertex > result;
+        for( const auto component_vertex :
+            geode::Range{ component_mesh.nb_vertices() } )
+        {
+            geode::ComponentMeshVertex mesh_vertex{ component_id,
+                component_vertex };
+            if( brep.unique_vertex( mesh_vertex ) == geode::NO_ID )
+            {
+                if( verbose )
+                {
+                    geode::Logger::info( "Component vertex '",
+                        mesh_vertex.string(),
+                        "' is not linked to a unique vertex." );
+                }
+                result.push_back( std::move( mesh_vertex ) );
+            }
+        }
+        return result;
     }
 } // namespace
 
@@ -108,7 +137,7 @@ namespace geode
             {
                 return false;
             }
-            if( !brep_meshed_components_are_linked_to_a_unique_vertex() )
+            if( !brep_meshed_components_are_linked_to_unique_vertices() )
             {
                 return false;
             }
@@ -132,12 +161,12 @@ namespace geode
             return true;
         }
 
-        bool brep_meshed_components_are_linked_to_a_unique_vertex() const
+        bool brep_meshed_components_are_linked_to_unique_vertices() const
         {
             for( const auto& corner : brep_.corners() )
             {
-                if( !brep_has_unique_vertex_associated_to_component(
-                        brep_, corner.id() ) )
+                if( !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, corner.component_id(), corner.mesh() ) )
                 {
                     return false;
                 }
@@ -145,8 +174,8 @@ namespace geode
             for( const auto& line : brep_.lines() )
             {
                 if( brep_line_is_meshed( brep_, line.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, line.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, line.component_id(), line.mesh() ) )
                 {
                     return false;
                 }
@@ -154,8 +183,8 @@ namespace geode
             for( const auto& surface : brep_.surfaces() )
             {
                 if( brep_surface_is_meshed( brep_, surface.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, surface.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, surface.component_id(), surface.mesh() ) )
                 {
                     return false;
                 }
@@ -163,8 +192,8 @@ namespace geode
             for( const auto& block : brep_.blocks() )
             {
                 if( brep_block_is_meshed( brep_, block.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, block.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, block.component_id(), block.mesh() ) )
                 {
                     return false;
                 }
@@ -190,8 +219,8 @@ namespace geode
             for( const auto& corner : brep_.corners() )
             {
                 if( brep_corner_is_meshed( brep_, corner.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, corner.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, corner.component_id(), corner.mesh() ) )
                 {
                     if( verbose_ )
                     {
@@ -205,19 +234,19 @@ namespace geode
             return counter;
         }
 
-        index_t nb_lines_meshed_but_not_linked_to_a_unique_vertex() const
+        index_t nb_lines_meshed_but_not_linked_to_unique_vertices() const
         {
             index_t counter{ 0 };
             for( const auto& line : brep_.lines() )
             {
                 if( brep_line_is_meshed( brep_, line.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, line.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, line.component_id(), line.mesh() ) )
                 {
                     if( verbose_ )
                     {
                         Logger::info( "Line with uuid '", line.id().string(),
-                            "' is not linked to a unique vertex." );
+                            "' has vertices not linked to a unique vertex." );
                     }
                     counter++;
                 }
@@ -225,20 +254,20 @@ namespace geode
             return counter;
         }
 
-        index_t nb_surfaces_meshed_but_not_linked_to_a_unique_vertex() const
+        index_t nb_surfaces_meshed_but_not_linked_to_unique_vertices() const
         {
             index_t counter{ 0 };
             for( const auto& surface : brep_.surfaces() )
             {
                 if( brep_surface_is_meshed( brep_, surface.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, surface.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, surface.component_id(), surface.mesh() ) )
                 {
                     if( verbose_ )
                     {
                         Logger::info( "Surface with uuid '",
                             surface.id().string(),
-                            "' is not linked to a unique vertex." );
+                            "' has vertices not linked to a unique vertex." );
                     }
                     counter++;
                 }
@@ -246,19 +275,19 @@ namespace geode
             return counter;
         }
 
-        index_t nb_blocks_meshed_but_not_linked_to_a_unique_vertex() const
+        index_t nb_blocks_meshed_but_not_linked_to_unique_vertices() const
         {
             index_t counter{ 0 };
             for( const auto& block : brep_.blocks() )
             {
                 if( brep_block_is_meshed( brep_, block.id() )
-                    && !brep_has_unique_vertex_associated_to_component(
-                        brep_, block.id() ) )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
+                        brep_, block.component_id(), block.mesh() ) )
                 {
                     if( verbose_ )
                     {
                         Logger::info( "Block with uuid '", block.id().string(),
-                            "' is not linked to a unique vertex." );
+                            "' has vertices not linked to a unique vertex." );
                     }
                     counter++;
                 }
@@ -282,6 +311,50 @@ namespace geode
                 }
             }
             return nb_unlinked;
+        }
+
+        std::vector< ComponentMeshVertex >
+            component_vertices_not_linked_to_a_unique_vertex() const
+        {
+            std::vector< ComponentMeshVertex > result;
+            for( const auto& corner : brep_.corners() )
+            {
+                auto corner_result =
+                    brep_component_vertices_not_associated_to_unique_vertices(
+                        brep_, corner.component_id(), corner.mesh(), verbose_ );
+                result.insert( result.end(),
+                    std::make_move_iterator( corner_result.begin() ),
+                    std::make_move_iterator( corner_result.end() ) );
+            }
+            for( const auto& line : brep_.lines() )
+            {
+                auto line_result =
+                    brep_component_vertices_not_associated_to_unique_vertices(
+                        brep_, line.component_id(), line.mesh(), verbose_ );
+                result.insert( result.end(),
+                    std::make_move_iterator( line_result.begin() ),
+                    std::make_move_iterator( line_result.end() ) );
+            }
+            for( const auto& surface : brep_.surfaces() )
+            {
+                auto surface_result =
+                    brep_component_vertices_not_associated_to_unique_vertices(
+                        brep_, surface.component_id(), surface.mesh(),
+                        verbose_ );
+                result.insert( result.end(),
+                    std::make_move_iterator( surface_result.begin() ),
+                    std::make_move_iterator( surface_result.end() ) );
+            }
+            for( const auto& block : brep_.blocks() )
+            {
+                auto block_result =
+                    brep_component_vertices_not_associated_to_unique_vertices(
+                        brep_, block.component_id(), block.mesh(), verbose_ );
+                result.insert( result.end(),
+                    std::make_move_iterator( block_result.begin() ),
+                    std::make_move_iterator( block_result.end() ) );
+            }
+            return result;
         }
 
         std::vector< index_t >
@@ -561,9 +634,9 @@ namespace geode
     }
 
     bool BRepTopologyInspector::
-        brep_meshed_components_are_linked_to_a_unique_vertex() const
+        brep_meshed_components_are_linked_to_unique_vertices() const
     {
-        return impl_->brep_meshed_components_are_linked_to_a_unique_vertex();
+        return impl_->brep_meshed_components_are_linked_to_unique_vertices();
     }
 
     bool BRepTopologyInspector::
@@ -579,27 +652,33 @@ namespace geode
     }
 
     index_t BRepTopologyInspector::
-        nb_lines_meshed_but_not_linked_to_a_unique_vertex() const
+        nb_lines_meshed_but_not_linked_to_unique_vertices() const
     {
-        return impl_->nb_lines_meshed_but_not_linked_to_a_unique_vertex();
+        return impl_->nb_lines_meshed_but_not_linked_to_unique_vertices();
     }
 
     index_t BRepTopologyInspector::
-        nb_surfaces_meshed_but_not_linked_to_a_unique_vertex() const
+        nb_surfaces_meshed_but_not_linked_to_unique_vertices() const
     {
-        return impl_->nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
+        return impl_->nb_surfaces_meshed_but_not_linked_to_unique_vertices();
     }
 
     index_t BRepTopologyInspector::
-        nb_blocks_meshed_but_not_linked_to_a_unique_vertex() const
+        nb_blocks_meshed_but_not_linked_to_unique_vertices() const
     {
-        return impl_->nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
+        return impl_->nb_blocks_meshed_but_not_linked_to_unique_vertices();
     }
 
     index_t BRepTopologyInspector::
         nb_unique_vertices_not_linked_to_a_component_vertex() const
     {
         return impl_->nb_unique_vertices_not_linked_to_a_component_vertex();
+    }
+
+    std::vector< ComponentMeshVertex > BRepTopologyInspector::
+        component_vertices_not_linked_to_a_unique_vertex() const
+    {
+        return impl_->component_vertices_not_linked_to_a_unique_vertex();
     }
 
     std::vector< index_t > BRepTopologyInspector::
