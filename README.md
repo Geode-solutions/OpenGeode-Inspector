@@ -51,7 +51,7 @@ To use OpenGeode-Inspector, several options are available:
 
  * If you installed and compiled the C++ source code, you can use the executable binaries to apply an inspection of your meshes/models and toggle on/off the various checks directly.
  * or use the API functions (check the tests to see how it is done) if you want to go further or use the resulting errors to repair your meshes/models.
- * If you installed the python library, you can add ```import opengeode_inspector``` in your Python script to use the available API functions. Check [this documentation page](https://docs.geode-solutions.com/how-to-use-binding) for more details. Examples are also procured in the ```examples``` folder.
+ * If you installed the python library, you can add ```import opengeode_inspector``` in your Python script to use the available API functions. Check [this documentation page](https://docs.geode-solutions.com/guides/use-opengeode-binding.html) for more details. Examples are also procured in the ```examples``` folder.
  * You can inspect your models without any installation, by using the API of the [Geode-solutions free tools](https://geode-solutions.com/tools).
 
 The available checks for each mesh type are:
