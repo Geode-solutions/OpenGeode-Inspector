@@ -44,6 +44,10 @@ ABSL_FLAG( bool,
     true,
     "Toggle components linking to unique vertices criterion" );
 ABSL_FLAG( bool,
+    unique_vertices_colocation,
+    true,
+    "Toggle inspection of unique vertices colocation" );
+ABSL_FLAG( bool,
     corners,
     true,
     "Toggle inspection of corner topology through unique vertices" );
@@ -55,6 +59,16 @@ ABSL_FLAG( bool,
     surfaces,
     true,
     "Toggle inspection of surfaces topology through unique vertices" );
+ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion for components" );
+ABSL_FLAG(
+    bool, colocation, true, "Toggle colocation criterion for components" );
+ABSL_FLAG(
+    bool, degeneration, true, "Toggle degeneration criterion for components" );
+ABSL_FLAG( bool, manifold, true, "Toggle manifold criterion for components" );
+ABSL_FLAG( bool,
+    intersection,
+    true,
+    "Toggle intersection criterion (only between triangulated surfaces)" );
 ABSL_FLAG( bool,
     verbose,
     false,
@@ -66,29 +80,39 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector cross_section_inspector{ cross_section,
         verbose };
-    absl::InlinedVector< async::task< void >, 12 > tasks;
+    absl::InlinedVector< async::task< void >, 20 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
-            const auto nb_corners =
+            const auto unlinked_component_vertices =
                 cross_section_inspector
-                    .nb_corners_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_corners, " corners not linked to a unique vertex" );
+                    .component_vertices_not_linked_to_a_unique_vertex();
+            geode::Logger::info( unlinked_component_vertices.size(),
+                " component vertices not linked to a unique vertex" );
         } ) );
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
-            const auto nb_lines =
+            const auto nb_unlinked_uv =
                 cross_section_inspector
-                    .nb_lines_meshed_but_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_lines, " lines meshed but not linked to a unique vertex" );
+                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+            geode::Logger::info( nb_unlinked_uv,
+                " unique vertices not linked to a component mesh vertex" );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb_unique_vertices =
+                cross_section_inspector
+                    .nb_unique_vertices_linked_to_different_points();
+            geode::Logger::info( nb_unique_vertices,
+                " unique vertices linked to mesh points at "
+                "different positions" );
         } ) );
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
-            const auto nb_surfaces =
-                cross_section_inspector
-                    .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
-            geode::Logger::info( nb_surfaces,
-                " surfaces meshed but not linked to a unique vertex" );
+            const auto nb_unique_vertices =
+                cross_section_inspector.nb_colocated_unique_vertices();
+            geode::Logger::info(
+                nb_unique_vertices, " unique vertices which are colocated" );
         } ) );
     }
     if( absl::GetFlag( FLAGS_corners ) )
@@ -164,6 +188,71 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
                                 .size();
             geode::Logger::info( nb,
                 " unique vertices part of surfaces with invalid topology." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb =
+                cross_section_inspector
+                    .part_of_line_and_not_on_surface_border_unique_vertices()
+                    .size();
+            geode::Logger::info( nb,
+                " unique vertices part of a line and a surface but for "
+                "which one of the associated vertex on the surface mesh is not "
+                "on the mesh border." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_adjacency ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb = cross_section_inspector
+                                .surfaces_nb_edges_with_wrong_adjacencies()
+                                .size();
+            geode::Logger::info(
+                nb, " surfaces with adjacency problems in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_colocation ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb =
+                cross_section_inspector.components_nb_colocated_points().size();
+            geode::Logger::info(
+                nb, " components with colocated points in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_degeneration ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb =
+                cross_section_inspector.components_nb_degenerated_elements()
+                    .size();
+            geode::Logger::info(
+                nb, " components with degenerated elements in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_manifold ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb = cross_section_inspector
+                                .component_meshes_nb_non_manifold_vertices()
+                                .size();
+            geode::Logger::info(
+                nb, " components with non manifold vertices in their mesh." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb =
+                cross_section_inspector.component_meshes_non_manifold_edges()
+                    .size();
+            geode::Logger::info(
+                nb, " components with non manifold edges in their mesh." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_intersection ) )
+    {
+        tasks.emplace_back( async::spawn( [&cross_section_inspector] {
+            const auto nb = cross_section_inspector
+                                .nb_intersecting_surfaces_elements_pair();
+            geode::Logger::info(
+                nb, " pairs of component triangles intersecting each other." );
         } ) );
     }
     for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )

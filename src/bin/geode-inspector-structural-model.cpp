@@ -70,6 +70,10 @@ ABSL_FLAG(
     bool, degeneration, true, "Toggle degeneration criterion for components" );
 ABSL_FLAG( bool, manifold, true, "Toggle manifold criterion for components" );
 ABSL_FLAG( bool,
+    intersection,
+    true,
+    "Toggle intersection criterion (only between triangulated surfaces)" );
+ABSL_FLAG( bool,
     verbose,
     false,
     "Toggle verbose mode for the inspection of topology through unique "
@@ -79,35 +83,15 @@ void inspect_model( const geode::StructuralModel& model )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector model_inspector{ model, verbose };
-    absl::InlinedVector< async::task< void >, 29 > tasks;
+    absl::InlinedVector< async::task< void >, 27 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
         tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto nb_corners =
-                model_inspector.nb_corners_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_corners, " corners not linked to a unique vertex" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto nb_lines =
+            const auto unlinked_component_vertices =
                 model_inspector
-                    .nb_lines_meshed_but_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_lines, " lines meshed but not linked to a unique vertex" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto nb_surfaces =
-                model_inspector
-                    .nb_surfaces_meshed_but_not_linked_to_a_unique_vertex();
-            geode::Logger::info( nb_surfaces,
-                " surfaces meshed but not linked to a unique vertex" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto nb_blocks =
-                model_inspector
-                    .nb_blocks_meshed_but_not_linked_to_a_unique_vertex();
-            geode::Logger::info(
-                nb_blocks, " blocks meshed but not linked to a unique vertex" );
+                    .component_vertices_not_linked_to_a_unique_vertex();
+            geode::Logger::info( unlinked_component_vertices.size(),
+                " component vertices not linked to a unique vertex" );
         } ) );
         tasks.emplace_back( async::spawn( [&model_inspector] {
             const auto nb_unlinked_uv =
@@ -309,6 +293,15 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb = model_inspector.model_non_manifold_edges().size();
             geode::Logger::info(
                 nb, " components with non manifold model edges." );
+        } ) );
+    }
+    if( absl::GetFlag( FLAGS_intersection ) )
+    {
+        tasks.emplace_back( async::spawn( [&model_inspector] {
+            const auto nb =
+                model_inspector.nb_intersecting_surfaces_elements_pair();
+            geode::Logger::info(
+                nb, " pairs of component triangles intersecting each other." );
         } ) );
     }
     for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
