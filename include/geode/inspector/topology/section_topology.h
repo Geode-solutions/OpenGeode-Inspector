@@ -26,7 +26,9 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
-
+#include <geode/inspector/topology/section_corners_topology.h>
+#include <geode/inspector/topology/section_lines_topology.h>
+#include <geode/inspector/topology/section_surfaces_topology.h>
 namespace geode
 {
     struct ComponentMeshVertex;
@@ -39,6 +41,9 @@ namespace geode
      * Class for inspecting the topology of a Section model corners
      */
     class opengeode_inspector_inspector_api SectionTopologyInspector
+        : public SectionCornersTopology,
+          public SectionLinesTopology,
+          public SectionSurfacesTopology
     {
         OPENGEODE_DISABLE_COPY( SectionTopologyInspector );
 
@@ -104,5 +109,6 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
+        const Section& section_;
     };
 } // namespace geode

@@ -35,10 +35,6 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/topology/section_corners_topology.h>
-#include <geode/inspector/topology/section_lines_topology.h>
-#include <geode/inspector/topology/section_surfaces_topology.h>
-
 namespace
 {
     bool section_corner_is_meshed(
@@ -107,47 +103,11 @@ namespace
 namespace geode
 {
     class SectionTopologyInspector::Impl
-        : public detail::SectionCornersTopologyImpl,
-          public detail::SectionLinesTopologyImpl,
-          public detail::SectionSurfacesTopologyImpl
     {
     public:
         Impl( const Section& section, bool verbose )
-            : detail::SectionCornersTopologyImpl( section, verbose ),
-              detail::SectionLinesTopologyImpl( section, verbose ),
-              detail::SectionSurfacesTopologyImpl( section, verbose ),
-              section_( section ),
-              verbose_( verbose )
+            : section_( section ), verbose_( verbose )
         {
-        }
-
-        bool section_topology_is_valid() const
-        {
-            if( section_.nb_unique_vertices() == 0 )
-            {
-                return false;
-            }
-            if( !section_meshed_components_are_linked_to_unique_vertices() )
-            {
-                return false;
-            }
-            if( !section_unique_vertices_are_linked_to_a_component_vertex() )
-            {
-                return false;
-            }
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( !section_corner_topology_is_valid( unique_vertex_id )
-                    || !section_vertex_lines_topology_is_valid(
-                        unique_vertex_id )
-                    || !section_vertex_surfaces_topology_is_valid(
-                        unique_vertex_id ) )
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         bool section_meshed_components_are_linked_to_unique_vertices() const
@@ -328,188 +288,27 @@ namespace geode
             return unlinked_uv;
         }
 
-        std::vector< index_t >
-            invalid_components_topology_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( !section_corner_topology_is_valid( unique_vertex_id )
-                    || !section_vertex_lines_topology_is_valid(
-                        unique_vertex_id )
-                    || !section_vertex_surfaces_topology_is_valid(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t > multiple_corners_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t > multiple_internals_corner_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( corner_has_multiple_embeddings( unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t > not_internal_nor_boundary_corner_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t > line_corners_without_boundary_status() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( corner_is_part_of_line_but_not_boundary(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_is_part_of_not_boundary_nor_internal_line(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_is_part_of_line_with_invalid_internal_topology(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t >
-            part_of_invalid_unique_line_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t >
-            part_of_lines_but_not_corner_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t > part_of_invalid_surfaces_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_is_part_of_invalid_surfaces_topology(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
-        std::vector< index_t >
-            part_of_line_and_not_on_surface_border_unique_vertices() const
-        {
-            std::vector< index_t > invalid_unique_vertices;
-            for( const auto unique_vertex_id :
-                Range{ section_.nb_unique_vertices() } )
-            {
-                if( vertex_is_part_of_line_and_not_on_surface_border(
-                        unique_vertex_id ) )
-                {
-                    invalid_unique_vertices.push_back( unique_vertex_id );
-                }
-            }
-            return invalid_unique_vertices;
-        }
-
     private:
         const Section& section_;
         DEBUG_CONST bool verbose_;
     };
 
     SectionTopologyInspector::SectionTopologyInspector( const Section& section )
-        : impl_( section, false )
+        : SectionCornersTopology( section, false ),
+          SectionLinesTopology( section, false ),
+          SectionSurfacesTopology( section, false ),
+          impl_( section, false ),
+          section_( section )
     {
     }
 
     SectionTopologyInspector::SectionTopologyInspector(
         const Section& section, bool verbose )
-        : impl_( section, verbose )
+        : SectionCornersTopology( section, verbose ),
+          SectionLinesTopology( section, verbose ),
+          SectionSurfacesTopology( section, verbose ),
+          impl_( section, verbose ),
+          section_( section )
     {
     }
 
@@ -517,7 +316,30 @@ namespace geode
 
     bool SectionTopologyInspector::section_topology_is_valid() const
     {
-        return impl_->section_topology_is_valid();
+        if( section_.nb_unique_vertices() == 0 )
+        {
+            return false;
+        }
+        if( !section_meshed_components_are_linked_to_unique_vertices() )
+        {
+            return false;
+        }
+        if( !section_unique_vertices_are_linked_to_a_component_vertex() )
+        {
+            return false;
+        }
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( !section_corner_topology_is_valid( unique_vertex_id )
+                || !section_vertex_lines_topology_is_valid( unique_vertex_id )
+                || !section_vertex_surfaces_topology_is_valid(
+                    unique_vertex_id ) )
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool SectionTopologyInspector::
@@ -573,71 +395,177 @@ namespace geode
         SectionTopologyInspector::invalid_components_topology_unique_vertices()
             const
     {
-        return impl_->invalid_components_topology_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( !section_corner_topology_is_valid( unique_vertex_id )
+                || !section_vertex_lines_topology_is_valid( unique_vertex_id )
+                || !section_vertex_surfaces_topology_is_valid(
+                    unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::multiple_corners_unique_vertices() const
     {
-        return impl_->multiple_corners_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::multiple_internals_corner_vertices() const
     {
-        return impl_->multiple_internals_corner_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( corner_has_multiple_embeddings( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::not_internal_nor_boundary_corner_vertices()
             const
     {
-        return impl_->not_internal_nor_boundary_corner_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::line_corners_without_boundary_status() const
     {
-        return impl_->line_corners_without_boundary_status();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( corner_is_part_of_line_but_not_boundary( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t > SectionTopologyInspector::
         part_of_not_boundary_nor_internal_line_unique_vertices() const
     {
-        return impl_->part_of_not_boundary_nor_internal_line_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_not_boundary_nor_internal_line(
+                    unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t > SectionTopologyInspector::
         part_of_line_with_invalid_internal_topology_unique_vertices() const
     {
-        return impl_
-            ->part_of_line_with_invalid_internal_topology_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_line_with_invalid_internal_topology(
+                    unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::part_of_invalid_unique_line_unique_vertices()
             const
     {
-        return impl_->part_of_invalid_unique_line_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::part_of_lines_but_not_corner_unique_vertices()
             const
     {
-        return impl_->part_of_lines_but_not_corner_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t >
         SectionTopologyInspector::part_of_invalid_surfaces_unique_vertices()
             const
     {
-        return impl_->part_of_invalid_surfaces_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_invalid_surfaces_topology(
+                    unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
 
     std::vector< index_t > SectionTopologyInspector::
         part_of_line_and_not_on_surface_border_unique_vertices() const
     {
-        return impl_->part_of_line_and_not_on_surface_border_unique_vertices();
+        std::vector< index_t > invalid_unique_vertices;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_line_and_not_on_surface_border(
+                    unique_vertex_id ) )
+            {
+                invalid_unique_vertices.push_back( unique_vertex_id );
+            }
+        }
+        return invalid_unique_vertices;
     }
+
 } // namespace geode

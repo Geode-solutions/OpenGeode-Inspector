@@ -26,6 +26,10 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/topology/brep_blocks_topology.h>
+#include <geode/inspector/topology/brep_corners_topology.h>
+#include <geode/inspector/topology/brep_lines_topology.h>
+#include <geode/inspector/topology/brep_surfaces_topology.h>
 
 namespace geode
 {
@@ -39,6 +43,10 @@ namespace geode
      * Class for inspecting the topology of a BRep model corners
      */
     class opengeode_inspector_inspector_api BRepTopologyInspector
+        : public BRepCornersTopology,
+          public BRepLinesTopology,
+          public BRepSurfacesTopology,
+          public BRepBlocksTopology
     {
         OPENGEODE_DISABLE_COPY( BRepTopologyInspector );
 
@@ -119,5 +127,6 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
+        const BRep& brep_;
     };
 } // namespace geode

@@ -38,108 +38,99 @@
 
 namespace geode
 {
-    namespace detail
+    SectionSurfacesTopology::SectionSurfacesTopology(
+        const Section& section, bool verbose )
+        : section_( section ), verbose_( verbose )
     {
-        SectionSurfacesTopologyImpl::SectionSurfacesTopologyImpl(
-            const Section& section, bool verbose )
-            : section_( section ), verbose_( verbose )
-        {
-        }
-        SectionSurfacesTopologyImpl::SectionSurfacesTopologyImpl(
-            const Section& section )
-            : SectionSurfacesTopologyImpl( section, false )
-        {
-        }
+    }
+    SectionSurfacesTopology::SectionSurfacesTopology( const Section& section )
+        : SectionSurfacesTopology( section, false )
+    {
+    }
 
-        bool SectionSurfacesTopologyImpl::
-            section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index ) const
+    bool SectionSurfacesTopology::section_vertex_surfaces_topology_is_valid(
+        index_t unique_vertex_index ) const
+    {
+        if( section_
+                .component_mesh_vertices(
+                    unique_vertex_index, Surface2D::component_type_static() )
+                .empty() )
         {
-            if( section_
-                    .component_mesh_vertices( unique_vertex_index,
-                        Surface2D::component_type_static() )
-                    .empty() )
+            return true;
+        }
+        if( vertex_is_part_of_invalid_surfaces_topology( unique_vertex_index )
+            || vertex_is_part_of_line_and_not_on_surface_border(
+                unique_vertex_index ) )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool SectionSurfacesTopology::vertex_is_part_of_invalid_surfaces_topology(
+        index_t unique_vertex_index ) const
+    {
+        const auto surface_uuids =
+            detail::components_uuids( section_.component_mesh_vertices(
+                unique_vertex_index, Surface2D::component_type_static() ) );
+        if( surface_uuids.size() == 2 )
+        {
+            for( const auto& line : section_.component_mesh_vertices(
+                     unique_vertex_index, Line2D::component_type_static() ) )
             {
-                return true;
+                if( section_.Relationships::is_boundary(
+                        line.component_id.id(), surface_uuids[0] )
+                    && section_.Relationships::is_boundary(
+                        line.component_id.id(), surface_uuids[1] ) )
+                {
+                    return false;
+                }
             }
-            if( vertex_is_part_of_invalid_surfaces_topology(
-                    unique_vertex_index )
-                || vertex_is_part_of_line_and_not_on_surface_border(
-                    unique_vertex_index ) )
+            if( verbose_ )
             {
-                return false;
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is part of two surfaces, but is associated to no "
+                    "line boundary of the two surfaces." );
             }
             return true;
         }
+        return false;
+    }
 
-        bool SectionSurfacesTopologyImpl::
-            vertex_is_part_of_invalid_surfaces_topology(
-                index_t unique_vertex_index ) const
+    bool SectionSurfacesTopology::
+        vertex_is_part_of_line_and_not_on_surface_border(
+            index_t unique_vertex_index ) const
+    {
+        if( !detail::section_surfaces_are_meshed( section_ ) )
         {
-            const auto surface_uuids =
-                components_uuids( section_.component_mesh_vertices(
-                    unique_vertex_index, Surface2D::component_type_static() ) );
-            if( surface_uuids.size() == 2 )
+            return false;
+        }
+        if( section_
+                .component_mesh_vertices(
+                    unique_vertex_index, Line2D::component_type_static() )
+                .empty() )
+        {
+            return false;
+        }
+        for( const auto& surface_vertex : section_.component_mesh_vertices(
+                 unique_vertex_index, Surface2D::component_type_static() ) )
+        {
+            if( !section_.surface( surface_vertex.component_id.id() )
+                     .mesh()
+                     .is_vertex_on_border( surface_vertex.vertex ) )
             {
-                for( const auto& line :
-                    section_.component_mesh_vertices(
-                        unique_vertex_index, Line2D::component_type_static() ) )
-                {
-                    if( section_.Relationships::is_boundary(
-                            line.component_id.id(), surface_uuids[0] )
-                        && section_.Relationships::is_boundary(
-                            line.component_id.id(), surface_uuids[1] ) )
-                    {
-                        return false;
-                    }
-                }
                 if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
-                        " is part of two surfaces, but is associated to no "
-                        "line boundary of the two surfaces." );
+                        " is part of a line and of surface with uuid '",
+                        surface_vertex.component_id.id().string(),
+                        "' but one of the associated vertex in the surface "
+                        "mesh is not on the mesh border." );
                 }
                 return true;
             }
-            return false;
         }
-
-        bool SectionSurfacesTopologyImpl::
-            vertex_is_part_of_line_and_not_on_surface_border(
-                index_t unique_vertex_index ) const
-        {
-            if( !detail::section_surfaces_are_meshed( section_ ) )
-            {
-                return false;
-            }
-            if( section_
-                    .component_mesh_vertices(
-                        unique_vertex_index, Line2D::component_type_static() )
-                    .empty() )
-            {
-                return false;
-            }
-            for( const auto& surface_vertex : section_.component_mesh_vertices(
-                     unique_vertex_index, Surface2D::component_type_static() ) )
-            {
-                if( !section_.surface( surface_vertex.component_id.id() )
-                         .mesh()
-                         .is_vertex_on_border( surface_vertex.vertex ) )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is part of a line and of surface with uuid '",
-                            surface_vertex.component_id.id().string(),
-                            "' but one of the associated vertex in the surface "
-                            "mesh is not on the mesh border." );
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
-    } // namespace detail
+        return false;
+    }
 } // namespace geode

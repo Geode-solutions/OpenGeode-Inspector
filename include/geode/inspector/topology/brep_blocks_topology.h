@@ -32,33 +32,31 @@ namespace geode
 
 namespace geode
 {
-    namespace detail
+
+    /*!
+     * Class for inspecting the topology of a BRep model blocks through
+     * their unique vertices
+     */
+    class opengeode_inspector_inspector_api BRepBlocksTopology
     {
+    public:
+        BRepBlocksTopology( const BRep& brep );
+
+        BRepBlocksTopology( const BRep& brep, bool verbose );
+
         /*!
-         * Class for inspecting the topology of a BRep model blocks through
-         * their unique vertices
+         * Checks if the brep unique vertices are parts of valid blocks,
+         * i.e. verify:
+         * If the vertex is part of multiple blocks, either it is part of
+         * exactly 2 blocks (and at least one surface which is boundary to
+         * the 2 blocks), or it is part of more than to blocks (and it is
+         * either a corner, or not a corner but part of only one line).
          */
-        class BRepBlocksTopologyImpl
-        {
-        public:
-            BRepBlocksTopologyImpl( const BRep& brep );
+        bool brep_vertex_blocks_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-            BRepBlocksTopologyImpl( const BRep& brep, bool verbose );
-
-            /*!
-             * Checks if the brep unique vertices are parts of valid blocks,
-             * i.e. verify:
-             * If the vertex is part of multiple blocks, either it is part of
-             * exactly 2 blocks (and at least one surface which is boundary to
-             * the 2 blocks), or it is part of more than to blocks (and it is
-             * either a corner, or not a corner but part of only one line).
-             */
-            bool brep_vertex_blocks_topology_is_valid(
-                index_t unique_vertex_index ) const;
-
-        private:
-            const BRep& brep_;
-            bool verbose_;
-        };
-    } // namespace detail
+    private:
+        const BRep& brep_;
+        bool verbose_;
+    };
 } // namespace geode

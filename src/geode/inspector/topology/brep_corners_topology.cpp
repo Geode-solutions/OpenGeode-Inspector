@@ -31,151 +31,143 @@
 
 namespace geode
 {
-    namespace detail
+    BRepCornersTopology::BRepCornersTopology( const BRep& brep, bool verbose )
+        : brep_( brep ), verbose_( verbose )
     {
-        BRepCornersTopologyImpl::BRepCornersTopologyImpl(
-            const BRep& brep, bool verbose )
-            : brep_( brep ), verbose_( verbose )
-        {
-        }
-        BRepCornersTopologyImpl::BRepCornersTopologyImpl( const BRep& brep )
-            : BRepCornersTopologyImpl( brep, false )
-        {
-        }
+    }
+    BRepCornersTopology::BRepCornersTopology( const BRep& brep )
+        : BRepCornersTopology( brep, false )
+    {
+    }
 
-        bool BRepCornersTopologyImpl::brep_corner_topology_is_valid(
-            index_t unique_vertex_index ) const
+    bool BRepCornersTopology::brep_corner_topology_is_valid(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = brep_.component_mesh_vertices(
+            unique_vertex_index, Corner3D::component_type_static() );
+        if( corners.empty() )
         {
-            const auto corners = brep_.component_mesh_vertices(
-                unique_vertex_index, Corner3D::component_type_static() );
-            if( corners.empty() )
-            {
-                return true;
-            }
-            if( corners.size() != 1 )
+            return true;
+        }
+        if( corners.size() != 1 )
+        {
+            return false;
+        }
+        const auto& corner_uuid = corners[0].component_id.id();
+        if( brep_.nb_embeddings( corner_uuid ) > 1 )
+        {
+            return false;
+        }
+        else if( brep_.nb_embeddings( corner_uuid ) != 1 )
+        {
+            if( brep_.nb_incidences( corner_uuid ) < 1 )
             {
                 return false;
             }
+        }
+        else if( brep_.nb_incidences( corner_uuid ) > 1 )
+        {
+            return false;
+        }
+        for( const auto& line : brep_.component_mesh_vertices(
+                 unique_vertex_index, Line3D::component_type_static() ) )
+        {
+            if( !brep_.Relationships::is_boundary(
+                    corner_uuid, line.component_id.id() ) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool BRepCornersTopology::unique_vertex_has_multiple_corners(
+        index_t unique_vertex_index ) const
+    {
+        if( brep_
+                .component_mesh_vertices(
+                    unique_vertex_index, Corner3D::component_type_static() )
+                .size()
+            > 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is part of several corners." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool BRepCornersTopology::corner_has_multiple_embeddings(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = brep_.component_mesh_vertices(
+            unique_vertex_index, Corner3D::component_type_static() );
+        if( !corners.empty()
+            && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is associated to corner with uuid '",
+                    corners[0].component_id.id().string(),
+                    "', which has several embeddings." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool BRepCornersTopology::corner_is_not_internal_nor_boundary(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = brep_.component_mesh_vertices(
+            unique_vertex_index, Corner3D::component_type_static() );
+        if( !corners.empty()
+            && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
+            && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is associated to corner with uuid '",
+                    corners[0].component_id.id().string(),
+                    "', which is neither incident nor embedded." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool BRepCornersTopology::corner_is_part_of_line_but_not_boundary(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = brep_.component_mesh_vertices(
+            unique_vertex_index, Corner3D::component_type_static() );
+        if( !corners.empty() )
+        {
             const auto& corner_uuid = corners[0].component_id.id();
-            if( brep_.nb_embeddings( corner_uuid ) > 1 )
-            {
-                return false;
-            }
-            else if( brep_.nb_embeddings( corner_uuid ) != 1 )
-            {
-                if( brep_.nb_incidences( corner_uuid ) < 1 )
-                {
-                    return false;
-                }
-            }
-            else if( brep_.nb_incidences( corner_uuid ) > 1 )
-            {
-                return false;
-            }
             for( const auto& line : brep_.component_mesh_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
                 if( !brep_.Relationships::is_boundary(
                         corner_uuid, line.component_id.id() ) )
                 {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        bool BRepCornersTopologyImpl::unique_vertex_has_multiple_corners(
-            index_t unique_vertex_index ) const
-        {
-            if( brep_
-                    .component_mesh_vertices(
-                        unique_vertex_index, Corner3D::component_type_static() )
-                    .size()
-                > 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index, " is part of several corners." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool BRepCornersTopologyImpl::corner_has_multiple_embeddings(
-            index_t unique_vertex_index ) const
-        {
-            const auto corners = brep_.component_mesh_vertices(
-                unique_vertex_index, Corner3D::component_type_static() );
-            if( !corners.empty()
-                && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to corner with uuid '",
-                        corners[0].component_id.id().string(),
-                        "', which has several embeddings." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool BRepCornersTopologyImpl::corner_is_not_internal_nor_boundary(
-            index_t unique_vertex_index ) const
-        {
-            const auto corners = brep_.component_mesh_vertices(
-                unique_vertex_index, Corner3D::component_type_static() );
-            if( !corners.empty()
-                && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
-                && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to corner with uuid '",
-                        corners[0].component_id.id().string(),
-                        "', which is neither incident nor embedded." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool BRepCornersTopologyImpl::corner_is_part_of_line_but_not_boundary(
-            index_t unique_vertex_index ) const
-        {
-            const auto corners = brep_.component_mesh_vertices(
-                unique_vertex_index, Corner3D::component_type_static() );
-            if( !corners.empty() )
-            {
-                const auto& corner_uuid = corners[0].component_id.id();
-                for( const auto& line :
-                    brep_.component_mesh_vertices(
-                        unique_vertex_index, Line3D::component_type_static() ) )
-                {
-                    if( !brep_.Relationships::is_boundary(
-                            corner_uuid, line.component_id.id() ) )
+                    if( verbose_ )
                     {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index,
-                                " is associated with corner with uuid '",
-                                corner_uuid.string(),
-                                "', part of line with uuid '",
-                                line.component_id.id().string(),
-                                "', but not boundary of it." );
-                        }
-                        return true;
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is associated with corner with uuid '",
+                            corner_uuid.string(), "', part of line with uuid '",
+                            line.component_id.id().string(),
+                            "', but not boundary of it." );
                     }
+                    return true;
                 }
             }
-            return false;
         }
-    } // namespace detail
+        return false;
+    }
 } // namespace geode

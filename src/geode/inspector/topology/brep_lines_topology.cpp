@@ -39,226 +39,215 @@
 
 namespace geode
 {
-    namespace detail
+    BRepLinesTopology::BRepLinesTopology( const BRep& brep, bool verbose )
+        : brep_( brep ), verbose_( verbose )
     {
-        BRepLinesTopologyImpl::BRepLinesTopologyImpl(
-            const BRep& brep, bool verbose )
-            : brep_( brep ), verbose_( verbose )
-        {
-        }
-        BRepLinesTopologyImpl::BRepLinesTopologyImpl( const BRep& brep )
-            : BRepLinesTopologyImpl( brep, false )
-        {
-        }
+    }
+    BRepLinesTopology::BRepLinesTopology( const BRep& brep )
+        : BRepLinesTopology( brep, false )
+    {
+    }
 
-        bool BRepLinesTopologyImpl::brep_vertex_lines_topology_is_valid(
-            index_t unique_vertex_index ) const
+    bool BRepLinesTopology::brep_vertex_lines_topology_is_valid(
+        index_t unique_vertex_index ) const
+    {
+        const auto lines = brep_.component_mesh_vertices(
+            unique_vertex_index, Line3D::component_type_static() );
+        if( lines.empty() )
         {
-            const auto lines = brep_.component_mesh_vertices(
-                unique_vertex_index, Line3D::component_type_static() );
-            if( lines.empty() )
-            {
-                return true;
-            }
-            if( vertex_is_part_of_not_boundary_nor_internal_line(
-                    unique_vertex_index )
-                || vertex_is_part_of_line_with_invalid_internal_topology(
-                    unique_vertex_index )
-                || vertex_is_part_of_invalid_unique_line( unique_vertex_index )
-                || vertex_has_lines_but_is_not_corner( unique_vertex_index ) )
-            {
-                return false;
-            }
             return true;
         }
-
-        bool BRepLinesTopologyImpl::
-            vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index ) const
+        if( vertex_is_part_of_not_boundary_nor_internal_line(
+                unique_vertex_index )
+            || vertex_is_part_of_line_with_invalid_internal_topology(
+                unique_vertex_index )
+            || vertex_is_part_of_invalid_unique_line( unique_vertex_index )
+            || vertex_has_lines_but_is_not_corner( unique_vertex_index ) )
         {
-            for( const auto& line : brep_.component_mesh_vertices(
-                     unique_vertex_index, Line3D::component_type_static() ) )
+            return false;
+        }
+        return true;
+    }
+
+    bool BRepLinesTopology::vertex_is_part_of_not_boundary_nor_internal_line(
+        const index_t unique_vertex_index ) const
+    {
+        for( const auto& line : brep_.component_mesh_vertices(
+                 unique_vertex_index, Line3D::component_type_static() ) )
+        {
+            if( brep_.nb_embeddings( line.component_id.id() ) < 1
+                && brep_.nb_incidences( line.component_id.id() ) < 1 )
             {
-                if( brep_.nb_embeddings( line.component_id.id() ) < 1
-                    && brep_.nb_incidences( line.component_id.id() ) < 1 )
+                if( verbose_ )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index, " is part of line with uuid '",
+                        line.component_id.id().string(),
+                        "', which is neither embedded nor incident." );
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool BRepLinesTopology::
+        vertex_is_part_of_line_with_invalid_internal_topology(
+            const index_t unique_vertex_index ) const
+    {
+        for( const auto line_id :
+            detail::components_uuids( brep_.component_mesh_vertices(
+                unique_vertex_index, Line3D::component_type_static() ) ) )
+        {
+            for( const auto& embedding : brep_.embeddings( line_id ) )
+            {
+                if( brep_.Relationships::is_boundary(
+                        line_id, embedding.id() ) )
                 {
                     if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
                             unique_vertex_index, " is part of line with uuid '",
-                            line.component_id.id().string(),
-                            "', which is neither embedded nor incident." );
+                            line_id.string(),
+                            "', which is both boundary and embedded in "
+                            "surface with uuid '",
+                            embedding.id().string(), "'." );
                     }
                     return true;
                 }
-            }
-            return false;
-        }
-
-        bool BRepLinesTopologyImpl::
-            vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const
-        {
-            for( const auto line_id :
-                components_uuids( brep_.component_mesh_vertices(
-                    unique_vertex_index, Line3D::component_type_static() ) ) )
-            {
-                for( const auto& embedding : brep_.embeddings( line_id ) )
+                if( embedding.type() == Block3D::component_type_static()
+                    && !detail::brep_blocks_are_meshed( brep_ ) )
                 {
-                    if( brep_.Relationships::is_boundary(
-                            line_id, embedding.id() ) )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index,
-                                " is part of line with uuid '",
-                                line_id.string(),
-                                "', which is both boundary and embedded in "
-                                "surface with uuid '",
-                                embedding.id().string(), "'." );
-                        }
-                        return true;
-                    }
-                    if( embedding.type() == Block3D::component_type_static()
-                        && !brep_blocks_are_meshed( brep_ ) )
-                    {
-                        continue;
-                    }
-                    if( !absl::c_any_of(
-                            brep_.component_mesh_vertices(
-                                unique_vertex_index, embedding.type() ),
-                            [&embedding]( const ComponentMeshVertex& cmv ) {
-                                return cmv.component_id.id() == embedding.id();
-                            } ) )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index,
-                                " is part of line with uuid '",
-                                line_id.string(),
-                                "', which is embedded in surface with uuid '",
-                                embedding.id().string(),
-                                "', but the unique vertex is not linked to the "
-                                "surface mesh vertices." );
-                        }
-                        return true;
-                    }
+                    continue;
                 }
-            }
-            return false;
-        }
-
-        bool BRepLinesTopologyImpl::vertex_is_part_of_invalid_unique_line(
-            index_t unique_vertex_index ) const
-        {
-            const auto line_uuids =
-                components_uuids( brep_.component_mesh_vertices(
-                    unique_vertex_index, Line3D::component_type_static() ) );
-            if( line_uuids.size() != 1 )
-            {
-                return false;
-            }
-            const auto& line_id = line_uuids[0];
-            const auto surface_uuids =
-                components_uuids( brep_.component_mesh_vertices(
-                    unique_vertex_index, Surface3D::component_type_static() ) );
-            const auto block_uuids =
-                components_uuids( brep_.component_mesh_vertices(
-                    unique_vertex_index, Block3D::component_type_static() ) );
-            if( surface_uuids.size() == 1 )
-            {
-                if( !brep_.Relationships::is_internal(
-                        line_id, surface_uuids[0] )
-                    && !( brep_.Relationships::nb_embeddings( surface_uuids[0] )
-                              > 0
-                          && brep_.Relationships::is_boundary(
-                              line_id, surface_uuids[0] ) ) )
+                if( !absl::c_any_of(
+                        brep_.component_mesh_vertices(
+                            unique_vertex_index, embedding.type() ),
+                        [&embedding]( const ComponentMeshVertex& cmv ) {
+                            return cmv.component_id.id() == embedding.id();
+                        } ) )
                 {
                     if( verbose_ )
                     {
                         Logger::info( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is part of only one line, with uuid '",
+                            unique_vertex_index, " is part of line with uuid '",
                             line_id.string(),
-                            "', and only one surface, with uuid '",
-                            surface_uuids[0].string(),
-                            "', but the line is neither embedded in the "
-                            "surface, nor boundary of the surface while the "
-                            "surface is embedded in a block." );
+                            "', which is embedded in surface with uuid '",
+                            embedding.id().string(),
+                            "', but the unique vertex is not linked to the "
+                            "surface mesh vertices." );
                     }
                     return true;
                 }
             }
-            else if( surface_uuids.empty() )
-            {
-                if( brep_blocks_are_meshed( brep_ )
-                    && !( block_uuids.size() == 1
-                          && brep_.Relationships::is_internal(
-                              line_id, block_uuids[0] ) ) )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is part of only one line, with uuid '",
-                            line_id.string(),
-                            "', no surfaces, but is either part of no or "
-                            "several blocks, or the line is not internal to "
-                            "one." );
-                    }
-                    return true;
-                }
-            }
-            else
-            {
-                for( const auto& surface_id : surface_uuids )
-                {
-                    if( !brep_.Relationships::is_boundary( line_id, surface_id )
-                        && !brep_.Relationships::is_internal(
-                            line_id, surface_id ) )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index,
-                                " is part of only one line, with uuid '",
-                                line_id.string(),
-                                "', and multiple surfaces, but the line is "
-                                "neither internal nor boundary of surface with "
-                                "uuid '",
-                                surface_id.string(),
-                                "', in which the vertex is." );
-                        }
-                        return true;
-                    }
-                }
-            }
+        }
+        return false;
+    }
+
+    bool BRepLinesTopology::vertex_is_part_of_invalid_unique_line(
+        index_t unique_vertex_index ) const
+    {
+        const auto line_uuids =
+            detail::components_uuids( brep_.component_mesh_vertices(
+                unique_vertex_index, Line3D::component_type_static() ) );
+        if( line_uuids.size() != 1 )
+        {
             return false;
         }
-
-        bool BRepLinesTopologyImpl::vertex_has_lines_but_is_not_corner(
-            index_t unique_vertex_index ) const
+        const auto& line_id = line_uuids[0];
+        const auto surface_uuids =
+            detail::components_uuids( brep_.component_mesh_vertices(
+                unique_vertex_index, Surface3D::component_type_static() ) );
+        const auto block_uuids =
+            detail::components_uuids( brep_.component_mesh_vertices(
+                unique_vertex_index, Block3D::component_type_static() ) );
+        if( surface_uuids.size() == 1 )
         {
-            if( brep_.component_mesh_vertices(
-                         unique_vertex_index, Line3D::component_type_static() )
-                        .size()
-                    > 1
-                && brep_
-                       .component_mesh_vertices( unique_vertex_index,
-                           Corner3D::component_type_static() )
-                       .empty() )
+            if( !brep_.Relationships::is_internal( line_id, surface_uuids[0] )
+                && !( brep_.Relationships::nb_embeddings( surface_uuids[0] ) > 0
+                      && brep_.Relationships::is_boundary(
+                          line_id, surface_uuids[0] ) ) )
             {
                 if( verbose_ )
                 {
                     Logger::info( "Unique vertex with index ",
                         unique_vertex_index,
-                        " is part of multiple lines but is not a corner." );
+                        " is part of only one line, with uuid '",
+                        line_id.string(),
+                        "', and only one surface, with uuid '",
+                        surface_uuids[0].string(),
+                        "', but the line is neither embedded in the "
+                        "surface, nor boundary of the surface while the "
+                        "surface is embedded in a block." );
                 }
                 return true;
             }
-            return false;
         }
-    } // namespace detail
+        else if( surface_uuids.empty() )
+        {
+            if( detail::brep_blocks_are_meshed( brep_ )
+                && !( block_uuids.size() == 1
+                      && brep_.Relationships::is_internal(
+                          line_id, block_uuids[0] ) ) )
+            {
+                if( verbose_ )
+                {
+                    Logger::info( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of only one line, with uuid '",
+                        line_id.string(),
+                        "', no surfaces, but is either part of no or "
+                        "several blocks, or the line is not internal to "
+                        "one." );
+                }
+                return true;
+            }
+        }
+        else
+        {
+            for( const auto& surface_id : surface_uuids )
+            {
+                if( !brep_.Relationships::is_boundary( line_id, surface_id )
+                    && !brep_.Relationships::is_internal(
+                        line_id, surface_id ) )
+                {
+                    if( verbose_ )
+                    {
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is part of only one line, with uuid '",
+                            line_id.string(),
+                            "', and multiple surfaces, but the line is "
+                            "neither internal nor boundary of surface with "
+                            "uuid '",
+                            surface_id.string(), "', in which the vertex is." );
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool BRepLinesTopology::vertex_has_lines_but_is_not_corner(
+        index_t unique_vertex_index ) const
+    {
+        if( brep_.component_mesh_vertices(
+                     unique_vertex_index, Line3D::component_type_static() )
+                    .size()
+                > 1
+            && brep_
+                   .component_mesh_vertices(
+                       unique_vertex_index, Corner3D::component_type_static() )
+                   .empty() )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is part of multiple lines but is not a corner." );
+            }
+            return true;
+        }
+        return false;
+    }
 } // namespace geode

@@ -32,49 +32,46 @@ namespace geode
 
 namespace geode
 {
-    namespace detail
+    /*!
+     * Class for inspecting the topology of a Section model lines through
+     * their unique vertices
+     */
+    class opengeode_inspector_inspector_api SectionLinesTopology
     {
+    public:
+        SectionLinesTopology( const Section& section );
+
+        SectionLinesTopology( const Section& section, bool verbose );
+
         /*!
-         * Class for inspecting the topology of a Section model lines through
-         * their unique vertices
+         * Checks if the section unique vertices are parts of valid lines,
+         * i.e. verify:
+         * Each line is either internal or boundary.
+         * Each internal line is internal to only one object and is not
+         * boundary.
+         * If the vertex is part of only one line, the vertex is part of
+         * no more than 2 surfaces, and the line is either internal to a
+         * surface (and the vertex is in one and only one surface) or a
+         * boundary of all the surfaces the vertex is in.
+         * If the vertex is part of multiple lines, it is also a corner.
          */
-        class SectionLinesTopologyImpl
-        {
-        public:
-            SectionLinesTopologyImpl( const Section& section );
+        bool section_vertex_lines_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-            SectionLinesTopologyImpl( const Section& section, bool verbose );
+        bool vertex_is_part_of_not_boundary_nor_internal_line(
+            const index_t unique_vertex_index ) const;
 
-            /*!
-             * Checks if the section unique vertices are parts of valid lines,
-             * i.e. verify:
-             * Each line is either internal or boundary.
-             * Each internal line is internal to only one object and is not
-             * boundary.
-             * If the vertex is part of only one line, the vertex is part of
-             * no more than 2 surfaces, and the line is either internal to a
-             * surface (and the vertex is in one and only one surface) or a
-             * boundary of all the surfaces the vertex is in.
-             * If the vertex is part of multiple lines, it is also a corner.
-             */
-            bool section_vertex_lines_topology_is_valid(
-                index_t unique_vertex_index ) const;
+        bool vertex_is_part_of_line_with_invalid_internal_topology(
+            const index_t unique_vertex_index ) const;
 
-            bool vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index ) const;
+        bool vertex_is_part_of_invalid_unique_line(
+            index_t unique_vertex_index ) const;
 
-            bool vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const;
+        bool vertex_has_lines_but_is_not_corner(
+            index_t unique_vertex_index ) const;
 
-            bool vertex_is_part_of_invalid_unique_line(
-                index_t unique_vertex_index ) const;
-
-            bool vertex_has_lines_but_is_not_corner(
-                index_t unique_vertex_index ) const;
-
-        private:
-            const Section& section_;
-            bool verbose_;
-        };
-    } // namespace detail
+    private:
+        const Section& section_;
+        bool verbose_;
+    };
 } // namespace geode

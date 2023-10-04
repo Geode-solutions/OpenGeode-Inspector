@@ -32,37 +32,34 @@ namespace geode
 
 namespace geode
 {
-    namespace detail
+    /*!
+     * Class for inspecting the topology of a Section model surfaces through
+     * its unique vertices
+     */
+    class opengeode_inspector_inspector_api SectionSurfacesTopology
     {
+    public:
+        SectionSurfacesTopology( const Section& section );
+
+        SectionSurfacesTopology( const Section& section, bool verbose );
+
         /*!
-         * Class for inspecting the topology of a Section model surfaces through
-         * its unique vertices
+         * Checks if the section unique vertices are parts of valid
+         * surfaces, i.e. verify:
+         * If a unique vertex is part of two surfaces, it is part of a least
+         * one line which is boundary of the two blocks.
          */
-        class SectionSurfacesTopologyImpl
-        {
-        public:
-            SectionSurfacesTopologyImpl( const Section& section );
+        bool section_vertex_surfaces_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-            SectionSurfacesTopologyImpl( const Section& section, bool verbose );
+        bool vertex_is_part_of_invalid_surfaces_topology(
+            index_t unique_vertex_index ) const;
 
-            /*!
-             * Checks if the section unique vertices are parts of valid
-             * surfaces, i.e. verify:
-             * If a unique vertex is part of two surfaces, it is part of a least
-             * one line which is boundary of the two blocks.
-             */
-            bool section_vertex_surfaces_topology_is_valid(
-                index_t unique_vertex_index ) const;
+        bool vertex_is_part_of_line_and_not_on_surface_border(
+            index_t unique_vertex_index ) const;
 
-            bool vertex_is_part_of_invalid_surfaces_topology(
-                index_t unique_vertex_index ) const;
-
-            bool vertex_is_part_of_line_and_not_on_surface_border(
-                index_t unique_vertex_index ) const;
-
-        private:
-            const Section& section_;
-            bool verbose_;
-        };
-    } // namespace detail
+    private:
+        const Section& section_;
+        bool verbose_;
+    };
 } // namespace geode

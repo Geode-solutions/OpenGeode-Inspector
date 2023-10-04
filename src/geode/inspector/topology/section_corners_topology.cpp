@@ -31,154 +31,145 @@
 
 namespace geode
 {
-    namespace detail
+    SectionCornersTopology::SectionCornersTopology(
+        const Section& section, bool verbose )
+        : section_( section ), verbose_( verbose )
     {
-        SectionCornersTopologyImpl::SectionCornersTopologyImpl(
-            const Section& section, bool verbose )
-            : section_( section ), verbose_( verbose )
-        {
-        }
-        SectionCornersTopologyImpl::SectionCornersTopologyImpl(
-            const Section& section )
-            : SectionCornersTopologyImpl( section, false )
-        {
-        }
+    }
+    SectionCornersTopology::SectionCornersTopology( const Section& section )
+        : SectionCornersTopology( section, false )
+    {
+    }
 
-        bool SectionCornersTopologyImpl::section_corner_topology_is_valid(
-            index_t unique_vertex_index ) const
+    bool SectionCornersTopology::section_corner_topology_is_valid(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = section_.component_mesh_vertices(
+            unique_vertex_index, Corner2D::component_type_static() );
+        if( corners.empty() )
         {
-            const auto corners = section_.component_mesh_vertices(
-                unique_vertex_index, Corner2D::component_type_static() );
-            if( corners.empty() )
-            {
-                return true;
-            }
-            if( corners.size() != 1 )
+            return true;
+        }
+        if( corners.size() != 1 )
+        {
+            return false;
+        }
+        const auto& corner_uuid = corners[0].component_id.id();
+        if( section_.nb_embeddings( corner_uuid ) > 1 )
+        {
+            return false;
+        }
+        else if( section_.nb_embeddings( corner_uuid ) != 1 )
+        {
+            if( section_.nb_incidences( corner_uuid ) < 1 )
             {
                 return false;
             }
+        }
+        else if( section_.nb_incidences( corner_uuid ) > 1 )
+        {
+            return false;
+        }
+        for( const auto& line : section_.component_mesh_vertices(
+                 unique_vertex_index, Line2D::component_type_static() ) )
+        {
+            if( !section_.Relationships::is_boundary(
+                    corner_uuid, line.component_id.id() ) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool SectionCornersTopology::unique_vertex_has_multiple_corners(
+        index_t unique_vertex_index ) const
+    {
+        if( section_
+                .component_mesh_vertices(
+                    unique_vertex_index, Corner2D::component_type_static() )
+                .size()
+            > 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is associated to multiple corners." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool SectionCornersTopology::corner_has_multiple_embeddings(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = section_.component_mesh_vertices(
+            unique_vertex_index, Corner2D::component_type_static() );
+        if( !corners.empty()
+            && section_.nb_embeddings( corners[0].component_id.id() ) > 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is associated to corner with uuid '",
+                    corners[0].component_id.id().string(),
+                    "', which has multiple embeddings." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool SectionCornersTopology::corner_is_not_internal_nor_boundary(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = section_.component_mesh_vertices(
+            unique_vertex_index, Corner2D::component_type_static() );
+        if( !corners.empty()
+            && section_.nb_embeddings( corners[0].component_id.id() ) < 1
+            && section_.nb_incidences( corners[0].component_id.id() ) < 1 )
+        {
+            if( verbose_ )
+            {
+                Logger::info( "Unique vertex with index ", unique_vertex_index,
+                    " is associated to corner with uuid '",
+                    corners[0].component_id.id().string(),
+                    "', which is neither boundary nor internal." );
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool SectionCornersTopology::corner_is_part_of_line_but_not_boundary(
+        index_t unique_vertex_index ) const
+    {
+        const auto corners = section_.component_mesh_vertices(
+            unique_vertex_index, Corner2D::component_type_static() );
+        if( !corners.empty() )
+        {
             const auto& corner_uuid = corners[0].component_id.id();
-            if( section_.nb_embeddings( corner_uuid ) > 1 )
-            {
-                return false;
-            }
-            else if( section_.nb_embeddings( corner_uuid ) != 1 )
-            {
-                if( section_.nb_incidences( corner_uuid ) < 1 )
-                {
-                    return false;
-                }
-            }
-            else if( section_.nb_incidences( corner_uuid ) > 1 )
-            {
-                return false;
-            }
             for( const auto& line : section_.component_mesh_vertices(
                      unique_vertex_index, Line2D::component_type_static() ) )
             {
                 if( !section_.Relationships::is_boundary(
                         corner_uuid, line.component_id.id() ) )
                 {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        bool SectionCornersTopologyImpl::unique_vertex_has_multiple_corners(
-            index_t unique_vertex_index ) const
-        {
-            if( section_
-                    .component_mesh_vertices(
-                        unique_vertex_index, Corner2D::component_type_static() )
-                    .size()
-                > 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to multiple corners." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool SectionCornersTopologyImpl::corner_has_multiple_embeddings(
-            index_t unique_vertex_index ) const
-        {
-            const auto corners = section_.component_mesh_vertices(
-                unique_vertex_index, Corner2D::component_type_static() );
-            if( !corners.empty()
-                && section_.nb_embeddings( corners[0].component_id.id() ) > 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to corner with uuid '",
-                        corners[0].component_id.id().string(),
-                        "', which has multiple embeddings." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool SectionCornersTopologyImpl::corner_is_not_internal_nor_boundary(
-            index_t unique_vertex_index ) const
-        {
-            const auto corners = section_.component_mesh_vertices(
-                unique_vertex_index, Corner2D::component_type_static() );
-            if( !corners.empty()
-                && section_.nb_embeddings( corners[0].component_id.id() ) < 1
-                && section_.nb_incidences( corners[0].component_id.id() ) < 1 )
-            {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is associated to corner with uuid '",
-                        corners[0].component_id.id().string(),
-                        "', which is neither boundary nor internal." );
-                }
-                return true;
-            }
-            return false;
-        }
-
-        bool
-            SectionCornersTopologyImpl::corner_is_part_of_line_but_not_boundary(
-                index_t unique_vertex_index ) const
-        {
-            const auto corners = section_.component_mesh_vertices(
-                unique_vertex_index, Corner2D::component_type_static() );
-            if( !corners.empty() )
-            {
-                const auto& corner_uuid = corners[0].component_id.id();
-                for( const auto& line :
-                    section_.component_mesh_vertices(
-                        unique_vertex_index, Line2D::component_type_static() ) )
-                {
-                    if( !section_.Relationships::is_boundary(
-                            corner_uuid, line.component_id.id() ) )
+                    if( verbose_ )
                     {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Unique vertex with index ",
-                                unique_vertex_index,
-                                " is associated to corner with uuid '",
-                                corner_uuid.string(), "' and line '",
-                                line.component_id.id().string(),
-                                "' but the corner is not boundary of the "
-                                "line." );
-                        }
-                        return true;
+                        Logger::info( "Unique vertex with index ",
+                            unique_vertex_index,
+                            " is associated to corner with uuid '",
+                            corner_uuid.string(), "' and line '",
+                            line.component_id.id().string(),
+                            "' but the corner is not boundary of the "
+                            "line." );
                     }
+                    return true;
                 }
             }
-            return false;
         }
-    } // namespace detail
+        return false;
+    }
 } // namespace geode
