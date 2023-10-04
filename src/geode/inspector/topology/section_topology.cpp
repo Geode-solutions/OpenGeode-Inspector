@@ -154,85 +154,6 @@ namespace geode
             return true;
         }
 
-        index_t nb_corners_not_linked_to_a_unique_vertex() const
-        {
-            index_t counter{ 0 };
-            for( const auto& corner : section_.corners() )
-            {
-                if( !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, corner.component_id(), corner.mesh() ) )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Corner with uuid '",
-                            corner.id().string(),
-                            "' is not linked to a unique vertex." );
-                    }
-                    counter++;
-                }
-            }
-            return counter;
-        }
-
-        index_t nb_lines_meshed_but_not_linked_to_unique_vertices() const
-        {
-            index_t counter{ 0 };
-            for( const auto& line : section_.lines() )
-            {
-                if( section_line_is_meshed( section_, line.id() )
-                    && !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, line.component_id(), line.mesh() ) )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Line with uuid '", line.id().string(),
-                            "' has vertices not linked to a unique vertex." );
-                    }
-                    counter++;
-                }
-            }
-            return counter;
-        }
-
-        index_t nb_surfaces_meshed_but_not_linked_to_unique_vertices() const
-        {
-            index_t counter{ 0 };
-            for( const auto& surface : section_.surfaces() )
-            {
-                if( section_surface_is_meshed( section_, surface.id() )
-                    && !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, surface.component_id(), surface.mesh() ) )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Surface with uuid '",
-                            surface.id().string(),
-                            "' has vertices not linked to a unique vertex." );
-                    }
-                    counter++;
-                }
-            }
-            return counter;
-        }
-
-        index_t nb_unique_vertices_not_linked_to_a_component_vertex() const
-        {
-            index_t nb_unlinked{ 0 };
-            for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
-            {
-                if( section_.component_mesh_vertices( uv_id ).empty() )
-                {
-                    nb_unlinked++;
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with id ", uv_id,
-                            " is not linked to any component mesh vertex." );
-                    }
-                }
-            }
-            return nb_unlinked;
-        }
-
         std::vector< ComponentMeshVertex >
             component_vertices_not_linked_to_a_unique_vertex() const
         {
@@ -353,30 +274,6 @@ namespace geode
     {
         return impl_
             ->section_unique_vertices_are_linked_to_a_component_vertex();
-    }
-
-    index_t SectionTopologyInspector::nb_corners_not_linked_to_a_unique_vertex()
-        const
-    {
-        return impl_->nb_corners_not_linked_to_a_unique_vertex();
-    }
-
-    index_t SectionTopologyInspector::
-        nb_lines_meshed_but_not_linked_to_unique_vertices() const
-    {
-        return impl_->nb_lines_meshed_but_not_linked_to_unique_vertices();
-    }
-
-    index_t SectionTopologyInspector::
-        nb_surfaces_meshed_but_not_linked_to_unique_vertices() const
-    {
-        return impl_->nb_surfaces_meshed_but_not_linked_to_unique_vertices();
-    }
-
-    index_t SectionTopologyInspector::
-        nb_unique_vertices_not_linked_to_a_component_vertex() const
-    {
-        return impl_->nb_unique_vertices_not_linked_to_a_component_vertex();
     }
 
     std::vector< ComponentMeshVertex > SectionTopologyInspector::

@@ -93,7 +93,8 @@ void inspect_cross_section( const geode::CrossSection& cross_section )
         tasks.emplace_back( async::spawn( [&cross_section_inspector] {
             const auto nb_unlinked_uv =
                 cross_section_inspector
-                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+                    .unique_vertices_not_linked_to_a_component_vertex()
+                    .size();
             geode::Logger::info( nb_unlinked_uv,
                 " unique vertices not linked to a component mesh vertex" );
         } ) );

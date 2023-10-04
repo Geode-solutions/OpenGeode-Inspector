@@ -67,16 +67,6 @@ namespace geode
 
         bool brep_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        index_t nb_corners_not_linked_to_a_unique_vertex() const;
-
-        index_t nb_lines_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_surfaces_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_blocks_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_unique_vertices_not_linked_to_a_component_vertex() const;
-
         std::vector< ComponentMeshVertex >
             component_vertices_not_linked_to_a_unique_vertex() const;
 

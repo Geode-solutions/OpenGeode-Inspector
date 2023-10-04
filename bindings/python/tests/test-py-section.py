@@ -31,19 +31,20 @@ import opengeode_inspector_py_inspector as inspector
 
 
 def check_components_linking(section_inspector):
-    nb_unlinked_corners = section_inspector.nb_corners_not_linked_to_a_unique_vertex()
-    print("There are ", nb_unlinked_corners,
-          " corners not linked to a unique vertex.")
-    nb_unlinked_lines = section_inspector.nb_lines_meshed_but_not_linked_to_unique_vertices()
-    print("There are ", nb_unlinked_lines,
-          " lines meshed but not linked to unique vertices.")
-    nb_unlinked_surfaces = section_inspector.nb_surfaces_meshed_but_not_linked_to_unique_vertices()
-    print("There are ", nb_unlinked_surfaces,
-          " surfaces meshed but not linked to unique vertices.")
-    nb_unlinked_uv = section_inspector.nb_unique_vertices_not_linked_to_a_component_vertex()
+#    nb_unlinked_corners = section_inspector.nb_corners_not_linked_to_a_unique_vertex()
+#    print("There are ", nb_unlinked_corners,
+#          " corners not linked to a unique vertex.")
+#    nb_unlinked_lines = section_inspector.nb_lines_meshed_but_not_linked_to_unique_vertices()
+#    print("There are ", nb_unlinked_lines,
+#          " lines meshed but not linked to unique vertices.")
+#    nb_unlinked_surfaces = section_inspector.nb_surfaces_meshed_but_not_linked_to_unique_vertices()
+#    print("There are ", nb_unlinked_surfaces,
+#          " surfaces meshed but not linked to unique vertices.")
+    nb_unlinked_uv = len(section_inspector.unique_vertices_not_linked_to_a_component_vertex())
     print("There are ", nb_unlinked_uv,
           " unique vertices not linked to a component mesh vertex.")
-    return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces + nb_unlinked_uv
+    return nb_unlinked_uv
+#    return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces + nb_unlinked_uv
 
 
 def check_unique_vertices_colocation(section_inspector):

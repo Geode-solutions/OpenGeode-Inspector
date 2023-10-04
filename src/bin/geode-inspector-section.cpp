@@ -79,7 +79,8 @@ void inspect_section( const geode::Section& section )
         tasks.emplace_back( async::spawn( [&section_inspector] {
             const auto nb_unlinked_uv =
                 section_inspector
-                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+                    .unique_vertices_not_linked_to_a_component_vertex()
+                    .size();
             geode::Logger::info( nb_unlinked_uv,
                 " unique vertices not linked to a component mesh vertex" );
         } ) );
