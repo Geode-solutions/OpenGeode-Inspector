@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/topology/private/section_surfaces_topology_impl.h>
+#include <geode/inspector/topology/section_surfaces_topology.h>
 
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>

@@ -35,9 +35,9 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/topology/private/section_corners_topology_impl.h>
-#include <geode/inspector/topology/private/section_lines_topology_impl.h>
-#include <geode/inspector/topology/private/section_surfaces_topology_impl.h>
+#include <geode/inspector/topology/section_corners_topology.h>
+#include <geode/inspector/topology/section_lines_topology.h>
+#include <geode/inspector/topology/section_surfaces_topology.h>
 
 namespace
 {

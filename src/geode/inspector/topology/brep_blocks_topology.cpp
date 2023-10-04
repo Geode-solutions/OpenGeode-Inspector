@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/topology/private/brep_blocks_topology_impl.h>
+#include <geode/inspector/topology/brep_blocks_topology.h>
 
 #include <absl/container/flat_hash_set.h>
 

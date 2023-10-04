@@ -37,10 +37,10 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
-#include <geode/inspector/topology/private/brep_blocks_topology_impl.h>
-#include <geode/inspector/topology/private/brep_corners_topology_impl.h>
-#include <geode/inspector/topology/private/brep_lines_topology_impl.h>
-#include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
+#include <geode/inspector/topology/brep_blocks_topology.h>
+#include <geode/inspector/topology/brep_corners_topology.h>
+#include <geode/inspector/topology/brep_lines_topology.h>
+#include <geode/inspector/topology/brep_surfaces_topology.h>
 
 namespace
 {

@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/topology/private/section_corners_topology_impl.h>
+#include <geode/inspector/topology/section_corners_topology.h>
 
 #include <geode/basic/logger.h>
 

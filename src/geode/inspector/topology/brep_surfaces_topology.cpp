@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/topology/private/brep_surfaces_topology_impl.h>
+#include <geode/inspector/topology/brep_surfaces_topology.h>
 
 #include <absl/algorithm/container.h>
 
