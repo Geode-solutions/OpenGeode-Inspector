@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -27,14 +28,13 @@
 
 #include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_edge_manifold( pybind11::module& module )
     {
-        using SurfaceMesh = geode::SurfaceMesh< dimension >;
-        using SurfaceMeshEdgeManifold =
-            geode::SurfaceMeshEdgeManifold< dimension >;
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshEdgeManifold = SurfaceMeshEdgeManifold< dimension >;
         const auto name =
             "SurfaceMeshEdgeManifold" + std::to_string( dimension ) + "D";
         pybind11::class_< SurfaceMeshEdgeManifold >( module, name.c_str() )
@@ -47,7 +47,7 @@ namespace
             .def( "non_manifold_edges",
                 &SurfaceMeshEdgeManifold::non_manifold_edges );
     }
-} // namespace
+} // namespace geode
 
 namespace geode
 {

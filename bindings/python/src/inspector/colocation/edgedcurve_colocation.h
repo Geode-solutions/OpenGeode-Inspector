@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/edged_curve.h>
 
@@ -27,13 +28,13 @@
 
 #define PYTHON_EDGEDCURVE_COLOCATION( dimension )
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_edgedcurve_colocation( pybind11::module& module )
     {
-        using EdgedCurve = geode::EdgedCurve< dimension >;
-        using EdgedCurveColocation = geode::EdgedCurveColocation< dimension >;
+        using EdgedCurve = EdgedCurve< dimension >;
+        using EdgedCurveColocation = EdgedCurveColocation< dimension >;
 
         const auto name =
             "EdgedCurveColocation" + std::to_string( dimension ) + "D";
@@ -47,9 +48,6 @@ namespace
             .def( "colocated_points_groups",
                 &EdgedCurveColocation::colocated_points_groups );
     }
-} // namespace
-namespace geode
-{
     void define_edgedcurve_colocation( pybind11::module& module )
     {
         do_define_edgedcurve_colocation< 2 >( module );

@@ -20,18 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/point_set.h>
 
 #include <geode/inspector/criterion/colocation/pointset_colocation.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_pointset_colocation( pybind11::module& module )
     {
-        using PointSet = geode::PointSet< dimension >;
-        using PointSetColocation = geode::PointSetColocation< dimension >;
+        using PointSet = PointSet< dimension >;
+        using PointSetColocation = PointSetColocation< dimension >;
         const auto name =
             "PointSetColocation" + std::to_string( dimension ) + "D";
         pybind11::class_< PointSetColocation >( module, name.c_str() )
@@ -44,9 +45,6 @@ namespace
             .def( "colocated_points_groups",
                 &PointSetColocation::colocated_points_groups );
     }
-} // namespace
-namespace geode
-{
     void define_pointset_colocation( pybind11::module& module )
     {
         do_define_pointset_colocation< 2 >( module );

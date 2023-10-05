@@ -20,32 +20,28 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/edged_curve.h>
 
 #include <geode/inspector/edgedcurve_inspector.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_edgedcurve_inspector( pybind11::module& module )
     {
-        using EdgedCurve = geode::EdgedCurve< dimension >;
+        using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveInspector = geode::EdgedCurveInspector< dimension >;
-        using EdgedCurveColocation = geode::EdgedCurveColocation< dimension >;
-        using EdgedCurveDegeneration =
-            geode::EdgedCurveDegeneration< dimension >;
+
         const auto name =
             "EdgedCurveInspector" + std::to_string( dimension ) + "D";
-        pybind11::class_< EdgedCurveInspector, EdgedCurveColocation,
-            EdgedCurveDegeneration >( module, name.c_str() )
+        pybind11::class_< EdgedCurveInspector,
+            EdgedCurveColocation< dimension >,
+            EdgedCurveDegeneration< dimension > >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
             .def( pybind11::init< const EdgedCurve&, bool >() );
     }
-} // namespace
-
-namespace geode
-{
     void define_edgedcurve_inspector( pybind11::module& module )
     {
         do_define_edgedcurve_inspector< 2 >( module );

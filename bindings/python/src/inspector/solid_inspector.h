@@ -20,40 +20,30 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/solid_inspector.h>
 
-namespace
+namespace geode
 {
     template < geode::index_t dimension >
     void do_define_solid_inspector( pybind11::module& module )
     {
         using SolidMesh = geode::SolidMesh< dimension >;
         using SolidMeshInspector = geode::SolidMeshInspector< dimension >;
-        using SolidMeshAdjacency = geode::SolidMeshAdjacency< dimension >;
-        using SolidMeshColocation = geode::SolidMeshColocation< dimension >;
-        using SolidMeshDegeneration = geode::SolidMeshDegeneration< dimension >;
-        using SolidMeshVertexManifold =
-            geode::SolidMeshVertexManifold< dimension >;
-        using SolidMeshEdgeManifold = geode::SolidMeshEdgeManifold< dimension >;
-        using SolidMeshFacetManifold =
-            geode::SolidMeshFacetManifold< dimension >;
-
         const auto name =
             "SolidMeshInspector" + std::to_string( dimension ) + "D";
-        pybind11::class_< SolidMeshInspector, SolidMeshAdjacency,
-            SolidMeshColocation, SolidMeshDegeneration, SolidMeshVertexManifold,
-            SolidMeshEdgeManifold, SolidMeshFacetManifold >(
-            module, name.c_str() )
+        pybind11::class_< SolidMeshInspector, SolidMeshAdjacency< dimension >,
+            SolidMeshColocation< dimension >,
+            SolidMeshDegeneration< dimension >,
+            SolidMeshVertexManifold< dimension >,
+            SolidMeshEdgeManifold< dimension >,
+            SolidMeshFacetManifold< dimension > >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() );
     }
-} // namespace
-
-namespace geode
-{
     void define_solid_inspector( pybind11::module& module )
     {
         do_define_solid_inspector< 3 >( module );

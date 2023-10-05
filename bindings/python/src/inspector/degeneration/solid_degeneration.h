@@ -20,18 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_solid_degeneration( pybind11::module& module )
     {
-        using SolidMesh = geode::SolidMesh< dimension >;
-        using SolidMeshDegeneration = geode::SolidMeshDegeneration< dimension >;
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshDegeneration = SolidMeshDegeneration< dimension >;
         const auto name =
             "SolidMeshDegeneration" + std::to_string( dimension ) + "D";
         pybind11::class_< SolidMeshDegeneration >( module, name.c_str() )
@@ -44,9 +45,6 @@ namespace
             .def( "degenerated_edges",
                 &SolidMeshDegeneration::degenerated_edges );
     }
-} // namespace
-namespace geode
-{
     void define_solid_degeneration( pybind11::module& module )
     {
         do_define_solid_degeneration< 3 >( module );

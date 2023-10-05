@@ -20,21 +20,20 @@
  * SOFTWARE.
  *
  */
-
-#include <geode/mesh/core/solid_mesh.h>
+#include <string>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
+#include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_solid_facet_manifold( pybind11::module& module )
     {
-        using SolidMesh = geode::SolidMesh< dimension >;
-        using SolidMeshFacetManifold =
-            geode::SolidMeshFacetManifold< dimension >;
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshFacetManifold = SolidMeshFacetManifold< dimension >;
         const auto name =
             "SolidMeshFacetManifold" + std::to_string( dimension ) + "D";
         pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
@@ -47,10 +46,6 @@ namespace
             .def( "non_manifold_facets",
                 &SolidMeshFacetManifold::non_manifold_facets );
     }
-} // namespace
-
-namespace geode
-{
     void define_solid_facet_manifold( pybind11::module& module )
     {
         do_define_solid_facet_manifold< 3 >( module );

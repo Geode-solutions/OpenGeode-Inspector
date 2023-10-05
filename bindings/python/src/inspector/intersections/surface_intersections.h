@@ -20,19 +20,20 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/triangulated_surface.h>
 
 #include <geode/inspector/criterion/intersections/surface_intersections.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_intersections( pybind11::module& module )
     {
-        using TriangulatedSurface = geode::TriangulatedSurface< dimension >;
+        using TriangulatedSurface = TriangulatedSurface< dimension >;
         using TriangulatedSurfaceIntersections =
-            geode::TriangulatedSurfaceIntersections< dimension >;
+            TriangulatedSurfaceIntersections< dimension >;
         const auto name = "TriangulatedSurfaceIntersections"
                           + std::to_string( dimension ) + "D";
         pybind11::class_< TriangulatedSurfaceIntersections >(
@@ -47,10 +48,6 @@ namespace
             .def( "intersecting_elements",
                 &TriangulatedSurfaceIntersections::intersecting_elements );
     }
-} // namespace
-
-namespace geode
-{
     void define_surface_intersections( pybind11::module& module )
     {
         do_define_surface_intersections< 2 >( module );

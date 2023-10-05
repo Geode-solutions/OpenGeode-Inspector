@@ -20,30 +20,26 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/point_set.h>
 
 #include <geode/inspector/pointset_inspector.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_pointset_inspector( pybind11::module& module )
     {
-        using PointSet = geode::PointSet< dimension >;
-        using PointSetInspector = geode::PointSetInspector< dimension >;
-        using PointSetColocation = geode::PointSetColocation< dimension >;
+        using PointSet = PointSet< dimension >;
+        using PointSetInspector = PointSetInspector< dimension >;
         const auto name =
             "PointSetInspector" + std::to_string( dimension ) + "D";
-        pybind11::class_< PointSetInspector, PointSetColocation >(
+        pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
             module, name.c_str() )
             .def( pybind11::init< const PointSet& >() )
             .def( pybind11::init< const PointSet&, bool >() );
     }
-} // namespace
-
-namespace geode
-{
     void define_pointset_inspector( pybind11::module& module )
     {
         do_define_pointset_inspector< 2 >( module );

@@ -20,17 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/adjacency/solid_adjacency.h>
-namespace
+
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_solid_adjacency( pybind11::module& module )
     {
-        using SolidMesh = geode::SolidMesh< dimension >;
-        using SolidMeshAdjacency = geode::SolidMeshAdjacency< dimension >;
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshAdjacency = SolidMeshAdjacency< dimension >;
         const auto name =
             "SolidMeshAdjacency" + std::to_string( dimension ) + "D";
         pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
@@ -43,9 +45,6 @@ namespace
             .def( "polyhedron_facets_with_wrong_adjacency",
                 &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency );
     }
-} // namespace
-namespace geode
-{
     void define_solid_adjacency( pybind11::module& module )
     {
         do_define_solid_adjacency< 3 >( module );

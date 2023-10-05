@@ -20,21 +20,22 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/triangulated_surface.h>
 
 #include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_curve_intersections( pybind11::module& module )
     {
-        using TriangulatedSurface = geode::TriangulatedSurface< dimension >;
-        using EdgedCurve = geode::EdgedCurve< dimension >;
+        using TriangulatedSurface = TriangulatedSurface< dimension >;
+        using EdgedCurve = EdgedCurve< dimension >;
         using SurfaceCurveIntersections =
-            geode::SurfaceCurveIntersections< dimension >;
+            SurfaceCurveIntersections< dimension >;
         const auto name =
             "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";
         pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
@@ -49,10 +50,6 @@ namespace
             .def( "intersecting_elements",
                 &SurfaceCurveIntersections::intersecting_elements );
     }
-} // namespace
-
-namespace geode
-{
     void define_surface_curve_intersections( pybind11::module& module )
     {
         do_define_surface_curve_intersections< 2 >( module );

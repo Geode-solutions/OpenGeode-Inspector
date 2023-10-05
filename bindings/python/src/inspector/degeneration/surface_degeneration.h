@@ -20,19 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_degeneration( pybind11::module& module )
     {
-        using SurfaceMesh = geode::SurfaceMesh< dimension >;
-        using SurfaceMeshDegeneration =
-            geode::SurfaceMeshDegeneration< dimension >;
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshDegeneration = SurfaceMeshDegeneration< dimension >;
         const auto name =
             "SurfaceMeshDegeneration" + std::to_string( dimension ) + "D";
         pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str() )
@@ -45,10 +45,6 @@ namespace
             .def( "degenerated_edges",
                 &SurfaceMeshDegeneration::degenerated_edges );
     }
-} // namespace
-
-namespace geode
-{
     void define_surface_degeneration( pybind11::module& module )
     {
         do_define_surface_degeneration< 2 >( module );

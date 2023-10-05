@@ -20,18 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_colocation( pybind11::module& module )
     {
-        using SurfaceMesh = geode::SurfaceMesh< dimension >;
-        using SurfaceMeshColocation = geode::SurfaceMeshColocation< dimension >;
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshColocation = SurfaceMeshColocation< dimension >;
         const auto name =
             "SurfaceMeshColocation" + std::to_string( dimension ) + "D";
         pybind11::class_< SurfaceMeshColocation >( module, name.c_str() )
@@ -44,9 +45,6 @@ namespace
             .def( "colocated_points_groups",
                 &SurfaceMeshColocation::colocated_points_groups );
     }
-} // namespace
-namespace geode
-{
     void define_surface_colocation( pybind11::module& module )
     {
         do_define_surface_colocation< 2 >( module );

@@ -20,19 +20,20 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_surface_vertex_manifold( pybind11::module& module )
     {
-        using SurfaceMesh = geode::SurfaceMesh< dimension >;
+        using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshVertexManifold =
-            geode::SurfaceMeshVertexManifold< dimension >;
+            SurfaceMeshVertexManifold< dimension >;
         const auto name =
             "SurfaceMeshVertexManifold" + std::to_string( dimension ) + "D";
         pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
@@ -45,10 +46,6 @@ namespace
             .def( "non_manifold_vertices",
                 &SurfaceMeshVertexManifold::non_manifold_vertices );
     }
-} // namespace
-
-namespace geode
-{
     void define_surface_vertex_manifold( pybind11::module& module )
     {
         do_define_surface_vertex_manifold< 2 >( module );

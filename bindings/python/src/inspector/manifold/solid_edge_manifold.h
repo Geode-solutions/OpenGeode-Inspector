@@ -20,19 +20,20 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
 
 #include <geode/inspector/criterion/manifold/solid_edge_manifold.h>
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_solid_edge_manifold( pybind11::module& module )
     {
-        using SolidMesh = geode::SolidMesh< dimension >;
-        using SolidMeshEdgeManifold = geode::SolidMeshEdgeManifold< dimension >;
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshEdgeManifold = SolidMeshEdgeManifold< dimension >;
         const auto name =
             "SolidMeshEdgeManifold" + std::to_string( dimension ) + "D";
         pybind11::class_< SolidMeshEdgeManifold >( module, name.c_str() )
@@ -45,10 +46,7 @@ namespace
             .def( "non_manifold_edges",
                 &SolidMeshEdgeManifold::non_manifold_edges );
     }
-} // namespace
 
-namespace geode
-{
     void define_solid_edge_manifold( pybind11::module& module )
     {
         do_define_solid_edge_manifold< 3 >( module );

@@ -20,18 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/colocation/solid_colocation.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_solid_colocation( pybind11::module& module )
     {
-        using SolidMesh = geode::SolidMesh< dimension >;
-        using SolidMeshColocation = geode::SolidMeshColocation< dimension >;
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshColocation = SolidMeshColocation< dimension >;
         const auto name =
             "SolidMeshColocation" + std::to_string( dimension ) + "D";
         pybind11::class_< SolidMeshColocation >( module, name.c_str() )
@@ -44,10 +45,6 @@ namespace
             .def( "colocated_points_groups",
                 &SolidMeshColocation::colocated_points_groups );
     }
-} // namespace
-
-namespace geode
-{
     void define_solid_colocation( pybind11::module& module )
     {
         do_define_solid_colocation< 3 >( module );

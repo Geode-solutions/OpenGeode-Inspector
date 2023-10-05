@@ -20,19 +20,19 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/edged_curve.h>
 
 #include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
 
-namespace
+namespace geode
 {
-    template < geode::index_t dimension >
+    template < index_t dimension >
     void do_define_edgedcurve_degeneration( pybind11::module& module )
     {
-        using EdgedCurve = geode::EdgedCurve< dimension >;
-        using EdgedCurveDegeneration =
-            geode::EdgedCurveDegeneration< dimension >;
+        using EdgedCurve = EdgedCurve< dimension >;
+        using EdgedCurveDegeneration = EdgedCurveDegeneration< dimension >;
         const auto name =
             "EdgedCurveDegeneration" + std::to_string( dimension ) + "D";
         pybind11::class_< EdgedCurveDegeneration >( module, name.c_str() )
@@ -45,10 +45,6 @@ namespace
             .def( "degenerated_edges",
                 &EdgedCurveDegeneration::degenerated_edges );
     }
-} // namespace
-
-namespace geode
-{
     void define_edgedcurve_degeneration( pybind11::module& module )
     {
         do_define_edgedcurve_degeneration< 2 >( module );
