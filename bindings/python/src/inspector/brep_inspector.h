@@ -35,6 +35,6 @@ namespace geode
             BRepComponentMeshesManifold, BRepMeshesIntersections >(
             module, "BRepInspector" )
             .def( pybind11::init< const BRep& >() )
-            .def( pybind11::init< const BRep&, bool >() )();
+            .def( pybind11::init< const BRep&, bool >() );
     }
 } // namespace geode
