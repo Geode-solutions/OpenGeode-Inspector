@@ -21,20 +21,42 @@
  *
  */
 
-#include <geode/model/representation/core/section.h>
+#pragma once
 
-#include <geode/inspector/section_inspector.h>
+#include <geode/inspector/common.h>
 
 namespace geode
 {
-    void define_section_inspector( pybind11::module& module )
+    class BRep;
+} // namespace geode
+
+namespace geode
+{
+
+    /*!
+     * Class for inspecting the topology of a BRep model blocks through
+     * their unique vertices
+     */
+    class opengeode_inspector_inspector_api BRepBlocksTopology
     {
-        pybind11::class_< SectionInspector, SectionTopologyInspector,
-            SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,
-            SectionComponentMeshesColocation,
-            SectionComponentMeshesDegeneration, SectionComponentMeshesManifold,
-            SectionMeshesIntersections >( module, "SectionInspector" )
-            .def( pybind11::init< const Section& >() )
-            .def( pybind11::init< const Section&, bool >() );
-    }
+    public:
+        BRepBlocksTopology( const BRep& brep );
+
+        BRepBlocksTopology( const BRep& brep, bool verbose );
+
+        /*!
+         * Checks if the brep unique vertices are parts of valid blocks,
+         * i.e. verify:
+         * If the vertex is part of multiple blocks, either it is part of
+         * exactly 2 blocks (and at least one surface which is boundary to
+         * the 2 blocks), or it is part of more than to blocks (and it is
+         * either a corner, or not a corner but part of only one line).
+         */
+        bool brep_vertex_blocks_topology_is_valid(
+            index_t unique_vertex_index ) const;
+
+    private:
+        const BRep& brep_;
+        bool verbose_;
+    };
 } // namespace geode

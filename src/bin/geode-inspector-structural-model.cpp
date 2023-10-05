@@ -96,7 +96,8 @@ void inspect_model( const geode::StructuralModel& model )
         tasks.emplace_back( async::spawn( [&model_inspector] {
             const auto nb_unlinked_uv =
                 model_inspector
-                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+                    .unique_vertices_not_linked_to_a_component_vertex()
+                    .size();
             geode::Logger::info( nb_unlinked_uv,
                 " unique vertices not linked to a component mesh vertex" );
         } ) );

@@ -20,30 +20,33 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/manifold/solid_vertex_manifold.h>
 
-#define PYTHON_SOLID_VERTEX_MANIFOLD( dimension )                              \
-    const auto name##dimension =                                               \
-        "SolidMeshVertexManifold" + std::to_string( dimension ) + "D";         \
-    pybind11::class_< SolidMeshVertexManifold##dimension##D >(                 \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
-        .def( "mesh_vertices_are_manifold",                                    \
-            &SolidMeshVertexManifold##dimension##D::                           \
-                mesh_vertices_are_manifold )                                   \
-        .def( "nb_non_manifold_vertices",                                      \
-            &SolidMeshVertexManifold##dimension##D::nb_non_manifold_vertices ) \
-        .def( "non_manifold_vertices",                                         \
-            &SolidMeshVertexManifold##dimension##D::non_manifold_vertices )
-
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_solid_vertex_manifold( pybind11::module& module )
+    {
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshVertexManifold = SolidMeshVertexManifold< dimension >;
+        const auto name =
+            "SolidMeshVertexManifold" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshVertexManifold >( module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() )
+            .def( "mesh_vertices_are_manifold",
+                &SolidMeshVertexManifold::mesh_vertices_are_manifold )
+            .def( "nb_non_manifold_vertices",
+                &SolidMeshVertexManifold::nb_non_manifold_vertices )
+            .def( "non_manifold_vertices",
+                &SolidMeshVertexManifold::non_manifold_vertices );
+    }
     void define_solid_vertex_manifold( pybind11::module& module )
     {
-        PYTHON_SOLID_VERTEX_MANIFOLD( 3 );
+        do_define_solid_vertex_manifold< 3 >( module );
     }
 } // namespace geode

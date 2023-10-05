@@ -20,30 +20,34 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/point_set.h>
 
 #include <geode/inspector/criterion/colocation/pointset_colocation.h>
 
-#define PYTHON_POINTSET_COLOCATION( dimension )                                \
-    const auto name##dimension =                                               \
-        "PointSetColocation" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< PointSetColocation##dimension##D >(                      \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const PointSet< dimension >& >() )               \
-        .def( pybind11::init< const PointSet< dimension >&, bool >() )         \
-        .def( "mesh_has_colocated_points",                                     \
-            &PointSetColocation##dimension##D::mesh_has_colocated_points )     \
-        .def( "nb_colocated_points",                                           \
-            &PointSetColocation##dimension##D::nb_colocated_points )           \
-        .def( "colocated_points_groups",                                       \
-            &PointSetColocation##dimension##D::colocated_points_groups )
-
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_pointset_colocation( pybind11::module& module )
+    {
+        using PointSet = PointSet< dimension >;
+        using PointSetColocation = PointSetColocation< dimension >;
+        const auto name =
+            "PointSetColocation" + std::to_string( dimension ) + "D";
+        pybind11::class_< PointSetColocation >( module, name.c_str() )
+            .def( pybind11::init< const PointSet& >() )
+            .def( pybind11::init< const PointSet&, bool >() )
+            .def( "mesh_has_colocated_points",
+                &PointSetColocation::mesh_has_colocated_points )
+            .def( "nb_colocated_points",
+                &PointSetColocation::nb_colocated_points )
+            .def( "colocated_points_groups",
+                &PointSetColocation::colocated_points_groups );
+    }
     void define_pointset_colocation( pybind11::module& module )
     {
-        PYTHON_POINTSET_COLOCATION( 2 );
-        PYTHON_POINTSET_COLOCATION( 3 );
+        do_define_pointset_colocation< 2 >( module );
+        do_define_pointset_colocation< 3 >( module );
     }
 } // namespace geode

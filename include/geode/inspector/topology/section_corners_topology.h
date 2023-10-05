@@ -27,38 +27,43 @@
 
 namespace geode
 {
-    class BRep;
+    class Section;
 } // namespace geode
 
 namespace geode
 {
-    namespace detail
+    class opengeode_inspector_inspector_api SectionCornersTopology
     {
+    public:
+        SectionCornersTopology( const Section& section );
+
+        SectionCornersTopology( const Section& section, bool verbose );
+
         /*!
-         * Class for inspecting the topology of a BRep model blocks through
-         * their unique vertices
+         * Checks if the section unique vertices are valid corners, i.e.
+         * corners that verify:
+         * Each unique_vertex can only be associated to one corner.
+         * Each corner can only be internal to one object (surface or
+         * block).
+         * Each corner is a boundary of every line it is associated to.
          */
-        class BRepBlocksTopologyImpl
-        {
-        public:
-            BRepBlocksTopologyImpl( const BRep& brep );
+        bool section_corner_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-            BRepBlocksTopologyImpl( const BRep& brep, bool verbose );
+        bool unique_vertex_has_multiple_corners(
+            index_t unique_vertex_index ) const;
 
-            /*!
-             * Checks if the brep unique vertices are parts of valid blocks,
-             * i.e. verify:
-             * If the vertex is part of multiple blocks, either it is part of
-             * exactly 2 blocks (and at least one surface which is boundary to
-             * the 2 blocks), or it is part of more than to blocks (and it is
-             * either a corner, or not a corner but part of only one line).
-             */
-            bool brep_vertex_blocks_topology_is_valid(
-                index_t unique_vertex_index ) const;
+        bool corner_has_multiple_embeddings(
+            index_t unique_vertex_index ) const;
 
-        private:
-            const BRep& brep_;
-            bool verbose_;
-        };
-    } // namespace detail
+        bool corner_is_not_internal_nor_boundary(
+            index_t unique_vertex_index ) const;
+
+        bool corner_is_part_of_line_but_not_boundary(
+            index_t unique_vertex_index ) const;
+
+    private:
+        const Section& section_;
+        bool verbose_;
+    };
 } // namespace geode

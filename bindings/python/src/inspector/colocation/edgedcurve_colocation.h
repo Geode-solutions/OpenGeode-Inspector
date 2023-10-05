@@ -20,30 +20,37 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/edged_curve.h>
 
 #include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
 
-#define PYTHON_EDGEDCURVE_COLOCATION( dimension )                              \
-    const auto name##dimension =                                               \
-        "EdgedCurveColocation" + std::to_string( dimension ) + "D";            \
-    pybind11::class_< EdgedCurveColocation##dimension##D >(                    \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const EdgedCurve< dimension >& >() )             \
-        .def( pybind11::init< const EdgedCurve< dimension >&, bool >() )       \
-        .def( "mesh_has_colocated_points",                                     \
-            &EdgedCurveColocation##dimension##D::mesh_has_colocated_points )   \
-        .def( "nb_colocated_points",                                           \
-            &EdgedCurveColocation##dimension##D::nb_colocated_points )         \
-        .def( "colocated_points_groups",                                       \
-            &EdgedCurveColocation##dimension##D::colocated_points_groups )
+#define PYTHON_EDGEDCURVE_COLOCATION( dimension )
 
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_edgedcurve_colocation( pybind11::module& module )
+    {
+        using EdgedCurve = EdgedCurve< dimension >;
+        using EdgedCurveColocation = EdgedCurveColocation< dimension >;
+
+        const auto name =
+            "EdgedCurveColocation" + std::to_string( dimension ) + "D";
+        pybind11::class_< EdgedCurveColocation >( module, name.c_str() )
+            .def( pybind11::init< const EdgedCurve& >() )
+            .def( pybind11::init< const EdgedCurve&, bool >() )
+            .def( "mesh_has_colocated_points",
+                &EdgedCurveColocation::mesh_has_colocated_points )
+            .def( "nb_colocated_points",
+                &EdgedCurveColocation::nb_colocated_points )
+            .def( "colocated_points_groups",
+                &EdgedCurveColocation::colocated_points_groups );
+    }
     void define_edgedcurve_colocation( pybind11::module& module )
     {
-        PYTHON_EDGEDCURVE_COLOCATION( 2 );
-        PYTHON_EDGEDCURVE_COLOCATION( 3 );
+        do_define_edgedcurve_colocation< 2 >( module );
+        do_define_edgedcurve_colocation< 3 >( module );
     }
 } // namespace geode

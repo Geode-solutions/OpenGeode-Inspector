@@ -20,39 +20,44 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/surface_inspector.h>
 
-#define PYTHON_SURFACE_INSPECTOR( dimension )                                  \
-    const auto name##dimension =                                               \
-        "SurfaceMeshInspector" + std::to_string( dimension ) + "D";            \
-    pybind11::class_< SurfaceMeshInspector##dimension##D,                      \
-        SurfaceMeshAdjacency##dimension##D,                                    \
-        SurfaceMeshColocation##dimension##D,                                   \
-        SurfaceMeshDegeneration##dimension##D,                                 \
-        SurfaceMeshEdgeManifold##dimension##D,                                 \
-        SurfaceMeshVertexManifold##dimension##D >(                             \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() );     \
-                                                                               \
-    const auto trgl_name##dimension =                                          \
-        "TriangulatedSurfaceInspector" + std::to_string( dimension ) + "D";    \
-    pybind11::class_< TriangulatedSurfaceInspector##dimension##D,              \
-        SurfaceMeshInspector##dimension##D,                                    \
-        TriangulatedSurfaceIntersections##dimension##D >(                      \
-        module, trgl_name##dimension.c_str() )                                 \
-        .def( pybind11::init< const TriangulatedSurface< dimension >& >() )    \
-        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
-            bool >() )
-
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_surface_inspector( pybind11::module& module )
+    {
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshInspector = SurfaceMeshInspector< dimension >;
+        using TriangulatedSurface = TriangulatedSurface< dimension >;
+        using TriangulatedSurfaceInspector =
+            TriangulatedSurfaceInspector< dimension >;
+        const auto name =
+            "SurfaceMeshInspector" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshInspector,
+            SurfaceMeshAdjacency< dimension >,
+            SurfaceMeshColocation< dimension >,
+            SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshEdgeManifold< dimension >,
+            SurfaceMeshVertexManifold< dimension > >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() );
+
+        const auto trgl_name =
+            "TriangulatedSurfaceInspector" + std::to_string( dimension ) + "D";
+        pybind11::class_< TriangulatedSurfaceInspector, SurfaceMeshInspector,
+            TriangulatedSurfaceIntersections< dimension > >(
+            module, trgl_name.c_str() )
+            .def( pybind11::init< const TriangulatedSurface& >() )
+            .def( pybind11::init< const TriangulatedSurface&, bool >() );
+    }
     void define_surface_inspector( pybind11::module& module )
     {
-        PYTHON_SURFACE_INSPECTOR( 2 );
-        PYTHON_SURFACE_INSPECTOR( 3 );
+        do_define_surface_inspector< 2 >( module );
+        do_define_surface_inspector< 3 >( module );
     }
 } // namespace geode

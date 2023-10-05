@@ -26,7 +26,9 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
-
+#include <geode/inspector/topology/section_corners_topology.h>
+#include <geode/inspector/topology/section_lines_topology.h>
+#include <geode/inspector/topology/section_surfaces_topology.h>
 namespace geode
 {
     struct ComponentMeshVertex;
@@ -39,6 +41,9 @@ namespace geode
      * Class for inspecting the topology of a Section model corners
      */
     class opengeode_inspector_inspector_api SectionTopologyInspector
+        : public SectionCornersTopology,
+          public SectionLinesTopology,
+          public SectionSurfacesTopology
     {
         OPENGEODE_DISABLE_COPY( SectionTopologyInspector );
 
@@ -58,14 +63,6 @@ namespace geode
         bool section_meshed_components_are_linked_to_unique_vertices() const;
 
         bool section_unique_vertices_are_linked_to_a_component_vertex() const;
-
-        index_t nb_corners_not_linked_to_a_unique_vertex() const;
-
-        index_t nb_lines_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_surfaces_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_unique_vertices_not_linked_to_a_component_vertex() const;
 
         std::vector< ComponentMeshVertex >
             component_vertices_not_linked_to_a_unique_vertex() const;
@@ -104,5 +101,6 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
+        const Section& section_;
     };
 } // namespace geode

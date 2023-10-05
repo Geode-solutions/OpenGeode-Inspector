@@ -80,7 +80,8 @@ void inspect_brep( const geode::BRep& brep )
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb_unlinked_uv =
                 brep_inspector
-                    .nb_unique_vertices_not_linked_to_a_component_vertex();
+                    .unique_vertices_not_linked_to_a_component_vertex()
+                    .size();
             geode::Logger::info( nb_unlinked_uv,
                 " unique vertices not linked to a component mesh vertex" );
         } ) );
@@ -89,7 +90,8 @@ void inspect_brep( const geode::BRep& brep )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
             const auto nb_unique_vertices =
-                brep_inspector.nb_unique_vertices_linked_to_different_points();
+                brep_inspector.unique_vertices_linked_to_different_points()
+                    .size();
             geode::Logger::info( nb_unique_vertices,
                 " unique vertices linked to mesh points at "
                 "different positions" );

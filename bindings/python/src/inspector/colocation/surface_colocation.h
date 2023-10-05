@@ -20,30 +20,34 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
 
-#define PYTHON_SURFACE_COLOCATION( dimension )                                 \
-    const auto name##dimension =                                               \
-        "SurfaceMeshColocation" + std::to_string( dimension ) + "D";           \
-    pybind11::class_< SurfaceMeshColocation##dimension##D >(                   \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "mesh_has_colocated_points",                                     \
-            &SurfaceMeshColocation##dimension##D::mesh_has_colocated_points )  \
-        .def( "nb_colocated_points",                                           \
-            &SurfaceMeshColocation##dimension##D::nb_colocated_points )        \
-        .def( "colocated_points_groups",                                       \
-            &SurfaceMeshColocation##dimension##D::colocated_points_groups )
-
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_surface_colocation( pybind11::module& module )
+    {
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshColocation = SurfaceMeshColocation< dimension >;
+        const auto name =
+            "SurfaceMeshColocation" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshColocation >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() )
+            .def( "mesh_has_colocated_points",
+                &SurfaceMeshColocation::mesh_has_colocated_points )
+            .def( "nb_colocated_points",
+                &SurfaceMeshColocation::nb_colocated_points )
+            .def( "colocated_points_groups",
+                &SurfaceMeshColocation::colocated_points_groups );
+    }
     void define_surface_colocation( pybind11::module& module )
     {
-        PYTHON_SURFACE_COLOCATION( 2 );
-        PYTHON_SURFACE_COLOCATION( 3 );
+        do_define_surface_colocation< 2 >( module );
+        do_define_surface_colocation< 3 >( module );
     }
 } // namespace geode

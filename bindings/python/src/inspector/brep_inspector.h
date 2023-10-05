@@ -25,19 +25,16 @@
 
 #include <geode/inspector/brep_inspector.h>
 
-#define PYTHON_BREP_INSPECTOR()                                                \
-    pybind11::class_< BRepInspector, BRepTopologyInspector,                    \
-        BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,            \
-        BRepComponentMeshesColocation, BRepComponentMeshesDegeneration,        \
-        BRepComponentMeshesManifold, BRepMeshesIntersections >(                \
-        module, "BRepInspector" )                                              \
-        .def( pybind11::init< const BRep& >() )                                \
-        .def( pybind11::init< const BRep&, bool >() )
-
 namespace geode
 {
     void define_brep_inspector( pybind11::module& module )
     {
-        PYTHON_BREP_INSPECTOR();
+        pybind11::class_< BRepInspector, BRepTopologyInspector,
+            BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,
+            BRepComponentMeshesColocation, BRepComponentMeshesDegeneration,
+            BRepComponentMeshesManifold, BRepMeshesIntersections >(
+            module, "BRepInspector" )
+            .def( pybind11::init< const BRep& >() )
+            .def( pybind11::init< const BRep&, bool >() );
     }
 } // namespace geode

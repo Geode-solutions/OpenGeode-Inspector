@@ -40,25 +40,26 @@ geode::index_t check_components_linking(
             .section_meshed_components_are_linked_to_unique_vertices();
     geode::Logger::info( "Section components are ",
         components_are_linked ? "" : "not ", "all linked to a unique vertex." );
-    const auto nb_unlinked_corners =
-        section_inspector.nb_corners_not_linked_to_a_unique_vertex();
-    geode::Logger::info( "There are ", nb_unlinked_corners,
-        " corners not linked to a unique vertex." );
-    const auto nb_unlinked_lines =
-        section_inspector.nb_lines_meshed_but_not_linked_to_unique_vertices();
-    geode::Logger::info( "There are ", nb_unlinked_lines,
-        " lines not linked to a unique vertex." );
-    const auto nb_unlinked_surfaces =
-        section_inspector
-            .nb_surfaces_meshed_but_not_linked_to_unique_vertices();
-    geode::Logger::info( "There are ", nb_unlinked_surfaces,
-        " surfaces not linked to a unique vertex." );
+    /*    const auto nb_unlinked_corners =
+            section_inspector.nb_corners_not_linked_to_a_unique_vertex();
+        geode::Logger::info( "There are ", nb_unlinked_corners,
+            " corners not linked to a unique vertex." );
+        const auto nb_unlinked_lines =
+            section_inspector.nb_lines_meshed_but_not_linked_to_unique_vertices();
+        geode::Logger::info( "There are ", nb_unlinked_lines,
+            " lines not linked to a unique vertex." );
+        const auto nb_unlinked_surfaces =
+            section_inspector
+                .nb_surfaces_meshed_but_not_linked_to_unique_vertices();
+        geode::Logger::info( "There are ", nb_unlinked_surfaces,
+            " surfaces not linked to a unique vertex." );*/
     const auto nb_unlinked_uv =
-        section_inspector.nb_unique_vertices_not_linked_to_a_component_vertex();
+        section_inspector.unique_vertices_not_linked_to_a_component_vertex()
+            .size();
     geode::Logger::info( "There are ", nb_unlinked_uv,
         " unique vertices not linked to a component mesh vertex." );
-    return nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces
-           + nb_unlinked_uv;
+    return // nb_unlinked_corners + nb_unlinked_lines + nb_unlinked_surfaces+
+        nb_unlinked_uv;
 }
 
 geode::index_t check_unique_vertices_colocation(

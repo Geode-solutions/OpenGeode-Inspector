@@ -20,31 +20,34 @@
  * SOFTWARE.
  *
  */
-
-#include <geode/mesh/core/solid_mesh.h>
+#include <string>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
+#include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
 
-#define PYTHON_SOLID_FACET_MANIFOLD( dimension )                               \
-    const auto name##dimension =                                               \
-        "SolidMeshFacetManifold" + std::to_string( dimension ) + "D";          \
-    pybind11::class_< SolidMeshFacetManifold##dimension##D >(                  \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
-        .def( "mesh_facets_are_manifold",                                      \
-            &SolidMeshFacetManifold##dimension##D::mesh_facets_are_manifold )  \
-        .def( "nb_non_manifold_facets",                                        \
-            &SolidMeshFacetManifold##dimension##D::nb_non_manifold_facets )    \
-        .def( "non_manifold_facets",                                           \
-            &SolidMeshFacetManifold##dimension##D::non_manifold_facets )
-
 namespace geode
 {
+    template < index_t dimension >
+    void do_define_solid_facet_manifold( pybind11::module& module )
+    {
+        using SolidMesh = SolidMesh< dimension >;
+        using SolidMeshFacetManifold = SolidMeshFacetManifold< dimension >;
+        const auto name =
+            "SolidMeshFacetManifold" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() )
+            .def( "mesh_facets_are_manifold",
+                &SolidMeshFacetManifold::mesh_facets_are_manifold )
+            .def( "nb_non_manifold_facets",
+                &SolidMeshFacetManifold::nb_non_manifold_facets )
+            .def( "non_manifold_facets",
+                &SolidMeshFacetManifold::non_manifold_facets );
+    }
     void define_solid_facet_manifold( pybind11::module& module )
     {
-        PYTHON_SOLID_FACET_MANIFOLD( 3 );
+        do_define_solid_facet_manifold< 3 >( module );
     }
 } // namespace geode

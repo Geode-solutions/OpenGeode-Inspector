@@ -26,6 +26,10 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/topology/brep_blocks_topology.h>
+#include <geode/inspector/topology/brep_corners_topology.h>
+#include <geode/inspector/topology/brep_lines_topology.h>
+#include <geode/inspector/topology/brep_surfaces_topology.h>
 
 namespace geode
 {
@@ -39,6 +43,10 @@ namespace geode
      * Class for inspecting the topology of a BRep model corners
      */
     class opengeode_inspector_inspector_api BRepTopologyInspector
+        : public BRepCornersTopology,
+          public BRepLinesTopology,
+          public BRepSurfacesTopology,
+          public BRepBlocksTopology
     {
         OPENGEODE_DISABLE_COPY( BRepTopologyInspector );
 
@@ -58,16 +66,6 @@ namespace geode
         bool brep_meshed_components_are_linked_to_unique_vertices() const;
 
         bool brep_unique_vertices_are_linked_to_a_component_vertex() const;
-
-        index_t nb_corners_not_linked_to_a_unique_vertex() const;
-
-        index_t nb_lines_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_surfaces_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_blocks_meshed_but_not_linked_to_unique_vertices() const;
-
-        index_t nb_unique_vertices_not_linked_to_a_component_vertex() const;
 
         std::vector< ComponentMeshVertex >
             component_vertices_not_linked_to_a_unique_vertex() const;
@@ -119,5 +117,6 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
+        const BRep& brep_;
     };
 } // namespace geode

@@ -25,30 +25,28 @@
 
 #include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
 
-#define PYTHON_SECTION_COMPONENTS_MANIFOLD()                                   \
-    pybind11::class_< SectionComponentMeshesManifold >(                        \
-        module, "SectionComponentMeshesManifold" )                             \
-        .def( pybind11::init< const Section& >() )                             \
-        .def( pybind11::init< const Section&, bool >() )                       \
-        .def( "components_non_manifold_meshes",                                \
-            &SectionComponentMeshesManifold::components_non_manifold_meshes )  \
-        .def( "component_meshes_nb_non_manifold_vertices",                     \
-            &SectionComponentMeshesManifold::                                  \
-                component_meshes_nb_non_manifold_vertices )                    \
-        .def( "component_meshes_nb_non_manifold_edges",                        \
-            &SectionComponentMeshesManifold::                                  \
-                component_meshes_nb_non_manifold_edges )                       \
-        .def( "component_meshes_non_manifold_vertices",                        \
-            &SectionComponentMeshesManifold::                                  \
-                component_meshes_non_manifold_vertices )                       \
-        .def( "component_meshes_non_manifold_edges",                           \
-            &SectionComponentMeshesManifold::                                  \
-                component_meshes_non_manifold_edges )
-
 namespace geode
 {
     void define_section_meshes_manifold( pybind11::module& module )
     {
-        PYTHON_SECTION_COMPONENTS_MANIFOLD();
+        pybind11::class_< SectionComponentMeshesManifold >(
+            module, "SectionComponentMeshesManifold" )
+            .def( pybind11::init< const Section& >() )
+            .def( pybind11::init< const Section&, bool >() )
+            .def( "components_non_manifold_meshes",
+                &SectionComponentMeshesManifold::
+                    components_non_manifold_meshes )
+            .def( "component_meshes_nb_non_manifold_vertices",
+                &SectionComponentMeshesManifold::
+                    component_meshes_nb_non_manifold_vertices )
+            .def( "component_meshes_nb_non_manifold_edges",
+                &SectionComponentMeshesManifold::
+                    component_meshes_nb_non_manifold_edges )
+            .def( "component_meshes_non_manifold_vertices",
+                &SectionComponentMeshesManifold::
+                    component_meshes_non_manifold_vertices )
+            .def( "component_meshes_non_manifold_edges",
+                &SectionComponentMeshesManifold::
+                    component_meshes_non_manifold_edges );
     }
 } // namespace geode
