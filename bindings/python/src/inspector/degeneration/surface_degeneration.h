@@ -25,25 +25,33 @@
 
 #include <geode/inspector/criterion/degeneration/surface_degeneration.h>
 
-#define PYTHON_SURFACE_DEGENERATION( dimension )                               \
-    const auto name##dimension =                                               \
-        "SurfaceMeshDegeneration" + std::to_string( dimension ) + "D";         \
-    pybind11::class_< SurfaceMeshDegeneration##dimension##D >(                 \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "is_mesh_degenerated",                                           \
-            &SurfaceMeshDegeneration##dimension##D::is_mesh_degenerated )      \
-        .def( "nb_degenerated_edges",                                          \
-            &SurfaceMeshDegeneration##dimension##D::nb_degenerated_edges )     \
-        .def( "degenerated_edges",                                             \
-            &SurfaceMeshDegeneration##dimension##D::degenerated_edges )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_degeneration( pybind11::module& module )
+    {
+        using SurfaceMesh = geode::SurfaceMesh< dimension >;
+        using SurfaceMeshDegeneration =
+            geode::SurfaceMeshDegeneration< dimension >;
+        const auto name =
+            "SurfaceMeshDegeneration" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() )
+            .def( "is_mesh_degenerated",
+                &SurfaceMeshDegeneration::is_mesh_degenerated )
+            .def( "nb_degenerated_edges",
+                &SurfaceMeshDegeneration::nb_degenerated_edges )
+            .def( "degenerated_edges",
+                &SurfaceMeshDegeneration::degenerated_edges );
+    }
+} // namespace
 
 namespace geode
 {
     void define_surface_degeneration( pybind11::module& module )
     {
-        PYTHON_SURFACE_DEGENERATION( 2 );
-        PYTHON_SURFACE_DEGENERATION( 3 );
+        do_define_surface_degeneration< 2 >( module );
+        do_define_surface_degeneration< 3 >( module );
     }
 } // namespace geode

@@ -25,29 +25,35 @@
 
 #include <geode/inspector/criterion/intersections/surface_intersections.h>
 
-#define PYTHON_SURFACE_INTERSECTIONS( dimension )                              \
-    const auto name##dimension = "TriangulatedSurfaceIntersections"            \
-                                 + std::to_string( dimension ) + "D";          \
-    pybind11::class_< TriangulatedSurfaceIntersections##dimension##D >(        \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const TriangulatedSurface< dimension >& >() )    \
-        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
-            bool >() )                                                         \
-        .def( "mesh_has_self_intersections",                                   \
-            &TriangulatedSurfaceIntersections##dimension##D::                  \
-                mesh_has_self_intersections )                                  \
-        .def( "nb_intersecting_elements_pair",                                 \
-            &TriangulatedSurfaceIntersections##dimension##D::                  \
-                nb_intersecting_elements_pair )                                \
-        .def( "intersecting_elements",                                         \
-            &TriangulatedSurfaceIntersections##dimension##D::                  \
-                intersecting_elements )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_intersections( pybind11::module& module )
+    {
+        using TriangulatedSurface = geode::TriangulatedSurface< dimension >;
+        using TriangulatedSurfaceIntersections =
+            geode::TriangulatedSurfaceIntersections< dimension >;
+        const auto name = "TriangulatedSurfaceIntersections"
+                          + std::to_string( dimension ) + "D";
+        pybind11::class_< TriangulatedSurfaceIntersections >(
+            module, name.c_str() )
+            .def( pybind11::init< const TriangulatedSurface& >() )
+            .def( pybind11::init< const TriangulatedSurface&, bool >() )
+            .def( "mesh_has_self_intersections",
+                &TriangulatedSurfaceIntersections::mesh_has_self_intersections )
+            .def( "nb_intersecting_elements_pair",
+                &TriangulatedSurfaceIntersections::
+                    nb_intersecting_elements_pair )
+            .def( "intersecting_elements",
+                &TriangulatedSurfaceIntersections::intersecting_elements );
+    }
+} // namespace
 
 namespace geode
 {
     void define_surface_intersections( pybind11::module& module )
     {
-        PYTHON_SURFACE_INTERSECTIONS( 2 );
-        PYTHON_SURFACE_INTERSECTIONS( 3 );
+        do_define_surface_intersections< 2 >( module );
+        do_define_surface_intersections< 3 >( module );
     }
 } // namespace geode

@@ -27,25 +27,33 @@
 
 #include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
 
-#define PYTHON_SURFACE_EDGE_MANIFOLD( dimension )                              \
-    const auto name##dimension =                                               \
-        "SurfaceMeshEdgeManifold" + std::to_string( dimension ) + "D";         \
-    pybind11::class_< SurfaceMeshEdgeManifold##dimension##D >(                 \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "mesh_edges_are_manifold",                                       \
-            &SurfaceMeshEdgeManifold##dimension##D::mesh_edges_are_manifold )  \
-        .def( "nb_non_manifold_edges",                                         \
-            &SurfaceMeshEdgeManifold##dimension##D::nb_non_manifold_edges )    \
-        .def( "non_manifold_edges",                                            \
-            &SurfaceMeshEdgeManifold##dimension##D::non_manifold_edges )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_edge_manifold( pybind11::module& module )
+    {
+        using SurfaceMesh = geode::SurfaceMesh< dimension >;
+        using SurfaceMeshEdgeManifold =
+            geode::SurfaceMeshEdgeManifold< dimension >;
+        const auto name =
+            "SurfaceMeshEdgeManifold" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshEdgeManifold >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() )
+            .def( "mesh_edges_are_manifold",
+                &SurfaceMeshEdgeManifold::mesh_edges_are_manifold )
+            .def( "nb_non_manifold_edges",
+                &SurfaceMeshEdgeManifold::nb_non_manifold_edges )
+            .def( "non_manifold_edges",
+                &SurfaceMeshEdgeManifold::non_manifold_edges );
+    }
+} // namespace
 
 namespace geode
 {
     void define_surface_edge_manifold( pybind11::module& module )
     {
-        PYTHON_SURFACE_EDGE_MANIFOLD( 2 );
-        PYTHON_SURFACE_EDGE_MANIFOLD( 3 );
+        do_define_surface_edge_manifold< 2 >( module );
+        do_define_surface_edge_manifold< 3 >( module );
     }
 } // namespace geode

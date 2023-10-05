@@ -24,28 +24,31 @@
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/criterion/adjacency/surface_adjacency.h>
-
-#define PYTHON_SURFACE_ADJACENCY( dimension )                                  \
-    const auto name##dimension =                                               \
-        "SurfaceMeshAdjacency" + std::to_string( dimension ) + "D";            \
-    pybind11::class_< SurfaceMeshAdjacency##dimension##D >(                    \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "mesh_has_wrong_adjacencies",                                    \
-            &SurfaceMeshAdjacency##dimension##D::mesh_has_wrong_adjacencies )  \
-        .def( "nb_edges_with_wrong_adjacency",                                 \
-            &SurfaceMeshAdjacency##dimension##D::                              \
-                nb_edges_with_wrong_adjacency )                                \
-        .def( "polygon_edges_with_wrong_adjacency",                            \
-            &SurfaceMeshAdjacency##dimension##D::                              \
-                polygon_edges_with_wrong_adjacency )
-
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_adjacency( pybind11::module& module )
+    {
+        using SurfaceMesh = geode::SurfaceMesh< dimension >;
+        using SurfaceMeshAdjacency = geode::SurfaceMeshAdjacency< dimension >;
+        const auto name =
+            "SurfaceMeshAdjacency" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshAdjacency >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() )
+            .def( "mesh_has_wrong_adjacencies",
+                &SurfaceMeshAdjacency::mesh_has_wrong_adjacencies )
+            .def( "nb_edges_with_wrong_adjacency",
+                &SurfaceMeshAdjacency::nb_edges_with_wrong_adjacency )
+            .def( "polygon_edges_with_wrong_adjacency",
+                &SurfaceMeshAdjacency::polygon_edges_with_wrong_adjacency );
+    }
+} // namespace
 namespace geode
 {
     void define_surface_adjacency( pybind11::module& module )
     {
-        PYTHON_SURFACE_ADJACENCY( 2 );
-        PYTHON_SURFACE_ADJACENCY( 3 );
+        do_define_surface_adjacency< 2 >( module );
+        do_define_surface_adjacency< 3 >( module );
     }
 } // namespace geode

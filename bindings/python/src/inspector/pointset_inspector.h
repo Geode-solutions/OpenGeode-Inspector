@@ -25,19 +25,28 @@
 
 #include <geode/inspector/pointset_inspector.h>
 
-#define PYTHON_POINTSET_INSPECTOR( dimension )                                 \
-    const auto name##dimension =                                               \
-        "PointSetInspector" + std::to_string( dimension ) + "D";               \
-    pybind11::class_< PointSetInspector##dimension##D,                         \
-        PointSetColocation##dimension##D >( module, name##dimension.c_str() )  \
-        .def( pybind11::init< const PointSet< dimension >& >() )               \
-        .def( pybind11::init< const PointSet< dimension >&, bool >() )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_pointset_inspector( pybind11::module& module )
+    {
+        using PointSet = geode::PointSet< dimension >;
+        using PointSetInspector = geode::PointSetInspector< dimension >;
+        using PointSetColocation = geode::PointSetColocation< dimension >;
+        const auto name =
+            "PointSetInspector" + std::to_string( dimension ) + "D";
+        pybind11::class_< PointSetInspector, PointSetColocation >(
+            module, name.c_str() )
+            .def( pybind11::init< const PointSet& >() )
+            .def( pybind11::init< const PointSet&, bool >() );
+    }
+} // namespace
 
 namespace geode
 {
     void define_pointset_inspector( pybind11::module& module )
     {
-        PYTHON_POINTSET_INSPECTOR( 2 );
-        PYTHON_POINTSET_INSPECTOR( 3 );
+        do_define_pointset_inspector< 2 >( module );
+        do_define_pointset_inspector< 3 >( module );
     }
 } // namespace geode

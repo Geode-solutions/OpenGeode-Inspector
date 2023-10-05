@@ -25,25 +25,33 @@
 
 #include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
 
-#define PYTHON_EDGEDCURVE_DEGENERATION( dimension )                            \
-    const auto name##dimension =                                               \
-        "EdgedCurveDegeneration" + std::to_string( dimension ) + "D";          \
-    pybind11::class_< EdgedCurveDegeneration##dimension##D >(                  \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const EdgedCurve< dimension >& >() )             \
-        .def( pybind11::init< const EdgedCurve< dimension >&, bool >() )       \
-        .def( "is_mesh_degenerated",                                           \
-            &EdgedCurveDegeneration##dimension##D::is_mesh_degenerated )       \
-        .def( "nb_degenerated_edges",                                          \
-            &EdgedCurveDegeneration##dimension##D::nb_degenerated_edges )      \
-        .def( "degenerated_edges",                                             \
-            &EdgedCurveDegeneration##dimension##D::degenerated_edges )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_edgedcurve_degeneration( pybind11::module& module )
+    {
+        using EdgedCurve = geode::EdgedCurve< dimension >;
+        using EdgedCurveDegeneration =
+            geode::EdgedCurveDegeneration< dimension >;
+        const auto name =
+            "EdgedCurveDegeneration" + std::to_string( dimension ) + "D";
+        pybind11::class_< EdgedCurveDegeneration >( module, name.c_str() )
+            .def( pybind11::init< const EdgedCurve& >() )
+            .def( pybind11::init< const EdgedCurve&, bool >() )
+            .def( "is_mesh_degenerated",
+                &EdgedCurveDegeneration::is_mesh_degenerated )
+            .def( "nb_degenerated_edges",
+                &EdgedCurveDegeneration::nb_degenerated_edges )
+            .def( "degenerated_edges",
+                &EdgedCurveDegeneration::degenerated_edges );
+    }
+} // namespace
 
 namespace geode
 {
     void define_edgedcurve_degeneration( pybind11::module& module )
     {
-        PYTHON_EDGEDCURVE_DEGENERATION( 2 );
-        PYTHON_EDGEDCURVE_DEGENERATION( 3 );
+        do_define_edgedcurve_degeneration< 2 >( module );
+        do_define_edgedcurve_degeneration< 3 >( module );
     }
 } // namespace geode

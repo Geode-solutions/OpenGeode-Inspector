@@ -25,23 +25,37 @@
 
 #include <geode/inspector/solid_inspector.h>
 
-#define PYTHON_SOLID_INSPECTOR( dimension )                                    \
-    const auto name##dimension =                                               \
-        "SolidMeshInspector" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< SolidMeshInspector##dimension##D,                        \
-        SolidMeshAdjacency##dimension##D, SolidMeshColocation##dimension##D,   \
-        SolidMeshDegeneration##dimension##D,                                   \
-        SolidMeshVertexManifold##dimension##D,                                 \
-        SolidMeshEdgeManifold##dimension##D,                                   \
-        SolidMeshFacetManifold##dimension##D >(                                \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_solid_inspector( pybind11::module& module )
+    {
+        using SolidMesh = geode::SolidMesh< dimension >;
+        using SolidMeshInspector = geode::SolidMeshInspector< dimension >;
+        using SolidMeshAdjacency = geode::SolidMeshAdjacency< dimension >;
+        using SolidMeshColocation = geode::SolidMeshColocation< dimension >;
+        using SolidMeshDegeneration = geode::SolidMeshDegeneration< dimension >;
+        using SolidMeshVertexManifold =
+            geode::SolidMeshVertexManifold< dimension >;
+        using SolidMeshEdgeManifold = geode::SolidMeshEdgeManifold< dimension >;
+        using SolidMeshFacetManifold =
+            geode::SolidMeshFacetManifold< dimension >;
+
+        const auto name =
+            "SolidMeshInspector" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshInspector, SolidMeshAdjacency,
+            SolidMeshColocation, SolidMeshDegeneration, SolidMeshVertexManifold,
+            SolidMeshEdgeManifold, SolidMeshFacetManifold >(
+            module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() );
+    }
+} // namespace
 
 namespace geode
 {
     void define_solid_inspector( pybind11::module& module )
     {
-        PYTHON_SOLID_INSPECTOR( 3 );
+        do_define_solid_inspector< 3 >( module );
     }
 } // namespace geode

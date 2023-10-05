@@ -25,24 +25,31 @@
 
 #include <geode/inspector/criterion/colocation/solid_colocation.h>
 
-#define PYTHON_SOLID_COLOCATION( dimension )                                   \
-    const auto name##dimension =                                               \
-        "SolidMeshColocation" + std::to_string( dimension ) + "D";             \
-    pybind11::class_< SolidMeshColocation##dimension##D >(                     \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
-        .def( "mesh_has_colocated_points",                                     \
-            &SolidMeshColocation##dimension##D::mesh_has_colocated_points )    \
-        .def( "nb_colocated_points",                                           \
-            &SolidMeshColocation##dimension##D::nb_colocated_points )          \
-        .def( "colocated_points_groups",                                       \
-            &SolidMeshColocation##dimension##D::colocated_points_groups )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_solid_colocation( pybind11::module& module )
+    {
+        using SolidMesh = geode::SolidMesh< dimension >;
+        using SolidMeshColocation = geode::SolidMeshColocation< dimension >;
+        const auto name =
+            "SolidMeshColocation" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshColocation >( module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() )
+            .def( "mesh_has_colocated_points",
+                &SolidMeshColocation::mesh_has_colocated_points )
+            .def( "nb_colocated_points",
+                &SolidMeshColocation::nb_colocated_points )
+            .def( "colocated_points_groups",
+                &SolidMeshColocation::colocated_points_groups );
+    }
+} // namespace
 
 namespace geode
 {
     void define_solid_colocation( pybind11::module& module )
     {
-        PYTHON_SOLID_COLOCATION( 3 );
+        do_define_solid_colocation< 3 >( module );
     }
 } // namespace geode

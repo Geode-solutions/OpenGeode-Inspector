@@ -25,24 +25,30 @@
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
 
-#define PYTHON_SOLID_DEGENERATION( dimension )                                 \
-    const auto name##dimension =                                               \
-        "SolidMeshDegeneration" + std::to_string( dimension ) + "D";           \
-    pybind11::class_< SolidMeshDegeneration##dimension##D >(                   \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
-        .def( "is_mesh_degenerated",                                           \
-            &SolidMeshDegeneration##dimension##D::is_mesh_degenerated )        \
-        .def( "nb_degenerated_edges",                                          \
-            &SolidMeshDegeneration##dimension##D::nb_degenerated_edges )       \
-        .def( "degenerated_edges",                                             \
-            &SolidMeshDegeneration##dimension##D::degenerated_edges )
-
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_solid_degeneration( pybind11::module& module )
+    {
+        using SolidMesh = geode::SolidMesh< dimension >;
+        using SolidMeshDegeneration = geode::SolidMeshDegeneration< dimension >;
+        const auto name =
+            "SolidMeshDegeneration" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshDegeneration >( module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() )
+            .def( "is_mesh_degenerated",
+                &SolidMeshDegeneration::is_mesh_degenerated )
+            .def( "nb_degenerated_edges",
+                &SolidMeshDegeneration::nb_degenerated_edges )
+            .def( "degenerated_edges",
+                &SolidMeshDegeneration::degenerated_edges );
+    }
+} // namespace
 namespace geode
 {
     void define_solid_degeneration( pybind11::module& module )
     {
-        PYTHON_SOLID_DEGENERATION( 3 );
+        do_define_solid_degeneration< 3 >( module );
     }
 } // namespace geode

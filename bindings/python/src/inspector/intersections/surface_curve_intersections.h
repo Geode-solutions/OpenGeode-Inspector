@@ -26,29 +26,36 @@
 
 #include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
 
-#define PYTHON_SURFACE_CURVE_INTERSECTIONS( dimension )                        \
-    const auto name##dimension =                                               \
-        "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";       \
-    pybind11::class_< SurfaceCurveIntersections##dimension##D >(               \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
-            const EdgedCurve< dimension >& >() )                               \
-        .def( pybind11::init< const TriangulatedSurface< dimension >&,         \
-            const EdgedCurve< dimension >&, bool >() )                         \
-        .def( "meshes_have_intersections",                                     \
-            &SurfaceCurveIntersections##dimension##D::                         \
-                meshes_have_intersections )                                    \
-        .def( "nb_intersecting_elements_pair",                                 \
-            &SurfaceCurveIntersections##dimension##D::                         \
-                nb_intersecting_elements_pair )                                \
-        .def( "intersecting_elements",                                         \
-            &SurfaceCurveIntersections##dimension##D::intersecting_elements )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_curve_intersections( pybind11::module& module )
+    {
+        using TriangulatedSurface = geode::TriangulatedSurface< dimension >;
+        using EdgedCurve = geode::EdgedCurve< dimension >;
+        using SurfaceCurveIntersections =
+            geode::SurfaceCurveIntersections< dimension >;
+        const auto name =
+            "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
+            .def( pybind11::init< const TriangulatedSurface&,
+                const EdgedCurve& >() )
+            .def( pybind11::init< const TriangulatedSurface&, const EdgedCurve&,
+                bool >() )
+            .def( "meshes_have_intersections",
+                &SurfaceCurveIntersections::meshes_have_intersections )
+            .def( "nb_intersecting_elements_pair",
+                &SurfaceCurveIntersections::nb_intersecting_elements_pair )
+            .def( "intersecting_elements",
+                &SurfaceCurveIntersections::intersecting_elements );
+    }
+} // namespace
 
 namespace geode
 {
     void define_surface_curve_intersections( pybind11::module& module )
     {
-        PYTHON_SURFACE_CURVE_INTERSECTIONS( 2 );
-        PYTHON_SURFACE_CURVE_INTERSECTIONS( 3 );
+        do_define_surface_curve_intersections< 2 >( module );
+        do_define_surface_curve_intersections< 3 >( module );
     }
 } // namespace geode

@@ -24,27 +24,30 @@
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/criterion/adjacency/solid_adjacency.h>
-
-#define PYTHON_SOLID_ADJACENCY( dimension )                                    \
-    const auto name##dimension =                                               \
-        "SolidMeshAdjacency" + std::to_string( dimension ) + "D";              \
-    pybind11::class_< SolidMeshAdjacency##dimension##D >(                      \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SolidMesh< dimension >& >() )              \
-        .def( pybind11::init< const SolidMesh< dimension >&, bool >() )        \
-        .def( "mesh_has_wrong_adjacencies",                                    \
-            &SolidMeshAdjacency##dimension##D::mesh_has_wrong_adjacencies )    \
-        .def( "nb_facets_with_wrong_adjacency",                                \
-            &SolidMeshAdjacency##dimension##D::                                \
-                nb_facets_with_wrong_adjacency )                               \
-        .def( "polyhedron_facets_with_wrong_adjacency",                        \
-            &SolidMeshAdjacency##dimension##D::                                \
-                polyhedron_facets_with_wrong_adjacency )
-
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_solid_adjacency( pybind11::module& module )
+    {
+        using SolidMesh = geode::SolidMesh< dimension >;
+        using SolidMeshAdjacency = geode::SolidMeshAdjacency< dimension >;
+        const auto name =
+            "SolidMeshAdjacency" + std::to_string( dimension ) + "D";
+        pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( pybind11::init< const SolidMesh&, bool >() )
+            .def( "mesh_has_wrong_adjacencies",
+                &SolidMeshAdjacency::mesh_has_wrong_adjacencies )
+            .def( "nb_facets_with_wrong_adjacency",
+                &SolidMeshAdjacency::nb_facets_with_wrong_adjacency )
+            .def( "polyhedron_facets_with_wrong_adjacency",
+                &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency );
+    }
+} // namespace
 namespace geode
 {
     void define_solid_adjacency( pybind11::module& module )
     {
-        PYTHON_SOLID_ADJACENCY( 3 );
+        do_define_solid_adjacency< 3 >( module );
     }
 } // namespace geode

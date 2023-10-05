@@ -25,27 +25,33 @@
 
 #include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
 
-#define PYTHON_SURFACE_VERTEX_MANIFOLD( dimension )                            \
-    const auto name##dimension =                                               \
-        "SurfaceMeshVertexManifold" + std::to_string( dimension ) + "D";       \
-    pybind11::class_< SurfaceMeshVertexManifold##dimension##D >(               \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const SurfaceMesh< dimension >& >() )            \
-        .def( pybind11::init< const SurfaceMesh< dimension >&, bool >() )      \
-        .def( "mesh_vertices_are_manifold",                                    \
-            &SurfaceMeshVertexManifold##dimension##D::                         \
-                mesh_vertices_are_manifold )                                   \
-        .def( "nb_non_manifold_vertices",                                      \
-            &SurfaceMeshVertexManifold##dimension##D::                         \
-                nb_non_manifold_vertices )                                     \
-        .def( "non_manifold_vertices",                                         \
-            &SurfaceMeshVertexManifold##dimension##D::non_manifold_vertices )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_surface_vertex_manifold( pybind11::module& module )
+    {
+        using SurfaceMesh = geode::SurfaceMesh< dimension >;
+        using SurfaceMeshVertexManifold =
+            geode::SurfaceMeshVertexManifold< dimension >;
+        const auto name =
+            "SurfaceMeshVertexManifold" + std::to_string( dimension ) + "D";
+        pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
+            .def( pybind11::init< const SurfaceMesh&, bool >() )
+            .def( "mesh_vertices_are_manifold",
+                &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
+            .def( "nb_non_manifold_vertices",
+                &SurfaceMeshVertexManifold::nb_non_manifold_vertices )
+            .def( "non_manifold_vertices",
+                &SurfaceMeshVertexManifold::non_manifold_vertices );
+    }
+} // namespace
 
 namespace geode
 {
     void define_surface_vertex_manifold( pybind11::module& module )
     {
-        PYTHON_SURFACE_VERTEX_MANIFOLD( 2 );
-        PYTHON_SURFACE_VERTEX_MANIFOLD( 3 );
+        do_define_surface_vertex_manifold< 2 >( module );
+        do_define_surface_vertex_manifold< 3 >( module );
     }
 } // namespace geode

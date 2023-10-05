@@ -25,21 +25,30 @@
 
 #include <geode/inspector/edgedcurve_inspector.h>
 
-#define PYTHON_EDGEDCURVE_INSPECTOR( dimension )                               \
-    const auto name##dimension =                                               \
-        "EdgedCurveInspector" + std::to_string( dimension ) + "D";             \
-    pybind11::class_< EdgedCurveInspector##dimension##D,                       \
-        EdgedCurveColocation##dimension##D,                                    \
-        EdgedCurveDegeneration##dimension##D >(                                \
-        module, name##dimension.c_str() )                                      \
-        .def( pybind11::init< const EdgedCurve< dimension >& >() )             \
-        .def( pybind11::init< const EdgedCurve< dimension >&, bool >() )
+namespace
+{
+    template < geode::index_t dimension >
+    void do_define_edgedcurve_inspector( pybind11::module& module )
+    {
+        using EdgedCurve = geode::EdgedCurve< dimension >;
+        using EdgedCurveInspector = geode::EdgedCurveInspector< dimension >;
+        using EdgedCurveColocation = geode::EdgedCurveColocation< dimension >;
+        using EdgedCurveDegeneration =
+            geode::EdgedCurveDegeneration< dimension >;
+        const auto name =
+            "EdgedCurveInspector" + std::to_string( dimension ) + "D";
+        pybind11::class_< EdgedCurveInspector, EdgedCurveColocation,
+            EdgedCurveDegeneration >( module, name.c_str() )
+            .def( pybind11::init< const EdgedCurve& >() )
+            .def( pybind11::init< const EdgedCurve&, bool >() );
+    }
+} // namespace
 
 namespace geode
 {
     void define_edgedcurve_inspector( pybind11::module& module )
     {
-        PYTHON_EDGEDCURVE_INSPECTOR( 2 );
-        PYTHON_EDGEDCURVE_INSPECTOR( 3 );
+        do_define_edgedcurve_inspector< 2 >( module );
+        do_define_edgedcurve_inspector< 3 >( module );
     }
 } // namespace geode
