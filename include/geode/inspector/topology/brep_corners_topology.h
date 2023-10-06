@@ -23,9 +23,9 @@
 
 #pragma once
 
-#include <geode/inspector/common.h>
-#include <geode\model\mixin\core\vertex_identifier.h>
+#include <vector>
 
+#include <geode/inspector/common.h>
 namespace geode
 {
     struct ComponentMeshVertex;
@@ -36,10 +36,11 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api CornerInspectionResult
     {
-        std::vector< ComponentMeshVertex > corners_not_linked_to_unique_vertex;
-        std::vector< index_t > multiple_corners_unique_vertices;
-        std::vector< index_t > multiple_internals_corner_vertices;
-        std::vector< index_t > not_internal_nor_boundary_corner_vertices;
+        std::vector< ComponentMeshVertex >
+            corners_not_linked_to_unique_vertex{};
+        std::vector< index_t > multiple_corners_unique_vertices{};
+        std::vector< index_t > multiple_internals_corner_vertices{};
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices{};
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology
