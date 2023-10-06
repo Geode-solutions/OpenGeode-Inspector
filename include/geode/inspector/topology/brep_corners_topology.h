@@ -24,14 +24,24 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode\model\mixin\core\vertex_identifier.h>
 
 namespace geode
 {
+    struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api CornerInspectionResult
+    {
+        std::vector< ComponentMeshVertex > corners_not_linked_to_unique_vertex;
+        std::vector< index_t > multiple_corners_unique_vertices;
+        std::vector< index_t > multiple_internals_corner_vertices;
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices;
+    };
+
     class opengeode_inspector_inspector_api BRepCornersTopology
     {
     public:
@@ -60,6 +70,8 @@ namespace geode
 
         bool corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
+
+        CornerInspectionResult inspect_corners() const;
 
     private:
         const BRep& brep_;

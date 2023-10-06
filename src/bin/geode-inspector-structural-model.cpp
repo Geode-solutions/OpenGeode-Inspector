@@ -83,6 +83,7 @@ void inspect_model( const geode::StructuralModel& model )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector model_inspector{ model, verbose };
+    auto result = model_inspector.inspect_brep();
     absl::InlinedVector< async::task< void >, 27 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
@@ -120,22 +121,21 @@ void inspect_model( const geode::StructuralModel& model )
     }
     if( absl::GetFlag( FLAGS_corners ) )
     {
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.multiple_corners_unique_vertices().size();
+                result.corners.multiple_corners_unique_vertices.size();
             geode::Logger::info(
                 nb, " unique vertices associated to multiple corners." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.multiple_internals_corner_vertices().size();
+                result.corners.multiple_internals_corner_vertices.size();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "with multiple internals." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.not_internal_nor_boundary_corner_vertices()
-                    .size();
+                result.corners.not_internal_nor_boundary_corner_vertices.size();
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );

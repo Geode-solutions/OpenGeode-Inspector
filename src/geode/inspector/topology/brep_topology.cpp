@@ -298,6 +298,12 @@ namespace geode
     {
         return impl_->brep_unique_vertices_are_linked_to_a_component_vertex();
     }
+    BRepInspectionResult BRepTopologyInspector::inspect_brep() const
+    {
+        BRepInspectionResult result;
+        result.corners = inspect_corners();
+        return result;
+    }
 
     std::vector< ComponentMeshVertex > BRepTopologyInspector::
         component_vertices_not_linked_to_a_unique_vertex() const
@@ -322,48 +328,6 @@ namespace geode
                 || !brep_vertex_lines_topology_is_valid( unique_vertex_id )
                 || !brep_vertex_surfaces_topology_is_valid( unique_vertex_id )
                 || !brep_vertex_blocks_topology_is_valid( unique_vertex_id ) )
-            {
-                invalid_unique_vertices.push_back( unique_vertex_id );
-            }
-        }
-        return invalid_unique_vertices;
-    }
-
-    std::vector< index_t >
-        BRepTopologyInspector::multiple_corners_unique_vertices() const
-    {
-        std::vector< index_t > invalid_unique_vertices;
-        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
-        {
-            if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
-            {
-                invalid_unique_vertices.push_back( unique_vertex_id );
-            }
-        }
-        return invalid_unique_vertices;
-    }
-
-    std::vector< index_t >
-        BRepTopologyInspector::multiple_internals_corner_vertices() const
-    {
-        std::vector< index_t > invalid_unique_vertices;
-        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
-        {
-            if( corner_has_multiple_embeddings( unique_vertex_id ) )
-            {
-                invalid_unique_vertices.push_back( unique_vertex_id );
-            }
-        }
-        return invalid_unique_vertices;
-    }
-
-    std::vector< index_t >
-        BRepTopologyInspector::not_internal_nor_boundary_corner_vertices() const
-    {
-        std::vector< index_t > invalid_unique_vertices;
-        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
-        {
-            if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
                 invalid_unique_vertices.push_back( unique_vertex_id );
             }

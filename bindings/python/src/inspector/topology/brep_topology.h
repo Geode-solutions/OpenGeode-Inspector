@@ -47,13 +47,13 @@ namespace geode
             .def( "invalid_components_topology_unique_vertices",
                 &BRepTopologyInspector::
                     invalid_components_topology_unique_vertices )
-            .def( "multiple_corners_unique_vertices",
-                &BRepTopologyInspector::multiple_corners_unique_vertices )
-            .def( "multiple_internals_corner_vertices",
-                &BRepTopologyInspector::multiple_internals_corner_vertices )
-            .def( "not_internal_nor_boundary_corner_vertices",
-                &BRepTopologyInspector::
-                    not_internal_nor_boundary_corner_vertices )
+            /*           .def( "multiple_corners_unique_vertices",
+                           &BRepTopologyInspector::multiple_corners_unique_vertices
+               ) .def( "multiple_internals_corner_vertices",
+                           &BRepTopologyInspector::multiple_internals_corner_vertices
+               ) .def( "not_internal_nor_boundary_corner_vertices",
+                           &BRepTopologyInspector::
+                               not_internal_nor_boundary_corner_vertices )*/
             .def( "line_corners_without_boundary_status",
                 &BRepTopologyInspector::line_corners_without_boundary_status )
             .def( "part_of_not_boundary_nor_internal_line_unique_vertices",

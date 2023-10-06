@@ -101,44 +101,6 @@ geode::index_t check_invalid_components_topology_unique_vertices(
     return nb_issues;
 }
 
-geode::index_t check_multiple_corners_unique_vertices(
-    geode::BRepInspector& brep_inspector )
-{
-    geode::index_t nb_issues{ 0 };
-    const auto multiple_corners_unique_vertices =
-        brep_inspector.multiple_corners_unique_vertices();
-    geode::Logger::info( "There are ", multiple_corners_unique_vertices.size(),
-        " vertices with multiple corners." );
-    nb_issues += multiple_corners_unique_vertices.size();
-    return nb_issues;
-}
-
-geode::index_t check_multiple_internals_corner_vertices(
-    geode::BRepInspector& brep_inspector )
-{
-    geode::index_t nb_issues{ 0 };
-    const auto multiple_internals_corner_vertices =
-        brep_inspector.multiple_internals_corner_vertices();
-    geode::Logger::info( "There are ",
-        multiple_internals_corner_vertices.size(),
-        " vertices with multiple internals." );
-    nb_issues += multiple_internals_corner_vertices.size();
-    return nb_issues;
-}
-
-geode::index_t check_not_internal_nor_boundary_corner_vertices(
-    geode::BRepInspector& brep_inspector )
-{
-    geode::index_t nb_issues{ 0 };
-    const auto not_internal_nor_boundary_corner_vertices =
-        brep_inspector.not_internal_nor_boundary_corner_vertices();
-    geode::Logger::info( "There are ",
-        not_internal_nor_boundary_corner_vertices.size(),
-        " corner vertices with no boundary nor internal property." );
-    nb_issues += not_internal_nor_boundary_corner_vertices.size();
-    return nb_issues;
-}
-
 geode::index_t check_line_corners_without_boundary_status(
     geode::BRepInspector& brep_inspector )
 {
@@ -295,10 +257,21 @@ geode::index_t launch_topological_validity_checks(
     geode::BRepInspector& brep_inspector )
 {
     geode::index_t nb_issues{ 0 };
-    nb_issues += check_multiple_corners_unique_vertices( brep_inspector );
-    nb_issues += check_multiple_internals_corner_vertices( brep_inspector );
+    auto result = brep_inspector.inspect_brep();
+
+    nb_issues += result.corners.multiple_corners_unique_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.multiple_corners_unique_vertices.size(),
+        " vertices with multiple corners." );
+    nb_issues += result.corners.multiple_internals_corner_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.multiple_internals_corner_vertices.size(),
+        " vertices with multiple internals." );
     nb_issues +=
-        check_not_internal_nor_boundary_corner_vertices( brep_inspector );
+        result.corners.not_internal_nor_boundary_corner_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.multiple_internals_corner_vertices.size(),
+        " corner vertices with no boundary nor internal property." );
     nb_issues += check_line_corners_without_boundary_status( brep_inspector );
     nb_issues += check_part_of_not_boundary_nor_internal_line_unique_vertices(
         brep_inspector );

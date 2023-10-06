@@ -170,4 +170,38 @@ namespace geode
         }
         return false;
     }
+
+    CornerInspectionResult BRepCornersTopology::inspect_corners() const
+    {
+        CornerInspectionResult result;
+        for( const auto& corner : brep_.corners() )
+        {
+            geode::ComponentMeshVertex mesh_vertex{ corner.component_id(), 0 };
+            if( brep_.unique_vertex( mesh_vertex ) == geode::NO_ID )
+            {
+                result.corners_not_linked_to_unique_vertex.push_back(
+                    mesh_vertex );
+            }
+        }
+        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
+        {
+            if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
+            {
+                result.multiple_corners_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_has_multiple_embeddings( unique_vertex_id ) )
+            {
+                result.multiple_internals_corner_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
+            {
+                result.not_internal_nor_boundary_corner_vertices.push_back(
+                    unique_vertex_id );
+            }
+        }
+        return result;
+    }
+
 } // namespace geode
