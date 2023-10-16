@@ -41,7 +41,10 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepInspectionResult
     {
-        CornerInspectionResult corners;
+        BRepCornersInspectionResult corners;
+        BRepLinesInspectionResult lines;
+        BRepSurfacesInspectionResult surfaces;
+        BRepBlocksInspectionResult blocks;
     };
     /*!
      * Class for inspecting the topology of a BRep model corners
@@ -81,38 +84,6 @@ namespace geode
 
         std::vector< index_t >
             invalid_components_topology_unique_vertices() const;
-
-        std::vector< index_t > line_corners_without_boundary_status() const;
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_lines_but_not_corner_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_surface_with_invalid_internal_topology_unique_vertices()
-                const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_multiple_surfaces_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_and_not_on_surface_border_unique_vertices() const;
-
-        std::vector< index_t > part_of_invalid_blocks_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

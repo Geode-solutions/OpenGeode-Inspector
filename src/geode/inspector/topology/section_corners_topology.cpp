@@ -172,4 +172,36 @@ namespace geode
         }
         return false;
     }
+
+    SectionCornersInspectionResult
+        SectionCornersTopology::inspect_corners() const
+    {
+        SectionCornersInspectionResult result;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
+            {
+                result.multiple_corners_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_has_multiple_embeddings( unique_vertex_id ) )
+            {
+                result.multiple_internals_corner_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
+            {
+                result.not_internal_nor_boundary_corner_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_is_part_of_line_but_not_boundary( unique_vertex_id ) )
+            {
+                result.line_corners_without_boundary_status.push_back(
+                    unique_vertex_id );
+            }
+        }
+        return result;
+    }
+
 } // namespace geode

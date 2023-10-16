@@ -381,4 +381,42 @@ namespace geode
         }
         return false;
     }
+    BRepSurfacesInspectionResult BRepSurfacesTopology::inspect_surfaces() const
+    {
+        BRepSurfacesInspectionResult result;
+        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_not_boundary_nor_internal_surface(
+                    unique_vertex_id ) )
+            {
+                result.part_of_not_boundary_nor_internal_surface_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+            if( vertex_is_part_of_surface_with_invalid_internal_topology(
+                    unique_vertex_id ) )
+            {
+                result
+                    .part_of_surface_with_invalid_internal_topology_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+            if( vertex_is_part_of_invalid_unique_surface( unique_vertex_id ) )
+            {
+                result.part_of_invalid_unique_surface_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( vertex_is_part_of_invalid_multiple_surfaces(
+                    unique_vertex_id ) )
+            {
+                result.part_of_invalid_multiple_surfaces_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+            if( vertex_is_part_of_line_and_not_on_surface_border(
+                    unique_vertex_id ) )
+            {
+                result.part_of_line_and_not_on_surface_border_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+        }
+        return result;
+    }
 } // namespace geode

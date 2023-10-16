@@ -32,6 +32,12 @@ namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api SectionSurfacesInspectionResult
+    {
+        std::vector< index_t > part_of_invalid_surfaces_unique_vertices{};
+        std::vector< index_t >
+            part_of_line_and_not_on_surface_border_unique_vertices{};
+    };
     /*!
      * Class for inspecting the topology of a Section model surfaces through
      * its unique vertices
@@ -57,6 +63,8 @@ namespace geode
 
         bool vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const;
+
+        SectionSurfacesInspectionResult inspect_surfaces() const;
 
     private:
         const Section& section_;

@@ -27,8 +27,79 @@
 
 namespace geode
 {
+
     void define_brep_topology_inspector( pybind11::module& module )
     {
+        pybind11::class_< BRepCornersInspectionResult >(
+            module, "BRepCornersInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "multiple_corners_unique_vertices",
+                &BRepCornersInspectionResult::multiple_corners_unique_vertices )
+            .def_readwrite( "multiple_internals_corner_vertices",
+                &BRepCornersInspectionResult::
+                    multiple_internals_corner_vertices )
+            .def_readwrite( "not_internal_nor_boundary_corner_vertices",
+                &BRepCornersInspectionResult::
+                    not_internal_nor_boundary_corner_vertices )
+            .def_readwrite( "line_corners_without_boundary_status",
+                &BRepCornersInspectionResult::
+                    line_corners_without_boundary_status );
+
+        pybind11::class_< BRepLinesInspectionResult >(
+            module, "BRepLinesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "part_of_not_boundary_nor_internal_line_unique_vertices",
+                &BRepLinesInspectionResult::
+                    part_of_not_boundary_nor_internal_line_unique_vertices )
+            .def_readwrite(
+                "part_of_line_with_invalid_internal_topology_unique_vertices",
+                &BRepLinesInspectionResult::
+                    part_of_line_with_invalid_internal_topology_unique_vertices )
+            .def_readwrite( "part_of_invalid_unique_line_unique_vertices",
+                &BRepLinesInspectionResult::
+                    part_of_invalid_unique_line_unique_vertices )
+            .def_readwrite( "part_of_lines_but_not_corner_unique_vertices",
+                &BRepLinesInspectionResult::
+                    part_of_lines_but_not_corner_unique_vertices );
+
+        pybind11::class_< BRepSurfacesInspectionResult >(
+            module, "BRepSurfacesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "part_of_not_boundary_nor_internal_surface_unique_vertices",
+                &BRepSurfacesInspectionResult::
+                    part_of_not_boundary_nor_internal_surface_unique_vertices )
+            .def_readwrite( "part_of_surface_with_invalid_internal_topology_"
+                            "unique_vertices",
+                &BRepSurfacesInspectionResult::
+                    part_of_surface_with_invalid_internal_topology_unique_vertices )
+            .def_readwrite( "part_of_invalid_unique_surface_unique_vertices",
+                &BRepSurfacesInspectionResult::
+                    part_of_invalid_unique_surface_unique_vertices )
+            .def_readwrite( "part_of_invalid_multiple_surfaces_unique_vertices",
+                &BRepSurfacesInspectionResult::
+                    part_of_invalid_multiple_surfaces_unique_vertices )
+            .def_readwrite(
+                "part_of_line_and_not_on_surface_border_unique_vertices",
+                &BRepSurfacesInspectionResult::
+                    part_of_line_and_not_on_surface_border_unique_vertices );
+
+        pybind11::class_< BRepBlocksInspectionResult >(
+            module, "BRepBlocksInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "part_of_invalid_blocks_unique_vertices",
+                &BRepBlocksInspectionResult::
+                    part_of_invalid_blocks_unique_vertices );
+
+        pybind11::class_< BRepInspectionResult >(
+            module, "BRepInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "corners", &BRepInspectionResult::corners )
+            .def_readwrite( "lines", &BRepInspectionResult::lines )
+            .def_readwrite( "surfaces", &BRepInspectionResult::surfaces )
+            .def_readwrite( "blocks", &BRepInspectionResult::blocks );
+
         pybind11::class_< BRepTopologyInspector >(
             module, "BRepTopologyInspector" )
             .def( pybind11::init< const BRep& >() )
@@ -47,45 +118,6 @@ namespace geode
             .def( "invalid_components_topology_unique_vertices",
                 &BRepTopologyInspector::
                     invalid_components_topology_unique_vertices )
-            /*           .def( "multiple_corners_unique_vertices",
-                           &BRepTopologyInspector::multiple_corners_unique_vertices
-               ) .def( "multiple_internals_corner_vertices",
-                           &BRepTopologyInspector::multiple_internals_corner_vertices
-               ) .def( "not_internal_nor_boundary_corner_vertices",
-                           &BRepTopologyInspector::
-                               not_internal_nor_boundary_corner_vertices )*/
-            .def( "line_corners_without_boundary_status",
-                &BRepTopologyInspector::line_corners_without_boundary_status )
-            .def( "part_of_not_boundary_nor_internal_line_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_not_boundary_nor_internal_line_unique_vertices )
-            .def( "part_of_line_with_invalid_internal_topology_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_line_with_invalid_internal_topology_unique_vertices )
-            .def( "part_of_invalid_unique_line_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_invalid_unique_line_unique_vertices )
-            .def( "part_of_lines_but_not_corner_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_lines_but_not_corner_unique_vertices )
-            .def( "part_of_not_boundary_nor_internal_surface_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_not_boundary_nor_internal_surface_unique_vertices )
-            .def( "part_of_surface_with_invalid_internal_topology_unique_"
-                  "vertices",
-                &BRepTopologyInspector::
-                    part_of_surface_with_invalid_internal_topology_unique_vertices )
-            .def( "part_of_invalid_unique_surface_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_invalid_unique_surface_unique_vertices )
-            .def( "part_of_invalid_multiple_surfaces_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_invalid_multiple_surfaces_unique_vertices )
-            .def( "part_of_line_and_not_on_surface_border_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_line_and_not_on_surface_border_unique_vertices )
-            .def( "part_of_invalid_blocks_unique_vertices",
-                &BRepTopologyInspector::
-                    part_of_invalid_blocks_unique_vertices );
+            .def( "inspect_brep", &BRepTopologyInspector::inspect_brep );
     }
 } // namespace geode

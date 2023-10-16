@@ -32,6 +32,15 @@ namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api BRepLinesInspectionResult
+    {
+        std::vector< index_t >
+            part_of_not_boundary_nor_internal_line_unique_vertices{};
+        std::vector< index_t >
+            part_of_line_with_invalid_internal_topology_unique_vertices{};
+        std::vector< index_t > part_of_invalid_unique_line_unique_vertices{};
+        std::vector< index_t > part_of_lines_but_not_corner_unique_vertices{};
+    };
     /*!
      * Class for inspecting the topology of a BRep model lines through their
      * unique vertices
@@ -67,6 +76,8 @@ namespace geode
 
         bool vertex_has_lines_but_is_not_corner(
             index_t unique_vertex_index ) const;
+
+        BRepLinesInspectionResult inspect_lines() const;
 
     private:
         const BRep& brep_;

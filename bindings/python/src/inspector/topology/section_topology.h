@@ -29,6 +29,58 @@ namespace geode
 {
     void define_section_topology_inspector( pybind11::module& module )
     {
+        pybind11::class_< SectionCornersInspectionResult >(
+            module, "SectionCornersInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "multiple_corners_unique_vertices",
+                &SectionCornersInspectionResult::
+                    multiple_corners_unique_vertices )
+            .def_readwrite( "multiple_internals_corner_vertices",
+                &SectionCornersInspectionResult::
+                    multiple_internals_corner_vertices )
+            .def_readwrite( "not_internal_nor_boundary_corner_vertices",
+                &SectionCornersInspectionResult::
+                    not_internal_nor_boundary_corner_vertices )
+            .def_readwrite( "line_corners_without_boundary_status",
+                &SectionCornersInspectionResult::
+                    line_corners_without_boundary_status );
+
+        pybind11::class_< SectionLinesInspectionResult >(
+            module, "SectionLinesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "part_of_not_boundary_nor_internal_line_unique_vertices",
+                &SectionLinesInspectionResult::
+                    part_of_not_boundary_nor_internal_line_unique_vertices )
+            .def_readwrite(
+                "part_of_line_with_invalid_internal_topology_unique_vertices",
+                &SectionLinesInspectionResult::
+                    part_of_line_with_invalid_internal_topology_unique_vertices )
+            .def_readwrite( "part_of_invalid_unique_line_unique_vertices",
+                &SectionLinesInspectionResult::
+                    part_of_invalid_unique_line_unique_vertices )
+            .def_readwrite( "part_of_lines_but_not_corner_unique_vertices",
+                &SectionLinesInspectionResult::
+                    part_of_lines_but_not_corner_unique_vertices );
+
+        pybind11::class_< SectionSurfacesInspectionResult >(
+            module, "SectionSurfacesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "part_of_invalid_surfaces_unique_vertices",
+                &SectionSurfacesInspectionResult::
+                    part_of_invalid_surfaces_unique_vertices )
+            .def_readwrite(
+                "part_of_line_and_not_on_surface_border_unique_vertices",
+                &SectionSurfacesInspectionResult::
+                    part_of_line_and_not_on_surface_border_unique_vertices );
+
+        pybind11::class_< SectionInspectionResult >(
+            module, "SectionInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "corners", &SectionInspectionResult::corners )
+            .def_readwrite( "lines", &SectionInspectionResult::lines )
+            .def_readwrite( "surfaces", &SectionInspectionResult::surfaces );
+
         pybind11::class_< SectionTopologyInspector >(
             module, "SectionTopologyInspector" )
             .def( pybind11::init< const Section& >() )
@@ -47,33 +99,7 @@ namespace geode
             .def( "invalid_components_topology_unique_vertices",
                 &SectionTopologyInspector::
                     invalid_components_topology_unique_vertices )
-            .def( "multiple_corners_unique_vertices",
-                &SectionTopologyInspector::multiple_corners_unique_vertices )
-            .def( "multiple_internals_corner_vertices",
-                &SectionTopologyInspector::multiple_internals_corner_vertices )
-            .def( "not_internal_nor_boundary_corner_vertices",
-                &SectionTopologyInspector::
-                    not_internal_nor_boundary_corner_vertices )
-            .def( "line_corners_without_boundary_status",
-                &SectionTopologyInspector::
-                    line_corners_without_boundary_status )
-            .def( "part_of_not_boundary_nor_internal_line_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_not_boundary_nor_internal_line_unique_vertices )
-            .def( "part_of_line_with_invalid_internal_topology_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_line_with_invalid_internal_topology_unique_vertices )
-            .def( "part_of_invalid_unique_line_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_invalid_unique_line_unique_vertices )
-            .def( "part_of_lines_but_not_corner_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_lines_but_not_corner_unique_vertices )
-            .def( "part_of_invalid_surfaces_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_invalid_surfaces_unique_vertices )
-            .def( "part_of_line_and_not_on_surface_border_unique_vertices",
-                &SectionTopologyInspector::
-                    part_of_line_and_not_on_surface_border_unique_vertices );
+            .def(
+                "inspect_section", &SectionTopologyInspector::inspect_section );
     }
 } // namespace geode

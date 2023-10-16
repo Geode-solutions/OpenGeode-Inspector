@@ -32,6 +32,14 @@ namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api SectionCornersInspectionResult
+    {
+        std::vector< index_t > multiple_corners_unique_vertices{};
+        std::vector< index_t > multiple_internals_corner_vertices{};
+        std::vector< index_t > not_internal_nor_boundary_corner_vertices{};
+        std::vector< index_t > line_corners_without_boundary_status{};
+    };
+
     class opengeode_inspector_inspector_api SectionCornersTopology
     {
     public:
@@ -61,6 +69,8 @@ namespace geode
 
         bool corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
+
+        SectionCornersInspectionResult inspect_corners() const;
 
     private:
         const Section& section_;

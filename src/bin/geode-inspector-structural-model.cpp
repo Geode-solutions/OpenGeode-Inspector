@@ -140,41 +140,40 @@ void inspect_model( const geode::StructuralModel& model )
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.line_corners_without_boundary_status().size();
+                result.corners.line_corners_without_boundary_status.size();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "part of a line but not boundary of it." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_lines ) )
     {
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_not_boundary_nor_internal_line_unique_vertices()
+                result.lines
+                    .part_of_not_boundary_nor_internal_line_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a line which is "
                                      "neither internal nor boundary." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_line_with_invalid_internal_topology_unique_vertices()
+                result.lines
+                    .part_of_line_with_invalid_internal_topology_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a line with "
                                      "invalid internal topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.part_of_invalid_unique_line_unique_vertices()
-                    .size();
+                result.lines.part_of_invalid_unique_line_unique_vertices.size();
             geode::Logger::info( nb, " unique vertices part of a unique line "
                                      "with invalid topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.part_of_lines_but_not_corner_unique_vertices()
+                result.lines.part_of_lines_but_not_corner_unique_vertices
                     .size();
             geode::Logger::info( nb,
                 " unique vertices part of multiple lines but not a corner." );
@@ -182,41 +181,40 @@ void inspect_model( const geode::StructuralModel& model )
     }
     if( absl::GetFlag( FLAGS_surfaces ) )
     {
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_not_boundary_nor_internal_surface_unique_vertices()
+                result.surfaces
+                    .part_of_not_boundary_nor_internal_surface_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a surface which "
                                      "is neither internal nor boundary." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_surface_with_invalid_internal_topology_unique_vertices()
+                result.surfaces
+                    .part_of_surface_with_invalid_internal_topology_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a surface with "
                                      "invalid internal topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.part_of_invalid_unique_surface_unique_vertices()
+                result.surfaces.part_of_invalid_unique_surface_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a unique "
                                      "surface with invalid topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_invalid_multiple_surfaces_unique_vertices()
-                    .size();
+                result.surfaces
+                    .part_of_invalid_multiple_surfaces_unique_vertices.size();
             geode::Logger::info( nb, " unique vertices part of multiple "
                                      "surfaces with invalid topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector
-                    .part_of_line_and_not_on_surface_border_unique_vertices()
+                result.surfaces
+                    .part_of_line_and_not_on_surface_border_unique_vertices
                     .size();
             geode::Logger::info( nb,
                 " unique vertices part of a line and a surface but for "
@@ -226,9 +224,9 @@ void inspect_model( const geode::StructuralModel& model )
     }
     if( absl::GetFlag( FLAGS_blocks ) )
     {
-        tasks.emplace_back( async::spawn( [&model_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                model_inspector.part_of_invalid_blocks_unique_vertices().size();
+                result.blocks.part_of_invalid_blocks_unique_vertices.size();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
         } ) );

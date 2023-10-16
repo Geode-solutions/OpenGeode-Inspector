@@ -33,6 +33,10 @@ namespace geode
 namespace geode
 {
 
+    struct opengeode_inspector_inspector_api BRepBlocksInspectionResult
+    {
+        std::vector< index_t > part_of_invalid_blocks_unique_vertices{};
+    };
     /*!
      * Class for inspecting the topology of a BRep model blocks through
      * their unique vertices
@@ -54,6 +58,8 @@ namespace geode
          */
         bool brep_vertex_blocks_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        BRepBlocksInspectionResult inspect_blocks() const;
 
     private:
         const BRep& brep_;

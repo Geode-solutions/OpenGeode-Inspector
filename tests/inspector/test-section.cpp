@@ -94,7 +94,7 @@ geode::index_t check_invalid_components_topology_unique_vertices(
     return invalid_components_unique_vertices.size();
 }
 
-geode::index_t check_multiple_corners_unique_vertices(
+/*geode::index_t check_multiple_corners_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto multiple_corners_unique_vertices =
@@ -107,9 +107,9 @@ geode::index_t check_multiple_corners_unique_vertices(
             vertex_index, " is associated to multiple corners." );
     }
     return multiple_corners_unique_vertices.size();
-}
+}*/
 
-geode::index_t check_multiple_internals_corner_vertices(
+/*eode::index_t check_multiple_internals_corner_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto multiple_internals_corner_vertices =
@@ -123,9 +123,9 @@ geode::index_t check_multiple_internals_corner_vertices(
             vertex_index, " is a corner associated with multiple embeddings." );
     }
     return multiple_internals_corner_vertices.size();
-}
+}*/
 
-geode::index_t check_not_internal_nor_boundary_corner_vertices(
+/*geode::index_t check_not_internal_nor_boundary_corner_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto not_internal_nor_boundary_corner_vertices =
@@ -139,9 +139,9 @@ geode::index_t check_not_internal_nor_boundary_corner_vertices(
             vertex_index, " is neither internal nor a boundary." );
     }
     return not_internal_nor_boundary_corner_vertices.size();
-}
+}*/
 
-geode::index_t check_line_corners_without_boundary_status(
+/*geode::index_t check_line_corners_without_boundary_status(
     geode::SectionInspector& section_inspector )
 {
     const auto line_corners_without_boundary_status =
@@ -156,9 +156,9 @@ geode::index_t check_line_corners_without_boundary_status(
             " is a corner but has a line for which it is not a boundary." );
     }
     return line_corners_without_boundary_status.size();
-}
+}*/
 
-geode::index_t check_part_of_not_boundary_nor_internal_line_unique_vertices(
+/*geode::index_t check_part_of_not_boundary_nor_internal_line_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto part_of_not_boundary_nor_internal_line_unique_vertices =
@@ -175,9 +175,9 @@ geode::index_t check_part_of_not_boundary_nor_internal_line_unique_vertices(
             " is part of a line which is neither boundary nor internal." );
     }
     return part_of_not_boundary_nor_internal_line_unique_vertices.size();
-}
+}*/
 
-geode::index_t
+/*geode::index_t
     check_part_of_line_with_invalid_internal_topology_unique_vertices(
         geode::SectionInspector& section_inspector )
 {
@@ -195,9 +195,9 @@ geode::index_t
             " is part of a line with invalid internal properties." );
     }
     return part_of_line_with_invalid_internal_topology_unique_vertices.size();
-}
+}*/
 
-geode::index_t check_part_of_invalid_unique_line_unique_vertices(
+/*geode::index_t check_part_of_invalid_unique_line_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto part_of_invalid_unique_line_unique_vertices =
@@ -213,9 +213,9 @@ geode::index_t check_part_of_invalid_unique_line_unique_vertices(
             "properties." );
     }
     return part_of_invalid_unique_line_unique_vertices.size();
-}
+}*/
 
-geode::index_t check_part_of_lines_but_not_corner_unique_vertices(
+/*geode::index_t check_part_of_lines_but_not_corner_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto part_of_lines_but_not_corner_unique_vertices =
@@ -230,9 +230,9 @@ geode::index_t check_part_of_lines_but_not_corner_unique_vertices(
             vertex_index, " is part of multiple lines but is not a corner." );
     }
     return part_of_lines_but_not_corner_unique_vertices.size();
-}
+}*/
 
-geode::index_t check_part_of_invalid_surfaces_unique_vertices(
+/*geode::index_t check_part_of_invalid_surfaces_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto part_of_invalid_surfaces_unique_vertices =
@@ -246,9 +246,9 @@ geode::index_t check_part_of_invalid_surfaces_unique_vertices(
             vertex_index, " has invalid surfaces topology." );
     }
     return part_of_invalid_surfaces_unique_vertices.size();
-}
+}*/
 
-geode::index_t check_part_of_line_and_not_on_surface_border_unique_vertices(
+/*geode::index_t check_part_of_line_and_not_on_surface_border_unique_vertices(
     geode::SectionInspector& section_inspector )
 {
     const auto part_of_line_and_not_on_surface_border_unique_vertices =
@@ -267,31 +267,68 @@ geode::index_t check_part_of_line_and_not_on_surface_border_unique_vertices(
             "surface mesh." );
     }
     return part_of_line_and_not_on_surface_border_unique_vertices.size();
-}
+}*/
 
 geode::index_t launch_topological_validity_checks(
     geode::SectionInspector& section_inspector )
 {
     geode::index_t nb_errors{ 0 };
-    nb_errors += check_multiple_corners_unique_vertices( section_inspector );
-    nb_errors += check_multiple_internals_corner_vertices( section_inspector );
+    auto result = section_inspector.inspect_section();
+    nb_errors += result.corners.multiple_corners_unique_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.multiple_corners_unique_vertices.size(),
+        " vertices with multiple corners." );
+    nb_errors += result.corners.multiple_internals_corner_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.multiple_internals_corner_vertices.size(),
+        " vertices with multiple internals." );
     nb_errors +=
-        check_not_internal_nor_boundary_corner_vertices( section_inspector );
+        result.corners.not_internal_nor_boundary_corner_vertices.size();
+    geode::Logger::info( "There are ",
+        result.corners.not_internal_nor_boundary_corner_vertices.size(),
+        " corner vertices with no boundary nor internal property." );
+    nb_errors += result.corners.line_corners_without_boundary_status.size();
+    geode::Logger::info( "There are ",
+        result.corners.line_corners_without_boundary_status.size(),
+        " corner vertices part of a line but not its boundary." );
     nb_errors +=
-        check_line_corners_without_boundary_status( section_inspector );
-    nb_errors += check_part_of_not_boundary_nor_internal_line_unique_vertices(
-        section_inspector );
+        result.lines.part_of_not_boundary_nor_internal_line_unique_vertices
+            .size();
+    geode::Logger::info( "There are ",
+        result.lines.part_of_not_boundary_nor_internal_line_unique_vertices
+            .size(),
+        " vertices part of a line which is not boundary not internal." );
     nb_errors +=
-        check_part_of_invalid_unique_line_unique_vertices( section_inspector );
+        result.lines.part_of_invalid_unique_line_unique_vertices.size();
+    geode::Logger::info( "There are ",
+        result.lines.part_of_invalid_unique_line_unique_vertices.size(),
+        " vertices part of a unique line with invalid toplogy." );
+    ( section_inspector );
     nb_errors +=
-        check_part_of_lines_but_not_corner_unique_vertices( section_inspector );
+        result.lines.part_of_lines_but_not_corner_unique_vertices.size();
+    geode::Logger::info( "There are ",
+        result.lines.part_of_lines_but_not_corner_unique_vertices.size(),
+        " vertices part of multiple lines but not corner." );
     nb_errors +=
-        check_part_of_invalid_surfaces_unique_vertices( section_inspector );
-    nb_errors += check_part_of_line_and_not_on_surface_border_unique_vertices(
-        section_inspector );
+        result.lines.part_of_line_with_invalid_internal_topology_unique_vertices
+            .size();
+    geode::Logger::info( "There are ",
+        result.lines.part_of_line_with_invalid_internal_topology_unique_vertices
+            .size(),
+        " vertices part of lines with invalid internal property." );
     nb_errors +=
-        check_part_of_line_with_invalid_internal_topology_unique_vertices(
-            section_inspector );
+        result.surfaces.part_of_invalid_surfaces_unique_vertices.size();
+    geode::Logger::info( "There are ",
+        result.surfaces.part_of_invalid_surfaces_unique_vertices.size(),
+        " vertices with invalid surface topology." );
+    nb_errors +=
+        result.surfaces.part_of_line_and_not_on_surface_border_unique_vertices
+            .size();
+    geode::Logger::info( "There are ",
+        result.surfaces.part_of_line_and_not_on_surface_border_unique_vertices
+            .size(),
+        " vertices part of a line and a surface and not on the border of the "
+        "surface mesh." );
 
     OPENGEODE_EXCEPTION(
         nb_errors

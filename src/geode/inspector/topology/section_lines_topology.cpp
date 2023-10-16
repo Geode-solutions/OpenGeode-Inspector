@@ -242,4 +242,38 @@ namespace geode
         }
         return false;
     }
+
+    SectionLinesInspectionResult SectionLinesTopology::inspect_lines() const
+    {
+        SectionLinesInspectionResult result;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_not_boundary_nor_internal_line(
+                    unique_vertex_id ) )
+            {
+                result.part_of_not_boundary_nor_internal_line_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+            if( vertex_is_part_of_line_with_invalid_internal_topology(
+                    unique_vertex_id ) )
+            {
+                result
+                    .part_of_line_with_invalid_internal_topology_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+            if( vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
+            {
+                result.part_of_invalid_unique_line_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
+            {
+                result.part_of_lines_but_not_corner_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+        }
+        return result;
+    }
+
 } // namespace geode

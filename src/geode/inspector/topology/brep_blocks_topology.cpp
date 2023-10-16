@@ -268,4 +268,17 @@ namespace geode
         }
         return true;
     }
+    BRepBlocksInspectionResult BRepBlocksTopology::inspect_blocks() const
+    {
+        BRepBlocksInspectionResult result;
+        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
+        {
+            if( !brep_vertex_blocks_topology_is_valid( unique_vertex_id ) )
+            {
+                result.part_of_invalid_blocks_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+        }
+        return result;
+    }
 } // namespace geode

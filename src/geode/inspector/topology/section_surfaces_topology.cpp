@@ -133,4 +133,27 @@ namespace geode
         }
         return false;
     }
+    SectionSurfacesInspectionResult
+        SectionSurfacesTopology::inspect_surfaces() const
+    {
+        SectionSurfacesInspectionResult result;
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( vertex_is_part_of_invalid_surfaces_topology(
+                    unique_vertex_id ) )
+            {
+                result.part_of_invalid_surfaces_unique_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( vertex_is_part_of_line_and_not_on_surface_border(
+                    unique_vertex_id ) )
+            {
+                result.part_of_line_and_not_on_surface_border_unique_vertices
+                    .push_back( unique_vertex_id );
+            }
+        }
+        return result;
+    }
+
 } // namespace geode

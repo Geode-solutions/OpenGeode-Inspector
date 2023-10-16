@@ -67,8 +67,8 @@ def check_invalid_components_topology_unique_vertices(section_inspector):
     return len(invalid_components_unique_vertices)
 
 
-def check_multiple_corners_unique_vertices(section_inspector):
-    multiple_corners_unique_vertices = section_inspector.multiple_corners_unique_vertices()
+def check_multiple_corners_unique_vertices(inspection_result):
+    multiple_corners_unique_vertices = inspection_result.corners.multiple_corners_unique_vertices
     print("There are ", len(multiple_corners_unique_vertices),
           " vertices with multiple corners.")
     for vertex_index in multiple_corners_unique_vertices:
@@ -77,8 +77,8 @@ def check_multiple_corners_unique_vertices(section_inspector):
     return len(multiple_corners_unique_vertices)
 
 
-def check_multiple_internals_corner_vertices(section_inspector):
-    multiple_internals_corner_vertices = section_inspector.multiple_internals_corner_vertices()
+def check_multiple_internals_corner_vertices(inspection_result):
+    multiple_internals_corner_vertices = inspection_result.corners.multiple_internals_corner_vertices
     print("There are ", len(multiple_internals_corner_vertices),
           " vertices with multiple internals.")
     for vertex_index in multiple_internals_corner_vertices:
@@ -87,8 +87,8 @@ def check_multiple_internals_corner_vertices(section_inspector):
     return len(multiple_internals_corner_vertices)
 
 
-def check_not_internal_nor_boundary_corner_vertices(section_inspector):
-    not_internal_nor_boundary_corner_vertices = section_inspector.not_internal_nor_boundary_corner_vertices()
+def check_not_internal_nor_boundary_corner_vertices(inspection_result):
+    not_internal_nor_boundary_corner_vertices = inspection_result.corners.not_internal_nor_boundary_corner_vertices
     print("There are ", len(not_internal_nor_boundary_corner_vertices),
           " corner vertices with no boundary nor internal property.")
     for vertex_index in not_internal_nor_boundary_corner_vertices:
@@ -97,8 +97,8 @@ def check_not_internal_nor_boundary_corner_vertices(section_inspector):
     return len(not_internal_nor_boundary_corner_vertices)
 
 
-def check_line_corners_without_boundary_status(section_inspector):
-    line_corners_without_boundary_status = section_inspector.line_corners_without_boundary_status()
+def check_line_corners_without_boundary_status(inspection_result):
+    line_corners_without_boundary_status = inspection_result.corners.line_corners_without_boundary_status
     print("There are ", len(line_corners_without_boundary_status),
           " corner vertices part of a line but not its boundary.")
     for vertex_index in line_corners_without_boundary_status:
@@ -107,8 +107,8 @@ def check_line_corners_without_boundary_status(section_inspector):
     return len(line_corners_without_boundary_status)
 
 
-def check_part_of_not_boundary_nor_internal_line_unique_vertices(section_inspector):
-    part_of_not_boundary_nor_internal_line_unique_vertices = section_inspector.part_of_not_boundary_nor_internal_line_unique_vertices()
+def check_part_of_not_boundary_nor_internal_line_unique_vertices(inspection_result):
+    part_of_not_boundary_nor_internal_line_unique_vertices = inspection_result.lines.part_of_not_boundary_nor_internal_line_unique_vertices
     print("There are ", len(part_of_not_boundary_nor_internal_line_unique_vertices),
           " vertices part of a line which is not boundary not internal.")
     for vertex_index in part_of_not_boundary_nor_internal_line_unique_vertices:
@@ -117,8 +117,8 @@ def check_part_of_not_boundary_nor_internal_line_unique_vertices(section_inspect
     return len(part_of_not_boundary_nor_internal_line_unique_vertices)
 
 
-def check_part_of_line_with_invalid_internal_topology_unique_vertices(section_inspector):
-    part_of_line_with_invalid_internal_topology_unique_vertices = section_inspector.part_of_line_with_invalid_internal_topology_unique_vertices()
+def check_part_of_line_with_invalid_internal_topology_unique_vertices(inspection_result):
+    part_of_line_with_invalid_internal_topology_unique_vertices = inspection_result.lines.part_of_line_with_invalid_internal_topology_unique_vertices
     print("There are ", len(part_of_line_with_invalid_internal_topology_unique_vertices),
           " vertices part of lines with invalid internal property.")
     for vertex_index in part_of_line_with_invalid_internal_topology_unique_vertices:
@@ -127,8 +127,8 @@ def check_part_of_line_with_invalid_internal_topology_unique_vertices(section_in
     return len(part_of_line_with_invalid_internal_topology_unique_vertices)
 
 
-def check_part_of_invalid_unique_line_unique_vertices(section_inspector):
-    part_of_invalid_unique_line_unique_vertices = section_inspector.part_of_invalid_unique_line_unique_vertices()
+def check_part_of_invalid_unique_line_unique_vertices(inspection_result):
+    part_of_invalid_unique_line_unique_vertices = inspection_result.lines.part_of_invalid_unique_line_unique_vertices
     print("There are ", len(part_of_invalid_unique_line_unique_vertices),
           " vertices part of a unique line with invalid toplogy.")
     for vertex_index in part_of_invalid_unique_line_unique_vertices:
@@ -137,8 +137,8 @@ def check_part_of_invalid_unique_line_unique_vertices(section_inspector):
     return len(part_of_invalid_unique_line_unique_vertices)
 
 
-def check_part_of_lines_but_not_corner_unique_vertices(section_inspector):
-    part_of_lines_but_not_corner_unique_vertices = section_inspector.part_of_lines_but_not_corner_unique_vertices()
+def check_part_of_lines_but_not_corner_unique_vertices(inspection_result):
+    part_of_lines_but_not_corner_unique_vertices = inspection_result.lines.part_of_lines_but_not_corner_unique_vertices
     print("There are ", len(part_of_lines_but_not_corner_unique_vertices),
           " vertices part of multiple lines but not corner.")
     for vertex_index in part_of_lines_but_not_corner_unique_vertices:
@@ -147,8 +147,8 @@ def check_part_of_lines_but_not_corner_unique_vertices(section_inspector):
     return len(part_of_lines_but_not_corner_unique_vertices)
 
 
-def check_part_of_invalid_surfaces_unique_vertices(section_inspector):
-    part_of_invalid_surfaces_unique_vertices = section_inspector.part_of_invalid_surfaces_unique_vertices()
+def check_part_of_invalid_surfaces_unique_vertices(inspection_result):
+    part_of_invalid_surfaces_unique_vertices = inspection_result.surfaces.part_of_invalid_surfaces_unique_vertices
     print("There are ", len(part_of_invalid_surfaces_unique_vertices),
           " vertices with invalid surface topology.")
     for vertex_index in part_of_invalid_surfaces_unique_vertices:
@@ -157,8 +157,8 @@ def check_part_of_invalid_surfaces_unique_vertices(section_inspector):
     return len(part_of_invalid_surfaces_unique_vertices)
 
 
-def check_part_of_line_and_not_on_surface_border_unique_vertices(section_inspector):
-    part_of_line_and_not_on_surface_border_unique_vertices = section_inspector.part_of_line_and_not_on_surface_border_unique_vertices()
+def check_part_of_line_and_not_on_surface_border_unique_vertices(inspection_result):
+    part_of_line_and_not_on_surface_border_unique_vertices = inspection_result.surfaces.part_of_line_and_not_on_surface_border_unique_vertices
     print("There are ", len(part_of_line_and_not_on_surface_border_unique_vertices),
           " vertices part of a line and a surface but not on surface mesh border.")
     for vertex_index in part_of_line_and_not_on_surface_border_unique_vertices:
@@ -168,21 +168,22 @@ def check_part_of_line_and_not_on_surface_border_unique_vertices(section_inspect
 
 
 def launch_topological_validity_checks(section_inspector):
-    nb_issues = check_multiple_corners_unique_vertices(section_inspector)
-    nb_issues += check_multiple_internals_corner_vertices(section_inspector)
+    inspection_result = section_inspector.inspect_section()
+    nb_issues = check_multiple_corners_unique_vertices(inpection_result)
+    nb_issues += check_multiple_internals_corner_vertices(inpection_result)
     nb_issues += check_not_internal_nor_boundary_corner_vertices(
-        section_inspector)
-    nb_issues += check_line_corners_without_boundary_status(section_inspector)
+        inpection_result)
+    nb_issues += check_line_corners_without_boundary_status(inpection_result)
     nb_issues += check_part_of_not_boundary_nor_internal_line_unique_vertices(
-        section_inspector)
+        inpection_result)
     nb_issues += check_part_of_invalid_unique_line_unique_vertices(
-        section_inspector)
+        inpection_result)
     nb_issues += check_part_of_lines_but_not_corner_unique_vertices(
-        section_inspector)
+        inpection_result)
     nb_issues += check_part_of_invalid_surfaces_unique_vertices(
-        section_inspector)
+        inpection_result)
     nb_issues += check_part_of_line_with_invalid_internal_topology_unique_vertices(
-        section_inspector)
+        inpection_result)
 
     if nb_issues != check_invalid_components_topology_unique_vertices(section_inspector):
         raise ValueError("[Test] Wrong number of invalid checks.")

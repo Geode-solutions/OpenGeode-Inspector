@@ -66,6 +66,7 @@ void inspect_section( const geode::Section& section )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SectionInspector section_inspector{ section, verbose };
+    auto result = section_inspector.inspect_section();
     absl::InlinedVector< async::task< void >, 20 > tasks;
     if( absl::GetFlag( FLAGS_component_linking ) )
     {
@@ -104,61 +105,59 @@ void inspect_section( const geode::Section& section )
     }
     if( absl::GetFlag( FLAGS_corners ) )
     {
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.multiple_corners_unique_vertices().size();
+                result.corners.multiple_corners_unique_vertices.size();
             geode::Logger::info(
                 nb, " unique vertices associated to multiple corners." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.multiple_internals_corner_vertices().size();
+                result.corners.multiple_internals_corner_vertices.size();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "with multiple internals." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.not_internal_nor_boundary_corner_vertices()
-                    .size();
+                result.corners.not_internal_nor_boundary_corner_vertices.size();
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.line_corners_without_boundary_status().size();
+                result.corners.line_corners_without_boundary_status.size();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "part of a line but not boundary of it." );
         } ) );
     }
     if( absl::GetFlag( FLAGS_lines ) )
     {
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector
-                    .part_of_not_boundary_nor_internal_line_unique_vertices()
+                result.lines
+                    .part_of_not_boundary_nor_internal_line_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a line which is "
                                      "neither internal nor boundary." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector
-                    .part_of_line_with_invalid_internal_topology_unique_vertices()
+                result.lines
+                    .part_of_line_with_invalid_internal_topology_unique_vertices
                     .size();
             geode::Logger::info( nb, " unique vertices part of a line with "
                                      "invalid internal topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.part_of_invalid_unique_line_unique_vertices()
-                    .size();
+                result.lines.part_of_invalid_unique_line_unique_vertices.size();
             geode::Logger::info( nb, " unique vertices part of a unique line "
                                      "with invalid topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.part_of_lines_but_not_corner_unique_vertices()
+                result.lines.part_of_lines_but_not_corner_unique_vertices
                     .size();
             geode::Logger::info( nb,
                 " unique vertices part of multiple lines but not a corner." );
@@ -166,17 +165,16 @@ void inspect_section( const geode::Section& section )
     }
     if( absl::GetFlag( FLAGS_surfaces ) )
     {
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector.part_of_invalid_surfaces_unique_vertices()
-                    .size();
+                result.surfaces.part_of_invalid_surfaces_unique_vertices.size();
             geode::Logger::info( nb,
                 " unique vertices part of surfaces with invalid topology." );
         } ) );
-        tasks.emplace_back( async::spawn( [&section_inspector] {
+        tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                section_inspector
-                    .part_of_line_and_not_on_surface_border_unique_vertices()
+                result.surfaces
+                    .part_of_line_and_not_on_surface_border_unique_vertices
                     .size();
             geode::Logger::info( nb,
                 " unique vertices part of a line and a surface but for "

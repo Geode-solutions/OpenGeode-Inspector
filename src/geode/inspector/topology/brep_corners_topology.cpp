@@ -171,18 +171,19 @@ namespace geode
         return false;
     }
 
-    CornerInspectionResult BRepCornersTopology::inspect_corners() const
+    BRepCornersInspectionResult BRepCornersTopology::inspect_corners() const
     {
-        CornerInspectionResult result;
-        for( const auto& corner : brep_.corners() )
-        {
-            geode::ComponentMeshVertex mesh_vertex{ corner.component_id(), 0 };
-            if( brep_.unique_vertex( mesh_vertex ) == geode::NO_ID )
-            {
-                result.corners_not_linked_to_unique_vertex.push_back(
-                    mesh_vertex );
-            }
-        }
+        BRepCornersInspectionResult result;
+        /* for( const auto& corner : brep_.corners() )
+         {
+             const geode::ComponentMeshVertex mesh_vertex{
+         corner.component_id(), 0 }; if( brep_.unique_vertex( mesh_vertex ) ==
+         geode::NO_ID )
+             {
+                 result.corners_not_linked_to_unique_vertex.push_back(
+                     mesh_vertex );
+             }
+         }*/
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( unique_vertex_has_multiple_corners( unique_vertex_id ) )
@@ -198,6 +199,11 @@ namespace geode
             if( corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
                 result.not_internal_nor_boundary_corner_vertices.push_back(
+                    unique_vertex_id );
+            }
+            if( corner_is_part_of_line_but_not_boundary( unique_vertex_id ) )
+            {
+                result.line_corners_without_boundary_status.push_back(
                     unique_vertex_id );
             }
         }
