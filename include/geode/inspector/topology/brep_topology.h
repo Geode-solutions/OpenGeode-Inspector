@@ -41,7 +41,7 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepInspectionResult
     {
-        BRepCornersInspectionResult corners;
+        BRepCornersTopologyInspectionResult corners;
         BRepLinesInspectionResult lines;
         BRepSurfacesInspectionResult surfaces;
         BRepBlocksInspectionResult blocks;

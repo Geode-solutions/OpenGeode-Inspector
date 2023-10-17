@@ -25,6 +25,7 @@
 
 #include <geode/basic/algorithm.h>
 
+#include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -72,6 +73,26 @@ namespace geode
             }
             sort_unique( component_uuids );
             return component_uuids;
+        }
+
+        std::vector< geode::ComponentMeshVertex >
+            brep_component_vertices_not_associated_to_unique_vertices(
+                const geode::BRep& brep,
+                const geode::ComponentID& component_id,
+                const geode::VertexSet& component_mesh )
+        {
+            std::vector< geode::ComponentMeshVertex > result;
+            for( const auto component_vertex :
+                geode::Range{ component_mesh.nb_vertices() } )
+            {
+                geode::ComponentMeshVertex mesh_vertex{ component_id,
+                    component_vertex };
+                if( brep.unique_vertex( mesh_vertex ) == geode::NO_ID )
+                {
+                    result.push_back( std::move( mesh_vertex ) );
+                }
+            }
+            return result;
         }
     } // namespace detail
 } // namespace geode

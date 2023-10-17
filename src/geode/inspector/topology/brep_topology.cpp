@@ -239,7 +239,7 @@ namespace geode
     };
 
     BRepTopologyInspector::BRepTopologyInspector( const BRep& brep )
-        : BRepCornersTopology( brep, false ),
+        : BRepCornersTopology( brep ),
           BRepLinesTopology( brep, false ),
           BRepSurfacesTopology( brep, false ),
           BRepBlocksTopology( brep, false ),
@@ -250,7 +250,7 @@ namespace geode
 
     BRepTopologyInspector::BRepTopologyInspector(
         const BRep& brep, bool verbose )
-        : BRepCornersTopology( brep, verbose ),
+        : BRepCornersTopology( brep ),
           BRepLinesTopology( brep, verbose ),
           BRepSurfacesTopology( brep, verbose ),
           BRepBlocksTopology( brep, verbose ),

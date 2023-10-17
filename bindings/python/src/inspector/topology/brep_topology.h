@@ -30,19 +30,20 @@ namespace geode
 
     void define_brep_topology_inspector( pybind11::module& module )
     {
-        pybind11::class_< BRepCornersInspectionResult >(
+        pybind11::class_< BRepCornersTopologyInspectionResult >(
             module, "BRepCornersInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "multiple_corners_unique_vertices",
-                &BRepCornersInspectionResult::multiple_corners_unique_vertices )
+                &BRepCornersTopologyInspectionResult::
+                    multiple_corners_unique_vertices )
             .def_readwrite( "multiple_internals_corner_vertices",
-                &BRepCornersInspectionResult::
+                &BRepCornersTopologyInspectionResult::
                     multiple_internals_corner_vertices )
             .def_readwrite( "not_internal_nor_boundary_corner_vertices",
-                &BRepCornersInspectionResult::
+                &BRepCornersTopologyInspectionResult::
                     not_internal_nor_boundary_corner_vertices )
             .def_readwrite( "line_corners_without_boundary_status",
-                &BRepCornersInspectionResult::
+                &BRepCornersTopologyInspectionResult::
                     line_corners_without_boundary_status );
 
         pybind11::class_< BRepLinesInspectionResult >(

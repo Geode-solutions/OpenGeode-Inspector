@@ -25,7 +25,9 @@
 
 #include <vector>
 
+#include <absl/container/flat_hash_map.h>
 #include <geode/inspector/common.h>
+
 namespace geode
 {
     struct ComponentMeshVertex;
@@ -34,10 +36,12 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api BRepCornersInspectionResult
+    struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
-        /* std::vector< ComponentMeshVertex >
-             corners_not_linked_to_unique_vertex{};*/
+        std::vector< ComponentMeshVertex >
+            corners_not_linked_to_unique_vertex{};
+        absl::flat_hash_map< index_t, std::vector< std::string > > problems{};
+
         std::vector< index_t > multiple_corners_unique_vertices{};
         std::vector< index_t > multiple_internals_corner_vertices{};
         std::vector< index_t > not_internal_nor_boundary_corner_vertices{};
@@ -49,8 +53,6 @@ namespace geode
     public:
         BRepCornersTopology( const BRep& brep );
 
-        BRepCornersTopology( const BRep& brep, bool verbose );
-
         /*!
          * Checks if the brep unique vertices are valid corners, i.e.
          * corners that verify:
@@ -61,22 +63,21 @@ namespace geode
          */
         bool brep_corner_topology_is_valid( index_t unique_vertex_index ) const;
 
-        bool unique_vertex_has_multiple_corners(
+        absl::optional< std::string > unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const;
 
-        bool corner_has_multiple_embeddings(
+        absl::optional< std::string > corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const;
 
-        bool corner_is_not_internal_nor_boundary(
+        absl::optional< std::string > corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const;
 
-        bool corner_is_part_of_line_but_not_boundary(
+        absl::optional< std::string > corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
 
-        BRepCornersInspectionResult inspect_corners() const;
+        BRepCornersTopologyInspectionResult inspect_corners() const;
 
     private:
         const BRep& brep_;
-        bool verbose_;
     };
 } // namespace geode
