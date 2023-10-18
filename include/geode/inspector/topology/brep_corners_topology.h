@@ -23,10 +23,11 @@
 
 #pragma once
 
-#include <vector>
+#include <absl/types/optional.h>
+#include <string>
 
-#include <absl/container/flat_hash_map.h>
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -38,14 +39,21 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
-        std::vector< ComponentMeshVertex >
-            corners_not_linked_to_unique_vertex{};
-        absl::flat_hash_map< index_t, std::vector< std::string > > problems{};
-
-        std::vector< index_t > multiple_corners_unique_vertices{};
-        std::vector< index_t > multiple_internals_corner_vertices{};
-        std::vector< index_t > not_internal_nor_boundary_corner_vertices{};
-        std::vector< index_t > line_corners_without_boundary_status{};
+        ProblemInspectionResult< ComponentMeshVertex >
+            corners_not_linked_to_unique_vertex{
+                "Corners without unique vertex"
+            };
+        ProblemInspectionResult< index_t > multiple_corners_unique_vertices{
+            "Unique vertices that are part of several corners."
+        };
+        ProblemInspectionResult< index_t > multiple_internals_corner_vertices{
+            "Corners with several embeddings"
+        };
+        ProblemInspectionResult< index_t >
+            not_internal_nor_boundary_corner_vertices{ "Isolated Corners" };
+        ProblemInspectionResult< index_t > line_corners_without_boundary_status{
+            "Corner on line but not a boundary)"
+        };
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology

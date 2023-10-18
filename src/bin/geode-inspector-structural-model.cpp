@@ -83,26 +83,26 @@ void inspect_model( const geode::StructuralModel& model )
 {
     const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::BRepInspector model_inspector{ model, verbose };
-    auto result = model_inspector.inspect_brep();
+    auto result = model_inspector.inspect_brep_topology();
     absl::InlinedVector< async::task< void >, 27 > tasks;
-    if( absl::GetFlag( FLAGS_component_linking ) )
-    {
-        tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto unlinked_component_vertices =
-                model_inspector
-                    .component_vertices_not_linked_to_a_unique_vertex();
-            geode::Logger::info( unlinked_component_vertices.size(),
-                " component vertices not linked to a unique vertex" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&model_inspector] {
-            const auto nb_unlinked_uv =
-                model_inspector
-                    .unique_vertices_not_linked_to_a_component_vertex()
-                    .size();
-            geode::Logger::info( nb_unlinked_uv,
-                " unique vertices not linked to a component mesh vertex" );
-        } ) );
-    }
+    /*if( absl::GetFlag( FLAGS_component_linking ) )
+     {
+         tasks.emplace_back( async::spawn( [&model_inspector] {
+             const auto unlinked_component_vertices =
+                 model_inspector
+                     .component_vertices_not_linked_to_a_unique_vertex();
+             geode::Logger::info( unlinked_component_vertices.size(),
+                 " component vertices not linked to a unique vertex" );
+         } ) );
+         tasks.emplace_back( async::spawn( [&model_inspector] {
+             const auto nb_unlinked_uv =
+                 model_inspector
+                     .unique_vertices_not_linked_to_a_component_vertex()
+                     .size();
+             geode::Logger::info( nb_unlinked_uv,
+                 " unique vertices not linked to a component mesh vertex" );
+         } ) );
+     }*/
     if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&model_inspector] {
@@ -123,26 +123,27 @@ void inspect_model( const geode::StructuralModel& model )
     {
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.corners.multiple_corners_unique_vertices.size();
+                result.corners.multiple_corners_unique_vertices.number();
             geode::Logger::info(
                 nb, " unique vertices associated to multiple corners." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.corners.multiple_internals_corner_vertices.size();
+                result.corners.multiple_internals_corner_vertices.number();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "with multiple internals." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.corners.not_internal_nor_boundary_corner_vertices.size();
+                result.corners.not_internal_nor_boundary_corner_vertices
+                    .number();
             geode::Logger::info( nb,
                 " unique vertices associated to a corner which is neither "
                 "internal nor boundary." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.corners.line_corners_without_boundary_status.size();
+                result.corners.line_corners_without_boundary_status.number();
             geode::Logger::info( nb, " unique vertices associated to a corner "
                                      "part of a line but not boundary of it." );
         } ) );
@@ -153,7 +154,7 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb =
                 result.lines
                     .part_of_not_boundary_nor_internal_line_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a line which is "
                                      "neither internal nor boundary." );
         } ) );
@@ -161,20 +162,21 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb =
                 result.lines
                     .part_of_line_with_invalid_internal_topology_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a line with "
                                      "invalid internal topology." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.lines.part_of_invalid_unique_line_unique_vertices.size();
+                result.lines.part_of_invalid_unique_line_unique_vertices
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a unique line "
                                      "with invalid topology." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.lines.part_of_lines_but_not_corner_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb,
                 " unique vertices part of multiple lines but not a corner." );
         } ) );
@@ -185,7 +187,7 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb =
                 result.surfaces
                     .part_of_not_boundary_nor_internal_surface_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a surface which "
                                      "is neither internal nor boundary." );
         } ) );
@@ -193,21 +195,21 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb =
                 result.surfaces
                     .part_of_surface_with_invalid_internal_topology_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a surface with "
                                      "invalid internal topology." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.surfaces.part_of_invalid_unique_surface_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb, " unique vertices part of a unique "
                                      "surface with invalid topology." );
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.surfaces
-                    .part_of_invalid_multiple_surfaces_unique_vertices.size();
+                    .part_of_invalid_multiple_surfaces_unique_vertices.number();
             geode::Logger::info( nb, " unique vertices part of multiple "
                                      "surfaces with invalid topology." );
         } ) );
@@ -215,7 +217,7 @@ void inspect_model( const geode::StructuralModel& model )
             const auto nb =
                 result.surfaces
                     .part_of_line_and_not_on_surface_border_unique_vertices
-                    .size();
+                    .number();
             geode::Logger::info( nb,
                 " unique vertices part of a line and a surface but for "
                 "which one of the associated vertex on the surface mesh is not "
@@ -226,7 +228,7 @@ void inspect_model( const geode::StructuralModel& model )
     {
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.blocks.part_of_invalid_blocks_unique_vertices.size();
+                result.blocks.part_of_invalid_blocks_unique_vertices.number();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
         } ) );

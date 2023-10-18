@@ -23,36 +23,35 @@
 
 #pragma once
 
-#include <absl/types/span.h>
+#include <string>
+#include <vector>
 
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    class BRep;
-    class Section;
-    struct uuid;
-    struct ComponentMeshVertex;
-    class ComponentID;
-    class VertexSet;
-} // namespace geode
-
-namespace geode
-{
-    namespace detail
+    template < typename ProblemType >
+    struct ProblemInspectionResult
     {
-        bool brep_blocks_are_meshed( const geode::BRep& brep );
+        ProblemInspectionResult( absl::string_view problem_descrption )
+            : description{ problem_descrption }
+        {
+        }
 
-        bool section_surfaces_are_meshed( const geode::Section& section );
+        index_t number()
+        {
+            return problems.size();
+        }
 
-        std::vector< uuid > components_uuids(
-            absl::Span< const ComponentMeshVertex > components );
+        void add_problem(
+            const ProblemType& problem, const std::string& message )
+        {
+            problems.push_back( problem );
+            messages.push_back( message );
+        }
 
-        std::pair< std::vector< geode::ComponentMeshVertex >,
-            std::vector< std::string > >
-            brep_component_vertices_not_associated_to_unique_vertices(
-                const geode::BRep& brep,
-                const geode::ComponentID& component_id,
-                const geode::VertexSet& component_mesh );
-    } // namespace detail
+        std::string description;
+        std::vector< ProblemType > problems{};
+        std::vector< std::string > messages{};
+    };
 } // namespace geode

@@ -39,12 +39,17 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api BRepInspectionResult
+    struct opengeode_inspector_inspector_api BRepTopologyInspectionResult
     {
         BRepCornersTopologyInspectionResult corners;
-        BRepLinesInspectionResult lines;
-        BRepSurfacesInspectionResult surfaces;
-        BRepBlocksInspectionResult blocks;
+        BRepLinesTopologyInspectionResult lines;
+        BRepSurfacesTopologyInspectionResult surfaces;
+        BRepBlocksTopologyInspectionResult blocks;
+
+        ProblemInspectionResult< index_t >
+            unique_vertex_not_linked_to_any_component{
+                "Unique vertex not linked to any component"
+            };
     };
     /*!
      * Class for inspecting the topology of a BRep model corners
@@ -74,13 +79,7 @@ namespace geode
 
         bool brep_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        BRepInspectionResult inspect_brep() const;
-
-        std::vector< ComponentMeshVertex >
-            component_vertices_not_linked_to_a_unique_vertex() const;
-
-        std::vector< index_t >
-            unique_vertices_not_linked_to_a_component_vertex() const;
+        BRepTopologyInspectionResult inspect_brep_topology() const;
 
         std::vector< index_t >
             invalid_components_topology_unique_vertices() const;

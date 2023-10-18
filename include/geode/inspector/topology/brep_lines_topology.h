@@ -22,24 +22,37 @@
  */
 
 #pragma once
+#include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
+    struct ComponentMeshVertex;
     class BRep;
+    struct uuid;
 } // namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api BRepLinesInspectionResult
+    struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
     {
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices{};
-        std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices{};
-        std::vector< index_t > part_of_invalid_unique_line_unique_vertices{};
-        std::vector< index_t > part_of_lines_but_not_corner_unique_vertices{};
+        ProblemInspectionResult< uuid > lines_not_meshed{ "Lines not meshed" };
+        ProblemInspectionResult< ComponentMeshVertex >
+            lines_not_linked_to_unique_vertex{
+                "Lines not completly linked to unique vertex"
+            };
+        ProblemInspectionResult< index_t >
+            part_of_not_boundary_nor_internal_line_unique_vertices{ "" };
+        ProblemInspectionResult< index_t >
+            part_of_line_with_invalid_internal_topology_unique_vertices{ "" };
+        ProblemInspectionResult< index_t >
+            part_of_invalid_unique_line_unique_vertices{ "" };
+        ProblemInspectionResult< index_t >
+            part_of_lines_but_not_corner_unique_vertices{
+                "unique vertices on a line "
+            };
     };
     /*!
      * Class for inspecting the topology of a BRep model lines through their
@@ -49,8 +62,6 @@ namespace geode
     {
     public:
         BRepLinesTopology( const BRep& brep );
-
-        BRepLinesTopology( const BRep& brep, bool verbose );
 
         /*!
          * Checks if the brep unique vertices are parts of valid lines, i.e.
@@ -65,22 +76,23 @@ namespace geode
         bool brep_vertex_lines_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        bool vertex_is_part_of_not_boundary_nor_internal_line(
-            const index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            vertex_is_part_of_not_boundary_nor_internal_line(
+                const index_t unique_vertex_index ) const;
 
-        bool vertex_is_part_of_line_with_invalid_internal_topology(
-            const index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            vertex_is_part_of_line_with_invalid_internal_topology(
+                const index_t unique_vertex_index ) const;
 
-        bool vertex_is_part_of_invalid_unique_line(
+        absl::optional< std::string > vertex_is_part_of_invalid_unique_line(
             index_t unique_vertex_index ) const;
 
-        bool vertex_has_lines_but_is_not_corner(
+        absl::optional< std::string > vertex_has_lines_but_is_not_corner(
             index_t unique_vertex_index ) const;
 
-        BRepLinesInspectionResult inspect_lines() const;
+        BRepLinesTopologyInspectionResult inspect_lines() const;
 
     private:
         const BRep& brep_;
-        bool verbose_;
     };
 } // namespace geode

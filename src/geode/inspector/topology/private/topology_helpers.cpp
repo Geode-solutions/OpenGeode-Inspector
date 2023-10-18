@@ -75,13 +75,16 @@ namespace geode
             return component_uuids;
         }
 
-        std::vector< geode::ComponentMeshVertex >
+        std::pair< std::vector< geode::ComponentMeshVertex >,
+            std::vector< std::string > >
             brep_component_vertices_not_associated_to_unique_vertices(
                 const geode::BRep& brep,
                 const geode::ComponentID& component_id,
                 const geode::VertexSet& component_mesh )
         {
-            std::vector< geode::ComponentMeshVertex > result;
+            std::pair< std::vector< geode::ComponentMeshVertex >,
+                std::vector< std::string > >
+                result;
             for( const auto component_vertex :
                 geode::Range{ component_mesh.nb_vertices() } )
             {
@@ -89,7 +92,12 @@ namespace geode
                     component_vertex };
                 if( brep.unique_vertex( mesh_vertex ) == geode::NO_ID )
                 {
-                    result.push_back( std::move( mesh_vertex ) );
+                    result.first.push_back( std::move( mesh_vertex ) );
+                    result.second.push_back(
+                        std::string( "Component vertex '" )
+                        + mesh_vertex.string()
+                        + std::string(
+                            "' is not linked to a unique vertex." ) );
                 }
             }
             return result;

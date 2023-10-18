@@ -171,46 +171,44 @@ namespace geode
             auto corner_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
-            result.corners_not_linked_to_unique_vertex.insert(
-                result.corners_not_linked_to_unique_vertex.end(),
-                std::make_move_iterator( corner_result.begin() ),
-                std::make_move_iterator( corner_result.end() ) );
+            result.corners_not_linked_to_unique_vertex.problems.insert(
+                result.corners_not_linked_to_unique_vertex.problems.end(),
+                std::make_move_iterator( corner_result.first.begin() ),
+                std::make_move_iterator( corner_result.first.end() ) );
+            result.corners_not_linked_to_unique_vertex.messages.insert(
+                result.corners_not_linked_to_unique_vertex.messages.end(),
+                std::make_move_iterator( corner_result.second.begin() ),
+                std::make_move_iterator( corner_result.second.end() ) );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            std::vector< std::string > unique_vertex_problems;
             const auto has_multiple_corners =
                 unique_vertex_has_multiple_corners( unique_vertex_id );
             if( has_multiple_corners )
             {
-                unique_vertex_problems.push_back(
-                    has_multiple_corners.value() );
+                result.multiple_corners_unique_vertices.add_problem(
+                    unique_vertex_id, has_multiple_corners.value() );
             }
             const auto has_multiple_embeddings =
                 corner_has_multiple_embeddings( unique_vertex_id );
             if( has_multiple_embeddings )
             {
-                unique_vertex_problems.push_back(
-                    has_multiple_embeddings.value() );
+                result.multiple_internals_corner_vertices.add_problem(
+                    unique_vertex_id, has_multiple_embeddings.value() );
             }
             const auto not_internal_nor_boundary =
                 corner_is_not_internal_nor_boundary( unique_vertex_id );
             if( not_internal_nor_boundary )
             {
-                unique_vertex_problems.push_back(
-                    not_internal_nor_boundary.value() );
+                result.not_internal_nor_boundary_corner_vertices.add_problem(
+                    unique_vertex_id, not_internal_nor_boundary.value() );
             }
             const auto without_boundary_status =
                 corner_is_part_of_line_but_not_boundary( unique_vertex_id );
             if( without_boundary_status )
             {
-                unique_vertex_problems.push_back(
-                    without_boundary_status.value() );
-            }
-            if( !unique_vertex_problems.empty() )
-            {
-                result.problems.emplace(
-                    unique_vertex_id, unique_vertex_problems );
+                result.line_corners_without_boundary_status.add_problem(
+                    unique_vertex_id, without_boundary_status.value() );
             }
         }
         return result;

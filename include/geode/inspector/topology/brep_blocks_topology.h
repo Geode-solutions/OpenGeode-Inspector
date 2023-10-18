@@ -23,19 +23,32 @@
 
 #pragma once
 
+#include <absl/types/optional.h>
+
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
+    struct ComponentMeshVertex;
     class BRep;
+    struct uuid;
 } // namespace geode
 
 namespace geode
 {
 
-    struct opengeode_inspector_inspector_api BRepBlocksInspectionResult
+    struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
-        std::vector< index_t > part_of_invalid_blocks_unique_vertices{};
+        ProblemInspectionResult< uuid > blocks_not_meshed{
+            "Blocks not meshed"
+        };
+        ProblemInspectionResult< ComponentMeshVertex >
+            blocks_not_linked_to_unique_vertex{
+                "Blocks without unique vertex"
+            };
+        ProblemInspectionResult< index_t >
+            part_of_invalid_blocks_unique_vertices{ "" };
     };
     /*!
      * Class for inspecting the topology of a BRep model blocks through
@@ -45,9 +58,6 @@ namespace geode
     {
     public:
         BRepBlocksTopology( const BRep& brep );
-
-        BRepBlocksTopology( const BRep& brep, bool verbose );
-
         /*!
          * Checks if the brep unique vertices are parts of valid blocks,
          * i.e. verify:
@@ -56,13 +66,12 @@ namespace geode
          * the 2 blocks), or it is part of more than to blocks (and it is
          * either a corner, or not a corner but part of only one line).
          */
-        bool brep_vertex_blocks_topology_is_valid(
+        absl::optional< std::string > brep_vertex_blocks_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        BRepBlocksInspectionResult inspect_blocks() const;
+        BRepBlocksTopologyInspectionResult inspect_blocks() const;
 
     private:
         const BRep& brep_;
-        bool verbose_;
     };
 } // namespace geode
