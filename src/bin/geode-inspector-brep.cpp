@@ -40,10 +40,6 @@
 
 ABSL_FLAG( std::string, input, "/path/my/model.og_brep", "Input model" );
 ABSL_FLAG( bool,
-    component_linking,
-    true,
-    "Toggle components linking to unique vertices criterion" );
-ABSL_FLAG( bool,
     unique_vertices_colocation,
     true,
     "Toggle inspection of unique vertices colocation" );
@@ -69,24 +65,6 @@ void inspect_brep( const geode::BRep& brep )
     const geode::BRepInspector brep_inspector{ brep, verbose };
     auto result = brep_inspector.inspect_brep_topology();
     absl::InlinedVector< async::task< void >, 27 > tasks;
-    /*if( absl::GetFlag( FLAGS_component_linking ) )
-    {
-        tasks.emplace_back( async::spawn( [&brep_inspector] {
-            const auto unlinked_component_vertices =
-                brep_inspector
-                    .component_vertices_not_linked_to_a_unique_vertex();
-            geode::Logger::info( unlinked_component_vertices.size(),
-                " component vertices not linked to a unique vertex" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&brep_inspector] {
-            const auto nb_unlinked_uv =
-                brep_inspector
-                    .unique_vertices_not_linked_to_a_component_vertex()
-                    .size();
-            geode::Logger::info( nb_unlinked_uv,
-                " unique vertices not linked to a component mesh vertex" );
-        } ) );
-    }*/
     if( absl::GetFlag( FLAGS_unique_vertices_colocation ) )
     {
         tasks.emplace_back( async::spawn( [&brep_inspector] {
@@ -106,6 +84,12 @@ void inspect_brep( const geode::BRep& brep )
     }
     if( absl::GetFlag( FLAGS_corners ) )
     {
+        tasks.emplace_back( async::spawn( [&result] {
+            const auto nb =
+                result.corners.corners_not_linked_to_a_unique_vertex.size();
+            geode::Logger::info(
+                nb, " corners with vertices not linked to a unique vertex." );
+        } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.corners.multiple_corners_unique_vertices.number();
@@ -135,6 +119,12 @@ void inspect_brep( const geode::BRep& brep )
     }
     if( absl::GetFlag( FLAGS_lines ) )
     {
+        tasks.emplace_back( async::spawn( [&result] {
+            const auto nb =
+                result.lines.lines_not_linked_to_a_unique_vertex.size();
+            geode::Logger::info(
+                nb, " lines with vertices not linked to a unique vertex." );
+        } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.lines
@@ -168,6 +158,12 @@ void inspect_brep( const geode::BRep& brep )
     }
     if( absl::GetFlag( FLAGS_surfaces ) )
     {
+        tasks.emplace_back( async::spawn( [&result] {
+            const auto nb =
+                result.surfaces.surfaces_not_linked_to_a_unique_vertex.size();
+            geode::Logger::info(
+                nb, " surfaces with vertices not linked to a unique vertex." );
+        } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.surfaces
@@ -213,7 +209,13 @@ void inspect_brep( const geode::BRep& brep )
     {
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.blocks.part_of_invalid_blocks_unique_vertices.number();
+                result.blocks.blocks_not_linked_to_a_unique_vertex.size();
+            geode::Logger::info(
+                nb, " blocks with vertices not linked to a unique vertex." );
+        } ) );
+        tasks.emplace_back( async::spawn( [&result] {
+            const auto nb =
+                result.blocks.vertices_with_incorrect_block_cmvs_count.number();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
         } ) );

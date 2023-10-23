@@ -64,47 +64,67 @@ namespace geode
     {
     }
 
-    absl::optional< std::string >
-        BRepBlocksTopology::brep_vertex_blocks_topology_is_valid(
+    bool BRepBlocksTopology::brep_vertex_blocks_topology_is_valid(
+        index_t unique_vertex_index ) const
+    {
+        if( vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                unique_vertex_index )
+            || vertex_block_cmvs_count_is_incorrect( unique_vertex_index ) )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    absl::optional< std::string > BRepBlocksTopology::
+        vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
         const auto block_cmvs = brep_.component_mesh_vertices(
             unique_vertex_index, Block3D::component_type_static() );
         const auto block_uuids = detail::components_uuids( block_cmvs );
-        if( block_uuids.size() == 2 )
+        if( block_uuids.size() != 2 )
         {
-            for( const auto& surface : brep_.component_mesh_vertices(
-                     unique_vertex_index, Surface3D::component_type_static() ) )
+            return absl::nullopt;
+        }
+        for( const auto& surface : brep_.component_mesh_vertices(
+                 unique_vertex_index, Surface3D::component_type_static() ) )
+        {
+            if( brep_.Relationships::is_boundary(
+                    surface.component_id.id(), block_uuids[0] )
+                && brep_.Relationships::is_boundary(
+                    surface.component_id.id(), block_uuids[1] ) )
+            {
+                return absl::nullopt;
+            }
+            for( const auto& line : brep_.component_mesh_vertices(
+                     unique_vertex_index, Line3D::component_type_static() ) )
             {
                 if( brep_.Relationships::is_boundary(
-                        surface.component_id.id(), block_uuids[0] )
-                    && brep_.Relationships::is_boundary(
-                        surface.component_id.id(), block_uuids[1] ) )
+                        line.component_id.id(), surface.component_id.id() )
+                    && ( brep_.Relationships::is_boundary(
+                             surface.component_id.id(), block_uuids[0] )
+                         || brep_.Relationships::is_boundary(
+                             surface.component_id.id(), block_uuids[1] ) ) )
                 {
                     return absl::nullopt;
                 }
-                for( const auto& line :
-                    brep_.component_mesh_vertices(
-                        unique_vertex_index, Line3D::component_type_static() ) )
-                {
-                    if( brep_.Relationships::is_boundary(
-                            line.component_id.id(), surface.component_id.id() )
-                        && ( brep_.Relationships::is_boundary(
-                                 surface.component_id.id(), block_uuids[0] )
-                             || brep_.Relationships::is_boundary(
-                                 surface.component_id.id(), block_uuids[1] ) ) )
-                    {
-                        return absl::nullopt;
-                    }
-                }
             }
-            return std::string( "Unique vertex with index " )
-                   + std::to_string( unique_vertex_index )
-                   + std::string(
-                       " is part of two blocks, but not of a surface boundary "
-                       "to the two blocks, nor of a line boundary to one "
-                       "of the blocks incident surfaces." );
         }
+        return "Unique vertex with index "
+               + std::to_string( unique_vertex_index )
+               + " is part of two blocks, but not of a surface boundary to the "
+                 "two blocks, nor of a line boundary to one of the blocks "
+                 "incident surfaces.";
+    }
+
+    absl::optional< std::string >
+        BRepBlocksTopology::vertex_block_cmvs_count_is_incorrect(
+            index_t unique_vertex_index ) const
+    {
+        const auto block_cmvs = brep_.component_mesh_vertices(
+            unique_vertex_index, Block3D::component_type_static() );
+        const auto block_uuids = detail::components_uuids( block_cmvs );
         const auto corner_cmvs = brep_.component_mesh_vertices(
             unique_vertex_index, Corner3D::component_type_static() );
         const auto line_cmvs = brep_.component_mesh_vertices(
@@ -169,15 +189,13 @@ namespace geode
                 {
                     if( nb_block_cmvs != 1 )
                     {
-                        return std::string( "Unique vertex with index " )
+                        return "Unique vertex with index "
                                + std::to_string( unique_vertex_index )
-                               + std::string( " is part of the block " )
-                               + block_uuid.string()
-                               + std::string( " and exactly one corner and one "
-                                              "line but has " )
+                               + " is part of block " + block_uuid.string()
+                               + " and exactly one corner and one line but has "
                                + std::to_string( nb_block_cmvs )
-                               + std::string( " block component mesh vertices "
-                                              "(should be 1)." );
+                               + " block component mesh vertices (should be "
+                                 "1).";
                     }
                     continue;
                 }
@@ -187,23 +205,18 @@ namespace geode
                                                      + corner_cmvs.size();
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
-                    return std::string( "Unique vertex with index " )
+                    return "Unique vertex with index "
                            + std::to_string( unique_vertex_index )
-                           + std::string( " is part of the block " )
-                           + block_uuid.string()
-                           + std::string(
-                               ", and of a corner, and of no internal line, " )
-                           + std::string( "and of " )
+                           + " is part of the block " + block_uuid.string()
+                           + ", and of a corner, and of no internal line, "
+                           + "and of "
                            + std::to_string( nb_boundary_surface_cmvs )
-                           + std::string( " boundary surface(s), and of " )
+                           + " boundary surface(s), and of "
                            + std::to_string( nb_boundary_line_cmvs )
-                           + std::string(
-                               " line(s) on block boundaries, with " )
+                           + " line(s) on block boundaries, with "
                            + std::to_string( nb_block_cmvs )
-                           + std::string( " block component mesh vertices" )
-                           + std::string( "(should be " )
-                           + std::to_string( predicted_nb_block_cmvs )
-                           + std::string( ")." );
+                           + " block component mesh vertices" + "(should be "
+                           + std::to_string( predicted_nb_block_cmvs ) + ").";
                 }
                 continue;
             }
@@ -215,17 +228,13 @@ namespace geode
                                                : nb_boundary_surface_cmvs / 2;
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
-                    return std::string( "Unique vertex with index " )
+                    return "Unique vertex with index "
                            + std::to_string( unique_vertex_index )
-                           + std::string( " is part of the block " )
-                           + block_uuid.string()
-                           + std::string( " and none of its internal "
-                                          "surfaces but has " )
+                           + " is part of the block " + block_uuid.string()
+                           + " and none of its internal surfaces but has "
                            + std::to_string( nb_block_cmvs )
-                           + std::string( " block component mesh vertices "
-                                          "(should be " )
-                           + std::to_string( predicted_nb_block_cmvs )
-                           + std::string( ")." );
+                           + " block component mesh vertices (should be "
+                           + std::to_string( predicted_nb_block_cmvs ) + ").";
                 }
                 continue;
             }
@@ -242,25 +251,23 @@ namespace geode
             }
             if( nb_block_cmvs != predicted_nb_block_cmvs )
             {
-                return std::string( "Unique vertex with index " )
+                return "Unique vertex with index "
                        + std::to_string( unique_vertex_index )
-                       + std::string( " is part of the block " )
-                       + block_uuid.string() + std::string( ", of " )
-                       + std::to_string( nb_internal_surface_cmvs )
-                       + std::string( " internal surface(s), of " )
+                       + " is part of the block " + block_uuid.string()
+                       + ", of " + std::to_string( nb_internal_surface_cmvs )
+                       + " internal surface(s), of "
                        + std::to_string( nb_boundary_surface_cmvs )
-                       + std::string( " boundary surface(s), and of " )
+                       + " boundary surface(s), and of "
                        + std::to_string( nb_free_line_cmvs )
-                       + std::string( " free line(s), with " )
+                       + " free line(s), with "
                        + std::to_string( nb_block_cmvs )
-                       + std::string(
-                           " block component mesh vertices (should be " )
-                       + std::to_string( predicted_nb_block_cmvs )
-                       + std::string( ")." );
+                       + " block component mesh vertices (should be "
+                       + std::to_string( predicted_nb_block_cmvs ) + ").";
             }
         }
         return absl::nullopt;
     }
+
     BRepBlocksTopologyInspectionResult
         BRepBlocksTopology::inspect_blocks() const
     {
@@ -270,31 +277,35 @@ namespace geode
             if( brep_.block( block.id() ).mesh().nb_vertices() == 0 )
             {
                 result.blocks_not_meshed.add_problem( block.id(),
-                    block.id().string()
-                        + std::string( " is a block without mesh." ) );
+                    "Block " + block.id().string() + " is not meshed." );
+                continue;
             }
-
             auto block_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
-            result.blocks_not_linked_to_unique_vertex.problems.insert(
-                result.blocks_not_linked_to_unique_vertex.problems.end(),
-                std::make_move_iterator( block_result.first.begin() ),
-                std::make_move_iterator( block_result.first.end() ) );
-            result.blocks_not_linked_to_unique_vertex.messages.insert(
-                result.blocks_not_linked_to_unique_vertex.messages.end(),
-                std::make_move_iterator( block_result.second.begin() ),
-                std::make_move_iterator( block_result.second.end() ) );
+            result.blocks_not_linked_to_a_unique_vertex.emplace_back(
+                block.id(),
+                "Block " + block.id().string()
+                    + " has mesh vertices not linked to a unique vertex." );
+            result.blocks_not_linked_to_a_unique_vertex.back().second.problems =
+                std::move( block_result.first );
+            result.blocks_not_linked_to_a_unique_vertex.back().second.messages =
+                std::move( block_result.second );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            const auto block_topology_is_valid =
-                brep_vertex_blocks_topology_is_valid( unique_vertex_id );
-
-            if( block_topology_is_valid )
+            if( const auto problem_message =
+                    vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                        unique_vertex_id ) )
             {
-                result.part_of_invalid_blocks_unique_vertices.add_problem(
-                    unique_vertex_id, block_topology_is_valid.value() );
+                result.vertices_part_of_two_blocks_and_no_boundary_surface
+                    .add_problem( unique_vertex_id, problem_message.value() );
+            }
+            if( const auto problem_message =
+                    vertex_block_cmvs_count_is_incorrect( unique_vertex_id ) )
+            {
+                result.vertices_with_incorrect_block_cmvs_count.add_problem(
+                    unique_vertex_id, problem_message.value() );
             }
         }
         return result;

@@ -32,6 +32,7 @@
 namespace geode
 {
     struct ComponentMeshVertex;
+    struct uuid;
     class BRep;
 } // namespace geode
 
@@ -39,10 +40,11 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
-        ProblemInspectionResult< ComponentMeshVertex >
-            corners_not_linked_to_unique_vertex{
-                "Corners without unique vertex"
-            };
+        ProblemInspectionResult< uuid > corners_not_meshed{
+            "Corners not meshed"
+        };
+        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+            corners_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t > multiple_corners_unique_vertices{
             "Unique vertices that are part of several corners."
         };
@@ -52,7 +54,7 @@ namespace geode
         ProblemInspectionResult< index_t >
             not_internal_nor_boundary_corner_vertices{ "Isolated Corners" };
         ProblemInspectionResult< index_t > line_corners_without_boundary_status{
-            "Corner on line but not a boundary)"
+            "Corners on a line but not its boundary)"
         };
     };
 

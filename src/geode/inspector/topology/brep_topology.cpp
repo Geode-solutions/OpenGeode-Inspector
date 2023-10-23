@@ -152,10 +152,8 @@ namespace geode
                 {
                     result.first.push_back( uv_id );
                     result.second.push_back(
-                        std::string( "Unique vertex with id " )
-                        + std::to_string( uv_id )
-                        + std::string( " is not linked to any component mesh "
-                                       "vertex." ) );
+                        "Unique vertex with id " + std::to_string( uv_id )
+                        + " is not linked to any component mesh vertex." );
                 }
             }
             return result;
@@ -175,7 +173,7 @@ namespace geode
     {
     }
     BRepTopologyInspector::BRepTopologyInspector(
-        const BRep& brep, bool verbause )
+        const BRep& brep, bool verbose )
         : BRepCornersTopology( brep ),
           BRepLinesTopology( brep ),
           BRepSurfacesTopology( brep ),
@@ -213,6 +211,7 @@ namespace geode
         }
         return true;
     }
+
     bool BRepTopologyInspector::
         brep_meshed_components_are_linked_to_unique_vertices() const
     {
@@ -224,6 +223,7 @@ namespace geode
     {
         return impl_->brep_unique_vertices_are_linked_to_a_component_vertex();
     }
+
     BRepTopologyInspectionResult
         BRepTopologyInspector::inspect_brep_topology() const
     {
@@ -240,23 +240,4 @@ namespace geode
             std::move( res.second );
         return result;
     }
-
-    std::vector< index_t >
-        BRepTopologyInspector::invalid_components_topology_unique_vertices()
-            const
-    {
-        std::vector< index_t > invalid_unique_vertices;
-        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
-        {
-            if( !brep_corner_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_lines_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_surfaces_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_blocks_topology_is_valid( unique_vertex_id ) )
-            {
-                invalid_unique_vertices.push_back( unique_vertex_id );
-            }
-        }
-        return invalid_unique_vertices;
-    }
-
 } // namespace geode

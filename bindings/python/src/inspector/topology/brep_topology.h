@@ -89,9 +89,9 @@ namespace geode
         pybind11::class_< BRepBlocksTopologyInspectionResult >(
             module, "BRepBlocksTopologyInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "part_of_invalid_blocks_unique_vertices",
+            .def_readwrite( "vertices_with_incorrect_block_cmvs_count",
                 &BRepBlocksTopologyInspectionResult::
-                    part_of_invalid_blocks_unique_vertices );
+                    vertices_with_incorrect_block_cmvs_count );
 
         pybind11::class_< BRepTopologyInspectionResult >(
             module, "BRepTopologyInspectionResult" )

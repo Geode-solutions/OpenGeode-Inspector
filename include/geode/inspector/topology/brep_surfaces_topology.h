@@ -42,11 +42,8 @@ namespace geode
         ProblemInspectionResult< uuid > surfaces_not_meshed{
             "Surface not meshed"
         };
-
-        ProblemInspectionResult< ComponentMeshVertex >
-            surfaces_not_linked_to_unique_vertex{
-                "Surfaces without unique vertex"
-            };
+        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+            surfaces_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             part_of_not_boundary_nor_internal_surface_unique_vertices{ "" };
         ProblemInspectionResult< index_t >
@@ -90,11 +87,11 @@ namespace geode
 
         absl::optional< std::string >
             vertex_is_part_of_not_boundary_nor_internal_surface(
-                const index_t unique_vertex_index ) const;
+                index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
             vertex_is_part_of_surface_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const;
+                index_t unique_vertex_index ) const;
 
         absl::optional< std::string > vertex_is_part_of_invalid_unique_surface(
             index_t unique_vertex_index ) const;

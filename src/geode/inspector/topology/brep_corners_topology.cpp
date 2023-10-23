@@ -56,7 +56,7 @@ namespace geode
         {
             return false;
         }
-        else if( brep_.nb_embeddings( corner_uuid ) != 1 )
+        if( brep_.nb_embeddings( corner_uuid ) != 1 )
         {
             if( brep_.nb_incidences( corner_uuid ) < 1 )
             {
@@ -67,14 +67,9 @@ namespace geode
         {
             return false;
         }
-        for( const auto& line : brep_.component_mesh_vertices(
-                 unique_vertex_index, Line3D::component_type_static() ) )
+        if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
         {
-            if( !brep_.Relationships::is_boundary(
-                    corner_uuid, line.component_id.id() ) )
-            {
-                return false;
-            }
+            return false;
         }
         return true;
     }
@@ -89,9 +84,9 @@ namespace geode
                 .size()
             > 1 )
         {
-            return std::string( "Unique vertex with index " )
+            return "Unique vertex with index "
                    + std::to_string( unique_vertex_index )
-                   + std::string( " is part of several corners." );
+                   + " is part of several corners.";
         }
         return absl::nullopt;
     }
@@ -105,11 +100,11 @@ namespace geode
         if( !corners.empty()
             && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
         {
-            return std::string( "Unique vertex with index " )
+            return "Unique vertex with index "
                    + std::to_string( unique_vertex_index )
-                   + std::string( " is associated to corner with uuid '" )
+                   + " is associated to corner with uuid '"
                    + corners[0].component_id.id().string()
-                   + std::string( "', which has several embeddings." );
+                   + "', which has several embeddings.";
         }
         return absl::nullopt;
     }
@@ -124,11 +119,11 @@ namespace geode
             && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
             && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
         {
-            std::string( "Unique vertex with index " )
-                + std::to_string( unique_vertex_index )
-                + std::string( " is associated to corner with uuid '" )
-                + corners[0].component_id.id().string()
-                + std::string( "', which is neither incident nor embedded." );
+            return "Unique vertex with index "
+                   + std::to_string( unique_vertex_index )
+                   + " is associated to corner with uuid '"
+                   + corners[0].component_id.id().string()
+                   + "', which is neither incident nor embedded.";
         }
         return absl::nullopt;
     }
@@ -137,26 +132,55 @@ namespace geode
         BRepCornersTopology::corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const
     {
-        const auto corners = brep_.component_mesh_vertices(
-            unique_vertex_index, Corner3D::component_type_static() );
-        if( !corners.empty() )
+        for( const auto cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            const auto& corner_uuid = corners[0].component_id.id();
+            if( cmv.component_id.type() != Corner3D::component_type_static() )
+            {
+                continue;
+            }
+            const auto& corner_uuid = cmv.component_id.id();
             for( const auto& line : brep_.component_mesh_vertices(
                      unique_vertex_index, Line3D::component_type_static() ) )
             {
-                if( !brep_.Relationships::is_boundary(
+                if( brep_.Relationships::is_boundary(
                         corner_uuid, line.component_id.id() ) )
                 {
-                    std::string( "Unique vertex with index " )
-                        + std::to_string( unique_vertex_index )
-                        + std::string(
-                            " is associated with corner with uuid '" )
-                        + corner_uuid.string()
-                        + std::string( "', part of line with uuid '" )
-                        + line.component_id.id().string()
-                        + std::string( "', but not boundary of it." );
+                    continue;
                 }
+                if( brep_.Relationships::is_internal(
+                        corner_uuid, line.component_id.id() ) )
+                {
+                    index_t line_vertex_count{ 0 };
+                    for( const auto cmv :
+                        brep_.component_mesh_vertices( unique_vertex_index ) )
+                    {
+                        if( cmv.component_id.id() == corner_uuid )
+                        {
+                            line_vertex_count++;
+                        }
+                    }
+                    if( line_vertex_count != 2 )
+                    {
+                        return "Unique vertex with index "
+                               + std::to_string( unique_vertex_index )
+                               + " is associated with corner with uuid '"
+                               + corner_uuid.string()
+                               + "', which is internal to line with uuid '"
+                               + line.component_id.id().string()
+                               + "', so line should be closed and have two "
+                                 "different vertices on unique vertex, but has "
+                               + std::to_string( line_vertex_count )
+                               + " vertices on it instead.";
+                    }
+                    continue;
+                }
+                return "Unique vertex with index "
+                       + std::to_string( unique_vertex_index )
+                       + " is associated with corner with uuid '"
+                       + corner_uuid.string() + "', part of line with uuid '"
+                       + line.component_id.id().string()
+                       + "', but is neither boundary nor internal of it.";
             }
         }
         return absl::nullopt;
@@ -168,47 +192,50 @@ namespace geode
         BRepCornersTopologyInspectionResult result;
         for( const auto& corner : brep_.corners() )
         {
+            if( brep_.corner( corner.id() ).mesh().nb_vertices() == 0 )
+            {
+                result.corners_not_meshed.add_problem( corner.id(),
+                    "Corner " + corner.id().string() + " is not meshed." );
+                continue;
+            }
             auto corner_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
-            result.corners_not_linked_to_unique_vertex.problems.insert(
-                result.corners_not_linked_to_unique_vertex.problems.end(),
-                std::make_move_iterator( corner_result.first.begin() ),
-                std::make_move_iterator( corner_result.first.end() ) );
-            result.corners_not_linked_to_unique_vertex.messages.insert(
-                result.corners_not_linked_to_unique_vertex.messages.end(),
-                std::make_move_iterator( corner_result.second.begin() ),
-                std::make_move_iterator( corner_result.second.end() ) );
+            result.corners_not_linked_to_a_unique_vertex.emplace_back(
+                corner.id(),
+                "Corner " + corner.id().string()
+                    + " has mesh vertices not linked to a unique vertex." );
+            result.corners_not_linked_to_a_unique_vertex.back()
+                .second.problems = std::move( corner_result.first );
+            result.corners_not_linked_to_a_unique_vertex.back()
+                .second.messages = std::move( corner_result.second );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            const auto has_multiple_corners =
-                unique_vertex_has_multiple_corners( unique_vertex_id );
-            if( has_multiple_corners )
+            if( const auto problem_message =
+                    unique_vertex_has_multiple_corners( unique_vertex_id ) )
             {
                 result.multiple_corners_unique_vertices.add_problem(
-                    unique_vertex_id, has_multiple_corners.value() );
+                    unique_vertex_id, problem_message.value() );
             }
-            const auto has_multiple_embeddings =
-                corner_has_multiple_embeddings( unique_vertex_id );
-            if( has_multiple_embeddings )
+            if( const auto problem_message =
+                    corner_has_multiple_embeddings( unique_vertex_id ) )
             {
                 result.multiple_internals_corner_vertices.add_problem(
-                    unique_vertex_id, has_multiple_embeddings.value() );
+                    unique_vertex_id, problem_message.value() );
             }
-            const auto not_internal_nor_boundary =
-                corner_is_not_internal_nor_boundary( unique_vertex_id );
-            if( not_internal_nor_boundary )
+            if( const auto problem_message =
+                    corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
                 result.not_internal_nor_boundary_corner_vertices.add_problem(
-                    unique_vertex_id, not_internal_nor_boundary.value() );
+                    unique_vertex_id, problem_message.value() );
             }
-            const auto without_boundary_status =
-                corner_is_part_of_line_but_not_boundary( unique_vertex_id );
-            if( without_boundary_status )
+            if( const auto problem_message =
+                    corner_is_part_of_line_but_not_boundary(
+                        unique_vertex_id ) )
             {
                 result.line_corners_without_boundary_status.add_problem(
-                    unique_vertex_id, without_boundary_status.value() );
+                    unique_vertex_id, problem_message.value() );
             }
         }
         return result;

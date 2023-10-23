@@ -39,10 +39,8 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
     {
         ProblemInspectionResult< uuid > lines_not_meshed{ "Lines not meshed" };
-        ProblemInspectionResult< ComponentMeshVertex >
-            lines_not_linked_to_unique_vertex{
-                "Lines not completly linked to unique vertex"
-            };
+        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+            lines_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             part_of_not_boundary_nor_internal_line_unique_vertices{ "" };
         ProblemInspectionResult< index_t >
@@ -78,11 +76,11 @@ namespace geode
 
         absl::optional< std::string >
             vertex_is_part_of_not_boundary_nor_internal_line(
-                const index_t unique_vertex_index ) const;
+                index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
             vertex_is_part_of_line_with_invalid_internal_topology(
-                const index_t unique_vertex_index ) const;
+                index_t unique_vertex_index ) const;
 
         absl::optional< std::string > vertex_is_part_of_invalid_unique_line(
             index_t unique_vertex_index ) const;

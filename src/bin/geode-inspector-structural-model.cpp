@@ -228,7 +228,7 @@ void inspect_model( const geode::StructuralModel& model )
     {
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.blocks.part_of_invalid_blocks_unique_vertices.number();
+                result.blocks.vertices_with_incorrect_block_cmvs_count.number();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
         } ) );

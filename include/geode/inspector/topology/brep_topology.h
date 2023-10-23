@@ -48,7 +48,7 @@ namespace geode
 
         ProblemInspectionResult< index_t >
             unique_vertex_not_linked_to_any_component{
-                "Unique vertex not linked to any component"
+                "Unique vertices not linked to any component"
             };
     };
     /*!
@@ -80,9 +80,6 @@ namespace geode
         bool brep_unique_vertices_are_linked_to_a_component_vertex() const;
 
         BRepTopologyInspectionResult inspect_brep_topology() const;
-
-        std::vector< index_t >
-            invalid_components_topology_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

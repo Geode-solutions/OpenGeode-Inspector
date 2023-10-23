@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <absl/container/flat_hash_map.h>
 #include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
@@ -37,19 +38,25 @@ namespace geode
 
 namespace geode
 {
-
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
         ProblemInspectionResult< uuid > blocks_not_meshed{
             "Blocks not meshed"
         };
-        ProblemInspectionResult< ComponentMeshVertex >
-            blocks_not_linked_to_unique_vertex{
-                "Blocks without unique vertex"
+        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+            blocks_not_linked_to_a_unique_vertex;
+        ProblemInspectionResult< index_t >
+            vertices_part_of_two_blocks_and_no_boundary_surface{
+                "Unique vertices part of two blocks and no boundary surface "
+                "(or block incident line)"
             };
         ProblemInspectionResult< index_t >
-            part_of_invalid_blocks_unique_vertices{ "" };
+            vertices_with_incorrect_block_cmvs_count{
+                "Unique vertices part of a block but with incorrect "
+                "ComponentMeshVertices count"
+            };
     };
+
     /*!
      * Class for inspecting the topology of a BRep model blocks through
      * their unique vertices
@@ -58,15 +65,15 @@ namespace geode
     {
     public:
         BRepBlocksTopology( const BRep& brep );
-        /*!
-         * Checks if the brep unique vertices are parts of valid blocks,
-         * i.e. verify:
-         * If the vertex is part of multiple blocks, either it is part of
-         * exactly 2 blocks (and at least one surface which is boundary to
-         * the 2 blocks), or it is part of more than to blocks (and it is
-         * either a corner, or not a corner but part of only one line).
-         */
-        absl::optional< std::string > brep_vertex_blocks_topology_is_valid(
+
+        bool brep_vertex_blocks_topology_is_valid(
+            index_t unique_vertex_index ) const;
+
+        absl::optional< std::string >
+            vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                index_t unique_vertex_index ) const;
+
+        absl::optional< std::string > vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const;
 
         BRepBlocksTopologyInspectionResult inspect_blocks() const;

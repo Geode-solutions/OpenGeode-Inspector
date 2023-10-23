@@ -38,7 +38,7 @@ namespace geode
 {
     namespace detail
     {
-        bool brep_blocks_are_meshed( const geode::BRep& brep )
+        bool brep_blocks_are_meshed( const BRep& brep )
         {
             for( const auto& block : brep.blocks() )
             {
@@ -50,7 +50,7 @@ namespace geode
             return true;
         }
 
-        bool section_surfaces_are_meshed( const geode::Section& section )
+        bool section_surfaces_are_meshed( const Section& section )
         {
             for( const auto& surface : section.surfaces() )
             {
@@ -75,29 +75,24 @@ namespace geode
             return component_uuids;
         }
 
-        std::pair< std::vector< geode::ComponentMeshVertex >,
-            std::vector< std::string > >
+        std::pair< std::vector< index_t >, std::vector< std::string > >
             brep_component_vertices_not_associated_to_unique_vertices(
-                const geode::BRep& brep,
-                const geode::ComponentID& component_id,
-                const geode::VertexSet& component_mesh )
+                const BRep& brep,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh )
         {
-            std::pair< std::vector< geode::ComponentMeshVertex >,
-                std::vector< std::string > >
+            std::pair< std::vector< index_t >, std::vector< std::string > >
                 result;
-            for( const auto component_vertex :
-                geode::Range{ component_mesh.nb_vertices() } )
+            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
             {
-                geode::ComponentMeshVertex mesh_vertex{ component_id,
-                    component_vertex };
-                if( brep.unique_vertex( mesh_vertex ) == geode::NO_ID )
+                ComponentMeshVertex component_mesh_vertex{ component_id,
+                    vertex_id };
+                if( brep.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
-                    result.first.push_back( std::move( mesh_vertex ) );
+                    result.first.push_back( vertex_id );
                     result.second.push_back(
-                        std::string( "Component vertex '" )
-                        + mesh_vertex.string()
-                        + std::string(
-                            "' is not linked to a unique vertex." ) );
+                        "Vertex '" + std::to_string( vertex_id )
+                        + "' is not linked to a unique vertex." );
                 }
             }
             return result;

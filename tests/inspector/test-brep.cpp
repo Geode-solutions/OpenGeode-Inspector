@@ -177,9 +177,10 @@ geode::index_t launch_topological_validity_checks(
             .number(),
         " vertices part of a line and a surface but not on the surface "
         "border." );
-    nb_issues += result.blocks.part_of_invalid_blocks_unique_vertices.number();
+    nb_issues +=
+        result.blocks.vertices_with_incorrect_block_cmvs_count.number();
     geode::Logger::info( "There are ",
-        result.blocks.part_of_invalid_blocks_unique_vertices.number(),
+        result.blocks.vertices_with_incorrect_block_cmvs_count.number(),
         " vertices with invalid block topology." );
     ;
 

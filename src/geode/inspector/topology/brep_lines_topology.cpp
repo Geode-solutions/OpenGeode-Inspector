@@ -65,7 +65,7 @@ namespace geode
 
     absl::optional< std::string >
         BRepLinesTopology::vertex_is_part_of_not_boundary_nor_internal_line(
-            const index_t unique_vertex_index ) const
+            index_t unique_vertex_index ) const
     {
         for( const auto& line : brep_.component_mesh_vertices(
                  unique_vertex_index, Line3D::component_type_static() ) )
@@ -73,12 +73,11 @@ namespace geode
             if( brep_.nb_embeddings( line.component_id.id() ) < 1
                 && brep_.nb_incidences( line.component_id.id() ) < 1 )
             {
-                return std::string( "Unique vertex with index " )
+                return "Unique vertex with index "
                        + std::to_string( unique_vertex_index )
-                       + std::string( " is part of line with uuid '" )
+                       + " is part of line with uuid '"
                        + line.component_id.id().string()
-                       + std::string(
-                           "', which is neither embedded nor incident." );
+                       + "', which is neither embedded nor incident.";
             }
         }
         return absl::nullopt;
@@ -86,7 +85,7 @@ namespace geode
 
     absl::optional< std::string > BRepLinesTopology::
         vertex_is_part_of_line_with_invalid_internal_topology(
-            const index_t unique_vertex_index ) const
+            index_t unique_vertex_index ) const
     {
         for( const auto line_id :
             detail::components_uuids( brep_.component_mesh_vertices(
@@ -97,14 +96,12 @@ namespace geode
                 if( brep_.Relationships::is_boundary(
                         line_id, embedding.id() ) )
                 {
-                    return std::string( "Unique vertex with index " )
+                    return "Unique vertex with index "
                            + std::to_string( unique_vertex_index )
-                           + std::string( " is part of line with uuid '" )
-                           + line_id.string()
-                           + std::string(
-                               "', which is both boundary and embedded in "
-                               "surface with uuid '" )
-                           + embedding.id().string() + std::string( "'." );
+                           + " is part of line with uuid '" + line_id.string()
+                           + "', which is both boundary and embedded in "
+                             "surface with uuid '"
+                           + embedding.id().string() + "'.";
                 }
                 if( embedding.type() == Block3D::component_type_static()
                     && !detail::brep_blocks_are_meshed( brep_ ) )
@@ -118,16 +115,13 @@ namespace geode
                             return cmv.component_id.id() == embedding.id();
                         } ) )
                 {
-                    return std::string( "Unique vertex with index " )
+                    return "Unique vertex with index "
                            + std::to_string( unique_vertex_index )
-                           + std::string( " is part of line with uuid '" )
-                           + line_id.string()
-                           + std::string(
-                               "', which is embedded in surface with uuid '" )
+                           + " is part of line with uuid '" + line_id.string()
+                           + "', which is embedded in surface with uuid '"
                            + embedding.id().string()
-                           + std::string(
-                               "', but the unique vertex is not linked to the "
-                               "surface mesh vertices." );
+                           + "', but the unique vertex is not linked to the "
+                             "surface mesh vertices.";
                 }
             }
         }
@@ -159,33 +153,41 @@ namespace geode
                       && brep_.Relationships::is_boundary(
                           line_id, surface_uuids[0] ) ) )
             {
-                return std::string( "Unique vertex with index " )
+                return "Unique vertex with index "
                        + std::to_string( unique_vertex_index )
-                       + std::string( " is part of only one line, with uuid '" )
+                       + " is part of only one line, with uuid '"
                        + line_id.string()
-                       + std::string( "', and only one surface, with uuid '" )
+                       + "', and only one surface, with uuid '"
                        + surface_uuids[0].string()
-                       + std::string(
-                           "', but the line is neither embedded in the "
-                           "surface, nor boundary of the surface while the "
-                           "surface is embedded in a block." );
+                       + "', but the line is neither embedded in the "
+                         "surface, nor boundary of the surface while the "
+                         "surface is embedded in a block.";
             }
         }
         else if( surface_uuids.empty() )
         {
-            if( detail::brep_blocks_are_meshed( brep_ )
-                && !( block_uuids.size() == 1
-                      && brep_.Relationships::is_internal(
-                          line_id, block_uuids[0] ) ) )
+            if( detail::brep_blocks_are_meshed( brep_ ) )
             {
-                return std::string( "Unique vertex with index " )
+                return absl::nullopt;
+            }
+            if( block_uuids.size() != 1 )
+            {
+                return "Unique vertex with index "
                        + std::to_string( unique_vertex_index )
-                       + std::string( " is part of only one line, with uuid '" )
+                       + " is part of only one line, with uuid '"
                        + line_id.string()
-                       + std::string(
-                           "', no surfaces, but is either part of no or "
-                           "several blocks, or the line is not internal to "
-                           "one." );
+                       + "', no surfaces, but is either part of "
+                       + std::to_string( block_uuids.size() )
+                       + " blocks, instead of one.";
+            }
+            if( !brep_.Relationships::is_internal( line_id, block_uuids[0] ) )
+            {
+                return "Unique vertex with index "
+                       + std::to_string( unique_vertex_index )
+                       + " is part of only one line, with uuid '"
+                       + line_id.string()
+                       + "', no surfaces, one block, but the line is not "
+                         "internal to the block.";
             }
         }
         else
@@ -196,17 +198,14 @@ namespace geode
                     && !brep_.Relationships::is_internal(
                         line_id, surface_id ) )
                 {
-                    return std::string( "Unique vertex with index " )
+                    return "Unique vertex with index "
                            + std::to_string( unique_vertex_index )
-                           + std::string(
-                               " is part of only one line, with uuid '" )
+                           + " is part of only one line, with uuid '"
                            + line_id.string()
-                           + std::string(
-                               "', and multiple surfaces, but the line is "
-                               "neither internal nor boundary of surface with "
-                               "uuid '" )
-                           + surface_id.string()
-                           + std::string( "', in which the vertex is." );
+                           + "', and multiple surfaces, but the line is "
+                             "neither internal nor boundary of surface with "
+                             "uuid '"
+                           + surface_id.string() + "', in which the vertex is.";
                 }
             }
         }
@@ -226,10 +225,9 @@ namespace geode
                        unique_vertex_index, Corner3D::component_type_static() )
                    .empty() )
         {
-            return std::string( "Unique vertex with index " )
+            return "Unique vertex with index "
                    + std::to_string( unique_vertex_index )
-                   + std::string(
-                       " is part of multiple lines but is not a corner." );
+                   + " is part of multiple lines but is not a corner.";
         }
         return absl::nullopt;
     }
@@ -242,53 +240,47 @@ namespace geode
             if( brep_.line( line.id() ).mesh().nb_vertices() == 0 )
             {
                 result.lines_not_meshed.add_problem( line.id(),
-                    line.id().string()
-                        + std::string( " is a line without mesh." ) );
+                    line.id().string() + " is a line without mesh." );
             }
 
             auto line_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
-            result.lines_not_linked_to_unique_vertex.problems.insert(
-                result.lines_not_linked_to_unique_vertex.problems.end(),
-                std::make_move_iterator( line_result.first.begin() ),
-                std::make_move_iterator( line_result.first.end() ) );
-            result.lines_not_linked_to_unique_vertex.messages.insert(
-                result.lines_not_linked_to_unique_vertex.messages.end(),
-                std::make_move_iterator( line_result.second.begin() ),
-                std::make_move_iterator( line_result.second.end() ) );
+            result.lines_not_linked_to_a_unique_vertex.emplace_back( line.id(),
+                "Line " + line.id().string()
+                    + " has mesh vertices not linked to a unique vertex." );
+            result.lines_not_linked_to_a_unique_vertex.back().second.problems =
+                std::move( line_result.first );
+            result.lines_not_linked_to_a_unique_vertex.back().second.messages =
+                std::move( line_result.second );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            const auto boundary_nor_internal_line =
-                vertex_is_part_of_not_boundary_nor_internal_line(
-                    unique_vertex_id );
-            if( boundary_nor_internal_line )
+            if( const auto boundary_nor_internal_line =
+                    vertex_is_part_of_not_boundary_nor_internal_line(
+                        unique_vertex_id ) )
             {
                 result.part_of_not_boundary_nor_internal_line_unique_vertices
                     .add_problem(
                         unique_vertex_id, boundary_nor_internal_line.value() );
             }
-            const auto invalid_internal_topology =
-                vertex_is_part_of_line_with_invalid_internal_topology(
-                    unique_vertex_id );
-            if( invalid_internal_topology )
+            if( const auto invalid_internal_topology =
+                    vertex_is_part_of_line_with_invalid_internal_topology(
+                        unique_vertex_id ) )
             {
                 result
                     .part_of_line_with_invalid_internal_topology_unique_vertices
                     .add_problem(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
-            const auto invalid_unique_line =
-                vertex_is_part_of_invalid_unique_line( unique_vertex_id );
-            if( invalid_unique_line )
+            if( const auto invalid_unique_line =
+                    vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
             {
                 result.part_of_invalid_unique_line_unique_vertices.add_problem(
                     unique_vertex_id, invalid_unique_line.value() );
             }
-            const auto lines_but_is_not_corner =
-                vertex_has_lines_but_is_not_corner( unique_vertex_id );
-            if( lines_but_is_not_corner )
+            if( const auto lines_but_is_not_corner =
+                    vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
             {
                 result.part_of_lines_but_not_corner_unique_vertices.add_problem(
                     unique_vertex_id, lines_but_is_not_corner.value() );
