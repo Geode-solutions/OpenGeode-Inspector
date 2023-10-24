@@ -53,8 +53,7 @@ namespace geode
         }
         if( vertex_is_part_of_not_internal_nor_boundary_line(
                 unique_vertex_index )
-            || vertex_is_part_of_invalid_embedded_line(
-                unique_vertex_index )
+            || vertex_is_part_of_invalid_embedded_line( unique_vertex_index )
             || vertex_is_part_of_invalid_single_line( unique_vertex_index )
             || vertex_has_lines_but_no_corner( unique_vertex_index ) )
         {
@@ -83,8 +82,8 @@ namespace geode
         return absl::nullopt;
     }
 
-    absl::optional< std::string > BRepLinesTopology::
-        vertex_is_part_of_invalid_embedded_line(
+    absl::optional< std::string >
+        BRepLinesTopology::vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const
     {
         for( const auto line_id :
@@ -269,8 +268,7 @@ namespace geode
                     vertex_is_part_of_invalid_embedded_line(
                         unique_vertex_id ) )
             {
-                result
-                    .unique_vertices_linked_to_a_line_with_invalid_embeddings
+                result.unique_vertices_linked_to_a_line_with_invalid_embeddings
                     .add_problem(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
