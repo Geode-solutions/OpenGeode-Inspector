@@ -72,7 +72,7 @@ namespace geode
     {
     }
 
-    bool BRepSurfacesTopology::brep_vertex_surfaces_topology_is_valid(
+    bool BRepSurfacesTopology::brep_surfaces_topology_is_valid(
         index_t unique_vertex_index ) const
     {
         const auto surfaces = brep_.component_mesh_vertices(
@@ -81,11 +81,10 @@ namespace geode
         {
             return true;
         }
-        if( vertex_is_part_of_not_boundary_nor_internal_surface(
+        if( vertex_is_part_of_not_internal_nor_boundary_surface(
                 unique_vertex_index )
-            || vertex_is_part_of_surface_with_invalid_internal_topology(
-                unique_vertex_index )
-            || vertex_is_part_of_invalid_unique_surface( unique_vertex_index )
+            || vertex_is_part_of_invalid_embedded_surface( unique_vertex_index )
+            || vertex_is_part_of_invalid_single_surface( unique_vertex_index )
             || vertex_is_part_of_invalid_multiple_surfaces(
                 unique_vertex_index )
             || vertex_is_part_of_line_and_not_on_surface_border(
@@ -97,7 +96,7 @@ namespace geode
     }
 
     absl::optional< std::string > BRepSurfacesTopology::
-        vertex_is_part_of_not_boundary_nor_internal_surface(
+        vertex_is_part_of_not_internal_nor_boundary_surface(
             index_t unique_vertex_index ) const
     {
         for( const auto surface_id :
@@ -117,8 +116,8 @@ namespace geode
         return absl::nullopt;
     }
 
-    absl::optional< std::string > BRepSurfacesTopology::
-        vertex_is_part_of_surface_with_invalid_internal_topology(
+    absl::optional< std::string >
+        BRepSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             const index_t unique_vertex_index ) const
     {
         for( const auto surface_id :
@@ -161,7 +160,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepSurfacesTopology::vertex_is_part_of_invalid_unique_surface(
+        BRepSurfacesTopology::vertex_is_part_of_invalid_single_surface(
             index_t unique_vertex_index ) const
     {
         const auto surface_uuids =
@@ -332,7 +331,7 @@ namespace geode
         return absl::nullopt;
     }
     BRepSurfacesTopologyInspectionResult
-        BRepSurfacesTopology::inspect_surfaces() const
+        BRepSurfacesTopology::inspect_surfaces_topology() const
     {
         BRepSurfacesTopologyInspectionResult result;
         for( const auto& surface : brep_.surfaces() )
@@ -358,27 +357,28 @@ namespace geode
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( const auto not_boundary_nor_internal_surface =
-                    vertex_is_part_of_not_boundary_nor_internal_surface(
+                    vertex_is_part_of_not_internal_nor_boundary_surface(
                         unique_vertex_id ) )
             {
-                result.part_of_not_boundary_nor_internal_surface_unique_vertices
+                result
+                    .unique_vertices_linked_to_not_internal_nor_boundary_surface
                     .add_problem( unique_vertex_id,
                         not_boundary_nor_internal_surface.value() );
             }
             if( const auto invalid_internal_topology =
-                    vertex_is_part_of_surface_with_invalid_internal_topology(
+                    vertex_is_part_of_invalid_embedded_surface(
                         unique_vertex_id ) )
             {
                 result
-                    .part_of_surface_with_invalid_internal_topology_unique_vertices
+                    .unique_vertices_linked_to_a_surface_with_invalid_embbedings
                     .add_problem(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
             if( const auto invalid_unique_surface =
-                    vertex_is_part_of_invalid_unique_surface(
+                    vertex_is_part_of_invalid_single_surface(
                         unique_vertex_id ) )
             {
-                result.part_of_invalid_unique_surface_unique_vertices
+                result.unique_vertices_linked_to_a_single_and_invalid_surface
                     .add_problem(
                         unique_vertex_id, invalid_unique_surface.value() );
             }
@@ -386,7 +386,7 @@ namespace geode
                     vertex_is_part_of_invalid_multiple_surfaces(
                         unique_vertex_id ) )
             {
-                result.part_of_invalid_multiple_surfaces_unique_vertices
+                result.unique_vertices_linked_to_several_and_invalid_surfaces
                     .add_problem(
                         unique_vertex_id, invalid_multiple_surfaces.value() );
             }
@@ -394,7 +394,8 @@ namespace geode
                     vertex_is_part_of_line_and_not_on_surface_border(
                         unique_vertex_id ) )
             {
-                result.part_of_line_and_not_on_surface_border_unique_vertices
+                result
+                    .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
                     .add_problem( unique_vertex_id,
                         line_and_not_on_surface_border.value() );
             }

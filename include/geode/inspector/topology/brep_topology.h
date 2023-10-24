@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 #include <geode/inspector/topology/brep_blocks_topology.h>
 #include <geode/inspector/topology/brep_corners_topology.h>
 #include <geode/inspector/topology/brep_lines_topology.h>
@@ -33,7 +34,6 @@
 
 namespace geode
 {
-    struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
 

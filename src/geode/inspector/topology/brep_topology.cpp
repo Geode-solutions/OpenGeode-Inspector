@@ -202,9 +202,9 @@ namespace geode
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( !brep_corner_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_lines_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_surfaces_topology_is_valid( unique_vertex_id )
-                || !brep_vertex_blocks_topology_is_valid( unique_vertex_id ) )
+                || !brep_lines_topology_is_valid( unique_vertex_id )
+                || !brep_surfaces_topology_is_valid( unique_vertex_id )
+                || !brep_blocks_topology_is_valid( unique_vertex_id ) )
             {
                 return false;
             }
@@ -228,9 +228,9 @@ namespace geode
         BRepTopologyInspector::inspect_brep_topology() const
     {
         BRepTopologyInspectionResult result;
-        result.corners = inspect_corners();
-        result.lines = inspect_lines();
-        result.surfaces = inspect_surfaces();
+        result.corners = inspect_corners_topology();
+        result.lines = inspect_lines_topology();
+        result.surfaces = inspect_surfaces_topology();
         result.blocks = inspect_blocks();
         const auto res =
             impl_->unique_vertices_not_linked_to_a_component_vertex();

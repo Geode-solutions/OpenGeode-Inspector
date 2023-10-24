@@ -152,10 +152,10 @@ namespace geode
                         corner_uuid, line.component_id.id() ) )
                 {
                     index_t line_vertex_count{ 0 };
-                    for( const auto cmv :
+                    for( const auto cmv2 :
                         brep_.component_mesh_vertices( unique_vertex_index ) )
                     {
-                        if( cmv.component_id.id() == corner_uuid )
+                        if( cmv2.component_id.id() == corner_uuid )
                         {
                             line_vertex_count++;
                         }
@@ -187,7 +187,7 @@ namespace geode
     }
 
     BRepCornersTopologyInspectionResult
-        BRepCornersTopology::inspect_corners() const
+        BRepCornersTopology::inspect_corners_topology() const
     {
         BRepCornersTopologyInspectionResult result;
         for( const auto& corner : brep_.corners() )
@@ -215,27 +215,28 @@ namespace geode
             if( const auto problem_message =
                     unique_vertex_has_multiple_corners( unique_vertex_id ) )
             {
-                result.multiple_corners_unique_vertices.add_problem(
+                result.unique_vertices_linked_to_multiple_corners.add_problem(
                     unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_has_multiple_embeddings( unique_vertex_id ) )
             {
-                result.multiple_internals_corner_vertices.add_problem(
-                    unique_vertex_id, problem_message.value() );
+                result.unique_vertices_linked_to_multiple_internals_corner
+                    .add_problem( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
-                result.not_internal_nor_boundary_corner_vertices.add_problem(
-                    unique_vertex_id, problem_message.value() );
+                result
+                    .unique_vertices_linked_to_not_internal_nor_boundary_corner
+                    .add_problem( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_part_of_line_but_not_boundary(
                         unique_vertex_id ) )
             {
-                result.line_corners_without_boundary_status.add_problem(
-                    unique_vertex_id, problem_message.value() );
+                result.unique_vertices_liked_to_not_boundary_line_corner
+                    .add_problem( unique_vertex_id, problem_message.value() );
             }
         }
         return result;

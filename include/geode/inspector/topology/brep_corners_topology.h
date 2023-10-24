@@ -41,21 +41,29 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
         ProblemInspectionResult< uuid > corners_not_meshed{
-            "Corners not meshed"
+            "uuids of corner without mesh."
         };
         std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
             corners_not_linked_to_a_unique_vertex;
-        ProblemInspectionResult< index_t > multiple_corners_unique_vertices{
-            "Unique vertices that are part of several corners."
-        };
-        ProblemInspectionResult< index_t > multiple_internals_corner_vertices{
-            "Corners with several embeddings"
-        };
         ProblemInspectionResult< index_t >
-            not_internal_nor_boundary_corner_vertices{ "Isolated Corners" };
-        ProblemInspectionResult< index_t > line_corners_without_boundary_status{
-            "Corners on a line but not its boundary)"
-        };
+            unique_vertices_linked_to_multiple_corners{
+                "Indexes of unique vertex that are part of several corners."
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_multiple_internals_corner{
+                "Indexes of unique vertex linked to corner with several "
+                "embeddings"
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_not_internal_nor_boundary_corner{
+                "Indexes of unique vertex linked to corner without boundary "
+                "nor internal status."
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_liked_to_not_boundary_line_corner{
+                "Indexes of unique vertex linked to conner on a line but "
+                "without boundary status.)"
+            };
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology
@@ -85,7 +93,7 @@ namespace geode
         absl::optional< std::string > corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
 
-        BRepCornersTopologyInspectionResult inspect_corners() const;
+        BRepCornersTopologyInspectionResult inspect_corners_topology() const;
 
     private:
         const BRep& brep_;

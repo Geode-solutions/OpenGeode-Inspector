@@ -41,18 +41,18 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
         ProblemInspectionResult< uuid > blocks_not_meshed{
-            "Blocks not meshed"
+            "uuids of block without mesh."
         };
         std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
             blocks_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             vertices_part_of_two_blocks_and_no_boundary_surface{
-                "Unique vertices part of two blocks and no boundary surface "
-                "(or block incident line)"
+                "Indexes of unique vertex part of two blocks and no boundary "
+                "surface (or block incident line)"
             };
         ProblemInspectionResult< index_t >
             vertices_with_incorrect_block_cmvs_count{
-                "Unique vertices part of a block but with incorrect "
+                "Indexes of unique vertex part of a block but with incorrect "
                 "ComponentMeshVertices count"
             };
     };
@@ -66,13 +66,14 @@ namespace geode
     public:
         BRepBlocksTopology( const BRep& brep );
 
-        bool brep_vertex_blocks_topology_is_valid(
-            index_t unique_vertex_index ) const;
+        bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
             vertex_is_part_of_two_blocks_and_no_boundary_surface(
                 index_t unique_vertex_index ) const;
 
+        // should it be rename
+        // vertex_is_part_of_block_with_invalid_internal_topology?
         absl::optional< std::string > vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const;
 

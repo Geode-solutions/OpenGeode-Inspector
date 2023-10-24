@@ -40,22 +40,35 @@ namespace geode
         BRepSurfacesTopologyInspectionResult
     {
         ProblemInspectionResult< uuid > surfaces_not_meshed{
-            "Surface not meshed"
+            "uuids of surface without mesh."
         };
         std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
             surfaces_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
-            part_of_not_boundary_nor_internal_surface_unique_vertices{ "" };
-        ProblemInspectionResult< index_t >
-            part_of_surface_with_invalid_internal_topology_unique_vertices{
-                ""
+            unique_vertices_linked_to_not_internal_nor_boundary_surface{
+                "Indexes of unique vertex linked to surface without boundary "
+                "nor internal status."
             };
         ProblemInspectionResult< index_t >
-            part_of_invalid_unique_surface_unique_vertices{ "" };
+            unique_vertices_linked_to_a_surface_with_invalid_embbedings{
+                "Indexes of unique vertex linked to a surface with invalid "
+                "internal topology."
+            };
         ProblemInspectionResult< index_t >
-            part_of_invalid_multiple_surfaces_unique_vertices{ "" };
+            unique_vertices_linked_to_a_single_and_invalid_surface{
+                "Indexes of unique vertex linked to only one surface and this "
+                "single surface is invalid."
+            };
         ProblemInspectionResult< index_t >
-            part_of_line_and_not_on_surface_border_unique_vertices{ "" };
+            unique_vertices_linked_to_several_and_invalid_surfaces{
+                "Indexes of unique vertex linked to several surfaces in an "
+                "invalid way."
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
+                "Indexes of unique vertex linked to a line but not linked to a "
+                "surface border."
+            };
     };
     /*!
      * Class for inspecting the topology of a BRep model surfaces through
@@ -82,18 +95,18 @@ namespace geode
          * internal or boundary to at least 2 of the surfaces the vertex is
          * in).
          */
-        bool brep_vertex_surfaces_topology_is_valid(
+        bool brep_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
-            vertex_is_part_of_not_boundary_nor_internal_surface(
+            vertex_is_part_of_not_internal_nor_boundary_surface(
                 index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
-            vertex_is_part_of_surface_with_invalid_internal_topology(
+            vertex_is_part_of_invalid_embedded_surface(
                 index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > vertex_is_part_of_invalid_unique_surface(
+        absl::optional< std::string > vertex_is_part_of_invalid_single_surface(
             index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
@@ -104,7 +117,7 @@ namespace geode
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
-        BRepSurfacesTopologyInspectionResult inspect_surfaces() const;
+        BRepSurfacesTopologyInspectionResult inspect_surfaces_topology() const;
 
     private:
         const BRep& brep_;

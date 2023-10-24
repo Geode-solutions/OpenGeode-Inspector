@@ -64,7 +64,7 @@ namespace geode
     {
     }
 
-    bool BRepBlocksTopology::brep_vertex_blocks_topology_is_valid(
+    bool BRepBlocksTopology::brep_blocks_topology_is_valid(
         index_t unique_vertex_index ) const
     {
         if( vertex_is_part_of_two_blocks_and_no_boundary_surface(

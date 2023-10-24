@@ -42,7 +42,7 @@ namespace geode
 {
     BRepLinesTopology::BRepLinesTopology( const BRep& brep ) : brep_( brep ) {}
 
-    bool BRepLinesTopology::brep_vertex_lines_topology_is_valid(
+    bool BRepLinesTopology::brep_lines_topology_is_valid(
         index_t unique_vertex_index ) const
     {
         const auto lines = brep_.component_mesh_vertices(
@@ -51,12 +51,12 @@ namespace geode
         {
             return true;
         }
-        if( vertex_is_part_of_not_boundary_nor_internal_line(
+        if( vertex_is_part_of_not_internal_nor_boundary_line(
                 unique_vertex_index )
-            || vertex_is_part_of_line_with_invalid_internal_topology(
+            || vertex_is_part_of_invalid_embedded_line(
                 unique_vertex_index )
-            || vertex_is_part_of_invalid_unique_line( unique_vertex_index )
-            || vertex_has_lines_but_is_not_corner( unique_vertex_index ) )
+            || vertex_is_part_of_invalid_single_line( unique_vertex_index )
+            || vertex_has_lines_but_no_corner( unique_vertex_index ) )
         {
             return false;
         }
@@ -64,7 +64,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepLinesTopology::vertex_is_part_of_not_boundary_nor_internal_line(
+        BRepLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             index_t unique_vertex_index ) const
     {
         for( const auto& line : brep_.component_mesh_vertices(
@@ -84,7 +84,7 @@ namespace geode
     }
 
     absl::optional< std::string > BRepLinesTopology::
-        vertex_is_part_of_line_with_invalid_internal_topology(
+        vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const
     {
         for( const auto line_id :
@@ -129,7 +129,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepLinesTopology::vertex_is_part_of_invalid_unique_line(
+        BRepLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
         const auto line_uuids =
@@ -213,7 +213,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepLinesTopology::vertex_has_lines_but_is_not_corner(
+        BRepLinesTopology::vertex_has_lines_but_no_corner(
             index_t unique_vertex_index ) const
     {
         if( brep_.component_mesh_vertices(
@@ -232,7 +232,8 @@ namespace geode
         return absl::nullopt;
     }
 
-    BRepLinesTopologyInspectionResult BRepLinesTopology::inspect_lines() const
+    BRepLinesTopologyInspectionResult
+        BRepLinesTopology::inspect_lines_topology() const
     {
         BRepLinesTopologyInspectionResult result;
         for( const auto& line : brep_.lines() )
@@ -257,33 +258,36 @@ namespace geode
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( const auto boundary_nor_internal_line =
-                    vertex_is_part_of_not_boundary_nor_internal_line(
+                    vertex_is_part_of_not_internal_nor_boundary_line(
                         unique_vertex_id ) )
             {
-                result.part_of_not_boundary_nor_internal_line_unique_vertices
+                result.unique_vertices_linked_to_not_internal_nor_boundary_line
                     .add_problem(
                         unique_vertex_id, boundary_nor_internal_line.value() );
             }
             if( const auto invalid_internal_topology =
-                    vertex_is_part_of_line_with_invalid_internal_topology(
+                    vertex_is_part_of_invalid_embedded_line(
                         unique_vertex_id ) )
             {
                 result
-                    .part_of_line_with_invalid_internal_topology_unique_vertices
+                    .unique_vertices_linked_to_a_line_with_invalid_embeddings
                     .add_problem(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
             if( const auto invalid_unique_line =
-                    vertex_is_part_of_invalid_unique_line( unique_vertex_id ) )
+                    vertex_is_part_of_invalid_single_line( unique_vertex_id ) )
             {
-                result.part_of_invalid_unique_line_unique_vertices.add_problem(
-                    unique_vertex_id, invalid_unique_line.value() );
+                result.unique_vertices_linked_to_a_single_and_invalid_line
+                    .add_problem(
+                        unique_vertex_id, invalid_unique_line.value() );
             }
             if( const auto lines_but_is_not_corner =
-                    vertex_has_lines_but_is_not_corner( unique_vertex_id ) )
+                    vertex_has_lines_but_no_corner( unique_vertex_id ) )
             {
-                result.part_of_lines_but_not_corner_unique_vertices.add_problem(
-                    unique_vertex_id, lines_but_is_not_corner.value() );
+                result
+                    .unique_vertices_linked_to_a_line_but_not_linked_to_a_corner
+                    .add_problem(
+                        unique_vertex_id, lines_but_is_not_corner.value() );
             }
         }
         return result;

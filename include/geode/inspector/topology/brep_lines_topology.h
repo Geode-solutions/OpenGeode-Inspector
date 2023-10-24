@@ -38,18 +38,30 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
     {
-        ProblemInspectionResult< uuid > lines_not_meshed{ "Lines not meshed" };
+        ProblemInspectionResult< uuid > lines_not_meshed{
+            "uuids of lines without mesh."
+        };
         std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
             lines_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices{ "" };
+            unique_vertices_linked_to_not_internal_nor_boundary_line{
+                "Indexes of unique vertex linked to line without boundary "
+                "nor internal status."
+            };
         ProblemInspectionResult< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices{ "" };
+            unique_vertices_linked_to_a_line_with_invalid_embeddings{
+                "Indexes of unique vertex linked to a line with invalid "
+                "internal topology."
+            };
         ProblemInspectionResult< index_t >
-            part_of_invalid_unique_line_unique_vertices{ "" };
+            unique_vertices_linked_to_a_single_and_invalid_line{
+                "Indexes of unique vertex linked to only one line and this "
+                "single line is invalid."
+            };
         ProblemInspectionResult< index_t >
-            part_of_lines_but_not_corner_unique_vertices{
-                "unique vertices on a line "
+            unique_vertices_linked_to_a_line_but_not_linked_to_a_corner{
+                "Indexes of unique vertex linked to a line but not kinked to a "
+                "corner."
             };
     };
     /*!
@@ -71,24 +83,22 @@ namespace geode
          * multiple surfaces.
          * If the vertex is part of multiple lines, it is also a corner.
          */
-        bool brep_vertex_lines_topology_is_valid(
-            index_t unique_vertex_index ) const;
+        bool brep_lines_topology_is_valid( index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
-            vertex_is_part_of_not_boundary_nor_internal_line(
+            vertex_is_part_of_not_internal_nor_boundary_line(
                 index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
-            vertex_is_part_of_line_with_invalid_internal_topology(
-                index_t unique_vertex_index ) const;
-
-        absl::optional< std::string > vertex_is_part_of_invalid_unique_line(
+        absl::optional< std::string > vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > vertex_has_lines_but_is_not_corner(
+        absl::optional< std::string > vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const;
 
-        BRepLinesTopologyInspectionResult inspect_lines() const;
+        absl::optional< std::string > vertex_has_lines_but_no_corner(
+            index_t unique_vertex_index ) const;
+
+        BRepLinesTopologyInspectionResult inspect_lines_topology() const;
 
     private:
         const BRep& brep_;
