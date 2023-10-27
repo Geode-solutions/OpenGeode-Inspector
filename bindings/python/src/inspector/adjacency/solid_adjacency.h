@@ -34,7 +34,7 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshAdjacency = SolidMeshAdjacency< dimension >;
         const auto name =
-            "SolidMeshAdjacency" + std::to_string( dimension ) + "D";
+            "SolidMeshAdjacency" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() )

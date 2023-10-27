@@ -91,7 +91,29 @@ namespace geode
                 {
                     result.first.push_back( vertex_id );
                     result.second.push_back(
-                        "Vertex '" + std::to_string( vertex_id )
+                        "Vertex '" + absl::StrCat( vertex_id )
+                        + "' is not linked to a unique vertex." );
+                }
+            }
+            return result;
+        }
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            section_component_vertices_are_associated_to_unique_vertices(
+                const Section& section,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh )
+        {
+            std::pair< std::vector< index_t >, std::vector< std::string > >
+                result;
+            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
+            {
+                ComponentMeshVertex component_mesh_vertex{ component_id,
+                    vertex_id };
+                if( section.unique_vertex( component_mesh_vertex ) == NO_ID )
+                {
+                    result.first.push_back( vertex_id );
+                    result.second.push_back(
+                        "Vertex '" + absl::StrCat( vertex_id )
                         + "' is not linked to a unique vertex." );
                 }
             }

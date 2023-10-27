@@ -29,7 +29,6 @@
 
 namespace geode
 {
-    struct ComponentMeshVertex;
     class BRep;
     struct uuid;
 } // namespace geode

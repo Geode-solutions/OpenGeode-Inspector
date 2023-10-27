@@ -34,7 +34,7 @@ namespace geode
         using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshDegeneration = SurfaceMeshDegeneration< dimension >;
         const auto name =
-            "SurfaceMeshDegeneration" + std::to_string( dimension ) + "D";
+            "SurfaceMeshDegeneration" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( pybind11::init< const SurfaceMesh&, bool >() )

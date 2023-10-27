@@ -24,8 +24,6 @@
 #include <geode/inspector/topology/brep_corners_topology.h>
 #include <geode/inspector/topology/private/topology_helpers.h>
 
-#include <geode/basic/logger.h>
-
 #include <geode/mesh/core/point_set.h>
 
 #include <geode/model/mixin/core/corner.h>
@@ -85,7 +83,7 @@ namespace geode
             > 1 )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is part of several corners.";
         }
         return absl::nullopt;
@@ -101,7 +99,7 @@ namespace geode
             && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is associated to corner with uuid '"
                    + corners[0].component_id.id().string()
                    + "', which has several embeddings.";
@@ -120,10 +118,10 @@ namespace geode
             && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is associated to corner with uuid '"
                    + corners[0].component_id.id().string()
-                   + "', which is neither incident nor embedded.";
+                   + "', which is neither internal nor boundary.";
         }
         return absl::nullopt;
     }
@@ -163,20 +161,20 @@ namespace geode
                     if( line_vertex_count != 2 )
                     {
                         return "Unique vertex with index "
-                               + std::to_string( unique_vertex_index )
+                               + absl::StrCat( unique_vertex_index )
                                + " is associated with corner with uuid '"
                                + corner_uuid.string()
                                + "', which is internal to line with uuid '"
                                + line.component_id.id().string()
                                + "', so line should be closed and have two "
                                  "different vertices on unique vertex, but has "
-                               + std::to_string( line_vertex_count )
+                               + absl::StrCat( line_vertex_count )
                                + " vertices on it instead.";
                     }
                     continue;
                 }
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is associated with corner with uuid '"
                        + corner_uuid.string() + "', part of line with uuid '"
                        + line.component_id.id().string()

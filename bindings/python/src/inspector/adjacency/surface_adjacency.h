@@ -34,7 +34,7 @@ namespace geode
         using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshAdjacency = SurfaceMeshAdjacency< dimension >;
         const auto name =
-            "SurfaceMeshAdjacency" + std::to_string( dimension ) + "D";
+            "SurfaceMeshAdjacency" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SurfaceMeshAdjacency >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( pybind11::init< const SurfaceMesh&, bool >() )

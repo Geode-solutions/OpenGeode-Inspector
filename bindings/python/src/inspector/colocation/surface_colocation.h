@@ -34,7 +34,7 @@ namespace geode
         using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshColocation = SurfaceMeshColocation< dimension >;
         const auto name =
-            "SurfaceMeshColocation" + std::to_string( dimension ) + "D";
+            "SurfaceMeshColocation" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SurfaceMeshColocation >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( pybind11::init< const SurfaceMesh&, bool >() )

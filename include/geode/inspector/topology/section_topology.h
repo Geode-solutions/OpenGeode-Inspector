@@ -26,12 +26,13 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 #include <geode/inspector/topology/section_corners_topology.h>
 #include <geode/inspector/topology/section_lines_topology.h>
 #include <geode/inspector/topology/section_surfaces_topology.h>
+
 namespace geode
 {
-    struct ComponentMeshVertex;
     class Section;
 } // namespace geode
 
@@ -42,6 +43,11 @@ namespace geode
         SectionCornersInspectionResult corners;
         SectionLinesInspectionResult lines;
         SectionSurfacesInspectionResult surfaces;
+
+        ProblemInspectionResult< index_t >
+            unique_vertices_not_linked_to_any_component{
+                "Unique vertices not linked to any component"
+            };
     };
 
     /*!
@@ -71,16 +77,7 @@ namespace geode
 
         bool section_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        SectionInspectionResult inspect_section() const;
-
-        std::vector< ComponentMeshVertex >
-            component_vertices_not_linked_to_a_unique_vertex() const;
-
-        std::vector< index_t >
-            unique_vertices_not_linked_to_a_component_vertex() const;
-
-        std::vector< index_t >
-            invalid_components_topology_unique_vertices() const;
+        SectionInspectionResult inspect_section_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

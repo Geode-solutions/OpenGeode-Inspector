@@ -26,7 +26,6 @@
 #include <absl/algorithm/container.h>
 
 #include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
 
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -107,7 +106,7 @@ namespace geode
                 && brep_.nb_incidences( surface_id ) < 1 )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of surface with uuid '" + surface_id.string()
                        + "', which is neither internal to nor a boundary of a "
                          "block.";
@@ -130,7 +129,7 @@ namespace geode
                         surface_id, embedding.id() ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of surface with uuid '"
                            + surface_id.string()
                            + "', which is both internal and boundary of "
@@ -146,7 +145,7 @@ namespace geode
                         } ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of surface with uuid '"
                            + surface_id.string()
                            + "', which is embedded in block with uuid '"
@@ -177,7 +176,7 @@ namespace geode
         if( block_uuids.size() > 2 )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is part of only one surface, but is part of more "
                      "than two blocks.";
         }
@@ -188,7 +187,7 @@ namespace geode
                 if( block_uuids.size() != 1 )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of only one surface, which is "
                              "embedded, but not part of only one block.";
                 }
@@ -196,7 +195,7 @@ namespace geode
                              surface_id, block_uuids[0] ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of only one surface, which is "
                              "embedded, and one block, but the surface is "
                              "not internal to the block.";
@@ -210,7 +209,7 @@ namespace geode
                 if( !brep_.Relationships::is_boundary( surface_id, block_id ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of only one surface, with uuid'"
                            + surface_id.string()
                            + "' which is not embedded, but not boundary "
@@ -239,7 +238,7 @@ namespace geode
         if( line_uuids.empty() )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is part of multiple surfaces, but not part of any "
                      "line.";
         }
@@ -252,7 +251,7 @@ namespace geode
                 && line_cmvs.size() < 2 )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of multiple surfaces and only one line, "
                          "but is a corner.";
             }
@@ -264,7 +263,7 @@ namespace geode
                         line_uuids[0], surface_id ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of multiple surfaces and only one line, "
                              "with uuid'"
                            + line_uuids[0].string()
@@ -283,7 +282,7 @@ namespace geode
                         brep_, line_id, surface_uuids ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of multiple surfaces and multiple "
                              "lines, but line with uuid'"
                            + line_id.string()
@@ -319,7 +318,7 @@ namespace geode
                         || brep_.is_internal( line, surface ) )
                     {
                         return "Unique vertex with index "
-                               + std::to_string( unique_vertex_index )
+                               + absl::StrCat( unique_vertex_index )
                                + " is part of a line and of surface with uuid '"
                                + surface_vertex.component_id.id().string()
                                + "' but the associated vertex in the surface "

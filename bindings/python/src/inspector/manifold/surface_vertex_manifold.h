@@ -35,7 +35,7 @@ namespace geode
         using SurfaceMeshVertexManifold =
             SurfaceMeshVertexManifold< dimension >;
         const auto name =
-            "SurfaceMeshVertexManifold" + std::to_string( dimension ) + "D";
+            "SurfaceMeshVertexManifold" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( pybind11::init< const SurfaceMesh&, bool >() )

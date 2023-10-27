@@ -34,7 +34,7 @@ namespace geode
         using SolidMesh = geode::SolidMesh< dimension >;
         using SolidMeshInspector = geode::SolidMeshInspector< dimension >;
         const auto name =
-            "SolidMeshInspector" + std::to_string( dimension ) + "D";
+            "SolidMeshInspector" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SolidMeshInspector, SolidMeshAdjacency< dimension >,
             SolidMeshColocation< dimension >,
             SolidMeshDegeneration< dimension >,

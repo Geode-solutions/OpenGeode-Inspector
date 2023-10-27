@@ -35,7 +35,7 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshEdgeManifold = SolidMeshEdgeManifold< dimension >;
         const auto name =
-            "SolidMeshEdgeManifold" + std::to_string( dimension ) + "D";
+            "SolidMeshEdgeManifold" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SolidMeshEdgeManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() )

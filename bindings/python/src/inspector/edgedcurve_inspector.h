@@ -35,7 +35,7 @@ namespace geode
         using EdgedCurveInspector = geode::EdgedCurveInspector< dimension >;
 
         const auto name =
-            "EdgedCurveInspector" + std::to_string( dimension ) + "D";
+            "EdgedCurveInspector" + absl::StrCat( dimension ) + "D";
         pybind11::class_< EdgedCurveInspector,
             EdgedCurveColocation< dimension >,
             EdgedCurveDegeneration< dimension > >( module, name.c_str() )

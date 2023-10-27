@@ -254,7 +254,7 @@ namespace geode
                     {
                         point_group_string += " ";
                         point_group_string +=
-                            std::to_string( point_group[point_index] );
+                            absl::StrCat( point_group[point_index] );
                     }
                 }
                 if( counter > 0 )
@@ -321,7 +321,7 @@ namespace geode
                     {
                         point_group_string += " ";
                         point_group_string +=
-                            std::to_string( point_group[point_index] );
+                            absl::StrCat( point_group[point_index] );
                     }
                 }
                 if( !fixed_point_group.empty() )

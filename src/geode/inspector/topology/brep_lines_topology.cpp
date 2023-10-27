@@ -25,8 +25,6 @@
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
-
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/solid_mesh.h>
 
@@ -55,7 +53,7 @@ namespace geode
                 unique_vertex_index )
             || vertex_is_part_of_invalid_embedded_line( unique_vertex_index )
             || vertex_is_part_of_invalid_single_line( unique_vertex_index )
-            || vertex_has_lines_but_no_corner( unique_vertex_index ) )
+            || vertex_has_lines_but_is_not_a_corner( unique_vertex_index ) )
         {
             return false;
         }
@@ -73,7 +71,7 @@ namespace geode
                 && brep_.nb_incidences( line.component_id.id() ) < 1 )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of line with uuid '"
                        + line.component_id.id().string()
                        + "', which is neither embedded nor incident.";
@@ -96,7 +94,7 @@ namespace geode
                         line_id, embedding.id() ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of line with uuid '" + line_id.string()
                            + "', which is both boundary and embedded in "
                              "surface with uuid '"
@@ -115,7 +113,7 @@ namespace geode
                         } ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of line with uuid '" + line_id.string()
                            + "', which is embedded in surface with uuid '"
                            + embedding.id().string()
@@ -153,7 +151,7 @@ namespace geode
                           line_id, surface_uuids[0] ) ) )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of only one line, with uuid '"
                        + line_id.string()
                        + "', and only one surface, with uuid '"
@@ -165,24 +163,23 @@ namespace geode
         }
         else if( surface_uuids.empty() )
         {
-            if( detail::brep_blocks_are_meshed( brep_ ) )
+            if( !detail::brep_blocks_are_meshed( brep_ ) )
             {
                 return absl::nullopt;
             }
             if( block_uuids.size() != 1 )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of only one line, with uuid '"
-                       + line_id.string()
-                       + "', no surfaces, but is either part of "
-                       + std::to_string( block_uuids.size() )
+                       + line_id.string() + "', no surfaces, but is part of "
+                       + absl::StrCat( block_uuids.size() )
                        + " blocks, instead of one.";
             }
             if( !brep_.Relationships::is_internal( line_id, block_uuids[0] ) )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of only one line, with uuid '"
                        + line_id.string()
                        + "', no surfaces, one block, but the line is not "
@@ -198,7 +195,7 @@ namespace geode
                         line_id, surface_id ) )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of only one line, with uuid '"
                            + line_id.string()
                            + "', and multiple surfaces, but the line is "
@@ -212,7 +209,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepLinesTopology::vertex_has_lines_but_no_corner(
+        BRepLinesTopology::vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const
     {
         if( brep_.component_mesh_vertices(
@@ -225,7 +222,7 @@ namespace geode
                    .empty() )
         {
             return "Unique vertex with index "
-                   + std::to_string( unique_vertex_index )
+                   + absl::StrCat( unique_vertex_index )
                    + " is part of multiple lines but is not a corner.";
         }
         return absl::nullopt;
@@ -280,7 +277,7 @@ namespace geode
                         unique_vertex_id, invalid_unique_line.value() );
             }
             if( const auto lines_but_is_not_corner =
-                    vertex_has_lines_but_no_corner( unique_vertex_id ) )
+                    vertex_has_lines_but_is_not_a_corner( unique_vertex_id ) )
             {
                 result
                     .unique_vertices_linked_to_a_line_but_not_linked_to_a_corner

@@ -53,5 +53,10 @@ namespace geode
                 const BRep& brep,
                 const ComponentID& component_id,
                 const VertexSet& component_mesh );
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            section_component_vertices_are_associated_to_unique_vertices(
+                const Section& section,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh );
     } // namespace detail
 } // namespace geode

@@ -22,11 +22,16 @@
  */
 
 #pragma once
+#include <string>
+
+#include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
+    struct uuid;
     class Section;
 } // namespace geode
 
@@ -34,18 +39,36 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api SectionCornersInspectionResult
     {
-        std::vector< index_t > multiple_corners_unique_vertices{};
-        std::vector< index_t > multiple_internals_corner_vertices{};
-        std::vector< index_t > not_internal_nor_boundary_corner_vertices{};
-        std::vector< index_t > line_corners_without_boundary_status{};
+        ProblemInspectionResult< uuid > corners_not_meshed{
+            "uuids of corner without mesh."
+        };
+        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+            corners_not_linked_to_a_unique_vertex;
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_multiple_corners{
+                "Indices of unique vertices that are part of several corners."
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_multiple_internals_corner{
+                "Indices of unique vertices linked to corner with several "
+                "embeddings"
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_linked_to_not_internal_nor_boundary_corner{
+                "Indices of unique vertices linked to corner without boundary "
+                "nor internal status."
+            };
+        ProblemInspectionResult< index_t >
+            unique_vertices_liked_to_not_boundary_line_corner{
+                "Indices of unique vertices linked to conner on a line but "
+                "without boundary status.)"
+            };
     };
 
     class opengeode_inspector_inspector_api SectionCornersTopology
     {
     public:
         SectionCornersTopology( const Section& section );
-
-        SectionCornersTopology( const Section& section, bool verbose );
 
         /*!
          * Checks if the section unique vertices are valid corners, i.e.
@@ -58,22 +81,21 @@ namespace geode
         bool section_corner_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        bool unique_vertex_has_multiple_corners(
+        absl::optional< std::string > unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const;
 
-        bool corner_has_multiple_embeddings(
+        absl::optional< std::string > corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const;
 
-        bool corner_is_not_internal_nor_boundary(
+        absl::optional< std::string > corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const;
 
-        bool corner_is_part_of_line_but_not_boundary(
+        absl::optional< std::string > corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
 
-        SectionCornersInspectionResult inspect_corners() const;
+        SectionCornersInspectionResult inspect_corners_topology() const;
 
     private:
         const Section& section_;
-        bool verbose_;
     };
 } // namespace geode

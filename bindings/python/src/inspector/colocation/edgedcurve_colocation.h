@@ -37,7 +37,7 @@ namespace geode
         using EdgedCurveColocation = EdgedCurveColocation< dimension >;
 
         const auto name =
-            "EdgedCurveColocation" + std::to_string( dimension ) + "D";
+            "EdgedCurveColocation" + absl::StrCat( dimension ) + "D";
         pybind11::class_< EdgedCurveColocation >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
             .def( pybind11::init< const EdgedCurve&, bool >() )

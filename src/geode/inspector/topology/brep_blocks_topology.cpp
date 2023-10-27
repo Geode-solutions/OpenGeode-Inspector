@@ -110,7 +110,7 @@ namespace geode
             }
         }
         return "Unique vertex with index "
-               + std::to_string( unique_vertex_index )
+               + absl::StrCat( unique_vertex_index )
                + " is part of two blocks, but not of a surface boundary to the "
                  "two blocks, nor of a line boundary to one of the blocks "
                  "incident surfaces.";
@@ -188,10 +188,10 @@ namespace geode
                     if( nb_block_cmvs != 1 )
                     {
                         return "Unique vertex with index "
-                               + std::to_string( unique_vertex_index )
+                               + absl::StrCat( unique_vertex_index )
                                + " is part of block " + block_uuid.string()
                                + " and exactly one corner and one line but has "
-                               + std::to_string( nb_block_cmvs )
+                               + absl::StrCat( nb_block_cmvs )
                                + " block component mesh vertices (should be "
                                  "1).";
                     }
@@ -204,17 +204,17 @@ namespace geode
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of the block " + block_uuid.string()
                            + ", and of a corner, and of no internal line, "
                            + "and of "
-                           + std::to_string( nb_boundary_surface_cmvs )
+                           + absl::StrCat( nb_boundary_surface_cmvs )
                            + " boundary surface(s), and of "
-                           + std::to_string( nb_boundary_line_cmvs )
+                           + absl::StrCat( nb_boundary_line_cmvs )
                            + " line(s) on block boundaries, with "
-                           + std::to_string( nb_block_cmvs )
+                           + absl::StrCat( nb_block_cmvs )
                            + " block component mesh vertices" + "(should be "
-                           + std::to_string( predicted_nb_block_cmvs ) + ").";
+                           + absl::StrCat( predicted_nb_block_cmvs ) + ").";
                 }
                 continue;
             }
@@ -227,12 +227,12 @@ namespace geode
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
                     return "Unique vertex with index "
-                           + std::to_string( unique_vertex_index )
+                           + absl::StrCat( unique_vertex_index )
                            + " is part of the block " + block_uuid.string()
                            + " and none of its internal surfaces but has "
-                           + std::to_string( nb_block_cmvs )
+                           + absl::StrCat( nb_block_cmvs )
                            + " block component mesh vertices (should be "
-                           + std::to_string( predicted_nb_block_cmvs ) + ").";
+                           + absl::StrCat( predicted_nb_block_cmvs ) + ").";
                 }
                 continue;
             }
@@ -250,17 +250,17 @@ namespace geode
             if( nb_block_cmvs != predicted_nb_block_cmvs )
             {
                 return "Unique vertex with index "
-                       + std::to_string( unique_vertex_index )
+                       + absl::StrCat( unique_vertex_index )
                        + " is part of the block " + block_uuid.string()
-                       + ", of " + std::to_string( nb_internal_surface_cmvs )
+                       + ", of " + absl::StrCat( nb_internal_surface_cmvs )
                        + " internal surface(s), of "
-                       + std::to_string( nb_boundary_surface_cmvs )
+                       + absl::StrCat( nb_boundary_surface_cmvs )
                        + " boundary surface(s), and of "
-                       + std::to_string( nb_free_line_cmvs )
+                       + absl::StrCat( nb_free_line_cmvs )
                        + " free line(s), with "
-                       + std::to_string( nb_block_cmvs )
+                       + absl::StrCat( nb_block_cmvs )
                        + " block component mesh vertices (should be "
-                       + std::to_string( predicted_nb_block_cmvs ) + ").";
+                       + absl::StrCat( predicted_nb_block_cmvs ) + ").";
             }
         }
         return absl::nullopt;

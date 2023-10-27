@@ -34,7 +34,7 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshColocation = SolidMeshColocation< dimension >;
         const auto name =
-            "SolidMeshColocation" + std::to_string( dimension ) + "D";
+            "SolidMeshColocation" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SolidMeshColocation >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() )

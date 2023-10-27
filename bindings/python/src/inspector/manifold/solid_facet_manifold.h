@@ -35,7 +35,7 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshFacetManifold = SolidMeshFacetManifold< dimension >;
         const auto name =
-            "SolidMeshFacetManifold" + std::to_string( dimension ) + "D";
+            "SolidMeshFacetManifold" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() )

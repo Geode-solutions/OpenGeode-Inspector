@@ -35,7 +35,7 @@ namespace geode
         using TriangulatedSurfaceIntersections =
             TriangulatedSurfaceIntersections< dimension >;
         const auto name = "TriangulatedSurfaceIntersections"
-                          + std::to_string( dimension ) + "D";
+                          + absl::StrCat( dimension ) + "D";
         pybind11::class_< TriangulatedSurfaceIntersections >(
             module, name.c_str() )
             .def( pybind11::init< const TriangulatedSurface& >() )

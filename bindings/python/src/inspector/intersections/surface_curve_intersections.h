@@ -37,7 +37,7 @@ namespace geode
         using SurfaceCurveIntersections =
             SurfaceCurveIntersections< dimension >;
         const auto name =
-            "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";
+            "SurfaceCurveIntersections" + absl::StrCat( dimension ) + "D";
         pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
             .def( pybind11::init< const TriangulatedSurface&,
                 const EdgedCurve& >() )
