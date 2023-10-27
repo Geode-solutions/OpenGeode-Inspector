@@ -23,15 +23,15 @@
 
 #pragma once
 
-#include <absl/types/optional.h>
 #include <string>
+
+#include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct ComponentMeshVertex;
     struct uuid;
     class BRep;
 } // namespace geode
@@ -47,21 +47,21 @@ namespace geode
             corners_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_multiple_corners{
-                "Indexes of unique vertex that are part of several corners."
+                "Indices of unique vertices that are part of several corners."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_multiple_internals_corner{
-                "Indexes of unique vertex linked to corner with several "
+                "Indices of unique vertices linked to corner with several "
                 "embeddings"
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
-                "Indexes of unique vertex linked to corner without boundary "
+                "Indices of unique vertices linked to corner without boundary "
                 "nor internal status."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_liked_to_not_boundary_line_corner{
-                "Indexes of unique vertex linked to conner on a line but "
+                "Indices of unique vertices linked to conner on a line but "
                 "without boundary status.)"
             };
     };

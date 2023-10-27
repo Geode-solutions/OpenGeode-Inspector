@@ -234,9 +234,9 @@ namespace geode
         result.blocks = inspect_blocks();
         const auto res =
             impl_->unique_vertices_not_linked_to_a_component_vertex();
-        result.unique_vertex_not_linked_to_any_component.problems =
+        result.unique_vertices_not_linked_to_any_component.problems =
             std::move( res.first );
-        result.unique_vertex_not_linked_to_any_component.messages =
+        result.unique_vertices_not_linked_to_any_component.messages =
             std::move( res.second );
         return result;
     }

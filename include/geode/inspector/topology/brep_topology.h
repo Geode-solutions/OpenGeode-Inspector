@@ -47,7 +47,7 @@ namespace geode
         BRepBlocksTopologyInspectionResult blocks;
 
         ProblemInspectionResult< index_t >
-            unique_vertex_not_linked_to_any_component{
+            unique_vertices_not_linked_to_any_component{
                 "Unique vertices not linked to any component"
             };
     };

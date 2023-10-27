@@ -46,27 +46,29 @@ namespace geode
             surfaces_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_surface{
-                "Indexes of unique vertex linked to surface without boundary "
+                "Indices of unique vertices linked to surface without boundary "
                 "nor internal status."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
-                "Indexes of unique vertex linked to a surface with invalid "
+                "Indices of unique vertices linked to a surface with invalid "
                 "internal topology."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_single_and_invalid_surface{
-                "Indexes of unique vertex linked to only one surface and this "
+                "Indices of unique vertices linked to only one surface and "
+                "this "
                 "single surface is invalid."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_several_and_invalid_surfaces{
-                "Indexes of unique vertex linked to several surfaces in an "
+                "Indices of unique vertices linked to several surfaces in an "
                 "invalid way."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
-                "Indexes of unique vertex linked to a line but not linked to a "
+                "Indices of unique vertices linked to a line but not linked to "
+                "a "
                 "surface border."
             };
     };

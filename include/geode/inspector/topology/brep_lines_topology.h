@@ -45,22 +45,23 @@ namespace geode
             lines_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_line{
-                "Indexes of unique vertex linked to line without boundary "
+                "Indices of unique vertices linked to line without boundary "
                 "nor internal status."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
-                "Indexes of unique vertex linked to a line with invalid "
+                "Indices of unique vertices linked to a line with invalid "
                 "internal topology."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indexes of unique vertex linked to only one line and this "
+                "Indices of unique vertices linked to only one line and this "
                 "single line is invalid."
             };
         ProblemInspectionResult< index_t >
             unique_vertices_linked_to_a_line_but_not_linked_to_a_corner{
-                "Indexes of unique vertex linked to a line but not kinked to a "
+                "Indices of unique vertices linked to a line but not kinked to "
+                "a "
                 "corner."
             };
     };

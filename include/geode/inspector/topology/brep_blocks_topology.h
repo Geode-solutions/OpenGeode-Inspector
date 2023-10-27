@@ -23,7 +23,10 @@
 
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
@@ -46,13 +49,13 @@ namespace geode
         std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
             blocks_not_linked_to_a_unique_vertex;
         ProblemInspectionResult< index_t >
-            vertices_part_of_two_blocks_and_no_boundary_surface{
-                "Indexes of unique vertex part of two blocks and no boundary "
+            unique_vertices_part_of_two_blocks_and_no_boundary_surface{
+                "Indices of unique vertices part of two blocks and no boundary "
                 "surface (or block incident line)"
             };
         ProblemInspectionResult< index_t >
-            vertices_with_incorrect_block_cmvs_count{
-                "Indexes of unique vertex part of a block but with incorrect "
+            unique_vertices_with_incorrect_block_cmvs_count{
+                "Indices of unique vertices part of a block but with incorrect "
                 "ComponentMeshVertices count"
             };
     };
@@ -69,13 +72,12 @@ namespace geode
         bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
 
         absl::optional< std::string >
-            vertex_is_part_of_two_blocks_and_no_boundary_surface(
+            unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
                 index_t unique_vertex_index ) const;
 
-        // should it be rename
-        // vertex_is_part_of_block_with_invalid_internal_topology?
-        absl::optional< std::string > vertex_block_cmvs_count_is_incorrect(
-            index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            unique_vertex_block_cmvs_count_is_incorrect(
+                index_t unique_vertex_index ) const;
 
         BRepBlocksTopologyInspectionResult inspect_blocks() const;
 

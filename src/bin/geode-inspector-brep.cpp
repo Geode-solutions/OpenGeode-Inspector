@@ -223,7 +223,8 @@ void inspect_brep( const geode::BRep& brep )
         } ) );
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
-                result.blocks.vertices_with_incorrect_block_cmvs_count.number();
+                result.blocks.unique_vertices_with_incorrect_block_cmvs_count
+                    .number();
             geode::Logger::info(
                 nb, " unique vertices part of blocks with invalid topology." );
         } ) );

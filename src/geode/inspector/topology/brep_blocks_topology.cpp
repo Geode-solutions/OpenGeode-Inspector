@@ -34,6 +34,7 @@
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/mixin/core/corner.h>
 #include <geode/model/mixin/core/line.h>
+#include <geode/model/mixin/core/relationships.h>
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
@@ -67,17 +68,14 @@ namespace geode
     bool BRepBlocksTopology::brep_blocks_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        if( vertex_is_part_of_two_blocks_and_no_boundary_surface(
-                unique_vertex_index )
-            || vertex_block_cmvs_count_is_incorrect( unique_vertex_index ) )
-        {
-            return false;
-        }
-        return true;
+        return !( unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                      +unique_vertex_index )
+                  || unique_vertex_block_cmvs_count_is_incorrect(
+                      unique_vertex_index ) );
     }
 
     absl::optional< std::string > BRepBlocksTopology::
-        vertex_is_part_of_two_blocks_and_no_boundary_surface(
+        unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
         const auto block_cmvs = brep_.component_mesh_vertices(
@@ -119,7 +117,7 @@ namespace geode
     }
 
     absl::optional< std::string >
-        BRepBlocksTopology::vertex_block_cmvs_count_is_incorrect(
+        BRepBlocksTopology::unique_vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const
     {
         const auto block_cmvs = brep_.component_mesh_vertices(
@@ -295,17 +293,19 @@ namespace geode
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( const auto problem_message =
-                    vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                    unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
                         unique_vertex_id ) )
             {
-                result.vertices_part_of_two_blocks_and_no_boundary_surface
+                result
+                    .unique_vertices_part_of_two_blocks_and_no_boundary_surface
                     .add_problem( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
-                    vertex_block_cmvs_count_is_incorrect( unique_vertex_id ) )
+                    unique_vertex_block_cmvs_count_is_incorrect(
+                        unique_vertex_id ) )
             {
-                result.vertices_with_incorrect_block_cmvs_count.add_problem(
-                    unique_vertex_id, problem_message.value() );
+                result.unique_vertices_with_incorrect_block_cmvs_count
+                    .add_problem( unique_vertex_id, problem_message.value() );
             }
         }
         return result;
