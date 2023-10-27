@@ -109,8 +109,7 @@ namespace geode
                 }
             }
         }
-        return "Unique vertex with index "
-               + absl::StrCat( unique_vertex_index )
+        return "Unique vertex with index " + absl::StrCat( unique_vertex_index )
                + " is part of two blocks, but not of a surface boundary to the "
                  "two blocks, nor of a line boundary to one of the blocks "
                  "incident surfaces.";
@@ -257,8 +256,7 @@ namespace geode
                        + absl::StrCat( nb_boundary_surface_cmvs )
                        + " boundary surface(s), and of "
                        + absl::StrCat( nb_free_line_cmvs )
-                       + " free line(s), with "
-                       + absl::StrCat( nb_block_cmvs )
+                       + " free line(s), with " + absl::StrCat( nb_block_cmvs )
                        + " block component mesh vertices (should be "
                        + absl::StrCat( predicted_nb_block_cmvs ) + ").";
             }
