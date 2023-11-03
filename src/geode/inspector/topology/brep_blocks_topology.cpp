@@ -109,10 +109,10 @@ namespace geode
                 }
             }
         }
-        return "Unique vertex with index " + absl::StrCat( unique_vertex_index )
-               + " is part of two blocks, but not of a surface boundary to the "
-                 "two blocks, nor of a line boundary to one of the blocks "
-                 "incident surfaces.";
+        return absl::StrCat( "Unique vertex with index ", unique_vertex_index,
+            " is part of two blocks, but not of a surface boundary to the two "
+            "blocks, nor of a line boundary to one of the blocks incident "
+            "surfaces." );
     }
 
     absl::optional< std::string >
@@ -186,13 +186,13 @@ namespace geode
                 {
                     if( nb_block_cmvs != 1 )
                     {
-                        return "Unique vertex with index "
-                               + absl::StrCat( unique_vertex_index )
-                               + " is part of block " + block_uuid.string()
-                               + " and exactly one corner and one line but has "
-                               + absl::StrCat( nb_block_cmvs )
-                               + " block component mesh vertices (should be "
-                                 "1).";
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of block ",
+                            block_uuid.string(),
+                            " and exactly one corner and one line but has ",
+                            nb_block_cmvs,
+                            " block component mesh vertices (should be "
+                            "1)." );
                     }
                     continue;
                 }
@@ -202,18 +202,15 @@ namespace geode
                                                      + corner_cmvs.size();
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
-                    return "Unique vertex with index "
-                           + absl::StrCat( unique_vertex_index )
-                           + " is part of the block " + block_uuid.string()
-                           + ", and of a corner, and of no internal line, "
-                           + "and of "
-                           + absl::StrCat( nb_boundary_surface_cmvs )
-                           + " boundary surface(s), and of "
-                           + absl::StrCat( nb_boundary_line_cmvs )
-                           + " line(s) on block boundaries, with "
-                           + absl::StrCat( nb_block_cmvs )
-                           + " block component mesh vertices" + "(should be "
-                           + absl::StrCat( predicted_nb_block_cmvs ) + ").";
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index, " is part of the block ",
+                        block_uuid.string(),
+                        ", and of a corner, and of no internal line, ",
+                        "and of ", nb_boundary_surface_cmvs,
+                        " boundary surface(s), and of ", nb_boundary_line_cmvs,
+                        " line(s) on block boundaries, with ", nb_block_cmvs,
+                        " block component mesh vertices", "(should be ",
+                        predicted_nb_block_cmvs + ")." );
                 }
                 continue;
             }
@@ -225,13 +222,13 @@ namespace geode
                                                : nb_boundary_surface_cmvs / 2;
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
-                    return "Unique vertex with index "
-                           + absl::StrCat( unique_vertex_index )
-                           + " is part of the block " + block_uuid.string()
-                           + " and none of its internal surfaces but has "
-                           + absl::StrCat( nb_block_cmvs )
-                           + " block component mesh vertices (should be "
-                           + absl::StrCat( predicted_nb_block_cmvs ) + ").";
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index, " is part of the block ",
+                        block_uuid.string(),
+                        " and none of its internal surfaces but has ",
+                        nb_block_cmvs,
+                        " block component mesh vertices (should be ",
+                        predicted_nb_block_cmvs, ")." );
                 }
                 continue;
             }
@@ -248,17 +245,14 @@ namespace geode
             }
             if( nb_block_cmvs != predicted_nb_block_cmvs )
             {
-                return "Unique vertex with index "
-                       + absl::StrCat( unique_vertex_index )
-                       + " is part of the block " + block_uuid.string()
-                       + ", of " + absl::StrCat( nb_internal_surface_cmvs )
-                       + " internal surface(s), of "
-                       + absl::StrCat( nb_boundary_surface_cmvs )
-                       + " boundary surface(s), and of "
-                       + absl::StrCat( nb_free_line_cmvs )
-                       + " free line(s), with " + absl::StrCat( nb_block_cmvs )
-                       + " block component mesh vertices (should be "
-                       + absl::StrCat( predicted_nb_block_cmvs ) + ").";
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is part of the block ",
+                    block_uuid.string(), ", of ", nb_internal_surface_cmvs,
+                    " internal surface(s), of ", nb_boundary_surface_cmvs,
+                    " boundary surface(s), and of ", nb_free_line_cmvs,
+                    " free line(s), with ", nb_block_cmvs,
+                    " block component mesh vertices (should be ",
+                    predicted_nb_block_cmvs, ")." );
             }
         }
         return absl::nullopt;
@@ -272,8 +266,9 @@ namespace geode
         {
             if( brep_.block( block.id() ).mesh().nb_vertices() == 0 )
             {
-                result.blocks_not_meshed.add_problem( block.id(),
-                    "Block " + block.id().string() + " is not meshed." );
+                result.blocks_not_meshed.add_problem(
+                    block.id(), absl::StrCat( "Block ", block.id().string(),
+                                    " is not meshed." ) );
                 continue;
             }
             auto block_result = detail::
@@ -281,8 +276,8 @@ namespace geode
                     brep_, block.component_id(), block.mesh() );
             result.blocks_not_linked_to_a_unique_vertex.emplace_back(
                 block.id(),
-                "Block " + block.id().string()
-                    + " has mesh vertices not linked to a unique vertex." );
+                absl::StrCat( "Block ", block.id().string(),
+                    " has mesh vertices not linked to a unique vertex." ) );
             result.blocks_not_linked_to_a_unique_vertex.back().second.problems =
                 std::move( block_result.first );
             result.blocks_not_linked_to_a_unique_vertex.back().second.messages =

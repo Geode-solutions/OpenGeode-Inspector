@@ -148,10 +148,10 @@ geode::index_t launch_topological_validity_checks(
             .number(),
         " vertices part of a unique line with invalid toplogy." );
     nb_issues +=
-        result.lines.unique_vertices_linked_to_a_line_but_not_linked_to_a_corner
+        result.lines.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .number();
     geode::Logger::info( "There are ",
-        result.lines.unique_vertices_linked_to_a_line_but_not_linked_to_a_corner
+        result.lines.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .number(),
         " vertices part of multiple lines but not corner." );
     nb_issues +=

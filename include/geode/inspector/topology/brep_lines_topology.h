@@ -36,33 +36,32 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
+    struct BRepLinesTopologyInspectionResult
     {
-        ProblemInspectionResult< uuid > lines_not_meshed{
+        InspectionIssues< uuid > lines_not_meshed{
             "uuids of lines without mesh."
         };
-        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
             lines_not_linked_to_a_unique_vertex;
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_line{
                 "Indices of unique vertices linked to line without boundary "
                 "nor internal status."
             };
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
                 "Indices of unique vertices linked to a line with invalid "
                 "internal topology."
             };
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_linked_to_a_single_and_invalid_line{
                 "Indices of unique vertices linked to only one line and this "
                 "single line is invalid."
             };
-        ProblemInspectionResult< index_t >
-            unique_vertices_linked_to_a_line_but_not_linked_to_a_corner{
-                "Indices of unique vertices linked to a line but not kinked to "
-                "a "
-                "corner."
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
+                "Indices of unique vertices linked to several lines but not "
+                "linked to a corner."
             };
     };
     /*!

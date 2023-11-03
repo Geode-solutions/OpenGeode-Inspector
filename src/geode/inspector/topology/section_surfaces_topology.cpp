@@ -82,10 +82,10 @@ namespace geode
                     return absl::nullopt;
                 }
             }
-            return "Unique vertex with index "
-                   + absl::StrCat( unique_vertex_index )
-                   + " is part of two surfaces, but is associated to no "
-                     "line boundary of the two surfaces.";
+            return absl::StrCat( "Unique vertex with index ",
+                absl::StrCat( unique_vertex_index ),
+                " is part of two surfaces, but is associated to no "
+                "line boundary of the two surfaces." );
         }
         return absl::nullopt;
     }
@@ -112,12 +112,12 @@ namespace geode
                      .mesh()
                      .is_vertex_on_border( surface_vertex.vertex ) )
             {
-                return "Unique vertex with index "
-                       + absl::StrCat( unique_vertex_index )
-                       + " is part of a line and of surface with uuid '"
-                       + surface_vertex.component_id.id().string()
-                       + "' but the associated vertex in the surface "
-                         "mesh is not on the mesh border.";
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index,
+                    " is part of a line and of surface with uuid '",
+                    surface_vertex.component_id.id().string(),
+                    "' but the associated vertex in the surface "
+                    "mesh is not on the mesh border." );
             }
         }
         return absl::nullopt;
@@ -130,8 +130,9 @@ namespace geode
         {
             if( section_.surface( surface.id() ).mesh().nb_vertices() == 0 )
             {
-                result.surfaces_not_meshed.add_problem( surface.id(),
-                    surface.id().string() + " is a surface without mesh." );
+                result.surfaces_not_meshed.add_problem(
+                    surface.id(), absl::StrCat( surface.id().string(),
+                                      " is a surface without mesh." ) );
             }
 
             auto surface_result = detail::
@@ -139,8 +140,8 @@ namespace geode
                     section_, surface.component_id(), surface.mesh() );
             result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
                 surface.id(),
-                "Surface " + surface.id().string()
-                    + " has mesh vertices not linked to a unique vertex." );
+                absl::StrCat( "Surface ", surface.id().string(),
+                    " has mesh vertices not linked to a unique vertex." ) );
             result.surfaces_not_linked_to_a_unique_vertex.back()
                 .second.problems = std::move( surface_result.first );
             result.surfaces_not_linked_to_a_unique_vertex.back()

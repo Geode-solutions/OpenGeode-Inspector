@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/edged_curve.h>
 
@@ -37,7 +37,7 @@ namespace geode
         using EdgedCurveColocation = EdgedCurveColocation< dimension >;
 
         const auto name =
-            "EdgedCurveColocation" + absl::StrCat( dimension ) + "D";
+            absl::StrCat( "EdgedCurveColocation", dimension, "D" );
         pybind11::class_< EdgedCurveColocation >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
             .def( pybind11::init< const EdgedCurve&, bool >() )

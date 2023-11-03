@@ -71,9 +71,9 @@ namespace geode
                 &BRepLinesTopologyInspectionResult::
                     unique_vertices_linked_to_a_single_and_invalid_line )
             .def_readwrite(
-                "unique_vertices_linked_to_a_line_but_not_linked_to_a_corner",
+                "unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner",
                 &BRepLinesTopologyInspectionResult::
-                    unique_vertices_linked_to_a_line_but_not_linked_to_a_corner );
+                    unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner );
 
         pybind11::class_< BRepSurfacesTopologyInspectionResult >(
             module, "BRepSurfacesTopologyInspectionResult" )

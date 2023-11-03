@@ -41,19 +41,19 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
+    struct BRepBlocksTopologyInspectionResult
     {
-        ProblemInspectionResult< uuid > blocks_not_meshed{
+        InspectionIssues< uuid > blocks_not_meshed{
             "uuids of block without mesh."
         };
-        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
             blocks_not_linked_to_a_unique_vertex;
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_part_of_two_blocks_and_no_boundary_surface{
                 "Indices of unique vertices part of two blocks and no boundary "
                 "surface (or block incident line)"
             };
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_with_incorrect_block_cmvs_count{
                 "Indices of unique vertices part of a block but with incorrect "
                 "ComponentMeshVertices count"

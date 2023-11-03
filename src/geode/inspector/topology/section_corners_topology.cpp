@@ -88,9 +88,8 @@ namespace geode
                 .size()
             > 1 )
         {
-            return "Unique vertex with index "
-                   + absl::StrCat( unique_vertex_index )
-                   + " is part of several corners.";
+            return absl::StrCat( "Unique vertex with index ",
+                unique_vertex_index, " is part of several corners." );
         }
         return absl::nullopt;
     }
@@ -104,11 +103,10 @@ namespace geode
         if( !corners.empty()
             && section_.nb_embeddings( corners[0].component_id.id() ) > 1 )
         {
-            return "Unique vertex with index "
-                   + absl::StrCat( unique_vertex_index )
-                   + " is associated to corner with uuid '"
-                   + corners[0].component_id.id().string()
-                   + "', which has several embeddings.";
+            return absl::StrCat( "Unique vertex with index ",
+                unique_vertex_index, " is associated to corner with uuid '",
+                corners[0].component_id.id().string(),
+                "', which has several embeddings." );
         }
         return absl::nullopt;
     }
@@ -123,11 +121,10 @@ namespace geode
             && section_.nb_embeddings( corners[0].component_id.id() ) < 1
             && section_.nb_incidences( corners[0].component_id.id() ) < 1 )
         {
-            return "Unique vertex with index "
-                   + absl::StrCat( unique_vertex_index )
-                   + " is associated to corner with uuid '"
-                   + corners[0].component_id.id().string()
-                   + "', which is neither internal nor boundary.";
+            return absl::StrCat( "Unique vertex with index ",
+                unique_vertex_index, " is associated to corner with uuid '",
+                corners[0].component_id.id().string(),
+                "', which is neither internal nor boundary." );
         }
         return absl::nullopt;
     }
@@ -147,13 +144,12 @@ namespace geode
                 if( !section_.Relationships::is_boundary(
                         corner_uuid, line.component_id.id() ) )
                 {
-                    return "Unique vertex with index "
-                           + absl::StrCat( unique_vertex_index )
-                           + " is associated with corner with uuid '"
-                           + corner_uuid.string()
-                           + "', part of line with uuid '"
-                           + line.component_id.id().string()
-                           + "', but is not a boundary of the line.";
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is associated with corner with uuid '",
+                        corner_uuid.string(), "', part of line with uuid '",
+                        line.component_id.id().string(),
+                        "', but is not a boundary of the line." );
                 }
             }
         }

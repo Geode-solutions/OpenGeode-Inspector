@@ -38,16 +38,15 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api SectionInspectionResult
+    struct SectionInspectionResult
     {
         SectionCornersInspectionResult corners;
         SectionLinesInspectionResult lines;
         SectionSurfacesInspectionResult surfaces;
 
-        ProblemInspectionResult< index_t >
-            unique_vertices_not_linked_to_any_component{
-                "Unique vertices not linked to any component"
-            };
+        InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
+            "Unique vertices not linked to any component"
+        };
     };
 
     /*!
@@ -62,9 +61,7 @@ namespace geode
 
     public:
         SectionTopologyInspector( const Section& section );
-
         SectionTopologyInspector( const Section& section, bool verbose );
-
         ~SectionTopologyInspector();
 
         /*!

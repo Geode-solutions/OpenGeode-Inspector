@@ -141,14 +141,14 @@ def check_unique_vertices_linked_to_a_single_and_invalid_line(inspection_result)
     return len(unique_vertices_linked_to_a_single_and_invalid_line)
 
 
-def check_unique_vertices_linked_to_a_line_but_not_linked_to_a_corner(inspection_result):
-    unique_vertices_linked_to_a_line_but_not_linked_to_a_corner = inspection_result.lines.unique_vertices_linked_to_a_line_but_not_linked_to_a_corner
-    print("There are ", len(unique_vertices_linked_to_a_line_but_not_linked_to_a_corner),
+def check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner(inspection_result):
+    unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner = inspection_result.lines.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+    print("There are ", len(unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner),
           " vertices part of multiple lines but not corner.")
-    for vertex_index in unique_vertices_linked_to_a_line_but_not_linked_to_a_corner:
+    for vertex_index in unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner:
         print("[Test] Model unique vertex with index ", vertex_index,
               " is part of multiple lines but is not a corner.")
-    return len(unique_vertices_linked_to_a_line_but_not_linked_to_a_corner)
+    return len(unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner)
 
 
 def check_part_of_not_boundary_nor_internal_surface_unique_vertices(inspection_result):
@@ -222,7 +222,7 @@ def launch_topological_validity_checks(brep_inspector):
         inpection_result)
     nb_invalids += check_unique_vertices_linked_to_a_single_and_invalid_line(
         inpection_result)
-    nb_invalids += check_unique_vertices_linked_to_a_line_but_not_linked_to_a_corner(
+    nb_invalids += check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner(
         inpection_result)
     nb_invalids += check_part_of_not_boundary_nor_internal_surface_unique_vertices(
         inpection_result)

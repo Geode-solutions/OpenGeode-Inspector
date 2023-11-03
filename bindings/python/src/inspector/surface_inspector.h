@@ -37,7 +37,7 @@ namespace geode
         using TriangulatedSurfaceInspector =
             TriangulatedSurfaceInspector< dimension >;
         const auto name =
-            "SurfaceMeshInspector" + absl::StrCat( dimension ) + "D";
+            absl::StrCat( "SurfaceMeshInspector", dimension, "D" );
         pybind11::class_< SurfaceMeshInspector,
             SurfaceMeshAdjacency< dimension >,
             SurfaceMeshColocation< dimension >,
@@ -48,7 +48,7 @@ namespace geode
             .def( pybind11::init< const SurfaceMesh&, bool >() );
 
         const auto trgl_name =
-            "TriangulatedSurfaceInspector" + absl::StrCat( dimension ) + "D";
+            absl::StrCat( "TriangulatedSurfaceInspector", dimension, "D" );
         pybind11::class_< TriangulatedSurfaceInspector, SurfaceMeshInspector,
             TriangulatedSurfaceIntersections< dimension > >(
             module, trgl_name.c_str() )

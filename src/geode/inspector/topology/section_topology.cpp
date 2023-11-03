@@ -135,8 +135,8 @@ namespace geode
                 {
                     result.first.push_back( uv_id );
                     result.second.push_back(
-                        "Unique vertex with id " + absl::StrCat( uv_id )
-                        + " is not linked to any component mesh vertex." );
+                        absl::StrCat( "Unique vertex with id ", uv_id,
+                            " is not linked to any component mesh vertex." ) );
                 }
             }
             return result;

@@ -33,7 +33,7 @@ namespace geode
     {
         using PointSet = PointSet< dimension >;
         using PointSetInspector = PointSetInspector< dimension >;
-        const auto name = "PointSetInspector" + absl::StrCat( dimension ) + "D";
+        const auto name = absl::StrCat( "PointSetInspector", dimension, "D" );
         pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
             module, name.c_str() )
             .def( pybind11::init< const PointSet& >() )

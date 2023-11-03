@@ -181,7 +181,7 @@ void inspect_model( const geode::StructuralModel& model )
         tasks.emplace_back( async::spawn( [&result] {
             const auto nb =
                 result.lines
-                    .unique_vertices_linked_to_a_line_but_not_linked_to_a_corner
+                    .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                     .number();
             geode::Logger::info( nb,
                 " unique vertices part of multiple lines but not a corner." );

@@ -61,10 +61,10 @@ def check_unique_vertices_linked_to_a_single_and_invalid_line( brep_inspector ):
     for vertex_index in unique_vertices_linked_to_a_single_and_invalid_line:
         print( "[Test] Model unique vertex with index ", vertex_index, " is part of a unique line with invalid topological properties." )
 
-def check_unique_vertices_linked_to_a_line_but_not_linked_to_a_corner( brep_inspector ):
-    unique_vertices_linked_to_a_line_but_not_linked_to_a_corner = brep_inspector.unique_vertices_linked_to_a_line_but_not_linked_to_a_corner()
-    print( "There are ", len( unique_vertices_linked_to_a_line_but_not_linked_to_a_corner ), " vertices part of multiple lines but not corner." )
-    for vertex_index in unique_vertices_linked_to_a_line_but_not_linked_to_a_corner:
+def check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner( brep_inspector ):
+    unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner = brep_inspector.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner()
+    print( "There are ", len( unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner ), " vertices part of multiple lines but not corner." )
+    for vertex_index in unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner:
         print( "[Test] Model unique vertex with index ", vertex_index, " is part of multiple lines but is not a corner." )
 
 def check_part_of_not_boundary_nor_internal_surface_unique_vertices( brep_inspector ):
@@ -107,7 +107,7 @@ def launch_topological_validity_checks( brep_inspector ):
     check_unique_vertices_linked_to_not_internal_nor_boundary_line( brep_inspector )
     check_unique_vertices_linked_to_a_single_and_invalid_line( brep_inspector )
     check_unique_vertices_linked_to_a_single_and_invalid_line( brep_inspector )
-    check_unique_vertices_linked_to_a_line_but_not_linked_to_a_corner( brep_inspector )
+    check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner( brep_inspector )
     check_part_of_not_boundary_nor_internal_surface_unique_vertices( brep_inspector )
     check_part_of_surface_with_invalid_internal_topology_unique_vertices( brep_inspector )
     check_part_of_invalid_unique_surface_unique_vertices( brep_inspector )

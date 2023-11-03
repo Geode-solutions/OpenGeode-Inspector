@@ -35,19 +35,19 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api SectionSurfacesInspectionResult
+    struct SectionSurfacesInspectionResult
     {
-        ProblemInspectionResult< uuid > surfaces_not_meshed{
+        InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of surface without mesh."
         };
-        std::vector< std::pair< uuid, ProblemInspectionResult< index_t > > >
+        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
             surfaces_not_linked_to_a_unique_vertex;
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
                 "Indices of unique vertices linked to a surface with invalid "
                 "internal topology."
             };
-        ProblemInspectionResult< index_t >
+        InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
                 "Indices of unique vertices linked to a line but not linked to "
                 "a "

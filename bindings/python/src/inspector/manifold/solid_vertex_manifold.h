@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/solid_mesh.h>
 
@@ -34,7 +34,7 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshVertexManifold = SolidMeshVertexManifold< dimension >;
         const auto name =
-            "SolidMeshVertexManifold" + absl::StrCat( dimension ) + "D";
+            absl::StrCat( "SolidMeshVertexManifold", dimension, "D" );
         pybind11::class_< SolidMeshVertexManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( pybind11::init< const SolidMesh&, bool >() )

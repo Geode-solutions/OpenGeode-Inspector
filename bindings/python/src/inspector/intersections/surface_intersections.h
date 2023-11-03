@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/triangulated_surface.h>
 
@@ -34,8 +34,8 @@ namespace geode
         using TriangulatedSurface = TriangulatedSurface< dimension >;
         using TriangulatedSurfaceIntersections =
             TriangulatedSurfaceIntersections< dimension >;
-        const auto name = "TriangulatedSurfaceIntersections"
-                          + absl::StrCat( dimension ) + "D";
+        const auto name =
+            absl::StrCat( "TriangulatedSurfaceIntersections", dimension, "D" );
         pybind11::class_< TriangulatedSurfaceIntersections >(
             module, name.c_str() )
             .def( pybind11::init< const TriangulatedSurface& >() )

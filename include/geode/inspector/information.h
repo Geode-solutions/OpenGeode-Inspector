@@ -31,9 +31,9 @@
 namespace geode
 {
     template < typename ProblemType >
-    struct ProblemInspectionResult
+    struct InspectionIssues
     {
-        ProblemInspectionResult( absl::string_view problem_descrption )
+        InspectionIssues( absl::string_view problem_descrption )
             : description{ problem_descrption }
         {
         }
@@ -46,8 +46,8 @@ namespace geode
         void add_problem(
             const ProblemType& problem, const std::string& message )
         {
-            problems.push_back( problem );
-            messages.push_back( message );
+            problems.emplace_back( std::move( problem ) );
+            messages.emplace_back( std::move( message ) );
         }
 
         std::string description;

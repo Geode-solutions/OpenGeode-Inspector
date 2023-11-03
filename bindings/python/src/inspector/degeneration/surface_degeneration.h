@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -34,7 +34,7 @@ namespace geode
         using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshDegeneration = SurfaceMeshDegeneration< dimension >;
         const auto name =
-            "SurfaceMeshDegeneration" + absl::StrCat( dimension ) + "D";
+            absl::StrCat( "SurfaceMeshDegeneration", dimension, +"D" );
         pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( pybind11::init< const SurfaceMesh&, bool >() )

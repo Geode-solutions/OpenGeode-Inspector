@@ -90,9 +90,8 @@ namespace geode
                 if( brep.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
                     result.first.push_back( vertex_id );
-                    result.second.push_back(
-                        "Vertex '" + absl::StrCat( vertex_id )
-                        + "' is not linked to a unique vertex." );
+                    result.second.push_back( absl::StrCat( "Vertex '",
+                        vertex_id, "' is not linked to a unique vertex." ) );
                 }
             }
             return result;
@@ -112,9 +111,8 @@ namespace geode
                 if( section.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
                     result.first.push_back( vertex_id );
-                    result.second.push_back(
-                        "Vertex '" + absl::StrCat( vertex_id )
-                        + "' is not linked to a unique vertex." );
+                    result.second.push_back( absl::StrCat( "Vertex '",
+                        vertex_id, "' is not linked to a unique vertex." ) );
                 }
             }
             return result;
