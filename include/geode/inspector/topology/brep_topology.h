@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 #include <geode/inspector/topology/brep_blocks_topology.h>
 #include <geode/inspector/topology/brep_corners_topology.h>
 #include <geode/inspector/topology/brep_lines_topology.h>
@@ -33,12 +34,22 @@
 
 namespace geode
 {
-    struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
 
 namespace geode
 {
+    struct BRepTopologyInspectionResult
+    {
+        BRepCornersTopologyInspectionResult corners;
+        BRepLinesTopologyInspectionResult lines;
+        BRepSurfacesTopologyInspectionResult surfaces;
+        BRepBlocksTopologyInspectionResult blocks;
+
+        InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
+            "Unique vertices not linked to any component"
+        };
+    };
     /*!
      * Class for inspecting the topology of a BRep model corners
      */
@@ -52,7 +63,6 @@ namespace geode
 
     public:
         BRepTopologyInspector( const BRep& brep );
-
         BRepTopologyInspector( const BRep& brep, bool verbose );
 
         ~BRepTopologyInspector();
@@ -67,53 +77,7 @@ namespace geode
 
         bool brep_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        std::vector< ComponentMeshVertex >
-            component_vertices_not_linked_to_a_unique_vertex() const;
-
-        std::vector< index_t >
-            unique_vertices_not_linked_to_a_component_vertex() const;
-
-        std::vector< index_t >
-            invalid_components_topology_unique_vertices() const;
-
-        std::vector< index_t > multiple_corners_unique_vertices() const;
-
-        std::vector< index_t > multiple_internals_corner_vertices() const;
-
-        std::vector< index_t >
-            not_internal_nor_boundary_corner_vertices() const;
-
-        std::vector< index_t > line_corners_without_boundary_status() const;
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_lines_but_not_corner_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_surface_with_invalid_internal_topology_unique_vertices()
-                const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_surface_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_multiple_surfaces_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_and_not_on_surface_border_unique_vertices() const;
-
-        std::vector< index_t > part_of_invalid_blocks_unique_vertices() const;
+        BRepTopologyInspectionResult inspect_brep_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

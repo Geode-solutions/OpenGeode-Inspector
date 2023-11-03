@@ -98,6 +98,7 @@ add_geode_library(
         "mixin/add_inspectors.h"
         "section_inspector.h"
         "brep_inspector.h"
+        "information.h"
         "pointset_inspector.h"
         "edgedcurve_inspector.h"
         "surface_inspector.h"

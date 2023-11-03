@@ -20,28 +20,38 @@
  * SOFTWARE.
  *
  */
+
+#pragma once
+
 #include <string>
+#include <vector>
 
-#include <geode/mesh/core/point_set.h>
-
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/common.h>
 
 namespace geode
 {
-    template < index_t dimension >
-    void do_define_pointset_inspector( pybind11::module& module )
+    template < typename ProblemType >
+    struct InspectionIssues
     {
-        using PointSet = PointSet< dimension >;
-        using PointSetInspector = PointSetInspector< dimension >;
-        const auto name = absl::StrCat( "PointSetInspector", dimension, "D" );
-        pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
-            module, name.c_str() )
-            .def( pybind11::init< const PointSet& >() )
-            .def( pybind11::init< const PointSet&, bool >() );
-    }
-    void define_pointset_inspector( pybind11::module& module )
-    {
-        do_define_pointset_inspector< 2 >( module );
-        do_define_pointset_inspector< 3 >( module );
-    }
+        InspectionIssues( absl::string_view problem_descrption )
+            : description{ problem_descrption }
+        {
+        }
+
+        index_t number()
+        {
+            return problems.size();
+        }
+
+        void add_problem(
+            const ProblemType& problem, const std::string& message )
+        {
+            problems.emplace_back( std::move( problem ) );
+            messages.emplace_back( std::move( message ) );
+        }
+
+        std::string description;
+        std::vector< ProblemType > problems{};
+        std::vector< std::string > messages{};
+    };
 } // namespace geode

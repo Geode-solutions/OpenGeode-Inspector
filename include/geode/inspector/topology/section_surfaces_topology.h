@@ -22,16 +22,38 @@
  */
 
 #pragma once
+#include <absl/types/optional.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
+    struct uuid;
     class Section;
 } // namespace geode
 
 namespace geode
 {
+    struct SectionSurfacesInspectionResult
+    {
+        InspectionIssues< uuid > surfaces_not_meshed{
+            "uuids of surface without mesh."
+        };
+        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
+            surfaces_not_linked_to_a_unique_vertex;
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_surface_with_invalid_embbedings{
+                "Indices of unique vertices linked to a surface with invalid "
+                "internal topology."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
+                "Indices of unique vertices linked to a line but not linked to "
+                "a "
+                "surface border."
+            };
+    };
     /*!
      * Class for inspecting the topology of a Section model surfaces through
      * its unique vertices
@@ -40,8 +62,6 @@ namespace geode
     {
     public:
         SectionSurfacesTopology( const Section& section );
-
-        SectionSurfacesTopology( const Section& section, bool verbose );
 
         /*!
          * Checks if the section unique vertices are parts of valid
@@ -52,14 +72,17 @@ namespace geode
         bool section_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        bool vertex_is_part_of_invalid_surfaces_topology(
-            index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            vertex_is_part_of_invalid_embedded_surface(
+                index_t unique_vertex_index ) const;
 
-        bool vertex_is_part_of_line_and_not_on_surface_border(
-            index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            vertex_is_part_of_line_and_not_on_surface_border(
+                index_t unique_vertex_index ) const;
+
+        SectionSurfacesInspectionResult inspect_surfaces() const;
 
     private:
         const Section& section_;
-        bool verbose_;
     };
 } // namespace geode

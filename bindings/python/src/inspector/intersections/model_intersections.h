@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+#include <absl/strings/str_cat.h>
 
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/core/section.h>

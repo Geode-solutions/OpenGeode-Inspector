@@ -33,17 +33,30 @@ namespace geode
     class Section;
     struct uuid;
     struct ComponentMeshVertex;
+    class ComponentID;
+    class VertexSet;
 } // namespace geode
 
 namespace geode
 {
     namespace detail
     {
-        bool brep_blocks_are_meshed( const geode::BRep& brep );
+        bool brep_blocks_are_meshed( const BRep& brep );
 
-        bool section_surfaces_are_meshed( const geode::Section& section );
+        bool section_surfaces_are_meshed( const Section& section );
 
         std::vector< uuid > components_uuids(
             absl::Span< const ComponentMeshVertex > components );
+
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            brep_component_vertices_not_associated_to_unique_vertices(
+                const BRep& brep,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh );
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            section_component_vertices_are_associated_to_unique_vertices(
+                const Section& section,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh );
     } // namespace detail
 } // namespace geode

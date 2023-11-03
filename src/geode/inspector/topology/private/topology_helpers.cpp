@@ -25,6 +25,7 @@
 
 #include <geode/basic/algorithm.h>
 
+#include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -37,7 +38,7 @@ namespace geode
 {
     namespace detail
     {
-        bool brep_blocks_are_meshed( const geode::BRep& brep )
+        bool brep_blocks_are_meshed( const BRep& brep )
         {
             for( const auto& block : brep.blocks() )
             {
@@ -49,7 +50,7 @@ namespace geode
             return true;
         }
 
-        bool section_surfaces_are_meshed( const geode::Section& section )
+        bool section_surfaces_are_meshed( const Section& section )
         {
             for( const auto& surface : section.surfaces() )
             {
@@ -72,6 +73,49 @@ namespace geode
             }
             sort_unique( component_uuids );
             return component_uuids;
+        }
+
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            brep_component_vertices_not_associated_to_unique_vertices(
+                const BRep& brep,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh )
+        {
+            std::pair< std::vector< index_t >, std::vector< std::string > >
+                result;
+            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
+            {
+                ComponentMeshVertex component_mesh_vertex{ component_id,
+                    vertex_id };
+                if( brep.unique_vertex( component_mesh_vertex ) == NO_ID )
+                {
+                    result.first.push_back( vertex_id );
+                    result.second.push_back( absl::StrCat( "Vertex '",
+                        vertex_id, "' is not linked to a unique vertex." ) );
+                }
+            }
+            return result;
+        }
+        std::pair< std::vector< index_t >, std::vector< std::string > >
+            section_component_vertices_are_associated_to_unique_vertices(
+                const Section& section,
+                const ComponentID& component_id,
+                const VertexSet& component_mesh )
+        {
+            std::pair< std::vector< index_t >, std::vector< std::string > >
+                result;
+            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
+            {
+                ComponentMeshVertex component_mesh_vertex{ component_id,
+                    vertex_id };
+                if( section.unique_vertex( component_mesh_vertex ) == NO_ID )
+                {
+                    result.first.push_back( vertex_id );
+                    result.second.push_back( absl::StrCat( "Vertex '",
+                        vertex_id, "' is not linked to a unique vertex." ) );
+                }
+            }
+            return result;
         }
     } // namespace detail
 } // namespace geode
