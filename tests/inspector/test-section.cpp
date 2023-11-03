@@ -227,7 +227,8 @@ unique_vertices_linked_to_a_single_and_invalid_line )
 check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner(
     geode::SectionInspector& section_inspector )
 {
-    const auto unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner =
+    const auto
+unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner =
         section_inspector.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner();
     geode::Logger::info( "There are ",
         unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.size(),
@@ -238,7 +239,8 @@ check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner(
         geode::Logger::warn( "[Test] Model unique vertex with index ",
             vertex_index, " is part of multiple lines but is not a corner." );
     }
-    return unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.size();
+    return
+unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.size();
 }*/
 
 /*geode::index_t
@@ -330,10 +332,12 @@ geode::index_t launch_topological_validity_checks(
         " vertices part of a unique line with invalid toplogy." );
     ( section_inspector );
     nb_errors +=
-        result.lines.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+        result.lines
+            .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .number();
     geode::Logger::info( "There are ",
-        result.lines.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+        result.lines
+            .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .number(),
         " vertices part of multiple lines but not corner." );
     nb_errors +=

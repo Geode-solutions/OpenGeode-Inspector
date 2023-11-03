@@ -70,8 +70,8 @@ namespace geode
                 "unique_vertices_linked_to_a_single_and_invalid_line",
                 &BRepLinesTopologyInspectionResult::
                     unique_vertices_linked_to_a_single_and_invalid_line )
-            .def_readwrite(
-                "unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner",
+            .def_readwrite( "unique_vertices_linked_to_several_lines_but_not_"
+                            "linked_to_a_corner",
                 &BRepLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner );
 
