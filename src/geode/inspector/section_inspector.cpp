@@ -50,4 +50,10 @@ namespace geode
             SectionMeshesIntersections >{ section, verbose }
     {
     }
+    SectionInspectionResult SectionInspector::inspect_brep() const
+    {
+        SectionInspectionResult result;
+        result.topology = inspect_section_topology();
+        return result;
+    }
 } // namespace geode

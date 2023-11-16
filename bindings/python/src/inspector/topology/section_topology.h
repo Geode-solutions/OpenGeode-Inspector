@@ -91,14 +91,16 @@ namespace geode
                 &SectionSurfacesInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border );
 
-        pybind11::class_< SectionInspectionResult >(
-            module, "SectionInspectionResult" )
+        pybind11::class_< SectionTopologyInspectionResult >(
+            module, "SectionTopologyInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "corners", &SectionInspectionResult::corners )
-            .def_readwrite( "lines", &SectionInspectionResult::lines )
-            .def_readwrite( "surfaces", &SectionInspectionResult::surfaces )
+            .def_readwrite(
+                "corners", &SectionTopologyInspectionResult::corners )
+            .def_readwrite( "lines", &SectionTopologyInspectionResult::lines )
+            .def_readwrite(
+                "surfaces", &SectionTopologyInspectionResult::surfaces )
             .def_readwrite( "unique_vertices_not_linked_to_any_component",
-                &SectionInspectionResult::
+                &SectionTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component );
 
         pybind11::class_< SectionTopologyInspector >(

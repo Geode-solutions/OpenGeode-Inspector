@@ -40,6 +40,10 @@ namespace geode
 
 namespace geode
 {
+    struct BRepInspectionResult
+    {
+        BRepTopologyInspectionResult topology;
+    };
     /*!
      * Class for inspecting a BRep model
      * @extends BRepTopologyInspector
@@ -60,5 +64,7 @@ namespace geode
         BRepInspector( const BRep& brep );
 
         BRepInspector( const BRep& brep, bool verbose );
+
+        BRepInspectionResult inspect_brep() const;
     };
 } // namespace geode

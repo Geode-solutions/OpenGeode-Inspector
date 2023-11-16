@@ -81,6 +81,5 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
-        const BRep& brep_;
     };
 } // namespace geode

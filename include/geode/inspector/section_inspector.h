@@ -35,6 +35,10 @@
 
 namespace geode
 {
+    struct SectionInspectionResult
+    {
+        SectionTopologyInspectionResult topology;
+    };
     /*!
      * Class for inspecting a Section model
      * @extends SectionTopologyInspector
@@ -55,5 +59,7 @@ namespace geode
         SectionInspector( const Section& section );
 
         SectionInspector( const Section& section, bool verbose );
+
+        SectionInspectionResult inspect_brep() const;
     };
 } // namespace geode

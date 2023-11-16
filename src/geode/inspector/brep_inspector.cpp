@@ -50,4 +50,11 @@ namespace geode
             BRepMeshesIntersections >{ brep, verbose }
     {
     }
+    BRepInspectionResult BRepInspector::inspect_brep() const
+    {
+        BRepInspectionResult result;
+        result.topology = inspect_brep_topology();
+        return result;
+    }
+
 } // namespace geode

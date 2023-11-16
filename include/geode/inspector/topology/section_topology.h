@@ -38,7 +38,7 @@ namespace geode
 
 namespace geode
 {
-    struct SectionInspectionResult
+    struct SectionTopologyInspectionResult
     {
         SectionCornersInspectionResult corners;
         SectionLinesInspectionResult lines;
@@ -74,10 +74,9 @@ namespace geode
 
         bool section_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        SectionInspectionResult inspect_section_topology() const;
+        SectionTopologyInspectionResult inspect_section_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
-        const Section& section_;
     };
 } // namespace geode
