@@ -24,38 +24,36 @@
 #pragma once
 
 #include <geode/inspector/common.h>
-#include <geode/inspector/criterion/brep_meshes_inspector.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
+#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
+#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
+#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/intersections/model_intersections.h>
+#include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
 
 namespace geode
 {
-    class BRep;
-}
-
-namespace geode
-{
-    struct BRepInspectionResult
+    struct SectionMeshesInspectionResult
     {
-        BRepMeshesInspectionResult meshes;
-        BRepTopologyInspectionResult topology;
     };
     /*!
-     * Class for inspecting a BRep model
-     * @extends BRepTopologyInspector
+     * Class for inspecting a Section model
+     * @extends SectionMeshesInspector
      */
-    class opengeode_inspector_inspector_api BRepInspector
-        : public AddInspectors< BRep,
-              BRepMeshesInspector,
-              BRepTopologyInspector >
+    class opengeode_inspector_inspector_api SectionMeshesInspector
+        : public SectionUniqueVerticesColocation,
+          public SectionComponentMeshesAdjacency,
+          public SectionComponentMeshesColocation,
+          public SectionComponentMeshesDegeneration,
+          public SectionComponentMeshesManifold,
+          public SectionMeshesIntersections
     {
-        OPENGEODE_DISABLE_COPY( BRepInspector );
+        OPENGEODE_DISABLE_COPY( SectionMeshesInspector );
 
     public:
-        BRepInspector( const BRep& brep );
+        SectionMeshesInspector( const Section& section );
+        SectionMeshesInspector( const Section& section, bool verbose );
 
-        BRepInspector( const BRep& brep, bool verbose );
-
-        BRepInspectionResult inspect_brep() const;
+        SectionMeshesInspectionResult inspect_section_meshes() const;
     };
 } // namespace geode

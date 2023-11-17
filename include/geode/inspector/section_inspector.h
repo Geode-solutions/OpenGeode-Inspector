@@ -24,12 +24,7 @@
 #pragma once
 
 #include <geode/inspector/common.h>
-#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
-#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
-#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
-#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
-#include <geode/inspector/criterion/intersections/model_intersections.h>
-#include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
+#include <geode/inspector/criterion/section_meshes_inspector.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/section_topology.h>
 
@@ -37,6 +32,7 @@ namespace geode
 {
     struct SectionInspectionResult
     {
+        SectionMeshesInspectionResult meshes;
         SectionTopologyInspectionResult topology;
     };
     /*!
@@ -45,13 +41,8 @@ namespace geode
      */
     class opengeode_inspector_inspector_api SectionInspector
         : public AddInspectors< Section,
-              SectionTopologyInspector,
-              SectionUniqueVerticesColocation,
-              SectionComponentMeshesAdjacency,
-              SectionComponentMeshesColocation,
-              SectionComponentMeshesDegeneration,
-              SectionComponentMeshesManifold,
-              SectionMeshesIntersections >
+              SectionMeshesInspector,
+              SectionTopologyInspector >
     {
         OPENGEODE_DISABLE_COPY( SectionInspector );
 
@@ -60,6 +51,6 @@ namespace geode
 
         SectionInspector( const Section& section, bool verbose );
 
-        SectionInspectionResult inspect_brep() const;
+        SectionInspectionResult inspect_section() const;
     };
 } // namespace geode

@@ -21,41 +21,33 @@
  *
  */
 
-#pragma once
-
-#include <geode/inspector/common.h>
 #include <geode/inspector/criterion/brep_meshes_inspector.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/brep_topology.h>
 
 namespace geode
 {
-    class BRep;
-}
 
-namespace geode
-{
-    struct BRepInspectionResult
+    BRepMeshesInspector::BRepMeshesInspector( const BRep& brep )
+        : BRepUniqueVerticesColocation( brep ),
+          BRepComponentMeshesAdjacency( brep ),
+          BRepComponentMeshesColocation( brep ),
+          BRepComponentMeshesDegeneration( brep ),
+          BRepComponentMeshesManifold( brep ),
+          BRepMeshesIntersections( brep )
     {
-        BRepMeshesInspectionResult meshes;
-        BRepTopologyInspectionResult topology;
-    };
-    /*!
-     * Class for inspecting a BRep model
-     * @extends BRepTopologyInspector
-     */
-    class opengeode_inspector_inspector_api BRepInspector
-        : public AddInspectors< BRep,
-              BRepMeshesInspector,
-              BRepTopologyInspector >
+    }
+    BRepMeshesInspector::BRepMeshesInspector( const BRep& brep, bool verbose )
+        : BRepUniqueVerticesColocation( brep ),
+          BRepComponentMeshesAdjacency( brep ),
+          BRepComponentMeshesColocation( brep ),
+          BRepComponentMeshesDegeneration( brep ),
+          BRepComponentMeshesManifold( brep ),
+          BRepMeshesIntersections( brep )
     {
-        OPENGEODE_DISABLE_COPY( BRepInspector );
+    }
 
-    public:
-        BRepInspector( const BRep& brep );
-
-        BRepInspector( const BRep& brep, bool verbose );
-
-        BRepInspectionResult inspect_brep() const;
-    };
+    BRepMeshesInspectionResult BRepMeshesInspector::inspect_brep_meshes() const
+    {
+        BRepMeshesInspectionResult result;
+        return result;
+    }
 } // namespace geode

@@ -24,38 +24,36 @@
 #pragma once
 
 #include <geode/inspector/common.h>
-#include <geode/inspector/criterion/brep_meshes_inspector.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
+#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
+#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
+#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/intersections/model_intersections.h>
+#include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
 
 namespace geode
 {
-    class BRep;
-}
-
-namespace geode
-{
-    struct BRepInspectionResult
+    struct BRepMeshesInspectionResult
     {
-        BRepMeshesInspectionResult meshes;
-        BRepTopologyInspectionResult topology;
     };
     /*!
      * Class for inspecting a BRep model
-     * @extends BRepTopologyInspector
+     * @extends BRepMeshesInspector
      */
-    class opengeode_inspector_inspector_api BRepInspector
-        : public AddInspectors< BRep,
-              BRepMeshesInspector,
-              BRepTopologyInspector >
+    class opengeode_inspector_inspector_api BRepMeshesInspector
+        : public BRepUniqueVerticesColocation,
+          public BRepComponentMeshesAdjacency,
+          public BRepComponentMeshesColocation,
+          public BRepComponentMeshesDegeneration,
+          public BRepComponentMeshesManifold,
+          public BRepMeshesIntersections
     {
-        OPENGEODE_DISABLE_COPY( BRepInspector );
+        OPENGEODE_DISABLE_COPY( BRepMeshesInspector );
 
     public:
-        BRepInspector( const BRep& brep );
+        BRepMeshesInspector( const BRep& brep );
+        BRepMeshesInspector( const BRep& brep, bool verbose );
 
-        BRepInspector( const BRep& brep, bool verbose );
-
-        BRepInspectionResult inspect_brep() const;
+        BRepMeshesInspectionResult inspect_brep_meshes() const;
     };
 } // namespace geode

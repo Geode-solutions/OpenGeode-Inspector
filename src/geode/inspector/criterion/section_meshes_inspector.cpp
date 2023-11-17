@@ -21,41 +21,35 @@
  *
  */
 
-#pragma once
-
-#include <geode/inspector/common.h>
-#include <geode/inspector/criterion/brep_meshes_inspector.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/criterion/section_meshes_inspector.h>
 
 namespace geode
 {
-    class BRep;
-}
 
-namespace geode
-{
-    struct BRepInspectionResult
+    SectionMeshesInspector::SectionMeshesInspector( const Section& section )
+        : SectionUniqueVerticesColocation( section ),
+          SectionComponentMeshesAdjacency( section ),
+          SectionComponentMeshesColocation( section ),
+          SectionComponentMeshesDegeneration( section ),
+          SectionComponentMeshesManifold( section ),
+          SectionMeshesIntersections( section )
     {
-        BRepMeshesInspectionResult meshes;
-        BRepTopologyInspectionResult topology;
-    };
-    /*!
-     * Class for inspecting a BRep model
-     * @extends BRepTopologyInspector
-     */
-    class opengeode_inspector_inspector_api BRepInspector
-        : public AddInspectors< BRep,
-              BRepMeshesInspector,
-              BRepTopologyInspector >
+    }
+    SectionMeshesInspector::SectionMeshesInspector(
+        const Section& section, bool verbose )
+        : SectionUniqueVerticesColocation( section ),
+          SectionComponentMeshesAdjacency( section ),
+          SectionComponentMeshesColocation( section ),
+          SectionComponentMeshesDegeneration( section ),
+          SectionComponentMeshesManifold( section ),
+          SectionMeshesIntersections( section )
     {
-        OPENGEODE_DISABLE_COPY( BRepInspector );
+    }
 
-    public:
-        BRepInspector( const BRep& brep );
-
-        BRepInspector( const BRep& brep, bool verbose );
-
-        BRepInspectionResult inspect_brep() const;
-    };
+    SectionMeshesInspectionResult
+        SectionMeshesInspector::inspect_section_meshes() const
+    {
+        SectionMeshesInspectionResult result;
+        return result;
+    }
 } // namespace geode
