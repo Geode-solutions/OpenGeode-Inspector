@@ -474,7 +474,7 @@ namespace geode
                         " of surface ",
                         triangle_pair.first.component_id.id().string(), " and ",
                         triangle_pair.second.element_id, " of surface ",
-                        triangle_pair.first.component_id.id().string(),
+                        triangle_pair.second.component_id.id().string(),
                         " intersect each other." );
                 }
             }
