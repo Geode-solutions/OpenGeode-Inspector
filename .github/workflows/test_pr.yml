@@ -1,11 +1,12 @@
-name: Prepare PR
+name: Test PR
 
 on:
   pull_request:
 
-jobs:  
-  prepare:
-    uses: Geode-solutions/actions/.github/workflows/prepare-pr.yml@master
+jobs:
+  test:
+    uses: Geode-solutions/actions/.github/workflows/cpp-test-pr.yml@master
     with:
+      name: OPENGEODE_INSPECTOR
       repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
     secrets: inherit

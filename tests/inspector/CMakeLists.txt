@@ -145,6 +145,7 @@ add_geode_test(
         OpenGeode-Geosciences::explicit
         OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspector
+    ESSENTIAL
 )
 
 add_geode_test(
