@@ -40,7 +40,7 @@ namespace geode
      * Class for inspecting the intersections of TriangulatedSurfaces
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api TriangulatedSurfaceIntersections
+    class TriangulatedSurfaceIntersections
     {
         OPENGEODE_DISABLE_COPY( TriangulatedSurfaceIntersections );
 
