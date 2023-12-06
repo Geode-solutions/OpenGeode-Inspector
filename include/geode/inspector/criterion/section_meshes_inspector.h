@@ -35,6 +35,8 @@ namespace geode
 {
     struct SectionMeshesInspectionResult
     {
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies;
     };
     /*!
      * Class for inspecting a Section model

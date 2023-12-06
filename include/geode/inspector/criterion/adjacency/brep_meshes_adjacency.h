@@ -28,6 +28,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -50,22 +51,14 @@ namespace geode
     public:
         BRepComponentMeshesAdjacency( const BRep& model );
 
-        BRepComponentMeshesAdjacency( const BRep& model, bool verbose );
-
         ~BRepComponentMeshesAdjacency();
 
         std::vector< uuid > components_with_wrong_adjacencies() const;
 
-        absl::flat_hash_map< uuid, index_t >
-            surfaces_nb_edges_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies() const;
 
-        absl::flat_hash_map< uuid, index_t >
-            blocks_nb_facets_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, std::vector< PolyhedronFacet > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
             blocks_facets_with_wrong_adjacencies() const;
 
     private:

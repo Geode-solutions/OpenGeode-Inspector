@@ -38,21 +38,15 @@ namespace geode
         : public ComponentMeshesAdjacency< 2, Section >
     {
     public:
-        Impl( const Section& brep, bool verbose )
-            : ComponentMeshesAdjacency< 2, Section >( brep, verbose )
+        Impl( const Section& section )
+            : ComponentMeshesAdjacency< 2, Section >( section )
         {
         }
     };
 
     SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
         const Section& model )
-        : impl_{ model, false }
-    {
-    }
-
-    SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
-        const Section& model, bool verbose )
-        : impl_{ model, verbose }
+        : impl_{ model }
     {
     }
 
@@ -65,13 +59,7 @@ namespace geode
         return impl_->surfaces_with_wrong_adjacencies();
     }
 
-    absl::flat_hash_map< uuid, index_t > SectionComponentMeshesAdjacency::
-        surfaces_nb_edges_with_wrong_adjacencies() const
-    {
-        return impl_->surfaces_nb_edges_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+    absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
         SectionComponentMeshesAdjacency::surfaces_edges_with_wrong_adjacencies()
             const
     {

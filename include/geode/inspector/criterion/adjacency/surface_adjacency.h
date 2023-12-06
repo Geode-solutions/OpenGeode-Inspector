@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -46,16 +47,12 @@ namespace geode
     public:
         SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
 
-        SurfaceMeshAdjacency(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
-
         ~SurfaceMeshAdjacency();
 
         bool mesh_has_wrong_adjacencies() const;
 
-        index_t nb_edges_with_wrong_adjacency() const;
-
-        std::vector< PolygonEdge > polygon_edges_with_wrong_adjacency() const;
+        InspectionIssues< PolygonEdge >
+            polygon_edges_with_wrong_adjacency() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

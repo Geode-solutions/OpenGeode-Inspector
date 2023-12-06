@@ -35,6 +35,10 @@ namespace geode
 {
     struct BRepMeshesInspectionResult
     {
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies;
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
+            blocks_facets_with_wrong_adjacencies;
     };
     /*!
      * Class for inspecting a BRep model

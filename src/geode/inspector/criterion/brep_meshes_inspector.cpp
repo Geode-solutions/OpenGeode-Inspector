@@ -48,6 +48,10 @@ namespace geode
     BRepMeshesInspectionResult BRepMeshesInspector::inspect_brep_meshes() const
     {
         BRepMeshesInspectionResult result;
+        result.surfaces_edges_with_wrong_adjacencies =
+            surfaces_edges_with_wrong_adjacencies();
+        result.blocks_facets_with_wrong_adjacencies =
+            blocks_facets_with_wrong_adjacencies();
         return result;
     }
 } // namespace geode

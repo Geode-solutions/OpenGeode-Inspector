@@ -50,6 +50,8 @@ namespace geode
         SectionMeshesInspector::inspect_section_meshes() const
     {
         SectionMeshesInspectionResult result;
+        result.surfaces_edges_with_wrong_adjacencies =
+            surfaces_edges_with_wrong_adjacencies();
         return result;
     }
 } // namespace geode
