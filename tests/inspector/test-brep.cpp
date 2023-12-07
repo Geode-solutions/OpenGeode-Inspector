@@ -30,10 +30,6 @@
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/io/brep_input.h>
 
-#include <geode/geosciences/explicit/common.h>
-#include <geode/geosciences/explicit/representation/core/structural_model.h>
-#include <geode/geosciences/explicit/representation/io/structural_model_input.h>
-
 #include <geode/inspector/brep_inspector.h>
 
 geode::index_t check_components_linking( geode::BRepInspector& brep_inspector )
@@ -510,20 +506,20 @@ void check_model_a1_valid()
 
 void check_model_mss()
 {
-    const auto model_brep = geode::load_structural_model(
-        absl::StrCat( geode::data_path, "mss.og_strm" ) );
+    const auto model_brep =
+        geode::load_brep( absl::StrCat( geode::data_path, "mss.og_brep" ) );
     geode::BRepInspector brep_inspector{ model_brep };
     geode::Logger::info( "model mss topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( brep_inspector );
     OPENGEODE_EXCEPTION( nb_topological_issues == 17,
-        "[Test] model mss.og_strm should have 17 unique "
+        "[Test] model mss.og_brep should have 17 unique "
         "vertices with topological problems." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( brep_inspector );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0,
-        "[Test] model mss.og_strm should have no issues in its component "
+        "[Test] model mss.og_brep should have no issues in its component "
         "meshes." );
 }
 
@@ -550,7 +546,6 @@ int main()
     try
     {
         geode::InspectorInspectorLibrary::initialize();
-        geode::GeosciencesExplicitLibrary::initialize();
         check_model_a1();
         check_model_a1_valid();
         check_model_mss();
