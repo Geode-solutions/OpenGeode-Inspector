@@ -274,8 +274,6 @@ namespace
                 geode::InspectionIssues< std::vector< geode::index_t > >
                     block_issues{ "Colocated vertices on the Block with uuid "
                                   + block.id().string() };
-                components_colocated_points.emplace(
-                    block.id(), std::move( colocated_pts ) );
                 const auto& block_mesh = block.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
                 {
