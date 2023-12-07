@@ -63,7 +63,6 @@ namespace geode
 
     public:
         BRepTopologyInspector( const BRep& brep );
-        BRepTopologyInspector( const BRep& brep, bool verbose );
 
         ~BRepTopologyInspector();
 
