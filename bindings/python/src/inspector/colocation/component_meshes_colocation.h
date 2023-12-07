@@ -35,9 +35,6 @@
         .def( "components_with_colocated_points",                              \
             &suffix##ComponentMeshesColocation::                               \
                 components_with_colocated_points )                             \
-        .def( "components_nb_colocated_points",                                \
-            &suffix##ComponentMeshesColocation::                               \
-                components_nb_colocated_points )                               \
         .def( "components_colocated_points_groups",                            \
             &suffix##ComponentMeshesColocation::                               \
                 components_colocated_points_groups )

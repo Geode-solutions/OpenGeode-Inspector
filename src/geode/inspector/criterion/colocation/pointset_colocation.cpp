@@ -61,13 +61,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t PointSetColocation< dimension >::nb_colocated_points() const
-    {
-        return impl_->nb_colocated_points();
-    }
-
-    template < index_t dimension >
-    std::vector< std::vector< index_t > >
+    InspectionIssues< std::vector< index_t > >
         PointSetColocation< dimension >::colocated_points_groups() const
     {
         return impl_->colocated_points_groups();

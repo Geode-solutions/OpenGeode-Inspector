@@ -95,22 +95,13 @@ namespace
         return new_colocated_points_groups;
     }
 
-    geode::index_t nb_points(
-        const absl::Span< const std::vector< geode::index_t > > points_groups )
-    {
-        geode::index_t nb_colocated{ 0 };
-        for( const auto& point_group : points_groups )
-        {
-            nb_colocated += point_group.size();
-        }
-        return nb_colocated;
-    }
-
     template < geode::index_t dimension, typename Model >
-    std::vector< geode::uuid > model_components_with_colocated_points_base(
-        const Model& model, bool verbose )
+    geode::InspectionIssues< geode::uuid >
+        model_components_with_colocated_points_base( const Model& model )
     {
-        std::vector< geode::uuid > components_with_colocation;
+        geode::InspectionIssues< geode::uuid > components_with_colocation{
+            "Model meshes with colocatred points."
+        };
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
@@ -118,15 +109,12 @@ namespace
             };
             if( !filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, line.component_id(),
-                    inspector.colocated_points_groups() )
+                    inspector.colocated_points_groups().problems )
                      .empty() )
             {
-                components_with_colocation.push_back( line.id() );
-                if( verbose )
-                {
-                    geode::Logger::info( "Line with uuid ", line.id().string(),
-                        " has colocated points." );
-                }
+                components_with_colocation.add_problem( line.id(),
+                    absl::StrCat( "Line with uuid ", line.id().string(),
+                        " has colocated points." ) );
             }
         }
         for( const auto& surface : model.surfaces() )
@@ -136,148 +124,53 @@ namespace
             };
             if( !filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, surface.component_id(),
-                    inspector.colocated_points_groups() )
+                    inspector.colocated_points_groups().problems )
                      .empty() )
             {
-                components_with_colocation.push_back( surface.id() );
-                if( verbose )
-                {
-                    geode::Logger::info( "Surface with uuid ",
-                        surface.id().string(), " has colocated points." );
-                }
+                components_with_colocation.add_problem( surface.id(),
+                    absl::StrCat( "Surface with uuid ", surface.id().string(),
+                        " has colocated points." ) );
             }
         }
         return components_with_colocation;
     }
 
-    std::vector< geode::uuid > model_components_with_colocated_points(
-        const geode::Section& model, bool verbose )
+    geode::InspectionIssues< geode::uuid >
+        model_components_with_colocated_points( const geode::Section& model )
     {
         return model_components_with_colocated_points_base< 2, geode::Section >(
-            model, verbose );
+            model );
     }
 
-    std::vector< geode::uuid > model_components_with_colocated_points(
-        const geode::BRep& model, bool verbose )
+    geode::InspectionIssues< geode::uuid >
+        model_components_with_colocated_points( const geode::BRep& model )
     {
         auto components_with_colocation =
             model_components_with_colocated_points_base< 3, geode::BRep >(
-                model, verbose );
+                model );
         for( const auto& block : model.blocks() )
         {
             const geode::SolidMeshColocation3D inspector{ block.mesh() };
             if( !filter_colocated_points_with_same_uuid< 3, geode::BRep >(
                     model, block.component_id(),
-                    inspector.colocated_points_groups() )
+                    inspector.colocated_points_groups().problems )
                      .empty() )
             {
-                components_with_colocation.push_back( block.id() );
-                if( verbose )
-                {
-                    geode::Logger::info( "Block with uuid ",
-                        block.id().string(), " has colocated points." );
-                }
+                components_with_colocation.add_problem( block.id(),
+                    absl::StrCat( "Block with uuid ", block.id().string(),
+                        " has colocated points." ) );
             }
         }
         return components_with_colocation;
     }
 
     template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_colocated_points_base(
-            const Model& model, bool verbose )
-    {
-        absl::flat_hash_map< geode::uuid, geode::index_t >
-            components_nb_colocated_points;
-        for( const auto& line : model.lines() )
-        {
-            const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh()
-            };
-            const auto nb_colocated = nb_points(
-                filter_colocated_points_with_same_uuid< dimension, Model >(
-                    model, line.component_id(),
-                    inspector.colocated_points_groups() ) );
-            if( nb_colocated > 0 )
-            {
-                components_nb_colocated_points.emplace(
-                    line.id(), nb_colocated );
-                if( verbose )
-                {
-                    geode::Logger::info( "Line with uuid ", line.id().string(),
-                        " has ", nb_colocated, " colocated points." );
-                }
-            }
-        }
-        for( const auto& surface : model.surfaces() )
-        {
-            const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh()
-            };
-            const auto nb_colocated = nb_points(
-                filter_colocated_points_with_same_uuid< dimension, Model >(
-                    model, surface.component_id(),
-                    inspector.colocated_points_groups() ) );
-            if( nb_colocated > 0 )
-            {
-                components_nb_colocated_points.emplace(
-                    surface.id(), nb_colocated );
-                if( verbose )
-                {
-                    geode::Logger::info( "Surface with uuid ",
-                        surface.id().string(), " has ", nb_colocated,
-                        " colocated points." );
-                }
-            }
-        }
-        return components_nb_colocated_points;
-    }
-
-    absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_colocated_points(
-            const geode::Section& model, bool verbose )
-    {
-        return model_components_nb_colocated_points_base< 2, geode::Section >(
-            model, verbose );
-    }
-
-    absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_colocated_points(
-            const geode::BRep& model, bool verbose )
-    {
-        auto components_nb_colocated_points =
-            model_components_nb_colocated_points_base< 3, geode::BRep >(
-                model, verbose );
-        for( const auto& block : model.blocks() )
-        {
-            const geode::SolidMeshColocation3D inspector{ block.mesh() };
-            const auto nb_colocated = nb_points(
-                filter_colocated_points_with_same_uuid< 3, geode::BRep >( model,
-                    block.component_id(),
-                    inspector.colocated_points_groups() ) );
-            if( nb_colocated > 0 )
-            {
-                components_nb_colocated_points.emplace(
-                    block.id(), nb_colocated );
-                if( verbose )
-                {
-                    geode::Logger::info( "Block with uuid ",
-                        block.id().string(), " has ", nb_colocated,
-                        " colocated points." );
-                }
-            }
-        }
-        return components_nb_colocated_points;
-    }
-
-    template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< geode::uuid,
-        std::vector< std::vector< geode::index_t > > >
-        model_components_colocated_points_groups_base(
-            const Model& model, bool verbose )
+        geode::InspectionIssues< std::vector< geode::index_t > > >
+        model_components_colocated_points_groups_base( const Model& model )
     {
         absl::flat_hash_map< geode::uuid,
-            std::vector< std::vector< geode::index_t > > >
+            geode::InspectionIssues< std::vector< geode::index_t > > >
             components_colocated_points;
         for( const auto& line : model.lines() )
         {
@@ -287,31 +180,30 @@ namespace
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, line.component_id(),
-                    inspector.colocated_points_groups() );
+                    inspector.colocated_points_groups().problems );
             if( !colocated_pts.empty() )
             {
-                components_colocated_points.emplace(
-                    line.id(), std::move( colocated_pts ) );
-                if( verbose )
+                geode::InspectionIssues< std::vector< geode::index_t > >
+                    line_issues{ "Colocated vertices on the Line with uuid "
+                                 + line.id().string() };
+                const auto& line_mesh = line.mesh();
+                for( const auto& colocated_points_group : colocated_pts )
                 {
-                    const auto& line_mesh = line.mesh();
-                    for( const auto& colocated_points_group : colocated_pts )
+                    std::string point_group_string{ "" };
+                    for( const auto point_index : colocated_points_group )
                     {
-                        std::string point_group_string{ "" };
-                        for( const auto point_index : colocated_points_group )
-                        {
-                            absl::StrAppend(
-                                &point_group_string, " ", point_index );
-                        }
-                        geode::Logger::info( "Line with uuid ",
-                            line.id().string(), " has vertices with indices",
-                            point_group_string,
+                        absl::StrAppend(
+                            &point_group_string, " ", point_index );
+                    }
+                    line_issues.add_problem( colocated_points_group,
+                        absl::StrCat( "Line with uuid ", line.id().string(),
+                            " has vertices with indices", point_group_string,
                             " which are colocated at position [",
                             line_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "]." );
-                    }
+                            "]." ) );
                 }
+                components_colocated_points.emplace( line.id(), line_issues );
             }
         }
         for( const auto& surface : model.surfaces() )
@@ -322,87 +214,91 @@ namespace
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, surface.component_id(),
-                    inspector.colocated_points_groups() );
+                    inspector.colocated_points_groups().problems );
             if( !colocated_pts.empty() )
             {
-                components_colocated_points.emplace(
-                    surface.id(), std::move( colocated_pts ) );
-                if( verbose )
+                geode::InspectionIssues< std::vector< geode::index_t > >
+                    surface_issues{
+                        "Colocated vertices on the Surface with uuid "
+                        + surface.id().string()
+                    };
+                const auto& surface_mesh = surface.mesh();
+                for( const auto& colocated_points_group : colocated_pts )
                 {
-                    const auto& surface_mesh = surface.mesh();
-                    for( const auto& colocated_points_group : colocated_pts )
+                    std::string point_group_string{ "" };
+                    for( const auto point_index : colocated_points_group )
                     {
-                        std::string point_group_string{ "" };
-                        for( const auto point_index : colocated_points_group )
-                        {
-                            absl::StrAppend(
-                                &point_group_string, " ", point_index );
-                        }
-                        geode::Logger::info( "Surface with uuid ",
+                        absl::StrAppend(
+                            &point_group_string, " ", point_index );
+                    }
+                    surface_issues.add_problem( colocated_points_group,
+                        absl::StrCat( "Surface with uuid ",
                             surface.id().string(), " has vertices with indices",
                             point_group_string,
                             " which are colocated at position [",
                             surface_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "]." );
-                    }
+                            "]." ) );
                 }
+                components_colocated_points.emplace(
+                    surface.id(), surface_issues );
             }
         }
         return components_colocated_points;
     }
 
     absl::flat_hash_map< geode::uuid,
-        std::vector< std::vector< geode::index_t > > >
-        model_components_colocated_points_groups(
-            const geode::Section& model, bool verbose )
+        geode::InspectionIssues< std::vector< geode::index_t > > >
+        model_components_colocated_points_groups( const geode::Section& model )
     {
         return model_components_colocated_points_groups_base< 2,
-            geode::Section >( model, verbose );
+            geode::Section >( model );
     }
 
     absl::flat_hash_map< geode::uuid,
-        std::vector< std::vector< geode::index_t > > >
-        model_components_colocated_points_groups(
-            const geode::BRep& model, bool verbose )
+        geode::InspectionIssues< std::vector< geode::index_t > > >
+        model_components_colocated_points_groups( const geode::BRep& model )
     {
         auto components_colocated_points =
             model_components_colocated_points_groups_base< 3, geode::BRep >(
-                model, false );
+                model );
         for( const auto& block : model.blocks() )
         {
             const geode::SolidMeshColocation3D inspector{ block.mesh() };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< 3, geode::BRep >( model,
-                    block.component_id(), inspector.colocated_points_groups() );
+                    block.component_id(),
+                    inspector.colocated_points_groups().problems );
             if( !colocated_pts.empty() )
             {
+                geode::InspectionIssues< std::vector< geode::index_t > >
+                    block_issues{ "Colocated vertices on the Block with uuid "
+                                  + block.id().string() };
                 components_colocated_points.emplace(
                     block.id(), std::move( colocated_pts ) );
-                if( verbose )
+                const auto& block_mesh = block.mesh();
+                for( const auto& colocated_points_group : colocated_pts )
                 {
-                    const auto& block_mesh = block.mesh();
-                    for( const auto& colocated_points_group : colocated_pts )
+                    std::string point_group_string{ "" };
+                    for( const auto point_index : colocated_points_group )
                     {
-                        std::string point_group_string{ "" };
-                        for( const auto point_index : colocated_points_group )
-                        {
-                            absl::StrAppend(
-                                &point_group_string, " ", point_index );
-                        }
-                        geode::Logger::info( "Block with uuid ",
-                            block.id().string(), " has vertices with indices",
-                            point_group_string,
+                        absl::StrAppend(
+                            &point_group_string, " ", point_index );
+                    }
+                    block_issues.add_problem( colocated_points_group,
+                        absl::StrCat( "Block with uuid ", block.id().string(),
+                            " has vertices with indices", point_group_string,
                             " which are colocated at position [",
                             block_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "]." );
-                    }
+                            "]." ) );
                 }
+                components_colocated_points.emplace( block.id(), block_issues );
             }
         }
         return components_colocated_points;
     }
+
 } // namespace
 
 namespace geode
@@ -411,28 +307,21 @@ namespace geode
     class ComponentMeshesColocation< dimension, Model >::Impl
     {
     public:
-        Impl( const Model& model ) : model_( model ), verbose_( false ) {}
+        Impl( const Model& model ) : model_( model ) {}
 
-        std::vector< uuid > components_with_colocated_points() const
+        InspectionIssues< uuid > components_with_colocated_points() const
         {
-            return model_components_with_colocated_points( model_, verbose_ );
+            return model_components_with_colocated_points( model_ );
         }
 
-        absl::flat_hash_map< uuid, index_t >
-            components_nb_colocated_points() const
-        {
-            return model_components_nb_colocated_points( model_, verbose_ );
-        }
-
-        absl::flat_hash_map< uuid, std::vector< std::vector< index_t > > >
+        absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
             components_colocated_points_groups() const
         {
-            return model_components_colocated_points_groups( model_, verbose_ );
+            return model_components_colocated_points_groups( model_ );
         }
 
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < geode::index_t dimension, typename Model >
@@ -448,25 +337,29 @@ namespace geode
     }
 
     template < geode::index_t dimension, typename Model >
-    std::vector< uuid > ComponentMeshesColocation< dimension,
+    InspectionIssues< uuid > ComponentMeshesColocation< dimension,
         Model >::components_with_colocated_points() const
     {
         return impl_->components_with_colocated_points();
     }
 
     template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, index_t > ComponentMeshesColocation< dimension,
-        Model >::components_nb_colocated_points() const
-    {
-        return impl_->components_nb_colocated_points();
-    }
-
-    template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, std::vector< std::vector< index_t > > >
+    absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
         ComponentMeshesColocation< dimension,
             Model >::components_colocated_points_groups() const
     {
         return impl_->components_colocated_points_groups();
+    }
+    template < geode::index_t dimension, typename Model >
+    MeshesColocationInspectionResult ComponentMeshesColocation< dimension,
+        Model >::inspect_meshes_point_colocations() const
+    {
+        MeshesColocationInspectionResult result;
+        result.components_with_colocated_points =
+            impl_->components_with_colocated_points();
+        result.components_colocated_points_groups =
+            impl_->components_colocated_points_groups();
+        return result;
     }
 
     template class opengeode_inspector_inspector_api

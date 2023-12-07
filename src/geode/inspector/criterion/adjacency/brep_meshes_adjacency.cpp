@@ -26,9 +26,6 @@
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/solid_mesh.h>
-#include <geode/mesh/core/surface_mesh.h>
-
 #include <geode/model/mixin/core/block.h>
 #include <geode/model/representation/core/brep.h>
 
@@ -106,5 +103,16 @@ namespace geode
             const
     {
         return impl_->blocks_facets_with_wrong_adjacencies();
+    }
+
+    BRepMeshesAdjacencyInspectionResult
+        BRepComponentMeshesAdjacency::inspect_brep_meshes_adjacencies() const
+    {
+        BRepMeshesAdjacencyInspectionResult result;
+        result.surfaces_edges_with_wrong_adjacencies =
+            impl_->surfaces_edges_with_wrong_adjacencies();
+        result.blocks_facets_with_wrong_adjacencies =
+            impl_->blocks_facets_with_wrong_adjacencies();
+        return result;
     }
 } // namespace geode

@@ -36,14 +36,9 @@ namespace geode
 {
     struct SectionMeshesInspectionResult
     {
-        InspectionIssues< std::vector< index_t > >
-            colocated_unique_vertices_groups{ "" };
-        InspectionIssues< index_t > unique_vertices_linked_to_different_points{
-            ""
-        };
-
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies;
+        UniqueVerticesInspectionResult unique_vertices_colocation;
+        MeshesColocationInspectionResult meshes_colocation;
+        SectionMeshesAdjacencyInspectionResult adjacencies;
     };
     /*!
      * Class for inspecting a Section model

@@ -50,8 +50,8 @@ namespace
     }
 
     template < geode::index_t dimension, typename Mesh >
-    std::vector< std::vector< geode::index_t > > colocated_points_groups(
-        const Mesh& mesh, double colocation_distance, bool verbose )
+    geode::InspectionIssues< std::vector< geode::index_t > >
+        colocated_points_groups( const Mesh& mesh, double colocation_distance )
     {
         const auto mesh_colocation_info =
             mesh_points_colocated_info< dimension, Mesh >(
@@ -72,25 +72,26 @@ namespace
             } );
         colocated_points_indices.erase(
             colocated_points_groups_end, colocated_points_indices.end() );
-        if( verbose )
+
+        geode::InspectionIssues< std::vector< geode::index_t > >
+            groups_of_colocated_points{ "Groups of colocated points." };
+        for( const auto& colocated_points_group : colocated_points_indices )
         {
-            for( const auto& colocated_points_group : colocated_points_indices )
+            std::string point_group_string{ "" };
+            for( const auto point_index : colocated_points_group )
             {
-                std::string point_group_string{ "" };
-                for( const auto point_index : colocated_points_group )
-                {
-                    absl::StrAppend( &point_group_string, " ", point_index );
-                }
-                geode::Logger::info( "Vertices with indices",
-                    point_group_string, " are colocated at position [",
+                absl::StrAppend( &point_group_string, " ", point_index );
+            }
+            groups_of_colocated_points.add_problem( colocated_points_group,
+                absl::StrCat( "Vertices with indices", point_group_string,
+                    " are colocated at position [",
                     mesh_colocation_info
                         .unique_points[mesh_colocation_info.colocated_mapping
                                            [colocated_points_group[0]]]
                         .string(),
-                    "]." );
-            }
+                    "]." ) );
         }
-        return colocated_points_indices;
+        return groups_of_colocated_points;
     }
 } // namespace
 
@@ -100,7 +101,7 @@ namespace geode
     {
         template < index_t dimension, typename Mesh >
         ColocationImpl< dimension, Mesh >::ColocationImpl( const Mesh& mesh )
-            : mesh_( mesh ), verbose_( false )
+            : mesh_( mesh )
         {
         }
 
@@ -115,30 +116,12 @@ namespace geode
         }
 
         template < index_t dimension, typename Mesh >
-        index_t ColocationImpl< dimension, Mesh >::nb_colocated_points() const
-        {
-            const auto colocated_points_indices =
-                ::colocated_points_groups< dimension, Mesh >(
-                    mesh_, global_epsilon, verbose_ );
-            index_t nb_colocated{ 0 };
-            for( const auto& point_group : colocated_points_indices )
-            {
-                nb_colocated += point_group.size();
-            }
-            if( nb_colocated > 0 && verbose_ )
-            {
-                Logger::info( "Mesh has ", nb_colocated, " colocated points" );
-            }
-            return nb_colocated;
-        }
-
-        template < index_t dimension, typename Mesh >
-        std::vector< std::vector< index_t > >
+        InspectionIssues< std::vector< index_t > >
             ColocationImpl< dimension, Mesh >::colocated_points_groups() const
         {
             const auto colocated_points_indices =
                 ::colocated_points_groups< dimension, Mesh >(
-                    mesh_, global_epsilon, verbose_ );
+                    mesh_, global_epsilon );
             return colocated_points_indices;
         }
 

@@ -26,6 +26,10 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
+
+#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
@@ -33,13 +37,18 @@
 namespace geode
 {
     class BRep;
-    struct uuid;
-    struct PolygonEdge;
-    struct PolyhedronFacet;
 } // namespace geode
 
 namespace geode
 {
+    struct BRepMeshesAdjacencyInspectionResult
+    {
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies;
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
+            blocks_facets_with_wrong_adjacencies;
+    };
+
     /*!
      * Class for inspecting the adjacency of the surface edges and solid facets
      * in the Component Meshes of a BRep.
@@ -60,6 +69,9 @@ namespace geode
 
         absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
             blocks_facets_with_wrong_adjacencies() const;
+
+        BRepMeshesAdjacencyInspectionResult
+            inspect_brep_meshes_adjacencies() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

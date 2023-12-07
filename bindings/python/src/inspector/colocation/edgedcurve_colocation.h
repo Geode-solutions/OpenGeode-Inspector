@@ -42,8 +42,6 @@ namespace geode
             .def( pybind11::init< const EdgedCurve& >() )
             .def( "mesh_has_colocated_points",
                 &EdgedCurveColocation::mesh_has_colocated_points )
-            .def( "nb_colocated_points",
-                &EdgedCurveColocation::nb_colocated_points )
             .def( "colocated_points_groups",
                 &EdgedCurveColocation::colocated_points_groups );
     }

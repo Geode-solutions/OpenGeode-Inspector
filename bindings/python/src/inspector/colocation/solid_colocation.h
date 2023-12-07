@@ -38,8 +38,6 @@ namespace geode
             .def( pybind11::init< const SolidMesh& >() )
             .def( "mesh_has_colocated_points",
                 &SolidMeshColocation::mesh_has_colocated_points )
-            .def( "nb_colocated_points",
-                &SolidMeshColocation::nb_colocated_points )
             .def( "colocated_points_groups",
                 &SolidMeshColocation::colocated_points_groups );
     }

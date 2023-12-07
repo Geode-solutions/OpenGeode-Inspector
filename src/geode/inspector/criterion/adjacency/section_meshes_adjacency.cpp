@@ -26,8 +26,6 @@
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/surface_mesh.h>
-
 #include <geode/model/representation/core/section.h>
 
 #include <geode/inspector/criterion/private/component_meshes_adjacency.h>
@@ -64,5 +62,15 @@ namespace geode
             const
     {
         return impl_->surfaces_edges_with_wrong_adjacencies();
+    }
+
+    SectionMeshesAdjacencyInspectionResult
+        SectionComponentMeshesAdjacency::inspect_section_meshes_adjacencies()
+            const
+    {
+        SectionMeshesAdjacencyInspectionResult result;
+        result.surfaces_edges_with_wrong_adjacencies =
+            impl_->surfaces_edges_with_wrong_adjacencies();
+        return result;
     }
 } // namespace geode

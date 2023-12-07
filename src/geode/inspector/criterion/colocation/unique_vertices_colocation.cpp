@@ -223,11 +223,13 @@ namespace geode
             const PointSetColocation< dimension > pointset_inspector{
                 *unique_vertices_
             };
-            InspectionIssues< std::vector< index_t > > colocated_points_groups{
-                "Groups of colocated points."
-            };
-            for( const auto& point_group :
-                pointset_inspector.colocated_points_groups() )
+            InspectionIssues< std::vector< index_t > >
+                colocated_unique_vertices_groups{
+                    "Groups of colocated points."
+                };
+            const auto colocated_pts_groups =
+                pointset_inspector.colocated_points_groups();
+            for( const auto& point_group : colocated_pts_groups.problems )
             {
                 std::vector< index_t > fixed_point_group;
                 std::string point_group_string{ "" };
@@ -246,7 +248,8 @@ namespace geode
                 }
                 if( !fixed_point_group.empty() )
                 {
-                    colocated_points_groups.add_problem( fixed_point_group,
+                    colocated_unique_vertices_groups.add_problem(
+                        fixed_point_group,
                         absl::StrCat( "Unique vertices with indices",
                             point_group_string, " are colocated at position [",
                             unique_vertices_->point( fixed_point_group[0] )
@@ -254,7 +257,7 @@ namespace geode
                             "]." ) );
                 }
             }
-            return colocated_points_groups;
+            return colocated_unique_vertices_groups;
         }
 
     private:
@@ -301,6 +304,18 @@ namespace geode
         Model >::unique_vertices_linked_to_different_points() const
     {
         return impl_->unique_vertices_linked_to_different_points();
+    }
+    template < geode::index_t dimension, typename Model >
+    UniqueVerticesInspectionResult
+        UniqueVerticesColocation< dimension, Model >::inspect_unique_vertices()
+            const
+    {
+        UniqueVerticesInspectionResult result;
+        result.colocated_unique_vertices_groups =
+            impl_->colocated_unique_vertices_groups();
+        result.unique_vertices_linked_to_different_points =
+            impl_->unique_vertices_linked_to_different_points();
+        return result;
     }
 
     template class opengeode_inspector_inspector_api

@@ -35,16 +35,9 @@ namespace geode
 {
     struct BRepMeshesInspectionResult
     {
-        InspectionIssues< std::vector< index_t > >
-            colocated_unique_vertices_groups{ "" };
-        InspectionIssues< index_t > unique_vertices_linked_to_different_points{
-            ""
-        };
-
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies;
-        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-            blocks_facets_with_wrong_adjacencies;
+        UniqueVerticesInspectionResult unique_vertices_colocation;
+        MeshesColocationInspectionResult meshes_colocation;
+        BRepMeshesAdjacencyInspectionResult adjacencies;
     };
     /*!
      * Class for inspecting a BRep model

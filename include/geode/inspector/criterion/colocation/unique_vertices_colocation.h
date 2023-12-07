@@ -36,6 +36,14 @@ namespace geode
 
 namespace geode
 {
+    struct UniqueVerticesInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > >
+            colocated_unique_vertices_groups{ "" };
+        InspectionIssues< index_t > unique_vertices_linked_to_different_points{
+            ""
+        };
+    };
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep
      * or Section)
@@ -59,6 +67,8 @@ namespace geode
 
         InspectionIssues< index_t >
             unique_vertices_linked_to_different_points() const;
+
+        UniqueVerticesInspectionResult inspect_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

@@ -39,15 +39,9 @@ namespace geode
     BRepMeshesInspectionResult BRepMeshesInspector::inspect_brep_meshes() const
     {
         BRepMeshesInspectionResult result;
-        result.colocated_unique_vertices_groups =
-            colocated_unique_vertices_groups();
-        result.unique_vertices_linked_to_different_points =
-            unique_vertices_linked_to_different_points();
-
-        result.surfaces_edges_with_wrong_adjacencies =
-            surfaces_edges_with_wrong_adjacencies();
-        result.blocks_facets_with_wrong_adjacencies =
-            blocks_facets_with_wrong_adjacencies();
+        result.unique_vertices_colocation = inspect_unique_vertices();
+        result.meshes_colocation = inspect_meshes_point_colocations();
+        result.adjacencies = inspect_brep_meshes_adjacencies();
         return result;
     }
 } // namespace geode

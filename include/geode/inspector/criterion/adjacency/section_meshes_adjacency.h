@@ -26,6 +26,9 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
+
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
@@ -33,12 +36,15 @@
 namespace geode
 {
     class Section;
-    struct uuid;
-    struct PolygonEdge;
 } // namespace geode
 
 namespace geode
 {
+    struct SectionMeshesAdjacencyInspectionResult
+    {
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies;
+    };
     /*!
      * Class for inspecting the adjacency of the surface edges in the Component
      * Meshes of a Section.
@@ -56,6 +62,9 @@ namespace geode
 
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies() const;
+
+        SectionMeshesAdjacencyInspectionResult
+            inspect_section_meshes_adjacencies() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

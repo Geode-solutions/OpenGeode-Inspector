@@ -24,20 +24,27 @@
 #pragma once
 
 #include <absl/container/flat_hash_map.h>
-
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
     class Section;
     class BRep;
-    struct uuid;
 } // namespace geode
 
 namespace geode
 {
+    struct MeshesColocationInspectionResult
+    {
+        InspectionIssues< uuid > components_with_colocated_points{ "" };
+        absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
+            components_colocated_points_groups;
+    };
+
     /*!
      * Class for inspecting the colocation of points in the Component Meshes of
      * a Model (BRep or Section).
@@ -52,13 +59,13 @@ namespace geode
 
         ~ComponentMeshesColocation();
 
-        std::vector< uuid > components_with_colocated_points() const;
+        InspectionIssues< uuid > components_with_colocated_points() const;
 
-        absl::flat_hash_map< uuid, index_t >
-            components_nb_colocated_points() const;
-
-        absl::flat_hash_map< uuid, std::vector< std::vector< index_t > > >
+        absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
             components_colocated_points_groups() const;
+
+        MeshesColocationInspectionResult
+            inspect_meshes_point_colocations() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
