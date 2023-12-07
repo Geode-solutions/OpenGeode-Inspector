@@ -34,12 +34,6 @@ namespace geode
     {
     }
 
-    SectionInspector::SectionInspector( const Section& section, bool verbose )
-        : AddInspectors< Section,
-            SectionMeshesInspector,
-            SectionTopologyInspector >{ section, verbose }
-    {
-    }
     SectionInspectionResult SectionInspector::inspect_section() const
     {
         SectionInspectionResult result;

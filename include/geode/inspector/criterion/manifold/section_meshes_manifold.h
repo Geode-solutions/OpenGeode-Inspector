@@ -48,8 +48,6 @@ namespace geode
     public:
         SectionComponentMeshesManifold( const Section& section );
 
-        SectionComponentMeshesManifold( const Section& section, bool verbose );
-
         ~SectionComponentMeshesManifold();
 
         std::vector< uuid > components_non_manifold_meshes() const;

@@ -30,11 +30,18 @@
 #include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
 #include <geode/inspector/criterion/intersections/model_intersections.h>
 #include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
     struct SectionMeshesInspectionResult
     {
+        InspectionIssues< std::vector< index_t > >
+            colocated_unique_vertices_groups{ "" };
+        InspectionIssues< index_t > unique_vertices_linked_to_different_points{
+            ""
+        };
+
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
     };
@@ -54,7 +61,6 @@ namespace geode
 
     public:
         SectionMeshesInspector( const Section& section );
-        SectionMeshesInspector( const Section& section, bool verbose );
 
         SectionMeshesInspectionResult inspect_section_meshes() const;
     };

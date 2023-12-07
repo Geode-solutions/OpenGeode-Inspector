@@ -54,8 +54,6 @@ namespace geode
 
     public:
         SolidMeshInspector( const SolidMesh< dimension >& mesh );
-
-        SolidMeshInspector( const SolidMesh< dimension >& mesh, bool verbose );
     };
     ALIAS_3D( SolidMeshInspector );
 } // namespace geode

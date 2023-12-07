@@ -49,8 +49,7 @@ namespace geode
         std::vector< uuid > comps_with_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
-                verbose_ };
+            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
             if( inspector.mesh_has_wrong_adjacencies() )
             {
                 comps_with_wrong_adjacencies.push_back( surface.id() );

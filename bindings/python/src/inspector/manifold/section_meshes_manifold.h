@@ -32,7 +32,6 @@ namespace geode
         pybind11::class_< SectionComponentMeshesManifold >(
             module, "SectionComponentMeshesManifold" )
             .def( pybind11::init< const Section& >() )
-            .def( pybind11::init< const Section&, bool >() )
             .def( "components_non_manifold_meshes",
                 &SectionComponentMeshesManifold::
                     components_non_manifold_meshes )

@@ -46,10 +46,7 @@ namespace geode
         : public ComponentMeshesManifold< 3, BRep >
     {
     public:
-        Impl( const BRep& brep, bool verbose )
-            : ComponentMeshesManifold< 3, BRep >( brep, verbose )
-        {
-        }
+        Impl( const BRep& brep ) : ComponentMeshesManifold< 3, BRep >( brep ) {}
 
         std::vector< uuid > components_non_manifold_meshes() const
         {
@@ -57,22 +54,21 @@ namespace geode
                 BRep >::surfaces_non_manifold_meshes();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshVertexManifold3D vertex_inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshVertexManifold3D vertex_inspector{
+                    block.mesh()
+                };
                 if( !vertex_inspector.mesh_vertices_are_manifold() )
                 {
                     non_manifold_components.push_back( block.id() );
                     continue;
                 }
-                const SolidMeshEdgeManifold3D edge_inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshEdgeManifold3D edge_inspector{ block.mesh() };
                 if( !edge_inspector.mesh_edges_are_manifold() )
                 {
                     non_manifold_components.push_back( block.id() );
                     continue;
                 }
-                const SolidMeshFacetManifold3D facet_inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshFacetManifold3D facet_inspector{ block.mesh() };
                 if( !facet_inspector.mesh_facets_are_manifold() )
                 {
                     non_manifold_components.push_back( block.id() );
@@ -101,8 +97,7 @@ namespace geode
                     BRep >::surfaces_meshes_nb_non_manifold_vertices();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshVertexManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto nb_non_manifold_vertices =
                     inspector.nb_non_manifold_vertices();
                 if( nb_non_manifold_vertices != 0 )
@@ -121,8 +116,7 @@ namespace geode
                 BRep >::surfaces_meshes_nb_non_manifold_edges();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshEdgeManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto nb_non_manifold_edges = inspector.nb_non_manifold_edges();
                 if( nb_non_manifold_edges != 0 )
                 {
@@ -140,8 +134,7 @@ namespace geode
                 components_nb_non_manifold_facets;
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshFacetManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto nb_non_manifold_facets =
                     inspector.nb_non_manifold_facets();
                 if( nb_non_manifold_facets != 0 )
@@ -160,8 +153,7 @@ namespace geode
                 BRep >::surfaces_meshes_non_manifold_vertices();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshVertexManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
                 if( !non_manifold_vertices.empty() )
                 {
@@ -179,8 +171,7 @@ namespace geode
                 BRep >::surfaces_meshes_non_manifold_edges();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshEdgeManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
                 if( !non_manifold_edges.empty() )
                 {
@@ -198,8 +189,7 @@ namespace geode
                 components_non_manifold_facets;
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshFacetManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
                 if( !non_manifold_facets.empty() )
                 {
@@ -278,13 +268,7 @@ namespace geode
 
     BRepComponentMeshesManifold::BRepComponentMeshesManifold(
         const BRep& model )
-        : impl_{ model, false }
-    {
-    }
-
-    BRepComponentMeshesManifold::BRepComponentMeshesManifold(
-        const BRep& model, bool verbose )
-        : impl_{ model, verbose }
+        : impl_{ model }
     {
     }
 

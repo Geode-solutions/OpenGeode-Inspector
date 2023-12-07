@@ -40,18 +40,5 @@ namespace geode
     {
     }
 
-    template < index_t dimension >
-    SolidMeshInspector< dimension >::SolidMeshInspector(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : AddInspectors< SolidMesh< dimension >,
-            SolidMeshAdjacency< dimension >,
-            SolidMeshColocation< dimension >,
-            SolidMeshDegeneration< dimension >,
-            SolidMeshVertexManifold< dimension >,
-            SolidMeshEdgeManifold< dimension >,
-            SolidMeshFacetManifold< dimension > >{ mesh, verbose }
-    {
-    }
-
     template class opengeode_inspector_inspector_api SolidMeshInspector< 3 >;
 } // namespace geode

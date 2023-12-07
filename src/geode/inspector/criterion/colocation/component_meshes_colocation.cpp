@@ -114,7 +114,7 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), false
+                line.mesh()
             };
             if( !filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, line.component_id(),
@@ -132,7 +132,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), false
+                surface.mesh()
             };
             if( !filter_colocated_points_with_same_uuid< dimension, Model >(
                     model, surface.component_id(),
@@ -165,7 +165,7 @@ namespace
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(), false };
+            const geode::SolidMeshColocation3D inspector{ block.mesh() };
             if( !filter_colocated_points_with_same_uuid< 3, geode::BRep >(
                     model, block.component_id(),
                     inspector.colocated_points_groups() )
@@ -192,7 +192,7 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), false
+                line.mesh()
             };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -212,7 +212,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), false
+                surface.mesh()
             };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -250,7 +250,7 @@ namespace
                 model, verbose );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(), false };
+            const geode::SolidMeshColocation3D inspector{ block.mesh() };
             const auto nb_colocated = nb_points(
                 filter_colocated_points_with_same_uuid< 3, geode::BRep >( model,
                     block.component_id(),
@@ -282,7 +282,7 @@ namespace
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveColocation< dimension > inspector{
-                line.mesh(), false
+                line.mesh()
             };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -317,7 +317,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshColocation< dimension > inspector{
-                surface.mesh(), false
+                surface.mesh()
             };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< dimension, Model >(
@@ -371,8 +371,7 @@ namespace
                 model, false );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshColocation3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshColocation3D inspector{ block.mesh() };
             auto colocated_pts =
                 filter_colocated_points_with_same_uuid< 3, geode::BRep >( model,
                     block.component_id(), inspector.colocated_points_groups() );
@@ -412,10 +411,7 @@ namespace geode
     class ComponentMeshesColocation< dimension, Model >::Impl
     {
     public:
-        Impl( const Model& model, bool verbose )
-            : model_( model ), verbose_( verbose )
-        {
-        }
+        Impl( const Model& model ) : model_( model ), verbose_( false ) {}
 
         std::vector< uuid > components_with_colocated_points() const
         {
@@ -442,14 +438,7 @@ namespace geode
     template < geode::index_t dimension, typename Model >
     ComponentMeshesColocation< dimension, Model >::ComponentMeshesColocation(
         const Model& model )
-        : impl_( model, false )
-    {
-    }
-
-    template < geode::index_t dimension, typename Model >
-    ComponentMeshesColocation< dimension, Model >::ComponentMeshesColocation(
-        const Model& model, bool verbose )
-        : impl_( model, verbose )
+        : impl_( model )
     {
     }
 

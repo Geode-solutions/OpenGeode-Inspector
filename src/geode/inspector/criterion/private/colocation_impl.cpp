@@ -99,9 +99,8 @@ namespace geode
     namespace detail
     {
         template < index_t dimension, typename Mesh >
-        ColocationImpl< dimension, Mesh >::ColocationImpl(
-            const Mesh& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        ColocationImpl< dimension, Mesh >::ColocationImpl( const Mesh& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 

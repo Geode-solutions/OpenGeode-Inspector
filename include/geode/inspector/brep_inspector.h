@@ -54,8 +54,6 @@ namespace geode
     public:
         BRepInspector( const BRep& brep );
 
-        BRepInspector( const BRep& brep, bool verbose );
-
         BRepInspectionResult inspect_brep() const;
     };
 } // namespace geode

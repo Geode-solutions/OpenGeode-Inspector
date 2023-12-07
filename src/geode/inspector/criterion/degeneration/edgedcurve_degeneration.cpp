@@ -37,8 +37,8 @@ namespace geode
     class EdgedCurveDegeneration< dimension >::Impl
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        Impl( const EdgedCurve< dimension >& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 
@@ -102,14 +102,7 @@ namespace geode
     template < index_t dimension >
     EdgedCurveDegeneration< dimension >::EdgedCurveDegeneration(
         const EdgedCurve< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    EdgedCurveDegeneration< dimension >::EdgedCurveDegeneration(
-        const EdgedCurve< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

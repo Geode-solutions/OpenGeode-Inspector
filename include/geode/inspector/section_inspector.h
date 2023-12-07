@@ -49,8 +49,6 @@ namespace geode
     public:
         SectionInspector( const Section& section );
 
-        SectionInspector( const Section& section, bool verbose );
-
         SectionInspectionResult inspect_section() const;
     };
 } // namespace geode

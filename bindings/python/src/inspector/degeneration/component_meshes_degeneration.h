@@ -32,7 +32,6 @@
     pybind11::class_< suffix##ComponentMeshesDegeneration >(                   \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
         .def( "degenerated_component_meshes",                                  \
             &suffix##ComponentMeshesDegeneration::                             \
                 degenerated_component_meshes )                                 \

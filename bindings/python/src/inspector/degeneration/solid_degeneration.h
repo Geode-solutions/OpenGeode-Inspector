@@ -37,7 +37,6 @@ namespace geode
             absl::StrCat( "SolidMeshDegeneration", dimension, "D" );
         pybind11::class_< SolidMeshDegeneration >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "is_mesh_degenerated",
                 &SolidMeshDegeneration::is_mesh_degenerated )
             .def( "nb_degenerated_edges",

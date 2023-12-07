@@ -52,9 +52,6 @@ namespace geode
     public:
         SolidMeshEdgeManifold( const SolidMesh< dimension >& mesh );
 
-        SolidMeshEdgeManifold(
-            const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshEdgeManifold();
 
         bool mesh_edges_are_manifold() const;

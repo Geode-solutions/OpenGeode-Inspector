@@ -32,19 +32,12 @@ namespace geode
         pybind11::class_< BRepComponentMeshesAdjacency >(
             module, "BRepComponentMeshesAdjacency" )
             .def( pybind11::init< const BRep& >() )
-            .def( pybind11::init< const BRep&, bool >() )
             .def( "components_with_wrong_adjacencies",
                 &BRepComponentMeshesAdjacency::
                     components_with_wrong_adjacencies )
-            .def( "surfaces_nb_edges_with_wrong_adjacencies",
-                &BRepComponentMeshesAdjacency::
-                    surfaces_nb_edges_with_wrong_adjacencies )
             .def( "surfaces_edges_with_wrong_adjacencies",
                 &BRepComponentMeshesAdjacency::
                     surfaces_edges_with_wrong_adjacencies )
-            .def( "blocks_nb_facets_with_wrong_adjacencies",
-                &BRepComponentMeshesAdjacency::
-                    blocks_nb_facets_with_wrong_adjacencies )
             .def( "blocks_facets_with_wrong_adjacencies",
                 &BRepComponentMeshesAdjacency::
                     blocks_facets_with_wrong_adjacencies );

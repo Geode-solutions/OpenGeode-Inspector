@@ -50,10 +50,6 @@ namespace geode
             const TriangulatedSurface< dimension >& surface,
             const EdgedCurve< dimension >& curve );
 
-        SurfaceCurveIntersections( const TriangulatedSurface< dimension >& mesh,
-            const EdgedCurve< dimension >& curve,
-            bool verbose );
-
         ~SurfaceCurveIntersections();
 
         bool meshes_have_intersections() const;

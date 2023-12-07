@@ -36,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, SolidMesh< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
+        Impl( const SolidMesh< dimension >& mesh )
             : detail::ColocationImpl< dimension, SolidMesh< dimension > >(
-                mesh, verbose )
+                mesh )
         {
         }
     };
@@ -46,14 +46,7 @@ namespace geode
     template < index_t dimension >
     SolidMeshColocation< dimension >::SolidMeshColocation(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshColocation< dimension >::SolidMeshColocation(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

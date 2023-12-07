@@ -48,9 +48,6 @@ namespace geode
         TriangulatedSurfaceIntersections(
             const TriangulatedSurface< dimension >& mesh );
 
-        TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh, bool verbose );
-
         ~TriangulatedSurfaceIntersections();
 
         bool mesh_has_self_intersections() const;

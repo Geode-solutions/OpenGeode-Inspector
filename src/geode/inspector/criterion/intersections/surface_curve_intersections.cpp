@@ -216,9 +216,8 @@ namespace geode
     {
     public:
         Impl( const TriangulatedSurface< dimension >& surface,
-            const EdgedCurve< dimension >& curve,
-            bool verbose )
-            : surface_( surface ), curve_( curve ), verbose_( verbose )
+            const EdgedCurve< dimension >& curve )
+            : surface_( surface ), curve_( curve ), verbose_( false )
         {
         }
 
@@ -287,16 +286,7 @@ namespace geode
     SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
         const TriangulatedSurface< dimension >& surface,
         const EdgedCurve< dimension >& curve )
-        : impl_( surface, curve, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceCurveIntersections< dimension >::SurfaceCurveIntersections(
-        const TriangulatedSurface< dimension >& surface,
-        const EdgedCurve< dimension >& curve,
-        bool verbose )
-        : impl_( surface, curve, verbose )
+        : impl_( surface, curve )
     {
     }
 

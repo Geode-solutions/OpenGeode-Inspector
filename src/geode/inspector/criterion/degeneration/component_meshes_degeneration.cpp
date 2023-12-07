@@ -44,13 +44,13 @@ namespace
 {
     template < geode::index_t dimension, typename Model >
     std::vector< geode::uuid > model_degenerated_component_meshes_base(
-        const Model& model, bool verbose )
+        const Model& model )
     {
         std::vector< geode::uuid > components_with_degeneration;
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveDegeneration< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh()
             };
             if( inspector.is_mesh_degenerated() )
             {
@@ -60,7 +60,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshDegeneration< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh()
             };
             if( inspector.is_mesh_degenerated() )
             {
@@ -71,22 +71,20 @@ namespace
     }
 
     std::vector< geode::uuid > model_degenerated_component_meshes(
-        const geode::Section& model, bool verbose )
+        const geode::Section& model )
     {
         return model_degenerated_component_meshes_base< 2, geode::Section >(
-            model, verbose );
+            model );
     }
 
     std::vector< geode::uuid > model_degenerated_component_meshes(
-        const geode::BRep& model, bool verbose )
+        const geode::BRep& model )
     {
         auto components_with_degeneration =
-            model_degenerated_component_meshes_base< 3, geode::BRep >(
-                model, verbose );
+            model_degenerated_component_meshes_base< 3, geode::BRep >( model );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshDegeneration3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
             if( inspector.is_mesh_degenerated() )
             {
                 components_with_degeneration.push_back( block.id() );
@@ -97,15 +95,14 @@ namespace
 
     template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_elements_base(
-            const Model& model, bool verbose )
+        model_components_nb_degenerated_elements_base( const Model& model )
     {
         absl::flat_hash_map< geode::uuid, geode::index_t >
             components_nb_degenerated_elements;
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveDegeneration< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh()
             };
             const auto nb_degenerated = inspector.nb_degenerated_edges();
             if( nb_degenerated > 0 )
@@ -117,7 +114,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshDegeneration< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh()
             };
             const auto nb_degenerated = inspector.nb_degenerated_edges()
                                         + inspector.nb_degenerated_polygons();
@@ -131,24 +128,21 @@ namespace
     }
 
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_elements(
-            const geode::Section& model, bool verbose )
+        model_components_nb_degenerated_elements( const geode::Section& model )
     {
         return model_components_nb_degenerated_elements_base< 2,
-            geode::Section >( model, verbose );
+            geode::Section >( model );
     }
 
     absl::flat_hash_map< geode::uuid, geode::index_t >
-        model_components_nb_degenerated_elements(
-            const geode::BRep& model, bool verbose )
+        model_components_nb_degenerated_elements( const geode::BRep& model )
     {
         auto components_nb_degenerated_elements =
             model_components_nb_degenerated_elements_base< 3, geode::BRep >(
-                model, verbose );
+                model );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshDegeneration3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
             const auto nb_degenerated = inspector.nb_degenerated_edges()
                                         + inspector.nb_degenerated_polyhedra();
             if( nb_degenerated > 0 )
@@ -162,15 +156,14 @@ namespace
 
     template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
-        model_components_degenerated_elements_base(
-            const Model& model, bool verbose )
+        model_components_degenerated_elements_base( const Model& model )
     {
         absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
             components_degenerated_elements;
         for( const auto& line : model.lines() )
         {
             const geode::EdgedCurveDegeneration< dimension > inspector{
-                line.mesh(), verbose
+                line.mesh()
             };
             auto degenerated_edges = inspector.degenerated_edges();
             if( !degenerated_edges.empty() )
@@ -185,7 +178,7 @@ namespace
         for( const auto& surface : model.surfaces() )
         {
             const geode::SurfaceMeshDegeneration< dimension > inspector{
-                surface.mesh(), verbose
+                surface.mesh()
             };
             auto degenerated_edges = inspector.degenerated_edges();
             auto degenerated_polygons = inspector.degenerated_polygons();
@@ -202,24 +195,21 @@ namespace
     }
 
     absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
-        model_components_degenerated_elements(
-            const geode::Section& model, bool verbose )
+        model_components_degenerated_elements( const geode::Section& model )
     {
         return model_components_degenerated_elements_base< 2, geode::Section >(
-            model, verbose );
+            model );
     }
 
     absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
-        model_components_degenerated_elements(
-            const geode::BRep& model, bool verbose )
+        model_components_degenerated_elements( const geode::BRep& model )
     {
         auto components_degenerated_elements =
             model_components_degenerated_elements_base< 3, geode::BRep >(
-                model, verbose );
+                model );
         for( const auto& block : model.blocks() )
         {
-            const geode::SolidMeshDegeneration3D inspector{ block.mesh(),
-                verbose };
+            const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
             auto degenerated_edges = inspector.degenerated_edges();
             auto degenerated_polyhedra = inspector.degenerated_polyhedra();
             if( !degenerated_edges.empty() || !degenerated_polyhedra.empty() )
@@ -241,44 +231,33 @@ namespace geode
     class ComponentMeshesDegeneration< dimension, Model >::Impl
     {
     public:
-        Impl( const Model& model, bool verbose )
-            : model_( model ), verbose_( verbose )
-        {
-        }
+        Impl( const Model& model ) : model_( model ) {}
 
         std::vector< uuid > degenerated_component_meshes() const
         {
-            return model_degenerated_component_meshes( model_, verbose_ );
+            return model_degenerated_component_meshes( model_ );
         }
 
         absl::flat_hash_map< uuid, index_t >
             components_nb_degenerated_elements() const
         {
-            return model_components_nb_degenerated_elements( model_, verbose_ );
+            return model_components_nb_degenerated_elements( model_ );
         }
 
         absl::flat_hash_map< uuid, DegeneratedElements >
             components_degenerated_elements() const
         {
-            return model_components_degenerated_elements( model_, verbose_ );
+            return model_components_degenerated_elements( model_ );
         }
 
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < geode::index_t dimension, typename Model >
     ComponentMeshesDegeneration< dimension,
         Model >::ComponentMeshesDegeneration( const Model& model )
-        : impl_( model, false )
-    {
-    }
-
-    template < geode::index_t dimension, typename Model >
-    ComponentMeshesDegeneration< dimension,
-        Model >::ComponentMeshesDegeneration( const Model& model, bool verbose )
-        : impl_( model, verbose )
+        : impl_( model )
     {
     }
 

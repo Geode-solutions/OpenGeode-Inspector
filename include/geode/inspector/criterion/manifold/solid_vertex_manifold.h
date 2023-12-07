@@ -46,9 +46,6 @@ namespace geode
     public:
         SolidMeshVertexManifold( const SolidMesh< dimension >& mesh );
 
-        SolidMeshVertexManifold(
-            const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshVertexManifold();
 
         bool mesh_vertices_are_manifold() const;

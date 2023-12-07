@@ -48,7 +48,7 @@ namespace geode
             bool edge_is_degenerated( index_t edge_index ) const;
 
         protected:
-            DegenerationImpl( const Mesh& mesh, bool verbose );
+            DegenerationImpl( const Mesh& mesh );
 
             const Mesh& mesh() const;
 

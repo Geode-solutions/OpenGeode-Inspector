@@ -214,15 +214,6 @@ namespace geode
           impl_( brep )
     {
     }
-    BRepTopologyInspector::BRepTopologyInspector(
-        const BRep& brep, bool verbose )
-        : BRepCornersTopology( brep ),
-          BRepLinesTopology( brep ),
-          BRepSurfacesTopology( brep ),
-          BRepBlocksTopology( brep ),
-          impl_( brep )
-    {
-    }
 
     BRepTopologyInspector::~BRepTopologyInspector() {}
 

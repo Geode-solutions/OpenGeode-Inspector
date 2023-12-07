@@ -200,15 +200,6 @@ namespace geode
     {
     }
 
-    SectionTopologyInspector::SectionTopologyInspector(
-        const Section& section, bool verbose )
-        : SectionCornersTopology( section ),
-          SectionLinesTopology( section ),
-          SectionSurfacesTopology( section ),
-          impl_( section )
-    {
-    }
-
     SectionTopologyInspector::~SectionTopologyInspector() {}
     bool SectionTopologyInspector::section_topology_is_valid() const
     {

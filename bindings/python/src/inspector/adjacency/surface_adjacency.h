@@ -37,11 +37,8 @@ namespace geode
             absl::StrCat( "SurfaceMeshAdjacency", dimension, "D" );
         pybind11::class_< SurfaceMeshAdjacency >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
-            .def( pybind11::init< const SurfaceMesh&, bool >() )
             .def( "mesh_has_wrong_adjacencies",
                 &SurfaceMeshAdjacency::mesh_has_wrong_adjacencies )
-            .def( "nb_edges_with_wrong_adjacency",
-                &SurfaceMeshAdjacency::nb_edges_with_wrong_adjacency )
             .def( "polygon_edges_with_wrong_adjacency",
                 &SurfaceMeshAdjacency::polygon_edges_with_wrong_adjacency );
     }

@@ -78,8 +78,8 @@ namespace geode
     class SurfaceMeshVertexManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        Impl( const SurfaceMesh< dimension >& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 
@@ -153,14 +153,7 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshVertexManifold< dimension >::SurfaceMeshVertexManifold(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceMeshVertexManifold< dimension >::SurfaceMeshVertexManifold(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

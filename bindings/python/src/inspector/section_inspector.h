@@ -34,7 +34,6 @@ namespace geode
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration, SectionComponentMeshesManifold,
             SectionMeshesIntersections >( module, "SectionInspector" )
-            .def( pybind11::init< const Section& >() )
-            .def( pybind11::init< const Section&, bool >() );
+            .def( pybind11::init< const Section& >() );
     }
 } // namespace geode

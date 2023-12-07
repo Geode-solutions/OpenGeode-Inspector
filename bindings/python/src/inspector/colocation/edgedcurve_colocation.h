@@ -40,7 +40,6 @@ namespace geode
             absl::StrCat( "EdgedCurveColocation", dimension, "D" );
         pybind11::class_< EdgedCurveColocation >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
-            .def( pybind11::init< const EdgedCurve&, bool >() )
             .def( "mesh_has_colocated_points",
                 &EdgedCurveColocation::mesh_has_colocated_points )
             .def( "nb_colocated_points",

@@ -42,7 +42,7 @@ add_subdirectory(src/geode)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector binaries
-add_subdirectory(src/bin)
+# add_subdirectory(src/bin)
 
 #------------------------------------------------------------------------------------------------
 # Optional modules configuration
@@ -50,7 +50,7 @@ if(OPENGEODE_INSPECTOR_WITH_TESTS)
     # Enable testing with CTest
     enable_testing()
     message(STATUS "Configuring OpenGeode-inspector with tests")
-    add_subdirectory(tests)
+    # add_subdirectory(tests)
 endif()
 
 if(OPENGEODE_INSPECTOR_WITH_PYTHON)

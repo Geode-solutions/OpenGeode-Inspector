@@ -58,6 +58,5 @@ namespace geode
 
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 } // namespace geode

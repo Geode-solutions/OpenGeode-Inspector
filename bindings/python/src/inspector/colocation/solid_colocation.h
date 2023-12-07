@@ -36,7 +36,6 @@ namespace geode
         const auto name = absl::StrCat( "SolidMeshColocation", dimension, "D" );
         pybind11::class_< SolidMeshColocation >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_has_colocated_points",
                 &SolidMeshColocation::mesh_has_colocated_points )
             .def( "nb_colocated_points",

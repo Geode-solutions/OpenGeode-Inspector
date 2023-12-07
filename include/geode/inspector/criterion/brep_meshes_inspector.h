@@ -35,6 +35,12 @@ namespace geode
 {
     struct BRepMeshesInspectionResult
     {
+        InspectionIssues< std::vector< index_t > >
+            colocated_unique_vertices_groups{ "" };
+        InspectionIssues< index_t > unique_vertices_linked_to_different_points{
+            ""
+        };
+
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
         absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
@@ -56,7 +62,6 @@ namespace geode
 
     public:
         BRepMeshesInspector( const BRep& brep );
-        BRepMeshesInspector( const BRep& brep, bool verbose );
 
         BRepMeshesInspectionResult inspect_brep_meshes() const;
     };

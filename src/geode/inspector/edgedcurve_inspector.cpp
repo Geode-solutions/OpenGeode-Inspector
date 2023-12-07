@@ -36,15 +36,6 @@ namespace geode
     {
     }
 
-    template < index_t dimension >
-    EdgedCurveInspector< dimension >::EdgedCurveInspector(
-        const EdgedCurve< dimension >& mesh, bool verbose )
-        : AddInspectors< EdgedCurve< dimension >,
-            EdgedCurveColocation< dimension >,
-            EdgedCurveDegeneration< dimension > >{ mesh, verbose }
-    {
-    }
-
     template class opengeode_inspector_inspector_api EdgedCurveInspector< 2 >;
     template class opengeode_inspector_inspector_api EdgedCurveInspector< 3 >;
 } // namespace geode

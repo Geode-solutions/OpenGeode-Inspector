@@ -79,8 +79,8 @@ namespace geode
     class SolidMeshVertexManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        Impl( const SolidMesh< dimension >& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 
@@ -154,14 +154,7 @@ namespace geode
     template < index_t dimension >
     SolidMeshVertexManifold< dimension >::SolidMeshVertexManifold(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshVertexManifold< dimension >::SolidMeshVertexManifold(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

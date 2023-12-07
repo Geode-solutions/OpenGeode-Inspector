@@ -35,19 +35,15 @@ namespace geode
           BRepMeshesIntersections( brep )
     {
     }
-    BRepMeshesInspector::BRepMeshesInspector( const BRep& brep, bool verbose )
-        : BRepUniqueVerticesColocation( brep ),
-          BRepComponentMeshesAdjacency( brep ),
-          BRepComponentMeshesColocation( brep ),
-          BRepComponentMeshesDegeneration( brep ),
-          BRepComponentMeshesManifold( brep ),
-          BRepMeshesIntersections( brep )
-    {
-    }
 
     BRepMeshesInspectionResult BRepMeshesInspector::inspect_brep_meshes() const
     {
         BRepMeshesInspectionResult result;
+        result.colocated_unique_vertices_groups =
+            colocated_unique_vertices_groups();
+        result.unique_vertices_linked_to_different_points =
+            unique_vertices_linked_to_different_points();
+
         result.surfaces_edges_with_wrong_adjacencies =
             surfaces_edges_with_wrong_adjacencies();
         result.blocks_facets_with_wrong_adjacencies =

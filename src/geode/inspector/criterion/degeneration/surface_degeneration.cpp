@@ -40,9 +40,8 @@ namespace geode
         : public detail::DegenerationImpl< SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh,
-                  verbose }
+        Impl( const SurfaceMesh< dimension >& mesh )
+            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
         {
         }
 
@@ -109,14 +108,7 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

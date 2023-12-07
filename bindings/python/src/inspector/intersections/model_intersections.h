@@ -32,7 +32,6 @@
     pybind11::class_< suffix##MeshesIntersections >(                           \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
         .def( "model_has_intersecting_surfaces",                               \
             &suffix##MeshesIntersections::model_has_intersecting_surfaces )    \
         .def( "nb_intersecting_surfaces_elements_pair",                        \

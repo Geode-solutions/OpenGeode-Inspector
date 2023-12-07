@@ -50,8 +50,6 @@ namespace geode
     public:
         BRepComponentMeshesManifold( const BRep& brep );
 
-        BRepComponentMeshesManifold( const BRep& brep, bool verbose );
-
         ~BRepComponentMeshesManifold();
 
         std::vector< uuid > components_non_manifold_meshes() const;

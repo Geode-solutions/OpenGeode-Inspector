@@ -36,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
+        Impl( const SurfaceMesh< dimension >& mesh )
             : detail::ColocationImpl< dimension, SurfaceMesh< dimension > >(
-                mesh, verbose )
+                mesh )
         {
         }
     };
@@ -46,14 +46,7 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

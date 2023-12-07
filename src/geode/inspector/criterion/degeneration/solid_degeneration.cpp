@@ -40,9 +40,8 @@ namespace geode
         : public detail::DegenerationImpl< SolidMesh< dimension > >
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
-            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh,
-                  verbose }
+        Impl( const SolidMesh< dimension >& mesh )
+            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh }
         {
         }
 
@@ -112,14 +111,7 @@ namespace geode
     template < index_t dimension >
     SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshDegeneration< dimension >::SolidMeshDegeneration(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

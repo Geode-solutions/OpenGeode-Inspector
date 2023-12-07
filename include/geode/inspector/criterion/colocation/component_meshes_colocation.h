@@ -50,8 +50,6 @@ namespace geode
     public:
         ComponentMeshesColocation( const Model& model );
 
-        ComponentMeshesColocation( const Model& model, bool verbose );
-
         ~ComponentMeshesColocation();
 
         std::vector< uuid > components_with_colocated_points() const;

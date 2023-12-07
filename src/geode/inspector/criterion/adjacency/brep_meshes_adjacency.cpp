@@ -60,10 +60,10 @@ namespace geode
             return comps_with_wrong_adjacencies;
         }
 
-        absl::flat_hash_map< uuid, std::vector< PolyhedronFacet > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
             blocks_facets_with_wrong_adjacencies() const
         {
-            absl::flat_hash_map< uuid, std::vector< PolyhedronFacet > >
+            absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
                 components_wrong_adjacencies;
             for( const auto& block : model().blocks() )
             {

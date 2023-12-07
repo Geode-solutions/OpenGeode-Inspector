@@ -57,8 +57,6 @@ namespace geode
     public:
         ComponentMeshesDegeneration( const Model& model );
 
-        ComponentMeshesDegeneration( const Model& model, bool verbose );
-
         ~ComponentMeshesDegeneration();
 
         std::vector< uuid > degenerated_component_meshes() const;

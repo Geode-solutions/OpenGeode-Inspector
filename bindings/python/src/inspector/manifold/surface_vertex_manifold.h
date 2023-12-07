@@ -38,7 +38,6 @@ namespace geode
             absl::StrCat( "SurfaceMeshVertexManifold", dimension, "D" );
         pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
-            .def( pybind11::init< const SurfaceMesh&, bool >() )
             .def( "mesh_vertices_are_manifold",
                 &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
             .def( "nb_non_manifold_vertices",

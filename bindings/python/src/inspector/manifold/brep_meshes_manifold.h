@@ -32,7 +32,6 @@ namespace geode
         pybind11::class_< BRepComponentMeshesManifold >(
             module, "BRepComponentMeshesManifold" )
             .def( pybind11::init< const BRep& >() )
-            .def( pybind11::init< const BRep&, bool >() )
             .def( "components_non_manifold_meshes",
                 &BRepComponentMeshesManifold::components_non_manifold_meshes )
             .def( "component_meshes_nb_non_manifold_vertices",

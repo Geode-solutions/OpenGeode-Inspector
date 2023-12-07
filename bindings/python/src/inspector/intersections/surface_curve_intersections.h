@@ -41,8 +41,6 @@ namespace geode
         pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
             .def( pybind11::init< const TriangulatedSurface&,
                 const EdgedCurve& >() )
-            .def( pybind11::init< const TriangulatedSurface&, const EdgedCurve&,
-                bool >() )
             .def( "meshes_have_intersections",
                 &SurfaceCurveIntersections::meshes_have_intersections )
             .def( "nb_intersecting_elements_pair",

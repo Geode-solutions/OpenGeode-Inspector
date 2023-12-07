@@ -36,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, EdgedCurve< dimension > >
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh, bool verbose )
+        Impl( const EdgedCurve< dimension >& mesh )
             : detail::ColocationImpl< dimension, EdgedCurve< dimension > >(
-                mesh, verbose )
+                mesh )
         {
         }
     };
@@ -46,14 +46,7 @@ namespace geode
     template < index_t dimension >
     EdgedCurveColocation< dimension >::EdgedCurveColocation(
         const EdgedCurve< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    EdgedCurveColocation< dimension >::EdgedCurveColocation(
-        const EdgedCurve< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

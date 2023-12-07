@@ -45,9 +45,6 @@ namespace geode
     public:
         SolidMeshFacetManifold( const SolidMesh< dimension >& mesh );
 
-        SolidMeshFacetManifold(
-            const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshFacetManifold();
 
         bool mesh_facets_are_manifold() const;

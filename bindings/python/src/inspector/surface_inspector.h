@@ -44,16 +44,14 @@ namespace geode
             SurfaceMeshDegeneration< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
-            .def( pybind11::init< const SurfaceMesh&, bool >() );
+            .def( pybind11::init< const SurfaceMesh& >() );
 
         const auto trgl_name =
             absl::StrCat( "TriangulatedSurfaceInspector", dimension, "D" );
         pybind11::class_< TriangulatedSurfaceInspector, SurfaceMeshInspector,
             TriangulatedSurfaceIntersections< dimension > >(
             module, trgl_name.c_str() )
-            .def( pybind11::init< const TriangulatedSurface& >() )
-            .def( pybind11::init< const TriangulatedSurface&, bool >() );
+            .def( pybind11::init< const TriangulatedSurface& >() );
     }
     void define_surface_inspector( pybind11::module& module )
     {

@@ -47,8 +47,6 @@ namespace geode
     public:
         ModelMeshesIntersections( const Model& model );
 
-        ModelMeshesIntersections( const Model& model, bool verbose );
-
         ~ModelMeshesIntersections();
 
         bool model_has_intersecting_surfaces() const;

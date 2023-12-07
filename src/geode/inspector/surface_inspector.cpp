@@ -40,32 +40,11 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : AddInspectors< SurfaceMesh< dimension >,
-            SurfaceMeshAdjacency< dimension >,
-            SurfaceMeshColocation< dimension >,
-            SurfaceMeshDegeneration< dimension >,
-            SurfaceMeshEdgeManifold< dimension >,
-            SurfaceMeshVertexManifold< dimension > >{ mesh, verbose }
-    {
-    }
-
-    template < index_t dimension >
     TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
         const TriangulatedSurface< dimension >& mesh )
         : SurfaceMeshInspector< dimension >{ mesh },
           AddInspectors< TriangulatedSurface< dimension >,
               TriangulatedSurfaceIntersections< dimension > >{ mesh }
-    {
-    }
-
-    template < index_t dimension >
-    TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
-        const TriangulatedSurface< dimension >& mesh, bool verbose )
-        : SurfaceMeshInspector< dimension >{ mesh, verbose },
-          AddInspectors< TriangulatedSurface< dimension >,
-              TriangulatedSurfaceIntersections< dimension > >{ mesh, verbose }
     {
     }
 

@@ -59,7 +59,7 @@ namespace geode
             surfaces_meshes_non_manifold_edges() const;
 
     protected:
-        ComponentMeshesManifold( const Model& model, bool verbose );
+        ComponentMeshesManifold( const Model& model );
 
         const Model& model() const;
 

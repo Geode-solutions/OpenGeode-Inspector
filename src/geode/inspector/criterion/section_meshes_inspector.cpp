@@ -35,23 +35,18 @@ namespace geode
           SectionMeshesIntersections( section )
     {
     }
-    SectionMeshesInspector::SectionMeshesInspector(
-        const Section& section, bool verbose )
-        : SectionUniqueVerticesColocation( section ),
-          SectionComponentMeshesAdjacency( section ),
-          SectionComponentMeshesColocation( section ),
-          SectionComponentMeshesDegeneration( section ),
-          SectionComponentMeshesManifold( section ),
-          SectionMeshesIntersections( section )
-    {
-    }
 
     SectionMeshesInspectionResult
         SectionMeshesInspector::inspect_section_meshes() const
     {
         SectionMeshesInspectionResult result;
-        result.surfaces_edges_with_wrong_adjacencies =
-            surfaces_edges_with_wrong_adjacencies();
+        /* result.colocated_unique_vertices_groups =
+             colocated_unique_vertices_groups();
+         result.unique_vertices_linked_to_different_points =
+             unique_vertices_linked_to_different_points();*/
+
+        /* result.surfaces_edges_with_wrong_adjacencies =
+             surfaces_edges_with_wrong_adjacencies();*/
         return result;
     }
 } // namespace geode

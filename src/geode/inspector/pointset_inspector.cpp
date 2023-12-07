@@ -35,14 +35,6 @@ namespace geode
     {
     }
 
-    template < index_t dimension >
-    PointSetInspector< dimension >::PointSetInspector(
-        const PointSet< dimension >& mesh, bool verbose )
-        : AddInspectors< PointSet< dimension >,
-            PointSetColocation< dimension > >{ mesh, verbose }
-    {
-    }
-
     template class opengeode_inspector_inspector_api PointSetInspector< 2 >;
     template class opengeode_inspector_inspector_api PointSetInspector< 3 >;
 } // namespace geode

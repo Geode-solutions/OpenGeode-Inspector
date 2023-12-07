@@ -36,9 +36,8 @@ namespace geode
         : public detail::ColocationImpl< dimension, PointSet< dimension > >
     {
     public:
-        Impl( const PointSet< dimension >& mesh, bool verbose )
-            : detail::ColocationImpl< dimension, PointSet< dimension > >(
-                mesh, verbose )
+        Impl( const PointSet< dimension >& mesh )
+            : detail::ColocationImpl< dimension, PointSet< dimension > >( mesh )
         {
         }
     };
@@ -46,14 +45,7 @@ namespace geode
     template < index_t dimension >
     PointSetColocation< dimension >::PointSetColocation(
         const PointSet< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    PointSetColocation< dimension >::PointSetColocation(
-        const PointSet< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

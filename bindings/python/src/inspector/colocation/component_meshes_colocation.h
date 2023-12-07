@@ -32,7 +32,6 @@
     pybind11::class_< suffix##ComponentMeshesColocation >(                     \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
         .def( "components_with_colocated_points",                              \
             &suffix##ComponentMeshesColocation::                               \
                 components_with_colocated_points )                             \

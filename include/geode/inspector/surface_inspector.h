@@ -54,9 +54,6 @@ namespace geode
 
     public:
         SurfaceMeshInspector( const SurfaceMesh< dimension >& mesh );
-
-        SurfaceMeshInspector(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
 
@@ -74,9 +71,6 @@ namespace geode
     public:
         TriangulatedSurfaceInspector(
             const TriangulatedSurface< dimension >& mesh );
-
-        TriangulatedSurfaceInspector(
-            const TriangulatedSurface< dimension >& mesh, bool verbose );
     };
     ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

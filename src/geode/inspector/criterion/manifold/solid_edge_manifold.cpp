@@ -86,9 +86,9 @@ namespace geode
     class SolidMeshEdgeManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
+        Impl( const SolidMesh< dimension >& mesh )
             : mesh_( mesh ),
-              verbose_( verbose ),
+              verbose_( false ),
               polyhedra_around_edges_( edges_to_polyhedra_around( mesh ) )
         {
         }
@@ -200,14 +200,7 @@ namespace geode
     template < index_t dimension >
     SolidMeshEdgeManifold< dimension >::SolidMeshEdgeManifold(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshEdgeManifold< dimension >::SolidMeshEdgeManifold(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 

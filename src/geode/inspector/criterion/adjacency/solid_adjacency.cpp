@@ -75,8 +75,9 @@ namespace geode
                             polyhedron_facet ) )
                     {
                         wrong_adjacency_facets.add_problem( polyhedron_facet,
-                            "Local facet ", facet_id, " of polyhedron ",
-                            polyhedron_id, " has wrong adjacencies." );
+                            absl::StrCat( "Local facet ", facet_id,
+                                " of polyhedron ", polyhedron_id,
+                                " has wrong adjacencies." ) );
                     }
                 }
             }

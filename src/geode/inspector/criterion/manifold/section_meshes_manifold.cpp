@@ -36,21 +36,15 @@ namespace geode
         : public ComponentMeshesManifold< 2, Section >
     {
     public:
-        Impl( const Section& section, bool verbose )
-            : ComponentMeshesManifold< 2, Section >( section, verbose )
+        Impl( const Section& section )
+            : ComponentMeshesManifold< 2, Section >( section )
         {
         }
     };
 
     SectionComponentMeshesManifold::SectionComponentMeshesManifold(
         const Section& model )
-        : impl_{ model, false }
-    {
-    }
-
-    SectionComponentMeshesManifold::SectionComponentMeshesManifold(
-        const Section& model, bool verbose )
-        : impl_{ model, verbose }
+        : impl_{ model }
     {
     }
 

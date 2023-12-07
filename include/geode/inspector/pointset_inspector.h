@@ -42,8 +42,6 @@ namespace geode
 
     public:
         PointSetInspector( const PointSet< dimension >& mesh );
-
-        PointSetInspector( const PointSet< dimension >& mesh, bool verbose );
     };
     ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

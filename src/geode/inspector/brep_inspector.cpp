@@ -34,13 +34,6 @@ namespace geode
     {
     }
 
-    BRepInspector::BRepInspector( const BRep& brep, bool verbose )
-        : AddInspectors< BRep, BRepMeshesInspector, BRepTopologyInspector >{
-              brep, verbose
-          }
-    {
-    }
-
     BRepInspectionResult BRepInspector::inspect_brep() const
     {
         BRepInspectionResult result;

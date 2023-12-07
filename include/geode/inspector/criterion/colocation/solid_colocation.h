@@ -46,8 +46,6 @@ namespace geode
     public:
         SolidMeshColocation( const SolidMesh< dimension >& mesh );
 
-        SolidMeshColocation( const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshColocation();
 
         bool mesh_has_colocated_points() const;

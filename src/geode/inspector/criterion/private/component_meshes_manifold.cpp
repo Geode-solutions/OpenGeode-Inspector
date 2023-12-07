@@ -38,8 +38,8 @@ namespace geode
 {
     template < index_t dimension, typename Model >
     ComponentMeshesManifold< dimension, Model >::ComponentMeshesManifold(
-        const Model& model, bool verbose )
-        : model_( model ), verbose_( verbose )
+        const Model& model )
+        : model_( model ), verbose_( false )
     {
     }
 
@@ -51,7 +51,7 @@ namespace geode
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshVertexManifold< dimension > v_inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             if( !v_inspector.mesh_vertices_are_manifold() )
             {
@@ -59,7 +59,7 @@ namespace geode
                 continue;
             }
             const SurfaceMeshEdgeManifold< dimension > e_inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             if( !e_inspector.mesh_edges_are_manifold() )
             {
@@ -77,7 +77,7 @@ namespace geode
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshVertexManifold< dimension > inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             const auto nb_non_manifold_vertices =
                 inspector.nb_non_manifold_vertices();
@@ -98,7 +98,7 @@ namespace geode
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshEdgeManifold< dimension > inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             const auto nb_non_manifold_edges =
                 inspector.nb_non_manifold_edges();
@@ -121,7 +121,7 @@ namespace geode
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshVertexManifold< dimension > inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             auto non_manifold_vertices = inspector.non_manifold_vertices();
             if( !non_manifold_vertices.empty() )
@@ -143,7 +143,7 @@ namespace geode
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshEdgeManifold< dimension > inspector{
-                surface.mesh(), verbose_
+                surface.mesh()
             };
             auto non_manifold_edges = inspector.non_manifold_edges();
             if( !non_manifold_edges.empty() )

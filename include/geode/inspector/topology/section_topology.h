@@ -61,7 +61,6 @@ namespace geode
 
     public:
         SectionTopologyInspector( const Section& section );
-        SectionTopologyInspector( const Section& section, bool verbose );
         ~SectionTopologyInspector();
 
         /*!

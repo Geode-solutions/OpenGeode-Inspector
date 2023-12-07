@@ -358,8 +358,8 @@ namespace geode
     class TriangulatedSurfaceIntersections< dimension >::Impl
     {
     public:
-        Impl( const TriangulatedSurface< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        Impl( const TriangulatedSurface< dimension >& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 
@@ -425,15 +425,7 @@ namespace geode
     TriangulatedSurfaceIntersections< dimension >::
         TriangulatedSurfaceIntersections(
             const TriangulatedSurface< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    TriangulatedSurfaceIntersections< dimension >::
-        TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
