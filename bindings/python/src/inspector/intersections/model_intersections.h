@@ -34,11 +34,8 @@
         .def( pybind11::init< const type& >() )                                \
         .def( "model_has_intersecting_surfaces",                               \
             &suffix##MeshesIntersections::model_has_intersecting_surfaces )    \
-        .def( "nb_intersecting_surfaces_elements_pair",                        \
-            &suffix##MeshesIntersections::                                     \
-                nb_intersecting_surfaces_elements_pair )                       \
-        .def( "intersecting_surfaces_elements",                                \
-            &suffix##MeshesIntersections::intersecting_surfaces_elements )
+        .def( "inspect_intersections",                                         \
+            &suffix##MeshesIntersections::inspect_intersections )
 
 namespace geode
 {

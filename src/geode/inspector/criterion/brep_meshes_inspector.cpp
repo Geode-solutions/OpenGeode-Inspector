@@ -43,6 +43,7 @@ namespace geode
         result.meshes_colocation = inspect_meshes_point_colocations();
         result.adjacencies = inspect_brep_meshes_adjacencies();
         result.elements = inspect_elements();
+        result.intersections = inspect_intersections();
         return result;
     }
 } // namespace geode

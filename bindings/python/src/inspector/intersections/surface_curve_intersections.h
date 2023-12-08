@@ -43,8 +43,6 @@ namespace geode
                 const EdgedCurve& >() )
             .def( "meshes_have_intersections",
                 &SurfaceCurveIntersections::meshes_have_intersections )
-            .def( "nb_intersecting_elements_pair",
-                &SurfaceCurveIntersections::nb_intersecting_elements_pair )
             .def( "intersecting_elements",
                 &SurfaceCurveIntersections::intersecting_elements );
     }

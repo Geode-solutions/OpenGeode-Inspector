@@ -28,6 +28,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -54,14 +55,12 @@ namespace geode
 
         bool meshes_have_intersections() const;
 
-        index_t nb_intersecting_elements_pair() const;
-
         /* Returns all pairs of intersecting triangles and edges.
          * First element of each pair is a triangle index in the
          * TriangulatedSurface, second element of each pair is an edge index in
          * the EdgedCurve.
          */
-        std::vector< std::pair< index_t, index_t > >
+        InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const;
 
     private:

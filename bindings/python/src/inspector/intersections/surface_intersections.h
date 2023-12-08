@@ -41,9 +41,6 @@ namespace geode
             .def( pybind11::init< const TriangulatedSurface& >() )
             .def( "mesh_has_self_intersections",
                 &TriangulatedSurfaceIntersections::mesh_has_self_intersections )
-            .def( "nb_intersecting_elements_pair",
-                &TriangulatedSurfaceIntersections::
-                    nb_intersecting_elements_pair )
             .def( "intersecting_elements",
                 &TriangulatedSurfaceIntersections::intersecting_elements );
     }

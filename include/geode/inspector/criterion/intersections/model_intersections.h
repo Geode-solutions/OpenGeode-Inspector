@@ -26,16 +26,25 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
+
+#include <geode/model/mixin/core/component_mesh_element.h>
 
 namespace geode
 {
     class Section;
     class BRep;
-    struct ComponentMeshElement;
 } // namespace geode
 
 namespace geode
 {
+    struct ElementsIntersectionsInspectionResult
+    {
+        InspectionIssues<
+            std::pair< ComponentMeshElement, ComponentMeshElement > >
+            elements_intersections{ "" };
+    };
+
     /*!
      * Class for inspecting the intersections of a Model meshes
      */
@@ -51,10 +60,7 @@ namespace geode
 
         bool model_has_intersecting_surfaces() const;
 
-        index_t nb_intersecting_surfaces_elements_pair() const;
-
-        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
-            intersecting_surfaces_elements() const;
+        ElementsIntersectionsInspectionResult inspect_intersections() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

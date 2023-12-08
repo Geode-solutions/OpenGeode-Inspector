@@ -439,43 +439,26 @@ namespace geode
             return true;
         }
 
-        index_t nb_intersecting_surfaces_elements_pair() const
-        {
-            const auto intersections = intersecting_triangles<
-                AllModelSurfacesIntersection< dimension, Model > >();
-            if( verbose_ )
-            {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first.element_id,
-                        " of surface ",
-                        triangle_pair.first.component_id.id().string(), " and ",
-                        triangle_pair.second.element_id, " of surface ",
-                        triangle_pair.second.component_id.id().string(),
-                        " intersect each other." );
-                }
-            }
-            return intersections.size();
-        }
-
-        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
+        InspectionIssues<
+            std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_surfaces_elements() const
         {
             const auto intersections = intersecting_triangles<
                 AllModelSurfacesIntersection< dimension, Model > >();
-            if( verbose_ )
+            InspectionIssues<
+                std::pair< ComponentMeshElement, ComponentMeshElement > >
+                issues{ "Surface intersections." };
+            for( const auto& triangle_pair : intersections )
             {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first.element_id,
+                issues.add_problem( triangle_pair,
+                    absl::StrCat( "Triangles ", triangle_pair.first.element_id,
                         " of surface ",
                         triangle_pair.first.component_id.id().string(), " and ",
                         triangle_pair.second.element_id, " of surface ",
                         triangle_pair.second.component_id.id().string(),
-                        " intersect each other." );
-                }
+                        " intersect each other." ) );
             }
-            return intersections;
+            return issues;
         }
 
     private:
@@ -584,18 +567,14 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    index_t ModelMeshesIntersections< dimension,
-        Model >::nb_intersecting_surfaces_elements_pair() const
+    ElementsIntersectionsInspectionResult
+        ModelMeshesIntersections< dimension, Model >::inspect_intersections()
+            const
     {
-        return impl_->nb_intersecting_surfaces_elements_pair();
-    }
-
-    template < index_t dimension, typename Model >
-    std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
-        ModelMeshesIntersections< dimension,
-            Model >::intersecting_surfaces_elements() const
-    {
-        return impl_->intersecting_surfaces_elements();
+        ElementsIntersectionsInspectionResult results;
+        results.elements_intersections =
+            impl_->intersecting_surfaces_elements();
+        return results;
     }
 
     template class opengeode_inspector_inspector_api

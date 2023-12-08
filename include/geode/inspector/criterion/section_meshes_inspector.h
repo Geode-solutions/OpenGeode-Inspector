@@ -40,6 +40,7 @@ namespace geode
         MeshesColocationInspectionResult meshes_colocation;
         SectionMeshesAdjacencyInspectionResult adjacencies;
         DegeneratedElementsInspectionResult elements;
+        ElementsIntersectionsInspectionResult intersections;
     };
     /*!
      * Class for inspecting a Section model

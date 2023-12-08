@@ -374,35 +374,22 @@ namespace geode
             return true;
         }
 
-        index_t nb_intersecting_elements_pair() const
-        {
-            const auto intersections = intersecting_triangles<
-                AllTriangleTriangleIntersection< dimension > >();
-            if( verbose_ )
-            {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first, " and ",
-                        triangle_pair.second, " intersect each other." );
-                }
-            }
-            return intersections.size();
-        }
-
-        std::vector< std::pair< index_t, index_t > >
+        InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
             const auto intersections = intersecting_triangles<
                 AllTriangleTriangleIntersection< dimension > >();
-            if( verbose_ )
+            InspectionIssues< std::pair< index_t, index_t > > issues{
+                "Triangle - triangle intersections."
+            };
+
+            for( const auto& triangle_pair : intersections )
             {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first, " and ",
-                        triangle_pair.second, " intersect each other." );
-                }
+                issues.add_problem( triangle_pair,
+                    absl::StrCat( "Triangles ", triangle_pair.first, " and ",
+                        triangle_pair.second, " intersect each other." ) );
             }
-            return intersections;
+            return issues;
         }
 
     private:
@@ -443,14 +430,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t TriangulatedSurfaceIntersections<
-        dimension >::nb_intersecting_elements_pair() const
-    {
-        return impl_->nb_intersecting_elements_pair();
-    }
-
-    template < index_t dimension >
-    std::vector< std::pair< index_t, index_t > >
+    InspectionIssues< std::pair< index_t, index_t > >
         TriangulatedSurfaceIntersections< dimension >::intersecting_elements()
             const
     {
