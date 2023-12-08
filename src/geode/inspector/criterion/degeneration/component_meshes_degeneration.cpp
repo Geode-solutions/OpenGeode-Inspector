@@ -24,7 +24,6 @@
 #include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
 
 #include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/solid_mesh.h>

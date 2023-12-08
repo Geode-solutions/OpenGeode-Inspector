@@ -26,6 +26,7 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
@@ -34,7 +35,6 @@ namespace geode
 {
     class Section;
     class BRep;
-    struct uuid;
 } // namespace geode
 
 namespace geode
