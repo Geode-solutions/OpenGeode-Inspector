@@ -210,7 +210,7 @@ namespace geode
     {
         DegeneratedElementsInspectionResult result;
         result.degenerated_meshes = impl_->degenerated_component_meshes();
-        result.degenerated_meshes = impl_->components_degenerated_elements();
+        result.degenerated_elements = impl_->components_degenerated_elements();
         return result;
     }
 
