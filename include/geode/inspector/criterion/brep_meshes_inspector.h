@@ -38,6 +38,7 @@ namespace geode
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
         BRepMeshesAdjacencyInspectionResult adjacencies;
+        DegeneratedElementsInspectionResult elements;
     };
     /*!
      * Class for inspecting a BRep model

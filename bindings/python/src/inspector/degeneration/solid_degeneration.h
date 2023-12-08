@@ -39,8 +39,6 @@ namespace geode
             .def( pybind11::init< const SolidMesh& >() )
             .def( "is_mesh_degenerated",
                 &SolidMeshDegeneration::is_mesh_degenerated )
-            .def( "nb_degenerated_edges",
-                &SolidMeshDegeneration::nb_degenerated_edges )
             .def( "degenerated_edges",
                 &SolidMeshDegeneration::degenerated_edges );
     }

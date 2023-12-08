@@ -39,8 +39,6 @@ namespace geode
             .def( pybind11::init< const EdgedCurve& >() )
             .def( "is_mesh_degenerated",
                 &EdgedCurveDegeneration::is_mesh_degenerated )
-            .def( "nb_degenerated_edges",
-                &EdgedCurveDegeneration::nb_degenerated_edges )
             .def( "degenerated_edges",
                 &EdgedCurveDegeneration::degenerated_edges );
     }

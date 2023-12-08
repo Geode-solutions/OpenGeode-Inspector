@@ -32,15 +32,8 @@
     pybind11::class_< suffix##ComponentMeshesDegeneration >(                   \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( "degenerated_component_meshes",                                  \
-            &suffix##ComponentMeshesDegeneration::                             \
-                degenerated_component_meshes )                                 \
-        .def( "components_nb_degenerated_elements",                            \
-            &suffix##ComponentMeshesDegeneration::                             \
-                components_nb_degenerated_elements )                           \
-        .def( "components_degenerated_elements",                               \
-            &suffix##ComponentMeshesDegeneration::                             \
-                components_degenerated_elements )
+        .def( "inspect_elements",                                              \
+            &suffix##ComponentMeshesDegeneration::inspect_elements )
 
 namespace geode
 {

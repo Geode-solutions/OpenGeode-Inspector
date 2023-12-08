@@ -63,29 +63,21 @@ namespace geode
             return false;
         }
 
-        index_t nb_degenerated_polyhedra() const
+        InspectionIssues< index_t > degenerated_polyhedra() const
         {
-            index_t counter{ 0 };
+            InspectionIssues< index_t > wrong_polyhedra{
+                "Degenerated Polyhedra on the Solid "
+                + this->mesh().id().string() + "."
+            };
             for( const auto polyhedron_id :
                 Range{ this->mesh().nb_polyhedra() } )
             {
                 if( polyhedron_is_degenerated( polyhedron_id ) )
                 {
-                    counter++;
-                }
-            }
-            return counter;
-        }
-
-        std::vector< index_t > degenerated_polyhedra() const
-        {
-            std::vector< index_t > wrong_polyhedra;
-            for( const auto polyhedron_id :
-                Range{ this->mesh().nb_polyhedra() } )
-            {
-                if( polyhedron_is_degenerated( polyhedron_id ) )
-                {
-                    wrong_polyhedra.push_back( polyhedron_id );
+                    wrong_polyhedra.add_problem( polyhedron_id,
+                        absl::StrCat( "Polyhedron ", polyhedron_id,
+                            " of Solid ", this->mesh().id().string(),
+                            " is degenerated." ) );
                 }
             }
             return wrong_polyhedra;
@@ -98,11 +90,6 @@ namespace geode
             if( mesh.polyhedron_volume( polyhedron_id ) > global_epsilon )
             {
                 return false;
-            }
-            if( this->verbose() )
-            {
-                Logger::info( "Polyhedron ", polyhedron_id, " of Solid ",
-                    mesh.id().string(), " is degenerated." );
             }
             return true;
         }
@@ -127,26 +114,14 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t SolidMeshDegeneration< dimension >::nb_degenerated_edges() const
-    {
-        return impl_->nb_degenerated_edges();
-    }
-
-    template < index_t dimension >
-    index_t SolidMeshDegeneration< dimension >::nb_degenerated_polyhedra() const
-    {
-        return impl_->nb_degenerated_polyhedra();
-    }
-
-    template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         SolidMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
     }
 
     template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         SolidMeshDegeneration< dimension >::degenerated_polyhedra() const
     {
         return impl_->degenerated_polyhedra();

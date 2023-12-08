@@ -39,6 +39,7 @@ namespace geode
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
         SectionMeshesAdjacencyInspectionResult adjacencies;
+        DegeneratedElementsInspectionResult elements;
     };
     /*!
      * Class for inspecting a Section model

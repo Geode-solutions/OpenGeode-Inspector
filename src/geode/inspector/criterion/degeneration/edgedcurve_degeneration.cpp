@@ -37,10 +37,7 @@ namespace geode
     class EdgedCurveDegeneration< dimension >::Impl
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh )
-            : mesh_( mesh ), verbose_( false )
-        {
-        }
+        Impl( const EdgedCurve< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool is_mesh_degenerated() const
         {
@@ -54,41 +51,20 @@ namespace geode
             return false;
         }
 
-        index_t nb_degenerated_edges() const
+        InspectionIssues< index_t > degenerated_edges() const
         {
-            index_t nb_degeneration{ 0 };
+            InspectionIssues< index_t > degenerated_edges_index{
+                "EdgeCurve with degenerated Edges"
+            };
             for( const auto edge_index : Range{ mesh_.nb_edges() } )
             {
                 if( mesh_.edge_length( edge_index ) < global_epsilon )
                 {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Edge with index ", edge_index,
+                    degenerated_edges_index.add_problem( edge_index,
+                        absl::StrCat( "Edge with index ", edge_index,
                             ", at position [",
                             mesh_.edge_barycenter( edge_index ).string(),
-                            "], is degenerated." );
-                    }
-                    nb_degeneration++;
-                }
-            }
-            return nb_degeneration;
-        }
-
-        std::vector< index_t > degenerated_edges() const
-        {
-            std::vector< index_t > degenerated_edges_index;
-            for( const auto edge_index : Range{ mesh_.nb_edges() } )
-            {
-                if( mesh_.edge_length( edge_index ) < global_epsilon )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Edge with index ", edge_index,
-                            ", at position [",
-                            mesh_.edge_barycenter( edge_index ).string(),
-                            "], is degenerated." );
-                    }
-                    degenerated_edges_index.push_back( edge_index );
+                            "], is degenerated." ) );
                 }
             }
             return degenerated_edges_index;
@@ -96,7 +72,6 @@ namespace geode
 
     private:
         const EdgedCurve< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
@@ -118,13 +93,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t EdgedCurveDegeneration< dimension >::nb_degenerated_edges() const
-    {
-        return impl_->nb_degenerated_edges();
-    }
-
-    template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         EdgedCurveDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();

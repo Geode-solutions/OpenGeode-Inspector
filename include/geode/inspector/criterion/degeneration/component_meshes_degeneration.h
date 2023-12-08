@@ -28,6 +28,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -40,9 +41,15 @@ namespace geode
 {
     struct DegeneratedElements
     {
-        std::vector< index_t > degenerated_edges;
-        std::vector< index_t > degenerated_polygons;
-        std::vector< index_t > degenerated_polyhedra;
+        InspectionIssues< index_t > degenerated_edges{ "" };
+        InspectionIssues< index_t > degenerated_polygons{ "" };
+        InspectionIssues< index_t > degenerated_polyhedra{ "" };
+    };
+
+    struct DegeneratedElementsInspectionResult
+    {
+        InspectionIssues< uuid > degenerated_meshes{ "" };
+        absl::flat_hash_map< uuid, DegeneratedElements > degenerated_elements;
     };
 
     /*!
@@ -59,13 +66,7 @@ namespace geode
 
         ~ComponentMeshesDegeneration();
 
-        std::vector< uuid > degenerated_component_meshes() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            components_nb_degenerated_elements() const;
-
-        absl::flat_hash_map< uuid, DegeneratedElements >
-            components_degenerated_elements() const;
+        DegeneratedElementsInspectionResult inspect_elements() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -50,13 +51,9 @@ namespace geode
 
         bool is_mesh_degenerated() const;
 
-        index_t nb_degenerated_edges() const;
+        InspectionIssues< index_t > degenerated_edges() const;
 
-        index_t nb_degenerated_polyhedra() const;
-
-        std::vector< index_t > degenerated_edges() const;
-
-        std::vector< index_t > degenerated_polyhedra() const;
+        InspectionIssues< index_t > degenerated_polyhedra() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

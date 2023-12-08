@@ -23,7 +23,7 @@
 
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
-#include <geode/basic/logger.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/solid_edges.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -39,7 +39,7 @@ namespace geode
     {
         template < class MeshType >
         DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
-            : mesh_( mesh ), verbose_( false )
+            : mesh_( mesh )
         {
             mesh_.enable_edges();
         }
@@ -63,29 +63,24 @@ namespace geode
         }
 
         template < class MeshType >
-        index_t DegenerationImpl< MeshType >::nb_degenerated_edges() const
-        {
-            index_t nb_degeneration{ 0 };
-            for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
-            {
-                if( edge_is_degenerated( edge_index ) )
-                {
-                    nb_degeneration++;
-                }
-            }
-            return nb_degeneration;
-        }
-
-        template < class MeshType >
-        std::vector< index_t >
+        InspectionIssues< index_t >
             DegenerationImpl< MeshType >::degenerated_edges() const
         {
-            std::vector< index_t > degenerated_edges_index;
+            InspectionIssues< index_t > degenerated_edges_index{
+                "Degenerated Edges on the mesh " + mesh_.id().string() + "."
+            };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
                 if( edge_is_degenerated( edge_index ) )
                 {
-                    degenerated_edges_index.push_back( edge_index );
+                    const auto edge_vertices =
+                        mesh_.edges().edge_vertices( edge_index );
+                    degenerated_edges_index.add_problem( edge_index,
+                        absl::StrCat( "Edge between vertices with index ",
+                            edge_vertices[0], " and index ", edge_vertices[1],
+                            ", at position [",
+                            mesh_.point( edge_vertices[0] ).string(),
+                            "], is degenerated." ) );
                 }
             }
             return degenerated_edges_index;
@@ -99,27 +94,13 @@ namespace geode
                 mesh_.edges().edge_vertices( edge_index );
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
-            const auto degenerated =
-                point_point_distance( p1, p2 ) < global_epsilon;
-            if( degenerated && verbose_ )
-            {
-                Logger::info( "Edge between vertices with index ",
-                    edge_vertices[0], " and index ", edge_vertices[1],
-                    ", at position [", p1.string(), "], is degenerated." );
-            }
-            return degenerated;
+            return point_point_distance( p1, p2 ) < global_epsilon;
         }
 
         template < class MeshType >
         const MeshType& DegenerationImpl< MeshType >::mesh() const
         {
             return mesh_;
-        }
-
-        template < class MeshType >
-        bool DegenerationImpl< MeshType >::verbose() const
-        {
-            return verbose_;
         }
 
         template class opengeode_inspector_inspector_api
