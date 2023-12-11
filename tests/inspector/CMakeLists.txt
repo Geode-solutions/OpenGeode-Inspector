@@ -142,9 +142,8 @@ add_geode_test(
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model
-        OpenGeode-Geosciences::explicit
-        OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspector
+    ESSENTIAL
 )
 
 add_geode_test(
