@@ -25,15 +25,39 @@
 
 #include <geode/inspector/brep_inspector.h>
 
+#include <geode/inspector/criterion/brep_meshes_inspector.h>
+
 namespace geode
 {
     void define_brep_inspector( pybind11::module& module )
     {
+        pybind11::class_< BRepMeshesInspectionResult >(
+            module, "BRepMeshesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "unique_vertices_colocation",
+                &BRepMeshesInspectionResult::unique_vertices_colocation )
+            .def_readwrite( "meshes_colocation",
+                &BRepMeshesInspectionResult::meshes_colocation )
+            .def_readwrite(
+                "adjacencies", &BRepMeshesInspectionResult::adjacencies )
+            .def_readwrite( "elements", &BRepMeshesInspectionResult::elements )
+            .def_readwrite(
+                "intersections", &BRepMeshesInspectionResult::intersections )
+            .def_readwrite(
+                "manifolds", &BRepMeshesInspectionResult::manifolds );
+
+        pybind11::class_< BRepInspectionResult >(
+            module, "BRepInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "meshes", &BRepInspectionResult::meshes )
+            .def_readwrite( "topology", &BRepInspectionResult::topology );
+
         pybind11::class_< BRepInspector, BRepTopologyInspector,
             BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,
             BRepComponentMeshesColocation, BRepComponentMeshesDegeneration,
             BRepComponentMeshesManifold, BRepMeshesIntersections >(
             module, "BRepInspector" )
-            .def( pybind11::init< const BRep& >() );
+            .def( pybind11::init< const BRep& >() )
+            .def( "inspect_brep", &BRepInspector::inspect_brep );
     }
 } // namespace geode

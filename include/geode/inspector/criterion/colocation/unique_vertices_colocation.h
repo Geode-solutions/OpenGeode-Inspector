@@ -62,12 +62,6 @@ namespace geode
 
         bool model_has_colocated_unique_vertices() const;
 
-        InspectionIssues< std::vector< index_t > >
-            colocated_unique_vertices_groups() const;
-
-        InspectionIssues< index_t >
-            unique_vertices_linked_to_different_points() const;
-
         UniqueVerticesInspectionResult inspect_unique_vertices() const;
 
     private:

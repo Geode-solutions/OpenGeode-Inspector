@@ -40,6 +40,7 @@ namespace geode
         BRepMeshesAdjacencyInspectionResult adjacencies;
         DegeneratedElementsInspectionResult elements;
         ElementsIntersectionsInspectionResult intersections;
+        BRepMeshesManifoldInspectionResult manifolds;
     };
     /*!
      * Class for inspecting a BRep model

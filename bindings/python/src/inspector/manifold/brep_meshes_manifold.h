@@ -29,30 +29,26 @@ namespace geode
 {
     void define_brep_meshes_manifold( pybind11::module& module )
     {
+        pybind11::class_< BRepMeshesManifoldInspectionResult >(
+            module, "BRepMeshesManifoldInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "non_manifold_meshes",
+                &BRepMeshesManifoldInspectionResult::non_manifold_meshes )
+            .def_readwrite( "meshes_non_manifold_vertices",
+                &BRepMeshesManifoldInspectionResult::
+                    meshes_non_manifold_vertices )
+            .def_readwrite( "meshes_non_manifold_edges",
+                &BRepMeshesManifoldInspectionResult::meshes_non_manifold_edges )
+            .def_readwrite( "meshes_non_manifold_facets",
+                &BRepMeshesManifoldInspectionResult::
+                    meshes_non_manifold_facets )
+            .def_readwrite( "model_non_manifold_edges",
+                &BRepMeshesManifoldInspectionResult::model_non_manifold_edges );
+
         pybind11::class_< BRepComponentMeshesManifold >(
             module, "BRepComponentMeshesManifold" )
             .def( pybind11::init< const BRep& >() )
-            .def( "components_non_manifold_meshes",
-                &BRepComponentMeshesManifold::components_non_manifold_meshes )
-            .def( "component_meshes_nb_non_manifold_vertices",
-                &BRepComponentMeshesManifold::
-                    component_meshes_nb_non_manifold_vertices )
-            .def( "component_meshes_nb_non_manifold_edges",
-                &BRepComponentMeshesManifold::
-                    component_meshes_nb_non_manifold_edges )
-            .def( "component_meshes_nb_non_manifold_facets",
-                &BRepComponentMeshesManifold::
-                    component_meshes_nb_non_manifold_facets )
-            .def( "component_meshes_non_manifold_vertices",
-                &BRepComponentMeshesManifold::
-                    component_meshes_non_manifold_vertices )
-            .def( "component_meshes_non_manifold_edges",
-                &BRepComponentMeshesManifold::
-                    component_meshes_non_manifold_edges )
-            .def( "component_meshes_non_manifold_facets",
-                &BRepComponentMeshesManifold::
-                    component_meshes_non_manifold_facets )
-            .def( "model_non_manifold_edges",
-                &BRepComponentMeshesManifold::model_non_manifold_edges );
+            .def( "inspect_brep_manifold",
+                &BRepComponentMeshesManifold::inspect_brep_manifold );
     }
 } // namespace geode

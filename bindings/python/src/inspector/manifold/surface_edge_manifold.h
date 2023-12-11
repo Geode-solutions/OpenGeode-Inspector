@@ -41,8 +41,6 @@ namespace geode
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( "mesh_edges_are_manifold",
                 &SurfaceMeshEdgeManifold::mesh_edges_are_manifold )
-            .def( "nb_non_manifold_edges",
-                &SurfaceMeshEdgeManifold::nb_non_manifold_edges )
             .def( "non_manifold_edges",
                 &SurfaceMeshEdgeManifold::non_manifold_edges );
     }

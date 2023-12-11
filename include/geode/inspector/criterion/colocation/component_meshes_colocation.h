@@ -59,11 +59,6 @@ namespace geode
 
         ~ComponentMeshesColocation();
 
-        InspectionIssues< uuid > components_with_colocated_points() const;
-
-        absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
-            components_colocated_points_groups() const;
-
         MeshesColocationInspectionResult
             inspect_meshes_point_colocations() const;
 

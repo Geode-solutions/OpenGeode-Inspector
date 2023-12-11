@@ -44,6 +44,7 @@ namespace geode
         result.adjacencies = inspect_brep_meshes_adjacencies();
         result.elements = inspect_elements();
         result.intersections = inspect_intersections();
+        result.manifolds = inspect_brep_manifold();
         return result;
     }
 } // namespace geode

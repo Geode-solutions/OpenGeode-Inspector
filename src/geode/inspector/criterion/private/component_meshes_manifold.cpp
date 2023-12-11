@@ -39,15 +39,17 @@ namespace geode
     template < index_t dimension, typename Model >
     ComponentMeshesManifold< dimension, Model >::ComponentMeshesManifold(
         const Model& model )
-        : model_( model ), verbose_( false )
+        : model_( model )
     {
     }
 
     template < index_t dimension, typename Model >
-    std::vector< uuid > ComponentMeshesManifold< dimension,
+    InspectionIssues< uuid > ComponentMeshesManifold< dimension,
         Model >::surfaces_non_manifold_meshes() const
     {
-        std::vector< uuid > non_manifold_surfaces;
+        InspectionIssues< uuid > non_manifold_surfaces{
+            "Non manifold meshes."
+        };
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshVertexManifold< dimension > v_inspector{
@@ -55,7 +57,9 @@ namespace geode
             };
             if( !v_inspector.mesh_vertices_are_manifold() )
             {
-                non_manifold_surfaces.push_back( surface.id() );
+                non_manifold_surfaces.add_problem( surface.id(),
+                    absl::StrCat( "Surface ", surface.id().string(),
+                        " has non manifold vertices." ) );
                 continue;
             }
             const SurfaceMeshEdgeManifold< dimension > e_inspector{
@@ -63,60 +67,20 @@ namespace geode
             };
             if( !e_inspector.mesh_edges_are_manifold() )
             {
-                non_manifold_surfaces.push_back( surface.id() );
+                non_manifold_surfaces.add_problem( surface.id(),
+                    absl::StrCat( "Surface ", surface.id().string(),
+                        " has non manifold edges." ) );
             }
         }
         return non_manifold_surfaces;
     }
 
     template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, index_t > ComponentMeshesManifold< dimension,
-        Model >::surfaces_meshes_nb_non_manifold_vertices() const
-    {
-        absl::flat_hash_map< uuid, index_t > surfaces_nb_non_manifold_vertices;
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshVertexManifold< dimension > inspector{
-                surface.mesh()
-            };
-            const auto nb_non_manifold_vertices =
-                inspector.nb_non_manifold_vertices();
-            if( nb_non_manifold_vertices != 0 )
-            {
-                surfaces_nb_non_manifold_vertices.emplace(
-                    surface.id(), nb_non_manifold_vertices );
-            }
-        }
-        return surfaces_nb_non_manifold_vertices;
-    }
-
-    template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, index_t > ComponentMeshesManifold< dimension,
-        Model >::surfaces_meshes_nb_non_manifold_edges() const
-    {
-        absl::flat_hash_map< uuid, index_t > surfaces_nb_non_manifold_edges;
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshEdgeManifold< dimension > inspector{
-                surface.mesh()
-            };
-            const auto nb_non_manifold_edges =
-                inspector.nb_non_manifold_edges();
-            if( nb_non_manifold_edges != 0 )
-            {
-                surfaces_nb_non_manifold_edges.emplace(
-                    surface.id(), nb_non_manifold_edges );
-            }
-        }
-        return surfaces_nb_non_manifold_edges;
-    }
-
-    template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, std::vector< index_t > >
+    absl::flat_hash_map< uuid, InspectionIssues< index_t > >
         ComponentMeshesManifold< dimension,
             Model >::surfaces_meshes_non_manifold_vertices() const
     {
-        absl::flat_hash_map< uuid, std::vector< index_t > >
+        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             surfaces_non_manifold_vertices;
         for( const auto& surface : model_.surfaces() )
         {
@@ -124,7 +88,7 @@ namespace geode
                 surface.mesh()
             };
             auto non_manifold_vertices = inspector.non_manifold_vertices();
-            if( !non_manifold_vertices.empty() )
+            if( !non_manifold_vertices.problems.empty() )
             {
                 surfaces_non_manifold_vertices.emplace(
                     surface.id(), std::move( non_manifold_vertices ) );
@@ -134,11 +98,12 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+    absl::flat_hash_map< uuid, InspectionIssues< std::array< index_t, 2 > > >
         ComponentMeshesManifold< dimension,
             Model >::surfaces_meshes_non_manifold_edges() const
     {
-        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+        absl::flat_hash_map< uuid,
+            InspectionIssues< std::array< index_t, 2 > > >
             surfaces_non_manifold_edges;
         for( const auto& surface : model_.surfaces() )
         {
@@ -146,7 +111,7 @@ namespace geode
                 surface.mesh()
             };
             auto non_manifold_edges = inspector.non_manifold_edges();
-            if( !non_manifold_edges.empty() )
+            if( !non_manifold_edges.problems.empty() )
             {
                 surfaces_non_manifold_edges.emplace(
                     surface.id(), std::move( non_manifold_edges ) );
@@ -159,12 +124,6 @@ namespace geode
     const Model& ComponentMeshesManifold< dimension, Model >::model() const
     {
         return model_;
-    }
-
-    template < index_t dimension, typename Model >
-    bool ComponentMeshesManifold< dimension, Model >::verbose() const
-    {
-        return verbose_;
     }
 
     template class opengeode_inspector_inspector_api

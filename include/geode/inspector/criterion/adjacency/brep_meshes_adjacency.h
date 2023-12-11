@@ -43,6 +43,7 @@ namespace geode
 {
     struct BRepMeshesAdjacencyInspectionResult
     {
+        InspectionIssues< uuid > meshes_with_wrong_adjacencies{ "" };
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
         absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
@@ -61,14 +62,6 @@ namespace geode
         BRepComponentMeshesAdjacency( const BRep& model );
 
         ~BRepComponentMeshesAdjacency();
-
-        std::vector< uuid > components_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-            blocks_facets_with_wrong_adjacencies() const;
 
         BRepMeshesAdjacencyInspectionResult
             inspect_brep_meshes_adjacencies() const;

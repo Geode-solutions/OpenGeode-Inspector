@@ -50,25 +50,13 @@ namespace geode
 
     SectionComponentMeshesAdjacency::~SectionComponentMeshesAdjacency() {}
 
-    std::vector< uuid >
-        SectionComponentMeshesAdjacency::components_with_wrong_adjacencies()
-            const
-    {
-        return impl_->surfaces_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-        SectionComponentMeshesAdjacency::surfaces_edges_with_wrong_adjacencies()
-            const
-    {
-        return impl_->surfaces_edges_with_wrong_adjacencies();
-    }
-
     SectionMeshesAdjacencyInspectionResult
         SectionComponentMeshesAdjacency::inspect_section_meshes_adjacencies()
             const
     {
         SectionMeshesAdjacencyInspectionResult result;
+        result.meshes_with_wrong_adjacencies =
+            impl_->surfaces_with_wrong_adjacencies();
         result.surfaces_edges_with_wrong_adjacencies =
             impl_->surfaces_edges_with_wrong_adjacencies();
         return result;

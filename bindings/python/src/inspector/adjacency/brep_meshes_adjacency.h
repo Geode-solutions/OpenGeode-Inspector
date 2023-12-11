@@ -29,17 +29,24 @@ namespace geode
 {
     void define_brep_meshes_adjacency( pybind11::module& module )
     {
+        pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
+            module, "BRepMeshesAdjacencyInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "meshes_with_wrong_adjacencies",
+                &BRepMeshesAdjacencyInspectionResult::
+                    meshes_with_wrong_adjacencies )
+            .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
+                &BRepMeshesAdjacencyInspectionResult::
+                    surfaces_edges_with_wrong_adjacencies )
+            .def_readwrite( "blocks_facets_with_wrong_adjacencies",
+                &BRepMeshesAdjacencyInspectionResult::
+                    blocks_facets_with_wrong_adjacencies );
+
         pybind11::class_< BRepComponentMeshesAdjacency >(
             module, "BRepComponentMeshesAdjacency" )
             .def( pybind11::init< const BRep& >() )
-            .def( "components_with_wrong_adjacencies",
+            .def( "inspect_brep_meshes_adjacencies",
                 &BRepComponentMeshesAdjacency::
-                    components_with_wrong_adjacencies )
-            .def( "surfaces_edges_with_wrong_adjacencies",
-                &BRepComponentMeshesAdjacency::
-                    surfaces_edges_with_wrong_adjacencies )
-            .def( "blocks_facets_with_wrong_adjacencies",
-                &BRepComponentMeshesAdjacency::
-                    blocks_facets_with_wrong_adjacencies );
+                    inspect_brep_meshes_adjacencies );
     }
 } // namespace geode

@@ -40,8 +40,6 @@ namespace geode
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( "mesh_vertices_are_manifold",
                 &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
-            .def( "nb_non_manifold_vertices",
-                &SurfaceMeshVertexManifold::nb_non_manifold_vertices )
             .def( "non_manifold_vertices",
                 &SurfaceMeshVertexManifold::non_manifold_vertices );
     }

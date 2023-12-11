@@ -38,7 +38,7 @@ namespace geode
         {
         }
 
-        index_t number()
+        index_t number() const
         {
             return problems.size();
         }

@@ -50,36 +50,15 @@ namespace geode
 
     SectionComponentMeshesManifold::~SectionComponentMeshesManifold() {}
 
-    std::vector< uuid >
-        SectionComponentMeshesManifold::components_non_manifold_meshes() const
+    SectionMeshesManifoldInspectionResult
+        SectionComponentMeshesManifold::inspect_section_manifold() const
     {
-        return impl_->surfaces_non_manifold_meshes();
-    }
-
-    absl::flat_hash_map< uuid, index_t > SectionComponentMeshesManifold::
-        component_meshes_nb_non_manifold_vertices() const
-    {
-        return impl_->surfaces_meshes_nb_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, index_t >
-        SectionComponentMeshesManifold::component_meshes_nb_non_manifold_edges()
-            const
-    {
-        return impl_->surfaces_meshes_nb_non_manifold_edges();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< index_t > >
-        SectionComponentMeshesManifold::component_meshes_non_manifold_vertices()
-            const
-    {
-        return impl_->surfaces_meshes_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
-        SectionComponentMeshesManifold::component_meshes_non_manifold_edges()
-            const
-    {
-        return impl_->surfaces_meshes_non_manifold_edges();
+        SectionMeshesManifoldInspectionResult result;
+        result.non_manifold_meshes = impl_->surfaces_non_manifold_meshes();
+        result.meshes_non_manifold_vertices =
+            impl_->surfaces_meshes_non_manifold_vertices();
+        result.meshes_non_manifold_edges =
+            impl_->surfaces_meshes_non_manifold_edges();
+        return result;
     }
 } // namespace geode

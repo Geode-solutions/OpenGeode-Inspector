@@ -335,20 +335,6 @@ namespace geode
     }
 
     template < geode::index_t dimension, typename Model >
-    InspectionIssues< uuid > ComponentMeshesColocation< dimension,
-        Model >::components_with_colocated_points() const
-    {
-        return impl_->components_with_colocated_points();
-    }
-
-    template < geode::index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
-        ComponentMeshesColocation< dimension,
-            Model >::components_colocated_points_groups() const
-    {
-        return impl_->components_colocated_points_groups();
-    }
-    template < geode::index_t dimension, typename Model >
     MeshesColocationInspectionResult ComponentMeshesColocation< dimension,
         Model >::inspect_meshes_point_colocations() const
     {

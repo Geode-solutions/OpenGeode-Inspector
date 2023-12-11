@@ -29,23 +29,22 @@ namespace geode
 {
     void define_section_meshes_manifold( pybind11::module& module )
     {
+        pybind11::class_< SectionMeshesManifoldInspectionResult >(
+            module, "SectionMeshesManifoldInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "non_manifold_meshes",
+                &SectionMeshesManifoldInspectionResult::non_manifold_meshes )
+            .def_readwrite( "meshes_non_manifold_vertices",
+                &SectionMeshesManifoldInspectionResult::
+                    meshes_non_manifold_vertices )
+            .def_readwrite( "meshes_non_manifold_edges",
+                &SectionMeshesManifoldInspectionResult::
+                    meshes_non_manifold_edges );
+
         pybind11::class_< SectionComponentMeshesManifold >(
             module, "SectionComponentMeshesManifold" )
             .def( pybind11::init< const Section& >() )
-            .def( "components_non_manifold_meshes",
-                &SectionComponentMeshesManifold::
-                    components_non_manifold_meshes )
-            .def( "component_meshes_nb_non_manifold_vertices",
-                &SectionComponentMeshesManifold::
-                    component_meshes_nb_non_manifold_vertices )
-            .def( "component_meshes_nb_non_manifold_edges",
-                &SectionComponentMeshesManifold::
-                    component_meshes_nb_non_manifold_edges )
-            .def( "component_meshes_non_manifold_vertices",
-                &SectionComponentMeshesManifold::
-                    component_meshes_non_manifold_vertices )
-            .def( "component_meshes_non_manifold_edges",
-                &SectionComponentMeshesManifold::
-                    component_meshes_non_manifold_edges );
+            .def( "inspect_section_manifold",
+                &SectionComponentMeshesManifold::inspect_section_manifold );
     }
 } // namespace geode

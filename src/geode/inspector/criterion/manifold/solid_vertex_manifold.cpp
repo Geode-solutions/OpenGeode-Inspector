@@ -25,7 +25,6 @@
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
 #include <geode/geometry/point.h>
@@ -79,10 +78,7 @@ namespace geode
     class SolidMeshVertexManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
-            : mesh_( mesh ), verbose_( false )
-        {
-        }
+        Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_vertices_are_manifold() const
         {
@@ -100,47 +96,23 @@ namespace geode
             return true;
         }
 
-        index_t nb_non_manifold_vertices() const
+        InspectionIssues< index_t > non_manifold_vertices() const
         {
             const auto polyhedra_around_vertices_list =
                 polyhedra_around_vertices( mesh_ );
-            index_t nb_non_manifold_vertices{ 0 };
+            InspectionIssues< geode::index_t > non_manifold_vertices{
+                "Non manifold vertices."
+            };
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
                 if( !polyhedra_around_vertex_are_the_same(
                         polyhedra_around_vertices_list[vertex_id],
                         mesh_.polyhedra_around_vertex( vertex_id ) ) )
                 {
-                    if( verbose_ )
-                    {
-                        geode::Logger::info( "Vertex with index ", vertex_id,
+                    non_manifold_vertices.add_problem( vertex_id,
+                        absl::StrCat( "Vertex with index ", vertex_id,
                             ", at position ", mesh_.point( vertex_id ).string(),
-                            ", is not manifold." );
-                    }
-                    nb_non_manifold_vertices++;
-                }
-            }
-            return nb_non_manifold_vertices;
-        }
-
-        std::vector< index_t > non_manifold_vertices() const
-        {
-            const auto polyhedra_around_vertices_list =
-                polyhedra_around_vertices( mesh_ );
-            std::vector< geode::index_t > non_manifold_vertices;
-            for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
-            {
-                if( !polyhedra_around_vertex_are_the_same(
-                        polyhedra_around_vertices_list[vertex_id],
-                        mesh_.polyhedra_around_vertex( vertex_id ) ) )
-                {
-                    if( verbose_ )
-                    {
-                        geode::Logger::info( "Vertex with index ", vertex_id,
-                            ", at position ", mesh_.point( vertex_id ).string(),
-                            ", is not manifold." );
-                    }
-                    non_manifold_vertices.push_back( vertex_id );
+                            ", is not manifold." ) );
                 }
             }
             return non_manifold_vertices;
@@ -148,7 +120,6 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
@@ -171,14 +142,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t
-        SolidMeshVertexManifold< dimension >::nb_non_manifold_vertices() const
-    {
-        return impl_->nb_non_manifold_vertices();
-    }
-
-    template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         SolidMeshVertexManifold< dimension >::non_manifold_vertices() const
     {
         return impl_->non_manifold_vertices();

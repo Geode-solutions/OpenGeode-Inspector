@@ -29,14 +29,21 @@ namespace geode
 {
     void define_section_meshes_adjacency( pybind11::module& module )
     {
+        pybind11::class_< SectionMeshesAdjacencyInspectionResult >(
+            module, "SectionMeshesAdjacencyInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "meshes_with_wrong_adjacencies",
+                &SectionMeshesAdjacencyInspectionResult::
+                    meshes_with_wrong_adjacencies )
+            .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
+                &SectionMeshesAdjacencyInspectionResult::
+                    surfaces_edges_with_wrong_adjacencies );
+
         pybind11::class_< SectionComponentMeshesAdjacency >(
             module, "SectionComponentMeshesAdjacency" )
             .def( pybind11::init< const Section& >() )
-            .def( "components_with_wrong_adjacencies",
+            .def( "inspect_section_meshes_adjacencies",
                 &SectionComponentMeshesAdjacency::
-                    components_with_wrong_adjacencies )
-            .def( "surfaces_edges_with_wrong_adjacencies",
-                &SectionComponentMeshesAdjacency::
-                    surfaces_edges_with_wrong_adjacencies );
+                    inspect_section_meshes_adjacencies );
     }
 } // namespace geode

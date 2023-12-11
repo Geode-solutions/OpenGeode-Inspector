@@ -46,7 +46,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
 
     public:
-        std::vector< uuid > surfaces_with_wrong_adjacencies() const;
+        InspectionIssues< uuid > surfaces_with_wrong_adjacencies() const;
 
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies() const;

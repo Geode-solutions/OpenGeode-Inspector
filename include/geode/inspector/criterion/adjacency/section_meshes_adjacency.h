@@ -42,6 +42,7 @@ namespace geode
 {
     struct SectionMeshesAdjacencyInspectionResult
     {
+        InspectionIssues< uuid > meshes_with_wrong_adjacencies{ "" };
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
     };
@@ -57,11 +58,6 @@ namespace geode
         SectionComponentMeshesAdjacency( const Section& model );
 
         ~SectionComponentMeshesAdjacency();
-
-        std::vector< uuid > components_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies() const;
 
         SectionMeshesAdjacencyInspectionResult
             inspect_section_meshes_adjacencies() const;

@@ -26,17 +26,26 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
+
+#include <geode/model/representation/core/section.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct uuid;
-    class Section;
-} // namespace geode
-
-namespace geode
-{
+    struct SectionMeshesManifoldInspectionResult
+    {
+        InspectionIssues< uuid > non_manifold_meshes{
+            "Non manifold section meshes"
+        };
+        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
+            meshes_non_manifold_vertices;
+        absl::flat_hash_map< uuid,
+            InspectionIssues< std::array< index_t, 2 > > >
+            meshes_non_manifold_edges;
+    };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of
      * a Section.
@@ -50,19 +59,7 @@ namespace geode
 
         ~SectionComponentMeshesManifold();
 
-        std::vector< uuid > components_non_manifold_meshes() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_vertices() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_edges() const;
-
-        absl::flat_hash_map< uuid, std::vector< index_t > >
-            component_meshes_non_manifold_vertices() const;
-
-        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
-            component_meshes_non_manifold_edges() const;
+        SectionMeshesManifoldInspectionResult inspect_section_manifold() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

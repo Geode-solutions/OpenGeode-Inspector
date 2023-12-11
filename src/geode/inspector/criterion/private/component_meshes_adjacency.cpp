@@ -43,16 +43,20 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    std::vector< uuid > ComponentMeshesAdjacency< dimension,
+    InspectionIssues< uuid > ComponentMeshesAdjacency< dimension,
         Model >::surfaces_with_wrong_adjacencies() const
     {
-        std::vector< uuid > comps_with_wrong_adjacencies;
+        InspectionIssues< uuid > comps_with_wrong_adjacencies{
+            "Meshes with wrong adjacencies."
+        };
         for( const auto& surface : model_.surfaces() )
         {
             const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
             if( inspector.mesh_has_wrong_adjacencies() )
             {
-                comps_with_wrong_adjacencies.push_back( surface.id() );
+                comps_with_wrong_adjacencies.add_problem( surface.id(),
+                    absl::StrCat( "Surface ", surface.id().string(),
+                        " Has wrong adjacencies." ) );
             }
         }
         return comps_with_wrong_adjacencies;

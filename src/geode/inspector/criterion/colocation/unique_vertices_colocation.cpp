@@ -292,20 +292,6 @@ namespace geode
     }
 
     template < geode::index_t dimension, typename Model >
-    InspectionIssues< std::vector< index_t > >
-        UniqueVerticesColocation< dimension,
-            Model >::colocated_unique_vertices_groups() const
-    {
-        return impl_->colocated_unique_vertices_groups();
-    }
-
-    template < geode::index_t dimension, typename Model >
-    InspectionIssues< index_t > UniqueVerticesColocation< dimension,
-        Model >::unique_vertices_linked_to_different_points() const
-    {
-        return impl_->unique_vertices_linked_to_different_points();
-    }
-    template < geode::index_t dimension, typename Model >
     UniqueVerticesInspectionResult
         UniqueVerticesColocation< dimension, Model >::inspect_unique_vertices()
             const

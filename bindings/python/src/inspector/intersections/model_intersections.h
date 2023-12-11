@@ -41,6 +41,13 @@ namespace geode
 {
     void define_model_intersections( pybind11::module& module )
     {
+        pybind11::class_< ElementsIntersectionsInspectionResult >(
+            module, "ElementsIntersectionsInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "degenerated_edges", &ElementsIntersectionsInspectionResult::
+                                         elements_intersections );
+
         PYTHON_MODEL_INTERSECTIONS( Section, Section );
         PYTHON_MODEL_INTERSECTIONS( BRep, BRep );
     }

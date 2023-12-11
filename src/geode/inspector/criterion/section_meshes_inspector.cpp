@@ -45,6 +45,7 @@ namespace geode
         result.adjacencies = inspect_section_meshes_adjacencies();
         result.elements = inspect_elements();
         result.intersections = inspect_intersections();
+        result.manifolds = inspect_section_manifold();
         return result;
     }
 } // namespace geode

@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -56,9 +57,7 @@ namespace geode
 
         bool mesh_edges_are_manifold() const;
 
-        index_t nb_non_manifold_edges() const;
-
-        std::vector< std::array< index_t, 2 > > non_manifold_edges() const;
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

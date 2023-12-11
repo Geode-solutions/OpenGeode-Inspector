@@ -39,6 +39,23 @@ namespace geode
 {
     void define_models_meshes_degeneration( pybind11::module& module )
     {
+        pybind11::class_< DegeneratedElements >( module, "DegeneratedElements" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite(
+                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite( "degenerated_polyhedra",
+                &DegeneratedElements::degenerated_polyhedra );
+
+        pybind11::class_< DegeneratedElementsInspectionResult >(
+            module, "DegeneratedElementsInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "degenerated_meshes",
+                &DegeneratedElementsInspectionResult::degenerated_meshes )
+            .def_readwrite( "degenerated_elements",
+                &DegeneratedElementsInspectionResult::degenerated_elements );
+
         PYTHON_COMPONENTS_DEGENERATION( Section, Section );
         PYTHON_COMPONENTS_DEGENERATION( BRep, BRep );
     }

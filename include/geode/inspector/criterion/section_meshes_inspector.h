@@ -41,6 +41,7 @@ namespace geode
         SectionMeshesAdjacencyInspectionResult adjacencies;
         DegeneratedElementsInspectionResult elements;
         ElementsIntersectionsInspectionResult intersections;
+        SectionMeshesManifoldInspectionResult manifolds;
     };
     /*!
      * Class for inspecting a Section model

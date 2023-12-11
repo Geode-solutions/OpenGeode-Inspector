@@ -42,7 +42,7 @@ namespace geode
         {
         }
 
-        std::vector< uuid > components_with_wrong_adjacencies() const
+        InspectionIssues< uuid > components_with_wrong_adjacencies() const
         {
             auto comps_with_wrong_adjacencies =
                 this->surfaces_with_wrong_adjacencies();
@@ -51,7 +51,9 @@ namespace geode
                 const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
                 if( inspector.mesh_has_wrong_adjacencies() )
                 {
-                    comps_with_wrong_adjacencies.push_back( block.id() );
+                    comps_with_wrong_adjacencies.add_problem(
+                        block.id(), absl::StrCat( "Block ", block.id().string(),
+                                        " has wrong adjacencies." ) );
                 }
             }
             return comps_with_wrong_adjacencies;
@@ -85,30 +87,12 @@ namespace geode
 
     BRepComponentMeshesAdjacency::~BRepComponentMeshesAdjacency() {}
 
-    std::vector< uuid >
-        BRepComponentMeshesAdjacency::components_with_wrong_adjacencies() const
-    {
-        return impl_->components_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-        BRepComponentMeshesAdjacency::surfaces_edges_with_wrong_adjacencies()
-            const
-    {
-        return impl_->surfaces_edges_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-        BRepComponentMeshesAdjacency::blocks_facets_with_wrong_adjacencies()
-            const
-    {
-        return impl_->blocks_facets_with_wrong_adjacencies();
-    }
-
     BRepMeshesAdjacencyInspectionResult
         BRepComponentMeshesAdjacency::inspect_brep_meshes_adjacencies() const
     {
         BRepMeshesAdjacencyInspectionResult result;
+        result.meshes_with_wrong_adjacencies =
+            impl_->components_with_wrong_adjacencies();
         result.surfaces_edges_with_wrong_adjacencies =
             impl_->surfaces_edges_with_wrong_adjacencies();
         result.blocks_facets_with_wrong_adjacencies =

@@ -88,7 +88,6 @@ namespace geode
     public:
         Impl( const SolidMesh< dimension >& mesh )
             : mesh_( mesh ),
-              verbose_( false ),
               polyhedra_around_edges_( edges_to_polyhedra_around( mesh ) )
         {
         }
@@ -120,9 +119,11 @@ namespace geode
             return true;
         }
 
-        index_t nb_non_manifold_edges() const
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const
         {
-            index_t nb_non_manifold_edges{ 0 };
+            InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
+                "Non manifold edges."
+            };
             absl::flat_hash_set< Edge > checked_edges;
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
@@ -139,50 +140,15 @@ namespace geode
                                 polyhedron_edge_vertices, polyhedron_id ),
                             polyhedra_around_edges_.at( polyhedron_edge ) ) )
                     {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Edge between vertices with index ",
-                                polyhedron_edge_vertices[0], " and index ",
-                                polyhedron_edge_vertices[1],
-                                ", is not manifold (Block ",
-                                mesh_.id().string(), ")." );
-                        }
-                        nb_non_manifold_edges++;
-                    }
-                }
-            }
-            return nb_non_manifold_edges;
-        }
+                        non_manifold_edges.add_problem(
+                            polyhedron_edge_vertices,
+                            absl::StrCat(
 
-        std::vector< std::array< index_t, 2 > > non_manifold_edges() const
-        {
-            std::vector< std::array< index_t, 2 > > non_manifold_edges;
-            absl::flat_hash_set< Edge > checked_edges;
-            for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
-            {
-                for( const auto polyhedron_edge_vertices :
-                    mesh_.polyhedron_edges_vertices( polyhedron_id ) )
-                {
-                    Edge polyhedron_edge{ polyhedron_edge_vertices };
-                    if( !checked_edges.insert( polyhedron_edge ).second )
-                    {
-                        continue;
-                    }
-                    if( !polyhedra_around_edge_are_the_same(
-                            mesh_.polyhedra_around_edge(
-                                polyhedron_edge_vertices, polyhedron_id ),
-                            polyhedra_around_edges_.at( polyhedron_edge ) ) )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Edge between vertices with index ",
+                                "Edge between vertices with index ",
                                 polyhedron_edge_vertices[0], " and index ",
                                 polyhedron_edge_vertices[1],
                                 ", is not manifold (Block ",
-                                mesh_.id().string(), ")." );
-                        }
-                        non_manifold_edges.push_back(
-                            polyhedron_edge_vertices );
+                                mesh_.id().string(), ")." ) );
                     }
                 }
             }
@@ -191,7 +157,6 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
         DEBUG_CONST
         absl::flat_hash_map< Edge, std::vector< geode::index_t > >
             polyhedra_around_edges_;
@@ -216,13 +181,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t SolidMeshEdgeManifold< dimension >::nb_non_manifold_edges() const
-    {
-        return impl_->nb_non_manifold_edges();
-    }
-
-    template < index_t dimension >
-    std::vector< std::array< index_t, 2 > >
+    InspectionIssues< std::array< index_t, 2 > >
         SolidMeshEdgeManifold< dimension >::non_manifold_edges() const
     {
         return impl_->non_manifold_edges();
