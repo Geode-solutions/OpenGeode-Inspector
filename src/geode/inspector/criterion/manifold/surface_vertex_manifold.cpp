@@ -88,11 +88,18 @@ namespace geode
                 polygons_around_vertices( mesh_ );
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
-                if( !polygons_around_vertex_are_the_same(
-                        polygons_around_vertices_list[vertex_id],
-                        mesh_.polygons_around_vertex( vertex_id ) ) )
+                try
                 {
-                    return false;
+                    if( !polygons_around_vertex_are_the_same(
+                            polygons_around_vertices_list[vertex_id],
+                            mesh_.polygons_around_vertex( vertex_id ) ) )
+                    {
+                        return false;
+                    }
+                }
+                catch( const geode::OpenGeodeException& e )
+                {
+                    continue;
                 }
             }
             return true;
@@ -107,14 +114,22 @@ namespace geode
             };
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
-                if( !polygons_around_vertex_are_the_same(
-                        polygons_around_vertices_list[vertex_id],
-                        mesh_.polygons_around_vertex( vertex_id ) ) )
+                try
                 {
-                    non_manifold_vertices.add_problem( vertex_id,
-                        absl::StrCat( "Vertex with index ", vertex_id,
-                            ", at position ", mesh_.point( vertex_id ).string(),
-                            ", is not manifold." ) );
+                    if( !polygons_around_vertex_are_the_same(
+                            polygons_around_vertices_list[vertex_id],
+                            mesh_.polygons_around_vertex( vertex_id ) ) )
+                    {
+                        non_manifold_vertices.add_problem(
+                            vertex_id, absl::StrCat( "Vertex with index ",
+                                           vertex_id, ", at position ",
+                                           mesh_.point( vertex_id ).string(),
+                                           ", is not manifold." ) );
+                    }
+                }
+                catch( const geode::OpenGeodeException& e )
+                {
+                    continue;
                 }
             }
             return non_manifold_vertices;
