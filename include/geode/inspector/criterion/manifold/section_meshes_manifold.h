@@ -37,9 +37,6 @@ namespace geode
 {
     struct SectionMeshesManifoldInspectionResult
     {
-        InspectionIssues< uuid > non_manifold_meshes{
-            "Non manifold section meshes"
-        };
         absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             meshes_non_manifold_vertices;
         absl::flat_hash_map< uuid,

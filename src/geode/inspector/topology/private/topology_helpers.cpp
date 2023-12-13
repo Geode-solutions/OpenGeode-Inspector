@@ -96,6 +96,7 @@ namespace geode
             }
             return result;
         }
+
         std::pair< std::vector< index_t >, std::vector< std::string > >
             section_component_vertices_are_associated_to_unique_vertices(
                 const Section& section,

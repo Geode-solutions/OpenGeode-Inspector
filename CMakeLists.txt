@@ -42,7 +42,7 @@ add_subdirectory(src/geode)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector binaries
-# add_subdirectory(src/bin)
+add_subdirectory(src/bin)
 
 #------------------------------------------------------------------------------------------------
 # Optional modules configuration

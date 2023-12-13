@@ -57,7 +57,7 @@ namespace
             {
                 components_with_degeneration.add_problem(
                     line.id(), absl::StrCat( "Line ", line.id().string(),
-                                   " have degenerated elements." ) );
+                                   " has degenerated elements." ) );
             }
         }
         for( const auto& surface : model.surfaces() )
@@ -69,7 +69,7 @@ namespace
             {
                 components_with_degeneration.add_problem( surface.id(),
                     absl::StrCat( "Surface ", surface.id().string(),
-                        " have degenerated elements." ) );
+                        " has degenerated elements." ) );
             }
         }
         return components_with_degeneration;
@@ -80,24 +80,6 @@ namespace
     {
         return model_degenerated_component_meshes_base< 2, geode::Section >(
             model );
-    }
-
-    geode::InspectionIssues< geode::uuid > model_degenerated_component_meshes(
-        const geode::BRep& model )
-    {
-        auto components_with_degeneration =
-            model_degenerated_component_meshes_base< 3, geode::BRep >( model );
-        for( const auto& block : model.blocks() )
-        {
-            const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
-            if( inspector.is_mesh_degenerated() )
-            {
-                components_with_degeneration.add_problem(
-                    block.id(), absl::StrCat( "Block ", block.id().string(),
-                                    " have degenerated elements." ) );
-            }
-        }
-        return components_with_degeneration;
     }
 
     template < geode::index_t dimension, typename Model >
@@ -175,11 +157,6 @@ namespace geode
     public:
         Impl( const Model& model ) : model_( model ) {}
 
-        InspectionIssues< uuid > degenerated_component_meshes() const
-        {
-            return model_degenerated_component_meshes( model_ );
-        }
-
         absl::flat_hash_map< uuid, DegeneratedElements >
             components_degenerated_elements() const
         {
@@ -209,8 +186,7 @@ namespace geode
             const
     {
         DegeneratedElementsInspectionResult result;
-        result.degenerated_meshes = impl_->degenerated_component_meshes();
-        result.degenerated_elements = impl_->components_degenerated_elements();
+        result.elements = impl_->components_degenerated_elements();
         return result;
     }
 

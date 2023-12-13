@@ -67,10 +67,7 @@ namespace geode
     class SurfaceMeshEdgeManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
-            : mesh_( mesh ), verbose_( false )
-        {
-        }
+        Impl( const SurfaceMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_edges_are_manifold() const
         {
@@ -106,7 +103,6 @@ namespace geode
 
     private:
         const SurfaceMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >

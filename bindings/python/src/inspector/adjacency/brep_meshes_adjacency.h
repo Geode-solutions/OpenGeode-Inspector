@@ -32,9 +32,6 @@ namespace geode
         pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
             module, "BRepMeshesAdjacencyInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "meshes_with_wrong_adjacencies",
-                &BRepMeshesAdjacencyInspectionResult::
-                    meshes_with_wrong_adjacencies )
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
                 &BRepMeshesAdjacencyInspectionResult::
                     surfaces_edges_with_wrong_adjacencies )

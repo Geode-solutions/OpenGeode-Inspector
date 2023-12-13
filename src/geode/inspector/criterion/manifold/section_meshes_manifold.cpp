@@ -54,7 +54,6 @@ namespace geode
         SectionComponentMeshesManifold::inspect_section_manifold() const
     {
         SectionMeshesManifoldInspectionResult result;
-        result.non_manifold_meshes = impl_->surfaces_non_manifold_meshes();
         result.meshes_non_manifold_vertices =
             impl_->surfaces_meshes_non_manifold_vertices();
         result.meshes_non_manifold_edges =

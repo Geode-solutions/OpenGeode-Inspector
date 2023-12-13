@@ -122,6 +122,7 @@ namespace geode
         }
         return absl::nullopt;
     }
+
     SectionSurfacesInspectionResult
         SectionSurfacesTopology::inspect_surfaces() const
     {

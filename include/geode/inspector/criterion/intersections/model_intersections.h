@@ -42,7 +42,7 @@ namespace geode
     {
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
-            elements_intersections{ "" };
+            elements_intersections;
     };
 
     /*!

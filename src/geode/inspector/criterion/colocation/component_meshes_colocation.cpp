@@ -339,9 +339,7 @@ namespace geode
         Model >::inspect_meshes_point_colocations() const
     {
         MeshesColocationInspectionResult result;
-        result.components_with_colocated_points =
-            impl_->components_with_colocated_points();
-        result.components_colocated_points_groups =
+        result.colocated_points_groups =
             impl_->components_colocated_points_groups();
         return result;
     }

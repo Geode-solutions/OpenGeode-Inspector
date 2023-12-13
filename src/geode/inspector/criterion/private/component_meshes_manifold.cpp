@@ -44,38 +44,6 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    InspectionIssues< uuid > ComponentMeshesManifold< dimension,
-        Model >::surfaces_non_manifold_meshes() const
-    {
-        InspectionIssues< uuid > non_manifold_surfaces{
-            "Non manifold meshes."
-        };
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshVertexManifold< dimension > v_inspector{
-                surface.mesh()
-            };
-            if( !v_inspector.mesh_vertices_are_manifold() )
-            {
-                non_manifold_surfaces.add_problem( surface.id(),
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " has non manifold vertices." ) );
-                continue;
-            }
-            const SurfaceMeshEdgeManifold< dimension > e_inspector{
-                surface.mesh()
-            };
-            if( !e_inspector.mesh_edges_are_manifold() )
-            {
-                non_manifold_surfaces.add_problem( surface.id(),
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " has non manifold edges." ) );
-            }
-        }
-        return non_manifold_surfaces;
-    }
-
-    template < index_t dimension, typename Model >
     absl::flat_hash_map< uuid, InspectionIssues< index_t > >
         ComponentMeshesManifold< dimension,
             Model >::surfaces_meshes_non_manifold_vertices() const

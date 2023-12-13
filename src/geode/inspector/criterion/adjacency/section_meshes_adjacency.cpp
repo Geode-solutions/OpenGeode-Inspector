@@ -55,8 +55,6 @@ namespace geode
             const
     {
         SectionMeshesAdjacencyInspectionResult result;
-        result.meshes_with_wrong_adjacencies =
-            impl_->surfaces_with_wrong_adjacencies();
         result.surfaces_edges_with_wrong_adjacencies =
             impl_->surfaces_edges_with_wrong_adjacencies();
         return result;

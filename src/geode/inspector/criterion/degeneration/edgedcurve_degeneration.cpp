@@ -24,8 +24,8 @@
 #include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
 #include <geode/inspector/criterion/private/degeneration_impl.h>
 
-#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/geometry/point.h>
 
@@ -54,7 +54,7 @@ namespace geode
         InspectionIssues< index_t > degenerated_edges() const
         {
             InspectionIssues< index_t > degenerated_edges_index{
-                "EdgeCurve with degenerated Edges"
+                "Degenerated Edges of EdgeCurve " + mesh_.id().string() + "."
             };
             for( const auto edge_index : Range{ mesh_.nb_edges() } )
             {

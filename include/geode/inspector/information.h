@@ -33,8 +33,14 @@ namespace geode
     template < typename ProblemType >
     struct InspectionIssues
     {
-        InspectionIssues( absl::string_view problem_descrption )
-            : description{ problem_descrption }
+        InspectionIssues( absl::string_view problem_description )
+            : description{ problem_description }
+        {
+        }
+
+        InspectionIssues()
+            : description{ "Default inspection issue message. This message "
+                           "should have been orriden." }
         {
         }
 

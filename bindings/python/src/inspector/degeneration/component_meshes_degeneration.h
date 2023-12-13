@@ -51,10 +51,8 @@ namespace geode
         pybind11::class_< DegeneratedElementsInspectionResult >(
             module, "DegeneratedElementsInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "degenerated_meshes",
-                &DegeneratedElementsInspectionResult::degenerated_meshes )
-            .def_readwrite( "degenerated_elements",
-                &DegeneratedElementsInspectionResult::degenerated_elements );
+            .def_readwrite(
+                "elements", &DegeneratedElementsInspectionResult::elements );
 
         PYTHON_COMPONENTS_DEGENERATION( Section, Section );
         PYTHON_COMPONENTS_DEGENERATION( BRep, BRep );

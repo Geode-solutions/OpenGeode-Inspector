@@ -32,8 +32,6 @@ namespace geode
         pybind11::class_< SectionMeshesManifoldInspectionResult >(
             module, "SectionMeshesManifoldInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "non_manifold_meshes",
-                &SectionMeshesManifoldInspectionResult::non_manifold_meshes )
             .def_readwrite( "meshes_non_manifold_vertices",
                 &SectionMeshesManifoldInspectionResult::
                     meshes_non_manifold_vertices )

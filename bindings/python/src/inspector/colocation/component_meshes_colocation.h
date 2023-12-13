@@ -43,12 +43,8 @@ namespace geode
         pybind11::class_< MeshesColocationInspectionResult >(
             module, "MeshesColocationInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "components_with_colocated_points",
-                &MeshesColocationInspectionResult::
-                    components_with_colocated_points )
-            .def_readwrite( "components_colocated_points_groups",
-                &MeshesColocationInspectionResult::
-                    components_colocated_points_groups );
+            .def_readwrite( "colocated_points_groups",
+                &MeshesColocationInspectionResult::colocated_points_groups );
 
         PYTHON_COMPONENTS_COLOCATION( Section, Section );
         PYTHON_COMPONENTS_COLOCATION( BRep, BRep );

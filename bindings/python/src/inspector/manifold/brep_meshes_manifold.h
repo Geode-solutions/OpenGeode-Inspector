@@ -32,8 +32,6 @@ namespace geode
         pybind11::class_< BRepMeshesManifoldInspectionResult >(
             module, "BRepMeshesManifoldInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "non_manifold_meshes",
-                &BRepMeshesManifoldInspectionResult::non_manifold_meshes )
             .def_readwrite( "meshes_non_manifold_vertices",
                 &BRepMeshesManifoldInspectionResult::
                     meshes_non_manifold_vertices )

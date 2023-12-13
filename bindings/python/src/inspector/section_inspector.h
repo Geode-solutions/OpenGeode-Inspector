@@ -41,7 +41,7 @@ namespace geode
             .def_readwrite(
                 "adjacencies", &SectionMeshesInspectionResult::adjacencies )
             .def_readwrite(
-                "elements", &SectionMeshesInspectionResult::elements )
+                "degenerations", &SectionMeshesInspectionResult::degenerations )
             .def_readwrite(
                 "intersections", &SectionMeshesInspectionResult::intersections )
             .def_readwrite(

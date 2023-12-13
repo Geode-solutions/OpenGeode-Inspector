@@ -40,7 +40,8 @@ namespace geode
                 &BRepMeshesInspectionResult::meshes_colocation )
             .def_readwrite(
                 "adjacencies", &BRepMeshesInspectionResult::adjacencies )
-            .def_readwrite( "elements", &BRepMeshesInspectionResult::elements )
+            .def_readwrite(
+                "degenerations", &BRepMeshesInspectionResult::degenerations )
             .def_readwrite(
                 "intersections", &BRepMeshesInspectionResult::intersections )
             .def_readwrite(

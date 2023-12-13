@@ -39,6 +39,11 @@
 
 namespace
 {
+    bool brep_corner_is_meshed(
+        const geode::BRep& brep, const geode::uuid& corner_id )
+    {
+        return brep.corner( corner_id ).mesh().nb_vertices() != 0;
+    }
 
     bool brep_line_is_meshed(
         const geode::BRep& brep, const geode::uuid& line_id )
@@ -87,8 +92,9 @@ namespace geode
         bool brep_meshed_components_are_linked_to_unique_vertices() const
         {
             for( const auto& corner : brep_.corners() )
-            { // why not testing that the corner is meshed?
-                if( !brep_component_vertices_are_associated_to_unique_vertices(
+            {
+                if( brep_corner_is_meshed( brep_, corner.id() )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
                         brep_, corner.component_id(), corner.mesh() ) )
                 {
                     return false;
@@ -153,6 +159,7 @@ namespace geode
             }
             return result;
         }
+
         bool brep_topology_is_valid(
             const BRepTopologyInspector& brep_topology_inspector ) const
         {
@@ -185,6 +192,7 @@ namespace geode
             }
             return true;
         }
+
         BRepTopologyInspectionResult inspect_brep_topology(
             const BRepTopologyInspector& brep_topology_inspector ) const
         {

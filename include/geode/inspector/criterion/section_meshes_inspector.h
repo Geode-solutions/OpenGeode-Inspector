@@ -39,7 +39,7 @@ namespace geode
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
         SectionMeshesAdjacencyInspectionResult adjacencies;
-        DegeneratedElementsInspectionResult elements;
+        DegeneratedElementsInspectionResult degenerations;
         ElementsIntersectionsInspectionResult intersections;
         SectionMeshesManifoldInspectionResult manifolds;
     };

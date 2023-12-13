@@ -426,7 +426,7 @@ namespace geode
     class ModelMeshesIntersections< dimension, Model >::Impl
     {
     public:
-        Impl( const Model& model ) : model_( model ), verbose_( false ) {}
+        Impl( const Model& model ) : model_( model ) {}
 
         bool model_has_intersecting_surfaces() const
         {
@@ -544,7 +544,6 @@ namespace geode
 
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension, typename Model >

@@ -242,9 +242,8 @@ namespace geode
                         continue;
                     }
                     fixed_point_group.push_back( point_group[point_index] );
-                    point_group_string += " ";
-                    point_group_string +=
-                        absl::StrCat( " ", point_group[point_index] );
+                    absl::StrAppend(
+                        &point_group_string, " ", point_group[point_index] );
                 }
                 if( !fixed_point_group.empty() )
                 {

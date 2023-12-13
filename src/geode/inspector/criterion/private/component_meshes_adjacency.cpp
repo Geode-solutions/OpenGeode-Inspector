@@ -43,26 +43,6 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    InspectionIssues< uuid > ComponentMeshesAdjacency< dimension,
-        Model >::surfaces_with_wrong_adjacencies() const
-    {
-        InspectionIssues< uuid > comps_with_wrong_adjacencies{
-            "Meshes with wrong adjacencies."
-        };
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
-            if( inspector.mesh_has_wrong_adjacencies() )
-            {
-                comps_with_wrong_adjacencies.add_problem( surface.id(),
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " Has wrong adjacencies." ) );
-            }
-        }
-        return comps_with_wrong_adjacencies;
-    }
-
-    template < index_t dimension, typename Model >
     absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
         ComponentMeshesAdjacency< dimension,
             Model >::surfaces_edges_with_wrong_adjacencies() const

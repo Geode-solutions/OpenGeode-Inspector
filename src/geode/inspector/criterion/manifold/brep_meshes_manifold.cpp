@@ -48,59 +48,6 @@ namespace geode
     public:
         Impl( const BRep& brep ) : ComponentMeshesManifold< 3, BRep >( brep ) {}
 
-        InspectionIssues< uuid > components_non_manifold_meshes() const
-        {
-            auto non_manifold_components = ComponentMeshesManifold< 3,
-                BRep >::surfaces_non_manifold_meshes();
-            for( const auto& block : model().blocks() )
-            {
-                const SolidMeshVertexManifold3D vertex_inspector{
-                    block.mesh()
-                };
-                if( !vertex_inspector.mesh_vertices_are_manifold() )
-                {
-                    non_manifold_components.add_problem(
-                        block.id(), absl::StrCat( "Block ", block.id().string(),
-                                        " has non manifold vertices." ) );
-                    continue;
-                }
-                const SolidMeshEdgeManifold3D edge_inspector{ block.mesh() };
-                if( !edge_inspector.mesh_edges_are_manifold() )
-                {
-                    non_manifold_components.add_problem(
-                        block.id(), absl::StrCat( "Block ", block.id().string(),
-                                        " has non manifold edges." ) );
-                    continue;
-                }
-                const SolidMeshFacetManifold3D facet_inspector{ block.mesh() };
-                if( !facet_inspector.mesh_facets_are_manifold() )
-                {
-                    non_manifold_components.add_problem(
-                        block.id(), absl::StrCat( "Block ", block.id().string(),
-                                        " has non manifold facets." ) );
-                }
-            }
-            const auto& model_non_manifold_edges_issues =
-                model_non_manifold_edges();
-            if( !model_non_manifold_edges_issues.empty() )
-            {
-                for( const auto& model_edge_issues :
-                    model_non_manifold_edges_issues )
-                {
-                    for( const auto issue_id :
-                        geode::Range( model_edge_issues.second.number() ) )
-                    {
-                        non_manifold_components.add_problem(
-                            model_edge_issues.second.problems[issue_id],
-                            model_edge_issues.second.messages[issue_id] );
-                    }
-                }
-            }
-            // I commented that.... How to deal with it?
-            // sort_unique( non_manifold_components );
-            return non_manifold_components;
-        }
-
         absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             component_meshes_non_manifold_vertices() const
         {
@@ -234,7 +181,6 @@ namespace geode
         BRepComponentMeshesManifold::inspect_brep_manifold() const
     {
         BRepMeshesManifoldInspectionResult result;
-        result.non_manifold_meshes = impl_->components_non_manifold_meshes();
         result.meshes_non_manifold_vertices =
             impl_->component_meshes_non_manifold_vertices();
         result.meshes_non_manifold_edges =

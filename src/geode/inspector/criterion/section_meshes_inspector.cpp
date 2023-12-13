@@ -43,7 +43,7 @@ namespace geode
         result.unique_vertices_colocation = inspect_unique_vertices();
         result.meshes_colocation = inspect_meshes_point_colocations();
         result.adjacencies = inspect_section_meshes_adjacencies();
-        result.elements = inspect_elements();
+        result.degenerations = inspect_elements();
         result.intersections = inspect_intersections();
         result.manifolds = inspect_section_manifold();
         return result;

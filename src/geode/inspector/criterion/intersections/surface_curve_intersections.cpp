@@ -217,7 +217,7 @@ namespace geode
     public:
         Impl( const TriangulatedSurface< dimension >& surface,
             const EdgedCurve< dimension >& curve )
-            : surface_( surface ), curve_( curve ), verbose_( false )
+            : surface_( surface ), curve_( curve )
         {
         }
 
@@ -238,7 +238,7 @@ namespace geode
             const auto intersections = intersecting_triangles_with_edges<
                 AllTriangleEdgeIntersection< dimension > >();
             InspectionIssues< std::pair< index_t, index_t > > issues{
-                "Triangle edge intersections."
+                "Triangle edge intersections between triangle."
             };
             for( const auto& pair : intersections )
             {
@@ -265,7 +265,6 @@ namespace geode
     private:
         const TriangulatedSurface< dimension >& surface_;
         const EdgedCurve< dimension >& curve_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >

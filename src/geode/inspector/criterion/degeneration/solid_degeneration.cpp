@@ -66,8 +66,8 @@ namespace geode
         InspectionIssues< index_t > degenerated_polyhedra() const
         {
             InspectionIssues< index_t > wrong_polyhedra{
-                "Degenerated Polyhedra on the Solid "
-                + this->mesh().id().string() + "."
+                "Degenerated Polyhedra of Solid " + this->mesh().id().string()
+                + "."
             };
             for( const auto polyhedron_id :
                 Range{ this->mesh().nb_polyhedra() } )

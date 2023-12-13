@@ -77,10 +77,7 @@ namespace geode
     class SurfaceMeshVertexManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
-            : mesh_( mesh ), verbose_( false )
-        {
-        }
+        Impl( const SurfaceMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_vertices_are_manifold() const
         {
@@ -97,7 +94,7 @@ namespace geode
                         return false;
                     }
                 }
-                catch( const geode::OpenGeodeException& e )
+                catch( const geode::OpenGeodeException& )
                 {
                     continue;
                 }
@@ -127,7 +124,7 @@ namespace geode
                                            ", is not manifold." ) );
                     }
                 }
-                catch( const geode::OpenGeodeException& e )
+                catch( const geode::OpenGeodeException& )
                 {
                     continue;
                 }
@@ -137,7 +134,6 @@ namespace geode
 
     private:
         const SurfaceMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >

@@ -40,9 +40,8 @@ namespace geode
 {
     struct MeshesColocationInspectionResult
     {
-        InspectionIssues< uuid > components_with_colocated_points{ "" };
         absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
-            components_colocated_points_groups;
+            colocated_points_groups;
     };
 
     /*!

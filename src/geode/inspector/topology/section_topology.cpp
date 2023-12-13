@@ -141,6 +141,7 @@ namespace geode
             }
             return result;
         }
+
         bool section_topology_is_valid(
             const SectionTopologyInspector& section_topology_inspector ) const
         {
@@ -170,8 +171,8 @@ namespace geode
                     return false;
                 }
             }
-            return true;
         }
+
         SectionTopologyInspectionResult inspect_section_topology(
             const SectionTopologyInspector& section_topology_inspector ) const
         {

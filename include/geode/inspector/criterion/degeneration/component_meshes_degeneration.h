@@ -41,15 +41,14 @@ namespace geode
 {
     struct DegeneratedElements
     {
-        InspectionIssues< index_t > degenerated_edges{ "" };
-        InspectionIssues< index_t > degenerated_polygons{ "" };
-        InspectionIssues< index_t > degenerated_polyhedra{ "" };
+        InspectionIssues< index_t > degenerated_edges;
+        InspectionIssues< index_t > degenerated_polygons;
+        InspectionIssues< index_t > degenerated_polyhedra;
     };
 
     struct DegeneratedElementsInspectionResult
     {
-        InspectionIssues< uuid > degenerated_meshes{ "" };
-        absl::flat_hash_map< uuid, DegeneratedElements > degenerated_elements;
+        absl::flat_hash_map< uuid, DegeneratedElements > elements;
     };
 
     /*!
