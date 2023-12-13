@@ -49,6 +49,20 @@ namespace geode
     struct DegeneratedElementsInspectionResult
     {
         absl::flat_hash_map< uuid, DegeneratedElements > elements;
+        std::string string() const
+        {
+            std::string message{ "" };
+            for( const auto& issue : elements )
+            {
+                absl::StrAppend(
+                    &message, issue.second.degenerated_edges.string() );
+                absl::StrAppend(
+                    &message, issue.second.degenerated_polygons.string() );
+                absl::StrAppend(
+                    &message, issue.second.degenerated_polyhedra.string() );
+            }
+            return message;
+        }
     };
 
     /*!

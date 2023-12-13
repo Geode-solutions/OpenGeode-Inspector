@@ -23,8 +23,8 @@
 
 #include <geode/inspector/criterion/adjacency/surface_adjacency.h>
 
-#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/surface_mesh.h>
 
@@ -58,9 +58,9 @@ namespace geode
         InspectionIssues< PolygonEdge >
             polygon_edges_with_wrong_adjacency() const
         {
-            InspectionIssues< PolygonEdge > wrong_adjacency_edges{
-                "Polygon edges with wrong adjacency."
-            };
+            InspectionIssues< PolygonEdge > wrong_adjacency_edges{ absl::StrCat(
+                "Polygon edges with wrong adjacency on the Surface ",
+                mesh_.id().string(), "." ) };
             for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
                 for( const auto edge_id :

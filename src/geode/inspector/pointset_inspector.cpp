@@ -35,6 +35,15 @@ namespace geode
     {
     }
 
+    template < index_t dimension >
+    PointSetInspectionResult
+        PointSetInspector< dimension >::inspect_pointset() const
+    {
+        PointSetInspectionResult result;
+        result.colocated_points_groups = this->colocated_points_groups();
+        return result;
+    }
+
     template class opengeode_inspector_inspector_api PointSetInspector< 2 >;
     template class opengeode_inspector_inspector_api PointSetInspector< 3 >;
 } // namespace geode

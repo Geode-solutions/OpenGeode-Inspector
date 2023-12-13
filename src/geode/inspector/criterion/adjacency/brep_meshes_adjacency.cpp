@@ -42,7 +42,7 @@ namespace geode
         {
         }
 
-                absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
             blocks_facets_with_wrong_adjacencies() const
         {
             absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >

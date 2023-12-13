@@ -27,10 +27,11 @@
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
+#include <geode/basic/uuid.h>
+
 namespace geode
 {
     class BRep;
-    struct uuid;
 } // namespace geode
 
 namespace geode
@@ -68,6 +69,33 @@ namespace geode
                 "a "
                 "surface border."
             };
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, surfaces_not_meshed.string() );
+            for( const auto& surface_uv_issue :
+                surfaces_not_linked_to_a_unique_vertex )
+            {
+                absl::StrAppend( &message, surface_uv_issue.second.string() );
+            }
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_not_internal_nor_boundary_surface
+                    .string() );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                    .string() );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_a_single_and_invalid_surface
+                              .string() );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_several_and_invalid_surfaces
+                              .string() );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                    .string() );
+            return message;
+        }
     };
     /*!
      * Class for inspecting the topology of a BRep model surfaces through

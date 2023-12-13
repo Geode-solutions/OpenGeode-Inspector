@@ -49,98 +49,98 @@ add_geode_binary(
         ${PROJECT_NAME}::inspector
 )
 
-#add_geode_binary(
-#    SOURCE "geode-inspector-edgedcurve.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::mesh
-#        OpenGeode-IO::mesh
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-pointset.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::mesh
-#        OpenGeode-IO::mesh
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-section.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::geometry
-#        OpenGeode::mesh
-#        OpenGeode::model
-#        OpenGeode-IO::model
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-solid.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::mesh
-#        OpenGeode-IO::mesh
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-structural-model.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::geometry
-#        OpenGeode::mesh
-#        OpenGeode::model
-#        OpenGeode-Geosciences::explicit
-#        OpenGeode-GeosciencesIO::model
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-surface.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::mesh
-#        OpenGeode-IO::mesh
-#        ${PROJECT_NAME}::inspector
-#)
-#
-#add_geode_binary(
-#    SOURCE "geode-inspector-surface-curve-intersections.cpp"
-#    DEPENDENCIES
-#        Async++
-#        absl::flags
-#        absl::flags_parse
-#        absl::flags_usage
-#        OpenGeode::basic
-#        OpenGeode::mesh
-#        OpenGeode-IO::mesh
-#        ${PROJECT_NAME}::inspector
-#)
+add_geode_binary(
+    SOURCE "geode-inspector-edgedcurve.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-pointset.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-section.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        OpenGeode-IO::model
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-solid.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-structural-model.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        OpenGeode-Geosciences::explicit
+        OpenGeode-GeosciencesIO::model
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-surface.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-surface-curve-intersections.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::mesh
+        OpenGeode-IO::mesh
+        ${PROJECT_NAME}::inspector
+)

@@ -36,6 +36,16 @@ namespace geode
     {
     }
 
+    template < index_t dimension >
+    EdgedCurveInspectionResult
+        EdgedCurveInspector< dimension >::inspect_edgedcurve() const
+    {
+        EdgedCurveInspectionResult result;
+        result.colocated_points_groups = this->colocated_points_groups();
+        result.degenerated_edges = this->degenerated_edges();
+        return result;
+    }
+
     template class opengeode_inspector_inspector_api EdgedCurveInspector< 2 >;
     template class opengeode_inspector_inspector_api EdgedCurveInspector< 3 >;
 } // namespace geode

@@ -23,8 +23,8 @@
 
 #include <geode/inspector/criterion/adjacency/solid_adjacency.h>
 
-#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -61,7 +61,9 @@ namespace geode
             polyhedron_facets_with_wrong_adjacency() const
         {
             InspectionIssues< PolyhedronFacet > wrong_adjacency_facets{
-                "Polyhedron facets with wrong adjacency."
+                absl::StrCat(
+                    "Polyhedron facets with wrong adjacency on the Solid ",
+                    mesh_.id().string(), "." )
             };
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {

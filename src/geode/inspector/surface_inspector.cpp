@@ -40,12 +40,36 @@ namespace geode
     }
 
     template < index_t dimension >
+    SurfaceInspectionResult
+        SurfaceMeshInspector< dimension >::inspect_surface() const
+    {
+        SurfaceInspectionResult result;
+        result.polygon_edges_with_wrong_adjacency =
+            this->polygon_edges_with_wrong_adjacency();
+        result.colocated_points_groups = this->colocated_points_groups();
+        result.degenerated_edges = this->degenerated_edges();
+        result.degenerated_polygons = this->degenerated_polygons();
+        result.non_manifold_edges = this->non_manifold_edges();
+        result.non_manifold_vertices = this->non_manifold_vertices();
+        return result;
+    }
+
+    template < index_t dimension >
     TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
         const TriangulatedSurface< dimension >& mesh )
         : SurfaceMeshInspector< dimension >{ mesh },
           AddInspectors< TriangulatedSurface< dimension >,
               TriangulatedSurfaceIntersections< dimension > >{ mesh }
     {
+    }
+
+    template < index_t dimension >
+    SurfaceInspectionResult
+        TriangulatedSurfaceInspector< dimension >::inspect_surface() const
+    {
+        auto result = SurfaceMeshInspector< dimension >::inspect_surface();
+        result.intersecting_elements = this->intersecting_elements();
+        return result;
     }
 
     template class opengeode_inspector_inspector_api SurfaceMeshInspector< 2 >;

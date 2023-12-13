@@ -43,6 +43,10 @@ namespace geode
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
             elements_intersections;
+        std::string string() const
+        {
+            return elements_intersections.string();
+        }
     };
 
     /*!

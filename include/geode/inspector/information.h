@@ -56,6 +56,20 @@ namespace geode
             messages.emplace_back( std::move( message ) );
         }
 
+        std::string string() const
+        {
+            if( problems.empty() )
+            {
+                return "";
+            }
+            auto message{ absl::StrCat( description, "\n" ) };
+            for( const auto& issue : messages )
+            {
+                absl::StrAppend( &message, "    ", issue, "\n" );
+            }
+            return message;
+        }
+
         std::string description;
         std::vector< ProblemType > problems{};
         std::vector< std::string > messages{};

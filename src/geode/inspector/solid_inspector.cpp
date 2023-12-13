@@ -39,6 +39,20 @@ namespace geode
             SolidMeshFacetManifold< dimension > >{ mesh }
     {
     }
+    template < index_t dimension >
+    SolidInspectionResult SolidMeshInspector< dimension >::inspect_solid() const
+    {
+        SolidInspectionResult result;
+        result.polyhedron_facets_with_wrong_adjacency =
+            this->polyhedron_facets_with_wrong_adjacency();
+        result.colocated_points_groups = this->colocated_points_groups();
+        result.degenerated_edges = this->degenerated_edges();
+        result.degenerated_polyhedra = this->degenerated_polyhedra();
+        result.non_manifold_vertices = this->non_manifold_vertices();
+        result.non_manifold_edges = this->non_manifold_edges();
+        result.non_manifold_facets = this->non_manifold_facets();
+        return result;
+    }
 
     template class opengeode_inspector_inspector_api SolidMeshInspector< 3 >;
 } // namespace geode

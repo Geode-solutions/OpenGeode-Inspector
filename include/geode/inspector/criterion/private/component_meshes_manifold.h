@@ -42,8 +42,6 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ComponentMeshesManifold );
 
     public:
-        InspectionIssues< uuid > surfaces_non_manifold_meshes() const;
-
         absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             surfaces_meshes_non_manifold_vertices() const;
 

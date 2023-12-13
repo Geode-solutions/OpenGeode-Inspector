@@ -47,25 +47,7 @@ void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
     const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve };
     const auto result = inspector.inspect_edgedcurve();
 
-    geode::index_t nb{ 0 };
-    for( const auto& pt_group : inspector.colocated_points_groups() )
-    {
-        nb += pt_group.size();
-    }
-    geode::Logger::info( nb, " colocated points" );
-} ) );
-}
-if( absl::GetFlag( FLAGS_degeneration ) )
-{
-    tasks.emplace_back( async::spawn( [&inspector] {
-        const auto nb = inspector.nb_degenerated_edges();
-        geode::Logger::info( nb, " degenerated edges" );
-    } ) );
-}
-for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
-{
-    task.get();
-}
+    geode::Logger::info( result.string() );
 }
 
 int main( int argc, char* argv[] )

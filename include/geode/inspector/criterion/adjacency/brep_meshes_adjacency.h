@@ -47,6 +47,22 @@ namespace geode
             surfaces_edges_with_wrong_adjacencies;
         absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
             blocks_facets_with_wrong_adjacencies;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            for( const auto& surface_issue :
+                surfaces_edges_with_wrong_adjacencies )
+            {
+                absl::StrAppend( &message, surface_issue.second.string() );
+            }
+            for( const auto& block_issue :
+                blocks_facets_with_wrong_adjacencies )
+            {
+                absl::StrAppend( &message, block_issue.second.string() );
+            }
+            return message;
+        }
     };
 
     /*!

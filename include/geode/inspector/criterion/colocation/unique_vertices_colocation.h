@@ -41,6 +41,16 @@ namespace geode
         InspectionIssues< std::vector< index_t > >
             colocated_unique_vertices_groups;
         InspectionIssues< index_t > unique_vertices_linked_to_different_points;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend(
+                &message, colocated_unique_vertices_groups.string() );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_different_points.string() );
+            return message;
+        }
     };
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep

@@ -44,6 +44,16 @@ namespace geode
     {
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
+        std::string string() const
+        {
+            std::string message{ "" };
+            for( const auto& surface_issue :
+                surfaces_edges_with_wrong_adjacencies )
+            {
+                absl::StrAppend( &message, surface_issue.second.string() );
+            }
+            return message;
+        }
     };
     /*!
      * Class for inspecting the adjacency of the surface edges in the Component

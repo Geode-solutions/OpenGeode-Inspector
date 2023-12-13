@@ -171,6 +171,7 @@ namespace geode
                     return false;
                 }
             }
+            return true;
         }
 
         SectionTopologyInspectionResult inspect_section_topology(
