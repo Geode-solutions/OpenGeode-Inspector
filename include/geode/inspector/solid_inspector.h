@@ -47,14 +47,14 @@ namespace geode
         std::string string() const
         {
             std::string message{ "" };
-            absl::StrAppend(
-                &message, polyhedron_facets_with_wrong_adjacency.string() );
-            absl::StrAppend( &message, colocated_points_groups.string() );
-            absl::StrAppend( &message, degenerated_edges.string() );
-            absl::StrAppend( &message, degenerated_polyhedra.string() );
-            absl::StrAppend( &message, non_manifold_vertices.string() );
-            absl::StrAppend( &message, non_manifold_edges.string() );
-            absl::StrAppend( &message, non_manifold_facets.string() );
+            absl::StrAppend( &message,
+                polyhedron_facets_with_wrong_adjacency.string(), "\n" );
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polyhedra.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_facets.string(), "\n" );
             return message;
         }
     };

@@ -20,43 +20,20 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
-#pragma once
-
-#include <geode/inspector/common.h>
-#include <geode/inspector/criterion/section_meshes_inspector.h>
-#include <geode/inspector/mixin/add_inspectors.h>
-#include <geode/inspector/topology/section_topology.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct SectionInspectionResult
+    void define_information( pybind11::module& module )
     {
-        SectionMeshesInspectionResult meshes;
-        SectionTopologyInspectionResult topology;
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend( &message, meshes.string(), "\n" );
-            absl::StrAppend( &message, topology.string(), "\n" );
-            return message;
-        }
-    };
-    /*!
-     * Class for inspecting a Section model
-     * @extends SectionTopologyInspector
-     */
-    class opengeode_inspector_inspector_api SectionInspector
-        : public AddInspectors< Section,
-              SectionMeshesInspector,
-              SectionTopologyInspector >
-    {
-        OPENGEODE_DISABLE_COPY( SectionInspector );
-
-    public:
-        SectionInspector( const Section& section );
-
-        SectionInspectionResult inspect_section() const;
-    };
+        // pybind11::class_< InspectionIssues >( module, "InspectionIssues" )
+        //     // .def( pybind11::init<>() )
+        //     .def_readwrite( "description", &InspectionIssues::description )
+        //     .def_readwrite( "problems", &InspectionIssues::problems )
+        //     .def_readwrite( "messages", &InspectionIssues::messages )
+        //     .def( "number", &InspectionIssues::number )
+        //     .def( "string", &InspectionIssues::string );
+    }
 } // namespace geode

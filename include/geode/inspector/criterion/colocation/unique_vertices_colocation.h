@@ -46,9 +46,9 @@ namespace geode
         {
             std::string message{ "" };
             absl::StrAppend(
-                &message, colocated_unique_vertices_groups.string() );
-            absl::StrAppend(
-                &message, unique_vertices_linked_to_different_points.string() );
+                &message, colocated_unique_vertices_groups.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_different_points.string(), "\n" );
             return message;
         }
     };

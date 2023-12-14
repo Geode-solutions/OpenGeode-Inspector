@@ -50,11 +50,11 @@ namespace geode
         std::string string() const
         {
             std::string message{ "" };
-            absl::StrAppend( &message, corners.string() );
-            absl::StrAppend( &message, lines.string() );
-            absl::StrAppend( &message, surfaces.string() );
+            absl::StrAppend( &message, corners.string(), "\n" );
+            absl::StrAppend( &message, lines.string(), "\n" );
+            absl::StrAppend( &message, surfaces.string(), "\n" );
             absl::StrAppend( &message,
-                unique_vertices_not_linked_to_any_component.string() );
+                unique_vertices_not_linked_to_any_component.string(), "\n" );
             return message;
         }
     };

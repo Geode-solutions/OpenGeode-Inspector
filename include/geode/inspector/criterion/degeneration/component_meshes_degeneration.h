@@ -55,11 +55,11 @@ namespace geode
             for( const auto& issue : elements )
             {
                 absl::StrAppend(
-                    &message, issue.second.degenerated_edges.string() );
-                absl::StrAppend(
-                    &message, issue.second.degenerated_polygons.string() );
-                absl::StrAppend(
-                    &message, issue.second.degenerated_polyhedra.string() );
+                    &message, issue.second.degenerated_edges.string(), "\n" );
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polygons.string(), "\n" );
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polyhedra.string(), "\n" );
             }
             return message;
         }

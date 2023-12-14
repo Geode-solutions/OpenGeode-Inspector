@@ -54,12 +54,13 @@ namespace geode
             for( const auto& surface_issue :
                 surfaces_edges_with_wrong_adjacencies )
             {
-                absl::StrAppend( &message, surface_issue.second.string() );
+                absl::StrAppend(
+                    &message, surface_issue.second.string(), "\n" );
             }
             for( const auto& block_issue :
                 blocks_facets_with_wrong_adjacencies )
             {
-                absl::StrAppend( &message, block_issue.second.string() );
+                absl::StrAppend( &message, block_issue.second.string(), "\n" );
             }
             return message;
         }

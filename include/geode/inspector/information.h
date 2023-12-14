@@ -62,10 +62,10 @@ namespace geode
             {
                 return "";
             }
-            auto message{ absl::StrCat( description, "\n" ) };
+            auto message{ absl::StrCat( description ) };
             for( const auto& issue : messages )
             {
-                absl::StrAppend( &message, "    ", issue, "\n" );
+                absl::StrAppend( &message, "\n ->    ", issue );
             }
             return message;
         }

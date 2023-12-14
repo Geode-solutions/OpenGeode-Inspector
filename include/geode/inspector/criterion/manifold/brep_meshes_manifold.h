@@ -60,19 +60,21 @@ namespace geode
             std::string message{ "" };
             for( const auto& vertices_issue : meshes_non_manifold_vertices )
             {
-                absl::StrAppend( &message, vertices_issue.second.string() );
+                absl::StrAppend(
+                    &message, vertices_issue.second.string(), "\n" );
             }
             for( const auto& edges_issue : meshes_non_manifold_edges )
             {
-                absl::StrAppend( &message, edges_issue.second.string() );
+                absl::StrAppend( &message, edges_issue.second.string(), "\n" );
             }
             for( const auto& facets_issue : meshes_non_manifold_facets )
             {
-                absl::StrAppend( &message, facets_issue.second.string() );
+                absl::StrAppend( &message, facets_issue.second.string(), "\n" );
             }
             for( const auto& model_edges_issue : model_non_manifold_edges )
             {
-                absl::StrAppend( &message, model_edges_issue.second.string() );
+                absl::StrAppend(
+                    &message, model_edges_issue.second.string(), "\n" );
             }
             return message;
         }

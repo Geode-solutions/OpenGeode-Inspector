@@ -37,7 +37,8 @@ namespace geode
                     meshes_non_manifold_vertices )
             .def_readwrite( "meshes_non_manifold_edges",
                 &SectionMeshesManifoldInspectionResult::
-                    meshes_non_manifold_edges );
+                    meshes_non_manifold_edges )
+            .def( "string", &SectionMeshesManifoldInspectionResult::string );
 
         pybind11::class_< SectionComponentMeshesManifold >(
             module, "SectionComponentMeshesManifold" )

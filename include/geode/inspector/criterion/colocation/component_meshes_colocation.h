@@ -47,7 +47,7 @@ namespace geode
             std::string message{ "" };
             for( const auto& issue : colocated_points_groups )
             {
-                absl::StrAppend( &message, issue.second.string() );
+                absl::StrAppend( &message, issue.second.string(), "\n" );
             }
             return message;
         }

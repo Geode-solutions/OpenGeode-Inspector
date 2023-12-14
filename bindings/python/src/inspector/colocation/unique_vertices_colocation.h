@@ -38,7 +38,8 @@ namespace geode
                     colocated_unique_vertices_groups )
             .def_readwrite( "unique_vertices_linked_to_different_points",
                 &UniqueVerticesInspectionResult::
-                    unique_vertices_linked_to_different_points );
+                    unique_vertices_linked_to_different_points )
+            .def( "string", &UniqueVerticesInspectionResult::string );
 
         pybind11::class_< SectionUniqueVerticesColocation >(
             module, "SectionUniqueVerticesColocation" )

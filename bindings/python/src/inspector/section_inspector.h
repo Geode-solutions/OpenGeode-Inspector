@@ -45,13 +45,15 @@ namespace geode
             .def_readwrite(
                 "intersections", &SectionMeshesInspectionResult::intersections )
             .def_readwrite(
-                "manifolds", &SectionMeshesInspectionResult::manifolds );
+                "manifolds", &SectionMeshesInspectionResult::manifolds )
+            .def( "string", &SectionMeshesInspectionResult::string );
 
         pybind11::class_< SectionInspectionResult >(
             module, "SectionInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes", &SectionInspectionResult::meshes )
-            .def_readwrite( "topology", &SectionInspectionResult::topology );
+            .def_readwrite( "topology", &SectionInspectionResult::topology )
+            .def( "string", &SectionInspectionResult::string );
 
         pybind11::class_< SectionInspector, SectionTopologyInspector,
             SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,

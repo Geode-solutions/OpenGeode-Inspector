@@ -51,7 +51,8 @@ namespace geode
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
             .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
                 &BRepCornersTopologyInspectionResult::
-                    unique_vertices_liked_to_not_boundary_line_corner );
+                    unique_vertices_liked_to_not_boundary_line_corner )
+            .def( "string", &BRepCornersTopologyInspectionResult::string );
 
         pybind11::class_< BRepLinesTopologyInspectionResult >(
             module, "BRepLinesTopologyInspectionResult" )
@@ -73,7 +74,8 @@ namespace geode
             .def_readwrite( "unique_vertices_linked_to_several_lines_but_not_"
                             "linked_to_a_corner",
                 &BRepLinesTopologyInspectionResult::
-                    unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner );
+                    unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
+            .def( "string", &BRepLinesTopologyInspectionResult::string );
 
         pybind11::class_< BRepSurfacesTopologyInspectionResult >(
             module, "BRepSurfacesTopologyInspectionResult" )
@@ -102,7 +104,8 @@ namespace geode
             .def_readwrite( "unique_vertices_linked_to_a_line_but_is_not_on_a_"
                             "surface_border",
                 &BRepSurfacesTopologyInspectionResult::
-                    unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border );
+                    unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
+            .def( "string", &BRepSurfacesTopologyInspectionResult::string );
 
         pybind11::class_< BRepBlocksTopologyInspectionResult >(
             module, "BRepBlocksTopologyInspectionResult" )
@@ -118,7 +121,8 @@ namespace geode
                     unique_vertices_part_of_two_blocks_and_no_boundary_surface )
             .def_readwrite( "unique_vertices_with_incorrect_block_cmvs_count",
                 &BRepBlocksTopologyInspectionResult::
-                    unique_vertices_with_incorrect_block_cmvs_count );
+                    unique_vertices_with_incorrect_block_cmvs_count )
+            .def( "string", &BRepBlocksTopologyInspectionResult::string );
 
         pybind11::class_< BRepTopologyInspectionResult >(
             module, "BRepTopologyInspectionResult" )
@@ -130,7 +134,8 @@ namespace geode
             .def_readwrite( "blocks", &BRepTopologyInspectionResult::blocks )
             .def_readwrite( "unique_vertices_not_linked_to_any_component",
                 &BRepTopologyInspectionResult::
-                    unique_vertices_not_linked_to_any_component );
+                    unique_vertices_not_linked_to_any_component )
+            .def( "string", &BRepTopologyInspectionResult::string );
 
         pybind11::class_< BRepTopologyInspector >(
             module, "BRepTopologyInspector" )

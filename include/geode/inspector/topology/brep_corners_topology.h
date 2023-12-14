@@ -68,21 +68,25 @@ namespace geode
         std::string string() const
         {
             std::string message{ "" };
-            absl::StrAppend( &message, corners_not_meshed.string() );
+            absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
             for( const auto& corner_uv_issue :
                 corners_not_linked_to_a_unique_vertex )
             {
-                absl::StrAppend( &message, corner_uv_issue.second.string() );
+                absl::StrAppend(
+                    &message, corner_uv_issue.second.string(), "\n" );
             }
-            absl::StrAppend(
-                &message, unique_vertices_linked_to_multiple_corners.string() );
             absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_internals_corner.string() );
+                unique_vertices_linked_to_multiple_corners.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiple_internals_corner.string(),
+                "\n" );
             absl::StrAppend( &message,
                 unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .string() );
+                    .string(),
+                "\n" );
             absl::StrAppend( &message,
-                unique_vertices_liked_to_not_boundary_line_corner.string() );
+                unique_vertices_liked_to_not_boundary_line_corner.string(),
+                "\n" );
             return message;
         }
     };

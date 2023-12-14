@@ -45,13 +45,15 @@ namespace geode
             .def_readwrite(
                 "intersections", &BRepMeshesInspectionResult::intersections )
             .def_readwrite(
-                "manifolds", &BRepMeshesInspectionResult::manifolds );
+                "manifolds", &BRepMeshesInspectionResult::manifolds )
+            .def( "string", &BRepMeshesInspectionResult::string );
 
         pybind11::class_< BRepInspectionResult >(
             module, "BRepInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes", &BRepInspectionResult::meshes )
-            .def_readwrite( "topology", &BRepInspectionResult::topology );
+            .def_readwrite( "topology", &BRepInspectionResult::topology )
+            .def( "string", &BRepInspectionResult::string );
 
         pybind11::class_< BRepInspector, BRepTopologyInspector,
             BRepUniqueVerticesColocation, BRepComponentMeshesAdjacency,

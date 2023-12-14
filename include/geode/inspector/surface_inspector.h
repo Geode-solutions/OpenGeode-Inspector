@@ -48,13 +48,13 @@ namespace geode
         {
             std::string message{ "" };
             absl::StrAppend(
-                &message, polygon_edges_with_wrong_adjacency.string() );
-            absl::StrAppend( &message, colocated_points_groups.string() );
-            absl::StrAppend( &message, degenerated_edges.string() );
-            absl::StrAppend( &message, degenerated_polygons.string() );
-            absl::StrAppend( &message, non_manifold_edges.string() );
-            absl::StrAppend( &message, non_manifold_vertices.string() );
-            absl::StrAppend( &message, intersecting_elements.string() );
+                &message, polygon_edges_with_wrong_adjacency.string(), "\n" );
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polygons.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, intersecting_elements.string(), "\n" );
             return message;
         }
     };
