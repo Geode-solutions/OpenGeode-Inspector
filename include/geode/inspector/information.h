@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include <geode/basic/logger.h>
 #include <geode/inspector/common.h>
 
 namespace geode
@@ -60,7 +61,7 @@ namespace geode
         {
             if( problems.empty() )
             {
-                return "";
+                return absl::StrCat( description, " -> No Problems :)" );
             }
             auto message{ absl::StrCat( description ) };
             for( const auto& issue : messages )

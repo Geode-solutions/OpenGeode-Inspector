@@ -62,7 +62,7 @@ namespace geode
         InspectionIssues< index_t >
             unique_vertices_liked_to_not_boundary_line_corner{
                 "Indices of unique vertices linked to conner on a line but "
-                "without boundary status.)"
+                "without boundary status."
             };
 
         std::string string() const

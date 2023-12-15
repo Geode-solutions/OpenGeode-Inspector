@@ -358,13 +358,6 @@ void check_model_a1_valid( bool string )
     const geode::BRepInspector brep_inspector{ model_brep };
     auto result = brep_inspector.inspect_brep();
 
-    for( const auto& issue :
-        result.topology.corners.corners_not_linked_to_a_unique_vertex )
-    {
-        // problem displayoiing that!!!
-        geode::Logger::info( issue.second.string() );
-    }
-
     geode::Logger::info( "model_A1_valid topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
 
@@ -429,7 +422,6 @@ int main()
     {
         geode::InspectorInspectorLibrary::initialize();
         check_model_a1( false );
-        // y a t il une différence entre ces modèles?
         check_model_a1_valid( false );
         check_model_mss( false );
         check_model_D( false );
