@@ -342,14 +342,11 @@ namespace geode
             auto surface_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, surface.component_id(), surface.mesh() );
-            result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
-                surface.id(),
+            surface_result.description =
                 absl::StrCat( "Surface ", surface.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.surfaces_not_linked_to_a_unique_vertex.back()
-                .second.problems = std::move( surface_result.first );
-            result.surfaces_not_linked_to_a_unique_vertex.back()
-                .second.messages = std::move( surface_result.second );
+                    " has mesh vertices not linked to a unique vertex." );
+            result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
+                surface.id(), surface_result );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {

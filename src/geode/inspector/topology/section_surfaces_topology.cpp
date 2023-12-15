@@ -123,10 +123,10 @@ namespace geode
         return absl::nullopt;
     }
 
-    SectionSurfacesInspectionResult
+    SectionSurfacesTopologyInspectionResult
         SectionSurfacesTopology::inspect_surfaces() const
     {
-        SectionSurfacesInspectionResult result;
+        SectionSurfacesTopologyInspectionResult result;
         for( const auto& surface : section_.surfaces() )
         {
             if( section_.surface( surface.id() ).mesh().nb_vertices() == 0 )
@@ -139,14 +139,11 @@ namespace geode
             auto surface_result = detail::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, surface.component_id(), surface.mesh() );
-            result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
-                surface.id(),
+            surface_result.description =
                 absl::StrCat( "Surface ", surface.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.surfaces_not_linked_to_a_unique_vertex.back()
-                .second.problems = std::move( surface_result.first );
-            result.surfaces_not_linked_to_a_unique_vertex.back()
-                .second.messages = std::move( surface_result.second );
+                    " has mesh vertices not linked to a unique vertex." );
+            result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
+                surface.id(), surface_result );
         }
         for( const auto unique_vertex_id :
             Range{ section_.nb_unique_vertices() } )

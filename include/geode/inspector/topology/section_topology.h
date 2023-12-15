@@ -40,9 +40,9 @@ namespace geode
 {
     struct SectionTopologyInspectionResult
     {
-        SectionCornersInspectionResult corners;
-        SectionLinesInspectionResult lines;
-        SectionSurfacesInspectionResult surfaces;
+        SectionCornersTopologyInspectionResult corners;
+        SectionLinesTopologyInspectionResult lines;
+        SectionSurfacesTopologyInspectionResult surfaces;
 
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
             "Unique vertices not linked to any component"

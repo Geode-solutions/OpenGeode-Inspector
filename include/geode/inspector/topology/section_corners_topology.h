@@ -38,7 +38,7 @@ namespace geode
 
 namespace geode
 {
-    struct SectionCornersInspectionResult
+    struct SectionCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
             "uuids of corner without mesh."
@@ -118,7 +118,7 @@ namespace geode
         absl::optional< std::string > corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
 
-        SectionCornersInspectionResult inspect_corners_topology() const;
+        SectionCornersTopologyInspectionResult inspect_corners_topology() const;
 
     private:
         const Section& section_;

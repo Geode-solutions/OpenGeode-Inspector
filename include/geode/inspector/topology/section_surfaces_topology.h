@@ -36,7 +36,7 @@ namespace geode
 
 namespace geode
 {
-    struct SectionSurfacesInspectionResult
+    struct SectionSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of surface without mesh."
@@ -101,7 +101,7 @@ namespace geode
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
-        SectionSurfacesInspectionResult inspect_surfaces() const;
+        SectionSurfacesTopologyInspectionResult inspect_surfaces() const;
 
     private:
         const Section& section_;

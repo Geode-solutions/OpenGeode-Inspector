@@ -274,14 +274,11 @@ namespace geode
             auto block_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
-            result.blocks_not_linked_to_a_unique_vertex.emplace_back(
-                block.id(),
+            block_result.description =
                 absl::StrCat( "Block ", block.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.blocks_not_linked_to_a_unique_vertex.back().second.problems =
-                std::move( block_result.first );
-            result.blocks_not_linked_to_a_unique_vertex.back().second.messages =
-                std::move( block_result.second );
+                    " has mesh vertices not linked to a unique vertex." );
+            result.blocks_not_linked_to_a_unique_vertex.emplace_back(
+                block.id(), block_result );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {

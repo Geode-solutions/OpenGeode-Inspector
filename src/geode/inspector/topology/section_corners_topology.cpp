@@ -156,10 +156,10 @@ namespace geode
         return absl::nullopt;
     }
 
-    SectionCornersInspectionResult
+    SectionCornersTopologyInspectionResult
         SectionCornersTopology::inspect_corners_topology() const
     {
-        SectionCornersInspectionResult result;
+        SectionCornersTopologyInspectionResult result;
         for( const auto& corner : section_.corners() )
         {
             if( section_.corner( corner.id() ).mesh().nb_vertices() == 0 )
@@ -171,14 +171,11 @@ namespace geode
             auto corner_result = detail::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, corner.component_id(), corner.mesh() );
+            corner_result.description =
+                absl::StrCat( "Corner ", corner.id().string(),
+                    " has mesh vertices not linked to a unique vertex." );
             result.corners_not_linked_to_a_unique_vertex.emplace_back(
-                corner.id(),
-                "Corner " + corner.id().string()
-                    + " has mesh vertices not linked to a unique vertex." );
-            result.corners_not_linked_to_a_unique_vertex.back()
-                .second.problems = std::move( corner_result.first );
-            result.corners_not_linked_to_a_unique_vertex.back()
-                .second.messages = std::move( corner_result.second );
+                corner.id(), corner_result );
         }
         for( const auto unique_vertex_id :
             Range{ section_.nb_unique_vertices() } )

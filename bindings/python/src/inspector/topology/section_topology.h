@@ -29,70 +29,70 @@ namespace geode
 {
     void define_section_topology_inspector( pybind11::module& module )
     {
-        pybind11::class_< SectionCornersInspectionResult >(
-            module, "SectionCornersInspectionResult" )
+        pybind11::class_< SectionCornersTopologyInspectionResult >(
+            module, "SectionCornersTopologyInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "corners_not_meshed",
-                &SectionCornersInspectionResult::corners_not_meshed )
+                &SectionCornersTopologyInspectionResult::corners_not_meshed )
             .def_readwrite( "corners_not_linked_to_a_unique_vertex",
-                &SectionCornersInspectionResult::
+                &SectionCornersTopologyInspectionResult::
                     corners_not_linked_to_a_unique_vertex )
             .def_readwrite( "unique_vertices_linked_to_multiple_corners",
-                &SectionCornersInspectionResult::
+                &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_multiple_corners )
             .def_readwrite(
                 "unique_vertices_linked_to_multiple_internals_corner",
-                &SectionCornersInspectionResult::
+                &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_multiple_internals_corner )
             .def_readwrite(
                 "unique_vertices_linked_not_internal_nor_boundary_corner",
-                &SectionCornersInspectionResult::
+                &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
             .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
-                &SectionCornersInspectionResult::
+                &SectionCornersTopologyInspectionResult::
                     unique_vertices_liked_to_not_boundary_line_corner )
-            .def( "string", &SectionCornersInspectionResult::string );
+            .def( "string", &SectionCornersTopologyInspectionResult::string );
 
-        pybind11::class_< SectionLinesInspectionResult >(
-            module, "SectionLinesInspectionResult" )
+        pybind11::class_< SectionLinesTopologyInspectionResult >(
+            module, "SectionLinesTopologyInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "lines_not_meshed",
-                &SectionLinesInspectionResult::lines_not_meshed )
+                &SectionLinesTopologyInspectionResult::lines_not_meshed )
             .def_readwrite(
                 "unique_vertices_linked_to_not_internal_nor_boundary_line",
-                &SectionLinesInspectionResult::
+                &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_line )
             .def_readwrite(
                 "unique_vertices_linked_to_a_line_with_invalid_embeddings",
-                &SectionLinesInspectionResult::
+                &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_with_invalid_embeddings )
             .def_readwrite(
                 "unique_vertices_linked_to_a_single_and_invalid_line",
-                &SectionLinesInspectionResult::
+                &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_a_single_and_invalid_line )
             .def_readwrite( "unique_vertices_linked_to_several_lines_but_not_"
                             "linked_to_a_corner",
-                &SectionLinesInspectionResult::
+                &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
-            .def( "string", &SectionLinesInspectionResult::string );
+            .def( "string", &SectionLinesTopologyInspectionResult::string );
 
-        pybind11::class_< SectionSurfacesInspectionResult >(
-            module, "SectionSurfacesInspectionResult" )
+        pybind11::class_< SectionSurfacesTopologyInspectionResult >(
+            module, "SectionSurfacesTopologyInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_not_meshed",
-                &SectionSurfacesInspectionResult::surfaces_not_meshed )
+                &SectionSurfacesTopologyInspectionResult::surfaces_not_meshed )
             .def_readwrite( "surfaces_not_linked_to_a_unique_vertex",
-                &SectionSurfacesInspectionResult::
+                &SectionSurfacesTopologyInspectionResult::
                     surfaces_not_linked_to_a_unique_vertex )
             .def_readwrite(
                 "unique_vertices_linked_to_a_surface_with_invalid_embbedings",
-                &SectionSurfacesInspectionResult::
+                &SectionSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_surface_with_invalid_embbedings )
             .def_readwrite( "unique_vertices_linked_to_a_line_but_is_not_on_a_"
                             "surface_border",
-                &SectionSurfacesInspectionResult::
+                &SectionSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
-            .def( "string", &SectionSurfacesInspectionResult::string );
+            .def( "string", &SectionSurfacesTopologyInspectionResult::string );
 
         pybind11::class_< SectionTopologyInspectionResult >(
             module, "SectionTopologyInspectionResult" )
