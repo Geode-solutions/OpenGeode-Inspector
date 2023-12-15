@@ -36,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, EdgedCurve< dimension > >
     {
     public:
-        Impl( const EdgedCurve< dimension >& mesh, bool verbose )
+        Impl( const EdgedCurve< dimension >& mesh )
             : detail::ColocationImpl< dimension, EdgedCurve< dimension > >(
-                mesh, verbose )
+                mesh )
         {
         }
     };
@@ -46,14 +46,7 @@ namespace geode
     template < index_t dimension >
     EdgedCurveColocation< dimension >::EdgedCurveColocation(
         const EdgedCurve< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    EdgedCurveColocation< dimension >::EdgedCurveColocation(
-        const EdgedCurve< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -69,13 +62,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t EdgedCurveColocation< dimension >::nb_colocated_points() const
-    {
-        return impl_->nb_colocated_points();
-    }
-
-    template < index_t dimension >
-    std::vector< std::vector< index_t > >
+    InspectionIssues< std::vector< index_t > >
         EdgedCurveColocation< dimension >::colocated_points_groups() const
     {
         return impl_->colocated_points_groups();

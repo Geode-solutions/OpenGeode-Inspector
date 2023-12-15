@@ -25,12 +25,10 @@
 
 #include <absl/container/flat_hash_map.h>
 
-#include <geode/inspector/common.h>
+#include <geode/basic/uuid.h>
 
-namespace geode
-{
-    struct uuid;
-} // namespace geode
+#include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -44,29 +42,19 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ComponentMeshesManifold );
 
     public:
-        std::vector< uuid > surfaces_non_manifold_meshes() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            surfaces_meshes_nb_non_manifold_vertices() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            surfaces_meshes_nb_non_manifold_edges() const;
-
-        absl::flat_hash_map< uuid, std::vector< index_t > >
+        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             surfaces_meshes_non_manifold_vertices() const;
 
-        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+        absl::flat_hash_map< uuid,
+            InspectionIssues< std::array< index_t, 2 > > >
             surfaces_meshes_non_manifold_edges() const;
 
     protected:
-        ComponentMeshesManifold( const Model& model, bool verbose );
+        ComponentMeshesManifold( const Model& model );
 
         const Model& model() const;
 
-        bool verbose() const;
-
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 } // namespace geode

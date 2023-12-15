@@ -67,10 +67,7 @@ namespace geode
     class SolidMeshFacetManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
-        {
-        }
+        Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_facets_are_manifold() const
         {
@@ -87,50 +84,25 @@ namespace geode
             return true;
         }
 
-        index_t nb_non_manifold_facets() const
+        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets() const
         {
             const auto nb_polyhedra_adjacent_to_facets =
                 facets_to_nb_adjacent_polyhedra( mesh_ );
-            index_t nb_non_manifold_facets{ 0 };
+            InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
+                "Non manifold facets."
+            };
             for( const auto& nb_adjacent_polyhedra :
                 nb_polyhedra_adjacent_to_facets )
             {
                 if( nb_adjacent_polyhedra.second > 2 )
                 {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Facet made of vertices with index",
+                    non_manifold_facets.add_problem(
+                        nb_adjacent_polyhedra.first.vertices(),
+                        absl::StrCat( "Facet made of vertices with index",
                             nb_adjacent_polyhedra.first.vertices()[0], ", ",
                             nb_adjacent_polyhedra.first.vertices()[1], ", ",
                             nb_adjacent_polyhedra.first.vertices()[2],
-                            ", is not manifold." );
-                    }
-                    nb_non_manifold_facets++;
-                }
-            }
-            return nb_non_manifold_facets;
-        }
-
-        std::vector< PolyhedronFacetVertices > non_manifold_facets() const
-        {
-            const auto nb_polyhedra_adjacent_to_facets =
-                facets_to_nb_adjacent_polyhedra( mesh_ );
-            std::vector< PolyhedronFacetVertices > non_manifold_facets;
-            for( const auto& nb_adjacent_polyhedra :
-                nb_polyhedra_adjacent_to_facets )
-            {
-                if( nb_adjacent_polyhedra.second > 2 )
-                {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Facet made of vertices with index",
-                            nb_adjacent_polyhedra.first.vertices()[0], ", ",
-                            nb_adjacent_polyhedra.first.vertices()[1], ", ",
-                            nb_adjacent_polyhedra.first.vertices()[2],
-                            ", is not manifold." );
-                    }
-                    non_manifold_facets.push_back(
-                        nb_adjacent_polyhedra.first.vertices() );
+                            ", is not manifold." ) );
                 }
             }
             return non_manifold_facets;
@@ -138,20 +110,12 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
     SolidMeshFacetManifold< dimension >::SolidMeshFacetManifold(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshFacetManifold< dimension >::SolidMeshFacetManifold(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -167,13 +131,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t SolidMeshFacetManifold< dimension >::nb_non_manifold_facets() const
-    {
-        return impl_->nb_non_manifold_facets();
-    }
-
-    template < index_t dimension >
-    std::vector< PolyhedronFacetVertices >
+    InspectionIssues< PolyhedronFacetVertices >
         SolidMeshFacetManifold< dimension >::non_manifold_facets() const
     {
         return impl_->non_manifold_facets();

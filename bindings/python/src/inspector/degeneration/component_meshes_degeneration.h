@@ -32,21 +32,29 @@
     pybind11::class_< suffix##ComponentMeshesDegeneration >(                   \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
-        .def( "degenerated_component_meshes",                                  \
-            &suffix##ComponentMeshesDegeneration::                             \
-                degenerated_component_meshes )                                 \
-        .def( "components_nb_degenerated_elements",                            \
-            &suffix##ComponentMeshesDegeneration::                             \
-                components_nb_degenerated_elements )                           \
-        .def( "components_degenerated_elements",                               \
-            &suffix##ComponentMeshesDegeneration::                             \
-                components_degenerated_elements )
+        .def( "inspect_elements",                                              \
+            &suffix##ComponentMeshesDegeneration::inspect_elements )
 
 namespace geode
 {
     void define_models_meshes_degeneration( pybind11::module& module )
     {
+        pybind11::class_< DegeneratedElements >( module, "DegeneratedElements" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite(
+                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite( "degenerated_polyhedra",
+                &DegeneratedElements::degenerated_polyhedra );
+
+        pybind11::class_< DegeneratedElementsInspectionResult >(
+            module, "DegeneratedElementsInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "elements", &DegeneratedElementsInspectionResult::elements )
+            .def( "string", &DegeneratedElementsInspectionResult::string );
+
         PYTHON_COMPONENTS_DEGENERATION( Section, Section );
         PYTHON_COMPONENTS_DEGENERATION( BRep, BRep );
     }

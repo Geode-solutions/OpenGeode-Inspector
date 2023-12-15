@@ -20,32 +20,20 @@
  * SOFTWARE.
  *
  */
-#include <absl/strings/str_cat.h>
+#include <string>
 
-#include <geode/mesh/core/surface_mesh.h>
-
-#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
-    template < index_t dimension >
-    void do_define_surface_vertex_manifold( pybind11::module& module )
+    void define_information( pybind11::module& module )
     {
-        using SurfaceMesh = SurfaceMesh< dimension >;
-        using SurfaceMeshVertexManifold =
-            SurfaceMeshVertexManifold< dimension >;
-        const auto name =
-            absl::StrCat( "SurfaceMeshVertexManifold", dimension, "D" );
-        pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
-            .def( "mesh_vertices_are_manifold",
-                &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
-            .def( "non_manifold_vertices",
-                &SurfaceMeshVertexManifold::non_manifold_vertices );
-    }
-    void define_surface_vertex_manifold( pybind11::module& module )
-    {
-        do_define_surface_vertex_manifold< 2 >( module );
-        do_define_surface_vertex_manifold< 3 >( module );
+        // pybind11::class_< InspectionIssues >( module, "InspectionIssues" )
+        //     // .def( pybind11::init<>() )
+        //     .def_readwrite( "description", &InspectionIssues::description )
+        //     .def_readwrite( "problems", &InspectionIssues::problems )
+        //     .def_readwrite( "messages", &InspectionIssues::messages )
+        //     .def( "number", &InspectionIssues::number )
+        //     .def( "string", &InspectionIssues::string );
     }
 } // namespace geode

@@ -38,11 +38,8 @@ namespace geode
             absl::StrCat( "SolidMeshFacetManifold", dimension, "D" );
         pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_facets_are_manifold",
                 &SolidMeshFacetManifold::mesh_facets_are_manifold )
-            .def( "nb_non_manifold_facets",
-                &SolidMeshFacetManifold::nb_non_manifold_facets )
             .def( "non_manifold_facets",
                 &SolidMeshFacetManifold::non_manifold_facets );
     }

@@ -43,10 +43,8 @@ void check_non_colocation2D()
     const geode::PointSetInspector2D inspector{ *pointset };
     OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().number() == 0,
         "[Test] PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().empty(),
-        "[Test] PointSet points are shown colocated whereas they are not." );
 }
 
 void check_colocation2D()
@@ -66,15 +64,23 @@ void check_colocation2D()
     OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),
         "[Test] PointSet doesn't have colocated points whereas it should have "
         "several." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 5,
+    const auto colocated_points_groups = inspector.colocated_points_groups();
+    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+        "[Test] PointSet has wrong number of colocated groups of points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto group : colocated_points_groups.problems )
+    {
+        nb_colocated_points += group.size();
+    }
+    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
         "[Test] PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(
-        inspector.colocated_points_groups()[0] == first_colocated_points_group,
+        colocated_points_groups.problems[0] == first_colocated_points_group,
         "[Test] PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION(
-        inspector.colocated_points_groups()[1] == second_colocated_points_group,
+        colocated_points_groups.problems[1] == second_colocated_points_group,
         "[Test] PointSet has wrong second colocated points group." );
 }
 
@@ -91,11 +97,8 @@ void check_non_colocation3D()
     const geode::PointSetInspector3D inspector{ *pointset };
     OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] (3D) PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().number() == 0,
         "[Test] (3D) PointSet has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().empty(),
-        "[Test] (3D) PointSet points are shown colocated whereas they are "
-        "not." );
 }
 
 void check_colocation3D()
@@ -117,15 +120,24 @@ void check_colocation3D()
         "[Test] (3D) PointSet doesn't have colocated points whereas it should "
         "have "
         "several." );
-    OPENGEODE_EXCEPTION( inspector.nb_colocated_points() == 5,
+    const auto colocated_points_groups = inspector.colocated_points_groups();
+    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+        "[Test] (3D) PointSet has wrong number of colocated groups of "
+        "points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto group : colocated_points_groups.problems )
+    {
+        nb_colocated_points += group.size();
+    }
+    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
         "[Test] (3D) PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(
-        inspector.colocated_points_groups()[0] == first_colocated_points_group,
+        colocated_points_groups.problems[0] == first_colocated_points_group,
         "[Test] (3D) PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION(
-        inspector.colocated_points_groups()[1] == second_colocated_points_group,
+        colocated_points_groups.problems[1] == second_colocated_points_group,
         "[Test] (3D) PointSet has wrong second colocated points group." );
 }
 

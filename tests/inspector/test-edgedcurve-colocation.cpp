@@ -43,10 +43,9 @@ void check_non_colocation2D()
     const geode::EdgedCurveColocation2D colocation_inspector{ *curve };
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
         "[Test] EdgedCurve has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION(
+        colocation_inspector.colocated_points_groups().number() == 0,
         "[Test] EdgedCurve has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
-        "[Test] EdgedCurve points are shown colocated whereas they are not." );
 }
 
 void check_colocation2D()
@@ -66,15 +65,24 @@ void check_colocation2D()
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
         "[Test] EdgedCurve doesn't have colocated points whereas it should "
         "have several." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 5,
+    const auto colocated_points_groups =
+        colocation_inspector.colocated_points_groups();
+    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+        "[Test] EdgedCurve has wrong number of colocated groups of points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto group : colocated_points_groups.problems )
+    {
+        nb_colocated_points += group.size();
+    }
+    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
         "[Test] EdgedCurve has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
-                             == first_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        colocated_points_groups.problems[0] == first_colocated_points_group,
         "[Test] EdgedCurve has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
-                             == second_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        colocated_points_groups.problems[1] == second_colocated_points_group,
         "[Test] EdgedCurve has wrong second colocated points group." );
 }
 
@@ -92,11 +100,9 @@ void check_non_colocation3D()
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
         "[Test] (3D) EdgedCurve has colocated points when it should have "
         "none." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 0,
+    OPENGEODE_EXCEPTION(
+        colocation_inspector.colocated_points_groups().number() == 0,
         "[Test] (3D) EdgedCurve has more colocated points than it should." );
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups().empty(),
-        "[Test] (3D) EdgedCurve points are shown colocated whereas they are "
-        "not." );
 }
 
 void check_colocation3D()
@@ -117,15 +123,25 @@ void check_colocation3D()
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
         "[Test] (3D) EdgedCurve doesn't have colocated points whereas it "
         "should have several." );
-    OPENGEODE_EXCEPTION( colocation_inspector.nb_colocated_points() == 5,
+    const auto colocated_points_groups =
+        colocation_inspector.colocated_points_groups();
+    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+        "[Test] (3D) EdgedCurve has wrong number of colocated groups of "
+        "points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto group : colocated_points_groups.problems )
+    {
+        nb_colocated_points += group.size();
+    }
+    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
         "[Test] (3D) EdgedCurve has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[0]
-                             == first_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        colocated_points_groups.problems[0] == first_colocated_points_group,
         "[Test] (3D) EdgedCurve has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION( colocation_inspector.colocated_points_groups()[1]
-                             == second_colocated_points_group,
+    OPENGEODE_EXCEPTION(
+        colocated_points_groups.problems[1] == second_colocated_points_group,
         "[Test] (3D) EdgedCurve has wrong second colocated points group." );
 }
 

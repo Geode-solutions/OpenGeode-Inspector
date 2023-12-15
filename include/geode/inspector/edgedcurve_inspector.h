@@ -30,6 +30,20 @@
 
 namespace geode
 {
+    struct EdgedCurveInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        InspectionIssues< index_t > degenerated_edges;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            return message;
+        }
+    };
+
     /*!
      * Class for inspecting an EdgedCurve
      * @extends EdgedCurveColocation
@@ -45,9 +59,7 @@ namespace geode
 
     public:
         EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
-
-        EdgedCurveInspector(
-            const EdgedCurve< dimension >& mesh, bool verbose );
+        EdgedCurveInspectionResult inspect_edgedcurve() const;
     };
     ALIAS_2D_AND_3D( EdgedCurveInspector );
 } // namespace geode

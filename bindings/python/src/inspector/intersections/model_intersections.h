@@ -32,19 +32,22 @@
     pybind11::class_< suffix##MeshesIntersections >(                           \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
         .def( "model_has_intersecting_surfaces",                               \
             &suffix##MeshesIntersections::model_has_intersecting_surfaces )    \
-        .def( "nb_intersecting_surfaces_elements_pair",                        \
-            &suffix##MeshesIntersections::                                     \
-                nb_intersecting_surfaces_elements_pair )                       \
-        .def( "intersecting_surfaces_elements",                                \
-            &suffix##MeshesIntersections::intersecting_surfaces_elements )
+        .def( "inspect_intersections",                                         \
+            &suffix##MeshesIntersections::inspect_intersections )
 
 namespace geode
 {
     void define_model_intersections( pybind11::module& module )
     {
+        pybind11::class_< ElementsIntersectionsInspectionResult >(
+            module, "ElementsIntersectionsInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "degenerated_edges",
+                &ElementsIntersectionsInspectionResult::elements_intersections )
+            .def( "string", &ElementsIntersectionsInspectionResult::string );
+
         PYTHON_MODEL_INTERSECTIONS( Section, Section );
         PYTHON_MODEL_INTERSECTIONS( BRep, BRep );
     }

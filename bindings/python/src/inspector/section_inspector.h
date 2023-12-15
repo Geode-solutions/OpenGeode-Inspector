@@ -23,18 +23,44 @@
 
 #include <geode/model/representation/core/section.h>
 
+#include <geode/inspector/criterion/section_meshes_inspector.h>
+
 #include <geode/inspector/section_inspector.h>
 
 namespace geode
 {
     void define_section_inspector( pybind11::module& module )
     {
+        pybind11::class_< SectionMeshesInspectionResult >(
+            module, "SectionMeshesInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "unique_vertices_colocation",
+                &SectionMeshesInspectionResult::unique_vertices_colocation )
+            .def_readwrite( "meshes_colocation",
+                &SectionMeshesInspectionResult::meshes_colocation )
+            .def_readwrite(
+                "adjacencies", &SectionMeshesInspectionResult::adjacencies )
+            .def_readwrite(
+                "degenerations", &SectionMeshesInspectionResult::degenerations )
+            .def_readwrite(
+                "intersections", &SectionMeshesInspectionResult::intersections )
+            .def_readwrite(
+                "manifolds", &SectionMeshesInspectionResult::manifolds )
+            .def( "string", &SectionMeshesInspectionResult::string );
+
+        pybind11::class_< SectionInspectionResult >(
+            module, "SectionInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "meshes", &SectionInspectionResult::meshes )
+            .def_readwrite( "topology", &SectionInspectionResult::topology )
+            .def( "string", &SectionInspectionResult::string );
+
         pybind11::class_< SectionInspector, SectionTopologyInspector,
             SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration, SectionComponentMeshesManifold,
             SectionMeshesIntersections >( module, "SectionInspector" )
             .def( pybind11::init< const Section& >() )
-            .def( pybind11::init< const Section&, bool >() );
+            .def( "inspect_section", &SectionInspector::inspect_section );
     }
 } // namespace geode

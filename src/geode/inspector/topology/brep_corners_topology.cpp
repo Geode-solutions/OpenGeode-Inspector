@@ -196,14 +196,11 @@ namespace geode
             auto corner_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
-            result.corners_not_linked_to_a_unique_vertex.emplace_back(
-                corner.id(),
+            corner_result.description =
                 absl::StrCat( "Corner ", corner.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.corners_not_linked_to_a_unique_vertex.back()
-                .second.problems = std::move( corner_result.first );
-            result.corners_not_linked_to_a_unique_vertex.back()
-                .second.messages = std::move( corner_result.second );
+                    " has mesh vertices not linked to a unique vertex." );
+            result.corners_not_linked_to_a_unique_vertex.emplace_back(
+                corner.id(), corner_result );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {

@@ -23,18 +23,19 @@
 
 #include <absl/types/optional.h>
 
+#include <geode/basic/uuid.h>
+
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct uuid;
     class Section;
 } // namespace geode
 
 namespace geode
 {
-    struct SectionLinesInspectionResult
+    struct SectionLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
             "uuids of lines without mesh."
@@ -61,6 +62,34 @@ namespace geode
                 "Indices of unique vertices linked to several lines but not "
                 "linked to a corner."
             };
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, lines_not_meshed.string(), "\n" );
+            for( const auto& line_uv_issue :
+                lines_not_linked_to_a_unique_vertex )
+            {
+                absl::StrAppend(
+                    &message, line_uv_issue.second.string(), "\n" );
+            }
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_not_internal_nor_boundary_line
+                    .string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_line_with_invalid_embeddings
+                    .string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_single_and_invalid_line.string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+                    .string(),
+                "\n" );
+            return message;
+        }
     };
     /*!
      * Class for inspecting the topology of a Section model lines through
@@ -99,7 +128,7 @@ namespace geode
         absl::optional< std::string > vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const;
 
-        SectionLinesInspectionResult inspect_lines_topology() const;
+        SectionLinesTopologyInspectionResult inspect_lines_topology() const;
 
     private:
         const Section& section_;

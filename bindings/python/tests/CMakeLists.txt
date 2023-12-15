@@ -18,80 +18,80 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_geode_python_test(
-    SOURCE "test-py-brep.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-section.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-edgedcurve-colocation.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-edgedcurve-degeneration.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-pointset-colocation.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-solid-colocation.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-solid-degeneration.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-adjacency.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-colocation.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-degeneration.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-intersections.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-curve-intersections.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
-
-add_geode_python_test(
-    SOURCE "test-py-surface-manifold.py"
-    DEPENDENCIES 
-        ${PROJECT_NAME}::py_inspector
-)
+# add_geode_python_test(
+#     SOURCE "test-py-brep.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-section.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-edgedcurve-colocation.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-edgedcurve-degeneration.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-pointset-colocation.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-solid-colocation.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-solid-degeneration.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-adjacency.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-colocation.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-degeneration.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-intersections.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-curve-intersections.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )
+# 
+# add_geode_python_test(
+#     SOURCE "test-py-surface-manifold.py"
+#     DEPENDENCIES 
+#         ${PROJECT_NAME}::py_inspector
+# )

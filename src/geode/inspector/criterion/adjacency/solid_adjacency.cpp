@@ -23,8 +23,8 @@
 
 #include <geode/inspector/criterion/adjacency/solid_adjacency.h>
 
-#include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -35,10 +35,7 @@ namespace geode
     class SolidMeshAdjacency< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
-        {
-        }
+        Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_has_wrong_adjacencies() const
         {
@@ -60,37 +57,14 @@ namespace geode
             return false;
         }
 
-        index_t nb_facets_with_wrong_adjacency() const
-        {
-            index_t nb_wrong_adjacency_facets{ 0 };
-            for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
-            {
-                for( const auto facet_id :
-                    LRange{ mesh_.nb_polyhedron_facets( polyhedron_id ) } )
-                {
-                    const PolyhedronFacet polyhedron_facet{ polyhedron_id,
-                        facet_id };
-                    if( !mesh_.is_polyhedron_facet_on_border( polyhedron_facet )
-                        && !mesh_polyhedron_facet_has_right_adjacency(
-                            polyhedron_facet ) )
-                    {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Local facet ", facet_id,
-                                " of polyhedron ", polyhedron_id,
-                                " has wrong adjacencies." );
-                        }
-                        nb_wrong_adjacency_facets++;
-                    }
-                }
-            }
-            return nb_wrong_adjacency_facets;
-        }
-
-        std::vector< PolyhedronFacet >
+        InspectionIssues< PolyhedronFacet >
             polyhedron_facets_with_wrong_adjacency() const
         {
-            std::vector< PolyhedronFacet > wrong_adjacency_facets;
+            InspectionIssues< PolyhedronFacet > wrong_adjacency_facets{
+                absl::StrCat(
+                    "Polyhedron facets with wrong adjacency on the Solid ",
+                    mesh_.id().string(), "." )
+            };
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
                 for( const auto facet_id :
@@ -102,13 +76,10 @@ namespace geode
                         && !mesh_polyhedron_facet_has_right_adjacency(
                             polyhedron_facet ) )
                     {
-                        if( verbose_ )
-                        {
-                            Logger::info( "Local facet ", facet_id,
+                        wrong_adjacency_facets.add_problem( polyhedron_facet,
+                            absl::StrCat( "Local facet ", facet_id,
                                 " of polyhedron ", polyhedron_id,
-                                " has wrong adjacencies." );
-                        }
-                        wrong_adjacency_facets.push_back( polyhedron_facet );
+                                " has wrong adjacencies." ) );
                     }
                 }
             }
@@ -144,20 +115,12 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
     SolidMeshAdjacency< dimension >::SolidMeshAdjacency(
         const SolidMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SolidMeshAdjacency< dimension >::SolidMeshAdjacency(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -173,14 +136,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t
-        SolidMeshAdjacency< dimension >::nb_facets_with_wrong_adjacency() const
-    {
-        return impl_->nb_facets_with_wrong_adjacency();
-    }
-
-    template < index_t dimension >
-    std::vector< PolyhedronFacet > SolidMeshAdjacency<
+    InspectionIssues< PolyhedronFacet > SolidMeshAdjacency<
         dimension >::polyhedron_facets_with_wrong_adjacency() const
     {
         return impl_->polyhedron_facets_with_wrong_adjacency();

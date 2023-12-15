@@ -44,7 +44,6 @@ add_geode_test(
         OpenGeode::mesh
         ${PROJECT_NAME}::inspector
 )
-
 add_geode_test(
     SOURCE "test-edgedcurve-colocation.cpp"
     DEPENDENCIES
@@ -134,7 +133,6 @@ add_geode_test(
         OpenGeode::mesh
         ${PROJECT_NAME}::inspector
 )
-
 add_geode_test(
     SOURCE "test-brep.cpp"
     DEPENDENCIES

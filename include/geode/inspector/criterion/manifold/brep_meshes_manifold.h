@@ -26,19 +26,59 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/mesh/core/solid_mesh.h>
 
+#include <geode/model/representation/core/brep.h>
+
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct uuid;
     class BRep;
 } // namespace geode
 
 namespace geode
 {
+    struct BRepMeshesManifoldInspectionResult
+    {
+        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
+            meshes_non_manifold_vertices;
+        absl::flat_hash_map< uuid,
+            InspectionIssues< std::array< index_t, 2 > > >
+            meshes_non_manifold_edges;
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacetVertices > >
+            meshes_non_manifold_facets;
+        absl::flat_hash_map< std::array< index_t, 2 >,
+            InspectionIssues< uuid > >
+            model_non_manifold_edges;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            for( const auto& vertices_issue : meshes_non_manifold_vertices )
+            {
+                absl::StrAppend(
+                    &message, vertices_issue.second.string(), "\n" );
+            }
+            for( const auto& edges_issue : meshes_non_manifold_edges )
+            {
+                absl::StrAppend( &message, edges_issue.second.string(), "\n" );
+            }
+            for( const auto& facets_issue : meshes_non_manifold_facets )
+            {
+                absl::StrAppend( &message, facets_issue.second.string(), "\n" );
+            }
+            for( const auto& model_edges_issue : model_non_manifold_edges )
+            {
+                absl::StrAppend(
+                    &message, model_edges_issue.second.string(), "\n" );
+            }
+            return message;
+        }
+    };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of
      * a BRep.
@@ -50,32 +90,9 @@ namespace geode
     public:
         BRepComponentMeshesManifold( const BRep& brep );
 
-        BRepComponentMeshesManifold( const BRep& brep, bool verbose );
-
         ~BRepComponentMeshesManifold();
 
-        std::vector< uuid > components_non_manifold_meshes() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_vertices() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_edges() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_facets() const;
-
-        absl::flat_hash_map< uuid, std::vector< index_t > >
-            component_meshes_non_manifold_vertices() const;
-
-        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
-            component_meshes_non_manifold_edges() const;
-
-        absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
-            component_meshes_non_manifold_facets() const;
-
-        absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
-            model_non_manifold_edges() const;
+        BRepMeshesManifoldInspectionResult inspect_brep_manifold() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

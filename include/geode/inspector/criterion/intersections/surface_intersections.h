@@ -28,6 +28,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -48,16 +49,11 @@ namespace geode
         TriangulatedSurfaceIntersections(
             const TriangulatedSurface< dimension >& mesh );
 
-        TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh, bool verbose );
-
         ~TriangulatedSurfaceIntersections();
 
         bool mesh_has_self_intersections() const;
 
-        index_t nb_intersecting_elements_pair() const;
-
-        std::vector< std::pair< index_t, index_t > >
+        InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const;
 
     private:

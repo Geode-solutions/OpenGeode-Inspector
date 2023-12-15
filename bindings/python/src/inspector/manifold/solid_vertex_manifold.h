@@ -37,11 +37,8 @@ namespace geode
             absl::StrCat( "SolidMeshVertexManifold", dimension, "D" );
         pybind11::class_< SolidMeshVertexManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_vertices_are_manifold",
                 &SolidMeshVertexManifold::mesh_vertices_are_manifold )
-            .def( "nb_non_manifold_vertices",
-                &SolidMeshVertexManifold::nb_non_manifold_vertices )
             .def( "non_manifold_vertices",
                 &SolidMeshVertexManifold::non_manifold_vertices );
     }

@@ -46,80 +46,13 @@
 #include <geode/inspector/solid_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
-ABSL_FLAG( bool, adjacency, true, "Toggle adjacency criterion" );
-ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
-ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
-ABSL_FLAG( bool, manifold_vertex, true, "Toggle manifold vertex criterion" );
-ABSL_FLAG( bool, manifold_edge, true, "Toggle manifold edge criterion" );
-ABSL_FLAG( bool, manifold_facet, true, "Toggle manifold facet criterion" );
-ABSL_FLAG( bool,
-    verbose,
-    false,
-    "Toggle verbose mode for the inspection of topology through unique "
-    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_solid( const geode::SolidMesh< dimension >& solid )
 {
-    const auto verbose = absl::GetFlag( FLAGS_verbose );
-    constexpr auto nb_tasks = 7;
-    absl::InlinedVector< async::task< void >, nb_tasks > tasks;
-    const geode::SolidMeshInspector< dimension > inspector{ solid, verbose };
-
-    if( absl::GetFlag( FLAGS_adjacency ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb_facets = inspector.nb_facets_with_wrong_adjacency();
-            geode::Logger::info( nb_facets, " facets with wrong adjacency" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_colocation ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            geode::index_t nb{ 0 };
-            for( const auto& pt_group : inspector.colocated_points_groups() )
-            {
-                nb += pt_group.size();
-            }
-            geode::Logger::info( nb, " colocated points" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_degeneration ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_degenerated_edges();
-            geode::Logger::info( nb, " degenerated edges" );
-        } ) );
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_degenerated_polyhedra();
-            geode::Logger::info( nb, " degenerated polyhedra" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_manifold_vertex ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_non_manifold_vertices();
-            geode::Logger::info( nb, " non manifold vertices" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_manifold_edge ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_non_manifold_edges();
-            geode::Logger::info( nb, " non manifold edges" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_manifold_facet ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_non_manifold_facets();
-            geode::Logger::info( nb, " non manifold facets" );
-        } ) );
-    }
-    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
-    {
-        task.get();
-    }
+    const geode::SolidMeshInspector< dimension > inspector{ solid };
+    const auto result = inspector.inspect_solid();
+    geode::Logger::info( result.string() );
 }
 
 int main( int argc, char* argv[] )

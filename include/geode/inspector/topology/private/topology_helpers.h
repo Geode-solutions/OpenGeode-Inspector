@@ -26,6 +26,7 @@
 #include <absl/types/span.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -48,12 +49,12 @@ namespace geode
         std::vector< uuid > components_uuids(
             absl::Span< const ComponentMeshVertex > components );
 
-        std::pair< std::vector< index_t >, std::vector< std::string > >
+        InspectionIssues< index_t >
             brep_component_vertices_not_associated_to_unique_vertices(
                 const BRep& brep,
                 const ComponentID& component_id,
                 const VertexSet& component_mesh );
-        std::pair< std::vector< index_t >, std::vector< std::string > >
+        InspectionIssues< index_t >
             section_component_vertices_are_associated_to_unique_vertices(
                 const Section& section,
                 const ComponentID& component_id,

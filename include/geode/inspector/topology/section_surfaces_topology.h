@@ -24,18 +24,19 @@
 #pragma once
 #include <absl/types/optional.h>
 
+#include <geode/basic/uuid.h>
+
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct uuid;
     class Section;
 } // namespace geode
 
 namespace geode
 {
-    struct SectionSurfacesInspectionResult
+    struct SectionSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of surface without mesh."
@@ -53,6 +54,26 @@ namespace geode
                 "a "
                 "surface border."
             };
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, surfaces_not_meshed.string(), "\n" );
+            for( const auto& surface_uv_issue :
+                surfaces_not_linked_to_a_unique_vertex )
+            {
+                absl::StrAppend(
+                    &message, surface_uv_issue.second.string(), "\n" );
+            }
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                    .string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                    .string(),
+                "\n" );
+            return message;
+        }
     };
     /*!
      * Class for inspecting the topology of a Section model surfaces through
@@ -80,7 +101,7 @@ namespace geode
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
-        SectionSurfacesInspectionResult inspect_surfaces() const;
+        SectionSurfacesTopologyInspectionResult inspect_surfaces() const;
 
     private:
         const Section& section_;

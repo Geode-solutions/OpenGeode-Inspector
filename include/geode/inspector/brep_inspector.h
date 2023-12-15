@@ -24,12 +24,7 @@
 #pragma once
 
 #include <geode/inspector/common.h>
-#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
-#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
-#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
-#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
-#include <geode/inspector/criterion/intersections/model_intersections.h>
-#include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
+#include <geode/inspector/criterion/brep_meshes_inspector.h>
 #include <geode/inspector/mixin/add_inspectors.h>
 #include <geode/inspector/topology/brep_topology.h>
 
@@ -40,25 +35,33 @@ namespace geode
 
 namespace geode
 {
+    struct BRepInspectionResult
+    {
+        BRepMeshesInspectionResult meshes;
+        BRepTopologyInspectionResult topology;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, meshes.string(), "\n" );
+            absl::StrAppend( &message, topology.string(), "\n" );
+            return message;
+        }
+    };
     /*!
      * Class for inspecting a BRep model
      * @extends BRepTopologyInspector
      */
     class opengeode_inspector_inspector_api BRepInspector
         : public AddInspectors< BRep,
-              BRepTopologyInspector,
-              BRepUniqueVerticesColocation,
-              BRepComponentMeshesAdjacency,
-              BRepComponentMeshesColocation,
-              BRepComponentMeshesDegeneration,
-              BRepComponentMeshesManifold,
-              BRepMeshesIntersections >
+              BRepMeshesInspector,
+              BRepTopologyInspector >
     {
         OPENGEODE_DISABLE_COPY( BRepInspector );
 
     public:
         BRepInspector( const BRep& brep );
 
-        BRepInspector( const BRep& brep, bool verbose );
+        BRepInspectionResult inspect_brep() const;
     };
 } // namespace geode

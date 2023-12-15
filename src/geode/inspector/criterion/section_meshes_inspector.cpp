@@ -20,32 +20,32 @@
  * SOFTWARE.
  *
  */
-#include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/surface_mesh.h>
-
-#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/criterion/section_meshes_inspector.h>
 
 namespace geode
 {
-    template < index_t dimension >
-    void do_define_surface_vertex_manifold( pybind11::module& module )
+
+    SectionMeshesInspector::SectionMeshesInspector( const Section& section )
+        : SectionUniqueVerticesColocation( section ),
+          SectionComponentMeshesAdjacency( section ),
+          SectionComponentMeshesColocation( section ),
+          SectionComponentMeshesDegeneration( section ),
+          SectionComponentMeshesManifold( section ),
+          SectionMeshesIntersections( section )
     {
-        using SurfaceMesh = SurfaceMesh< dimension >;
-        using SurfaceMeshVertexManifold =
-            SurfaceMeshVertexManifold< dimension >;
-        const auto name =
-            absl::StrCat( "SurfaceMeshVertexManifold", dimension, "D" );
-        pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
-            .def( "mesh_vertices_are_manifold",
-                &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
-            .def( "non_manifold_vertices",
-                &SurfaceMeshVertexManifold::non_manifold_vertices );
     }
-    void define_surface_vertex_manifold( pybind11::module& module )
+
+    SectionMeshesInspectionResult
+        SectionMeshesInspector::inspect_section_meshes() const
     {
-        do_define_surface_vertex_manifold< 2 >( module );
-        do_define_surface_vertex_manifold< 3 >( module );
+        SectionMeshesInspectionResult result;
+        result.unique_vertices_colocation = inspect_unique_vertices();
+        result.meshes_colocation = inspect_meshes_point_colocations();
+        result.adjacencies = inspect_section_meshes_adjacencies();
+        result.degenerations = inspect_elements();
+        result.intersections = inspect_intersections();
+        result.manifolds = inspect_section_manifold();
+        return result;
     }
 } // namespace geode

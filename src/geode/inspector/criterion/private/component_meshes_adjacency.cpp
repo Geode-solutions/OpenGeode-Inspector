@@ -37,62 +37,24 @@ namespace geode
 {
     template < index_t dimension, typename Model >
     ComponentMeshesAdjacency< dimension, Model >::ComponentMeshesAdjacency(
-        const Model& model, bool verbose )
-        : model_( model ), verbose_( verbose )
+        const Model& model )
+        : model_( model )
     {
     }
 
     template < index_t dimension, typename Model >
-    std::vector< uuid > ComponentMeshesAdjacency< dimension,
-        Model >::surfaces_with_wrong_adjacencies() const
-    {
-        std::vector< uuid > comps_with_wrong_adjacencies;
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
-                verbose_ };
-            if( inspector.mesh_has_wrong_adjacencies() )
-            {
-                comps_with_wrong_adjacencies.push_back( surface.id() );
-            }
-        }
-        return comps_with_wrong_adjacencies;
-    }
-
-    template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, index_t > ComponentMeshesAdjacency< dimension,
-        Model >::surfaces_nb_edges_with_wrong_adjacencies() const
-    {
-        absl::flat_hash_map< uuid, index_t > components_nb_wrong_adjacencies;
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
-                verbose_ };
-            const auto nb_wrong_adjacencies =
-                inspector.nb_edges_with_wrong_adjacency();
-            if( nb_wrong_adjacencies != 0 )
-            {
-                components_nb_wrong_adjacencies.emplace(
-                    surface.id(), nb_wrong_adjacencies );
-            }
-        }
-        return components_nb_wrong_adjacencies;
-    }
-
-    template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+    absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
         ComponentMeshesAdjacency< dimension,
             Model >::surfaces_edges_with_wrong_adjacencies() const
     {
-        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             components_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh(),
-                verbose_ };
+            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
             auto wrong_adjacencies =
                 inspector.polygon_edges_with_wrong_adjacency();
-            if( !wrong_adjacencies.empty() )
+            if( wrong_adjacencies.number() != 0 )
             {
                 components_wrong_adjacencies.emplace(
                     surface.id(), std::move( wrong_adjacencies ) );
@@ -105,12 +67,6 @@ namespace geode
     const Model& ComponentMeshesAdjacency< dimension, Model >::model() const
     {
         return model_;
-    }
-
-    template < index_t dimension, typename Model >
-    bool ComponentMeshesAdjacency< dimension, Model >::verbose() const
-    {
-        return verbose_;
     }
 
     template class opengeode_inspector_inspector_api

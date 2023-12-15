@@ -49,6 +49,18 @@ namespace geode
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
             "Unique vertices not linked to any component"
         };
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, corners.string(), "\n" );
+            absl::StrAppend( &message, lines.string(), "\n" );
+            absl::StrAppend( &message, surfaces.string(), "\n" );
+            absl::StrAppend( &message, blocks.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_not_linked_to_any_component.string(), "\n" );
+            return message;
+        }
     };
     /*!
      * Class for inspecting the topology of a BRep model corners
@@ -63,7 +75,6 @@ namespace geode
 
     public:
         BRepTopologyInspector( const BRep& brep );
-        BRepTopologyInspector( const BRep& brep, bool verbose );
 
         ~BRepTopologyInspector();
 
@@ -81,6 +92,5 @@ namespace geode
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
-        const BRep& brep_;
     };
 } // namespace geode

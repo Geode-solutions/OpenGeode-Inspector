@@ -29,6 +29,17 @@
 
 namespace geode
 {
+    struct PointSetInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            return message;
+        }
+    };
+
     /*!
      * Class for inspecting a PointSet
      * @extends PointSetColocation
@@ -43,7 +54,7 @@ namespace geode
     public:
         PointSetInspector( const PointSet< dimension >& mesh );
 
-        PointSetInspector( const PointSet< dimension >& mesh, bool verbose );
+        PointSetInspectionResult inspect_pointset() const;
     };
     ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

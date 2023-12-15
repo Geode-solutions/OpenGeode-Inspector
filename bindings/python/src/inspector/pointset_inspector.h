@@ -36,11 +36,17 @@ namespace geode
         const auto name = absl::StrCat( "PointSetInspector", dimension, "D" );
         pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
             module, name.c_str() )
-            .def( pybind11::init< const PointSet& >() )
-            .def( pybind11::init< const PointSet&, bool >() );
+            .def( pybind11::init< const PointSet& >() );
     }
     void define_pointset_inspector( pybind11::module& module )
     {
+        pybind11::class_< PointSetInspectionResult >(
+            module, "PointSetInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "colocated_points_groups",
+                &PointSetInspectionResult::colocated_points_groups )
+            .def( "string", &PointSetInspectionResult::string );
+
         do_define_pointset_inspector< 2 >( module );
         do_define_pointset_inspector< 3 >( module );
     }

@@ -54,6 +54,7 @@ add_geode_python_binding(
         "section_inspector.h"
         "solid_inspector.h"
         "surface_inspector.h"
+        "information.h"
     DEPENDENCIES
         ${PROJECT_NAME}::inspector
 )

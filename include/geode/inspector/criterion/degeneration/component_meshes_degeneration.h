@@ -26,23 +26,43 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
     class Section;
     class BRep;
-    struct uuid;
 } // namespace geode
 
 namespace geode
 {
     struct DegeneratedElements
     {
-        std::vector< index_t > degenerated_edges;
-        std::vector< index_t > degenerated_polygons;
-        std::vector< index_t > degenerated_polyhedra;
+        InspectionIssues< index_t > degenerated_edges;
+        InspectionIssues< index_t > degenerated_polygons;
+        InspectionIssues< index_t > degenerated_polyhedra;
+    };
+
+    struct DegeneratedElementsInspectionResult
+    {
+        absl::flat_hash_map< uuid, DegeneratedElements > elements;
+        std::string string() const
+        {
+            std::string message{ "" };
+            for( const auto& issue : elements )
+            {
+                absl::StrAppend(
+                    &message, issue.second.degenerated_edges.string(), "\n" );
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polygons.string(), "\n" );
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polyhedra.string(), "\n" );
+            }
+            return message;
+        }
     };
 
     /*!
@@ -57,17 +77,9 @@ namespace geode
     public:
         ComponentMeshesDegeneration( const Model& model );
 
-        ComponentMeshesDegeneration( const Model& model, bool verbose );
-
         ~ComponentMeshesDegeneration();
 
-        std::vector< uuid > degenerated_component_meshes() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            components_nb_degenerated_elements() const;
-
-        absl::flat_hash_map< uuid, DegeneratedElements >
-            components_degenerated_elements() const;
+        DegeneratedElementsInspectionResult inspect_elements() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

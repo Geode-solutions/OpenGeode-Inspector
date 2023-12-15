@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -35,6 +36,22 @@ namespace geode
 
 namespace geode
 {
+    struct UniqueVerticesInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > >
+            colocated_unique_vertices_groups;
+        InspectionIssues< index_t > unique_vertices_linked_to_different_points;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend(
+                &message, colocated_unique_vertices_groups.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_different_points.string(), "\n" );
+            return message;
+        }
+    };
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep
      * or Section)
@@ -47,23 +64,13 @@ namespace geode
     public:
         UniqueVerticesColocation( const Model& model );
 
-        UniqueVerticesColocation( const Model& model, bool verbose );
-
         ~UniqueVerticesColocation();
 
         bool model_has_unique_vertices_linked_to_different_points() const;
 
         bool model_has_colocated_unique_vertices() const;
 
-        index_t nb_colocated_unique_vertices() const;
-
-        index_t nb_unique_vertices_linked_to_different_points() const;
-
-        std::vector< std::vector< index_t > >
-            colocated_unique_vertices_groups() const;
-
-        std::vector< index_t >
-            unique_vertices_linked_to_different_points() const;
+        UniqueVerticesInspectionResult inspect_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

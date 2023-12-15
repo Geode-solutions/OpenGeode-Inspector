@@ -47,10 +47,9 @@ void check_non_degeneration2D()
     const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 0,
         "[Test] Surface has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
-        "[Test] Surface has degenerated edges when it should have none." );
 }
 
 void check_degeneration_by_colocalisation2D()
@@ -69,10 +68,11 @@ void check_degeneration_by_colocalisation2D()
     const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] Surface has wrong number of degenerated edges." );
     surface->enable_edges();
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
                              == surface->edges().edge_from_vertices( { 1, 3 } ),
         "[Test] Surface has wrong degenerated edges." );
 }
@@ -92,10 +92,11 @@ void check_degeneration_by_point_multiple_presence2D()
     const geode::SurfaceMeshDegeneration2D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Surface is not shown degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] Surface has the wrong number of degenerated edges." );
     surface->enable_edges();
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
                              == surface->edges().edge_from_vertices( { 1, 1 } ),
         "[Test] Surface shows the wrong degenerated edges." );
 }
@@ -115,10 +116,9 @@ void check_non_degeneration3D()
     const geode::SurfaceMeshDegeneration3D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) Surface is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 0,
         "[Test] (3D) Surface has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
-        "[Test] (3D) Surface has degenerated edges when it should have none." );
 }
 
 void check_degeneration_by_colocalisation3D()
@@ -138,10 +138,11 @@ void check_degeneration_by_colocalisation3D()
     const geode::SurfaceMeshDegeneration3D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) Surface is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] (3D) Surface has wrong number of degenerated edges." );
     surface->enable_edges();
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
                              == surface->edges().edge_from_vertices( { 1, 3 } ),
         "[Test] (3D) Surface has wrong degenerated edges." );
 }
@@ -161,10 +162,11 @@ void check_degeneration_by_point_multiple_presence3D()
     const geode::SurfaceMeshDegeneration3D degeneration_inspector{ *surface };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) Surface is not shown degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] (3D) Surface has the wrong number of degenerated edges." );
     surface->enable_edges();
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
                              == surface->edges().edge_from_vertices( { 1, 1 } ),
         "[Test] (3D) Surface shows the wrong degenerated edges." );
 }

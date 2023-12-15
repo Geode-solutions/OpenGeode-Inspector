@@ -142,6 +142,54 @@ namespace geode
             return result;
         }
 
+        bool section_topology_is_valid(
+            const SectionTopologyInspector& section_topology_inspector ) const
+        {
+            if( section_.nb_unique_vertices() == 0 )
+            {
+                return false;
+            }
+            if( !section_meshed_components_are_linked_to_unique_vertices() )
+            {
+                return false;
+            }
+            if( !section_unique_vertices_are_linked_to_a_component_vertex() )
+            {
+                return false;
+            }
+            for( const auto unique_vertex_id :
+                Range{ section_.nb_unique_vertices() } )
+            {
+                if( !section_topology_inspector
+                         .section_corner_topology_is_valid( unique_vertex_id )
+                    || !section_topology_inspector
+                            .section_lines_topology_is_valid( unique_vertex_id )
+                    || !section_topology_inspector
+                            .section_vertex_surfaces_topology_is_valid(
+                                unique_vertex_id ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        SectionTopologyInspectionResult inspect_section_topology(
+            const SectionTopologyInspector& section_topology_inspector ) const
+        {
+            SectionTopologyInspectionResult result;
+            result.corners =
+                section_topology_inspector.inspect_corners_topology();
+            result.lines = section_topology_inspector.inspect_lines_topology();
+            result.surfaces = section_topology_inspector.inspect_surfaces();
+            const auto res = unique_vertices_not_linked_to_a_component_vertex();
+            result.unique_vertices_not_linked_to_any_component.problems =
+                std::move( res.first );
+            result.unique_vertices_not_linked_to_any_component.messages =
+                std::move( res.second );
+            return result;
+        }
+
     private:
         const Section& section_;
     };
@@ -150,49 +198,14 @@ namespace geode
         : SectionCornersTopology( section ),
           SectionLinesTopology( section ),
           SectionSurfacesTopology( section ),
-          impl_( section ),
-          section_( section )
-    {
-    }
-
-    SectionTopologyInspector::SectionTopologyInspector(
-        const Section& section, bool verbose )
-        : SectionCornersTopology( section ),
-          SectionLinesTopology( section ),
-          SectionSurfacesTopology( section ),
-          impl_( section ),
-          section_( section )
+          impl_( section )
     {
     }
 
     SectionTopologyInspector::~SectionTopologyInspector() {}
-
     bool SectionTopologyInspector::section_topology_is_valid() const
     {
-        if( section_.nb_unique_vertices() == 0 )
-        {
-            return false;
-        }
-        if( !section_meshed_components_are_linked_to_unique_vertices() )
-        {
-            return false;
-        }
-        if( !section_unique_vertices_are_linked_to_a_component_vertex() )
-        {
-            return false;
-        }
-        for( const auto unique_vertex_id :
-            Range{ section_.nb_unique_vertices() } )
-        {
-            if( !section_corner_topology_is_valid( unique_vertex_id )
-                || !section_lines_topology_is_valid( unique_vertex_id )
-                || !section_vertex_surfaces_topology_is_valid(
-                    unique_vertex_id ) )
-            {
-                return false;
-            }
-        }
-        return true;
+        return impl_->section_topology_is_valid( *this );
     }
 
     bool SectionTopologyInspector::
@@ -208,19 +221,9 @@ namespace geode
             ->section_unique_vertices_are_linked_to_a_component_vertex();
     }
 
-    SectionInspectionResult
+    SectionTopologyInspectionResult
         SectionTopologyInspector::inspect_section_topology() const
     {
-        SectionInspectionResult result;
-        result.corners = inspect_corners_topology();
-        result.lines = inspect_lines_topology();
-        result.surfaces = inspect_surfaces();
-        const auto res =
-            impl_->unique_vertices_not_linked_to_a_component_vertex();
-        result.unique_vertices_not_linked_to_any_component.problems =
-            std::move( res.first );
-        result.unique_vertices_not_linked_to_any_component.messages =
-            std::move( res.second );
-        return result;
+        return impl_->inspect_section_topology( *this );
     }
 } // namespace geode

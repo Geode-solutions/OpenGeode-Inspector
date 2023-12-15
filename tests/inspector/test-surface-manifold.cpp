@@ -49,10 +49,9 @@ void check_vertex_manifold2D()
     const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_vertices_are_manifold(),
         "[Test] Surface is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_vertices() == 0,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_vertices().number() == 0,
         "[Test] Surface has more non manifold vertices than it should." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_vertices().empty(),
-        "[Test] Surface vertices are shown non manifold whereas they are." );
 }
 
 void check_vertex_non_manifold2D()
@@ -71,9 +70,11 @@ void check_vertex_non_manifold2D()
     const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_vertices_are_manifold(),
         "[Test] Surface vertices are shown manifold whereas one is not." );
-    OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_vertices() == 1,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_vertices().number() == 1,
         "[Test] Surface has wrong number of non manifold vertices." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_vertices()[0] == 1,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_vertices().problems[0] == 1,
         "[Test] Surface shows wrong non manifold vertex id." );
 }
 
@@ -98,10 +99,8 @@ void check_edge_manifold2D()
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_edges_are_manifold(),
         "[Test] Surface is shown non-manifold through edges whereas it is." );
-    OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_edges() == 0,
+    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().number() == 0,
         "[Test] Surface has more non manifold edges than it should." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().empty(),
-        "[Test] Surface edges are shown non manifold whereas they are." );
 }
 
 void check_edge_non_manifold2D()
@@ -124,11 +123,11 @@ void check_edge_non_manifold2D()
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),
         "[Test] Surface is shown manifold through edges whereas it is not." );
-    OPENGEODE_EXCEPTION( manifold_inspector.nb_non_manifold_edges() == 1,
+    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().number() == 1,
         "[Test] Surface has wrong number of non manifold edges." );
     const std::array< geode::index_t, 2 > pt1_pt2_edge{ 1, 2 };
     OPENGEODE_EXCEPTION(
-        manifold_inspector.non_manifold_edges()[0] == pt1_pt2_edge,
+        manifold_inspector.non_manifold_edges().problems[0] == pt1_pt2_edge,
         "[Test] Surface edges are shown non manifold whereas they are." );
 }
 

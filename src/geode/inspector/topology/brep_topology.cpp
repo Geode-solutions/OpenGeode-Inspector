@@ -39,6 +39,11 @@
 
 namespace
 {
+    bool brep_corner_is_meshed(
+        const geode::BRep& brep, const geode::uuid& corner_id )
+    {
+        return brep.corner( corner_id ).mesh().nb_vertices() != 0;
+    }
 
     bool brep_line_is_meshed(
         const geode::BRep& brep, const geode::uuid& line_id )
@@ -87,8 +92,9 @@ namespace geode
         bool brep_meshed_components_are_linked_to_unique_vertices() const
         {
             for( const auto& corner : brep_.corners() )
-            { // why not testing that the corner is meshed?
-                if( !brep_component_vertices_are_associated_to_unique_vertices(
+            {
+                if( brep_corner_is_meshed( brep_, corner.id() )
+                    && !brep_component_vertices_are_associated_to_unique_vertices(
                         brep_, corner.component_id(), corner.mesh() ) )
                 {
                     return false;
@@ -154,6 +160,56 @@ namespace geode
             return result;
         }
 
+        bool brep_topology_is_valid(
+            const BRepTopologyInspector& brep_topology_inspector ) const
+        {
+            if( brep_.nb_unique_vertices() == 0 )
+            {
+                return false;
+            }
+            if( !brep_meshed_components_are_linked_to_unique_vertices() )
+            {
+                return false;
+            }
+            if( !brep_unique_vertices_are_linked_to_a_component_vertex() )
+            {
+                return false;
+            }
+            for( const auto unique_vertex_id :
+                Range{ brep_.nb_unique_vertices() } )
+            {
+                if( !brep_topology_inspector.brep_corner_topology_is_valid(
+                        unique_vertex_id )
+                    || !brep_topology_inspector.brep_lines_topology_is_valid(
+                        unique_vertex_id )
+                    || !brep_topology_inspector.brep_surfaces_topology_is_valid(
+                        unique_vertex_id )
+                    || !brep_topology_inspector.brep_blocks_topology_is_valid(
+                        unique_vertex_id ) )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        BRepTopologyInspectionResult inspect_brep_topology(
+            const BRepTopologyInspector& brep_topology_inspector ) const
+        {
+            BRepTopologyInspectionResult result;
+            result.corners = brep_topology_inspector.inspect_corners_topology();
+            result.lines = brep_topology_inspector.inspect_lines_topology();
+            result.surfaces =
+                brep_topology_inspector.inspect_surfaces_topology();
+            result.blocks = brep_topology_inspector.inspect_blocks();
+            const auto res = unique_vertices_not_linked_to_a_component_vertex();
+            result.unique_vertices_not_linked_to_any_component.problems =
+                std::move( res.first );
+            result.unique_vertices_not_linked_to_any_component.messages =
+                std::move( res.second );
+            return result;
+        }
+
     private:
         const BRep& brep_;
     };
@@ -163,18 +219,7 @@ namespace geode
           BRepLinesTopology( brep ),
           BRepSurfacesTopology( brep ),
           BRepBlocksTopology( brep ),
-          impl_( brep ),
-          brep_( brep )
-    {
-    }
-    BRepTopologyInspector::BRepTopologyInspector(
-        const BRep& brep, bool verbose )
-        : BRepCornersTopology( brep ),
-          BRepLinesTopology( brep ),
-          BRepSurfacesTopology( brep ),
-          BRepBlocksTopology( brep ),
-          impl_( brep ),
-          brep_( brep )
+          impl_( brep )
     {
     }
 
@@ -182,29 +227,7 @@ namespace geode
 
     bool BRepTopologyInspector::brep_topology_is_valid() const
     {
-        if( brep_.nb_unique_vertices() == 0 )
-        {
-            return false;
-        }
-        if( !brep_meshed_components_are_linked_to_unique_vertices() )
-        {
-            return false;
-        }
-        if( !brep_unique_vertices_are_linked_to_a_component_vertex() )
-        {
-            return false;
-        }
-        for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
-        {
-            if( !brep_corner_topology_is_valid( unique_vertex_id )
-                || !brep_lines_topology_is_valid( unique_vertex_id )
-                || !brep_surfaces_topology_is_valid( unique_vertex_id )
-                || !brep_blocks_topology_is_valid( unique_vertex_id ) )
-            {
-                return false;
-            }
-        }
-        return true;
+        return impl_->brep_topology_is_valid( *this );
     }
 
     bool BRepTopologyInspector::
@@ -222,17 +245,6 @@ namespace geode
     BRepTopologyInspectionResult
         BRepTopologyInspector::inspect_brep_topology() const
     {
-        BRepTopologyInspectionResult result;
-        result.corners = inspect_corners_topology();
-        result.lines = inspect_lines_topology();
-        result.surfaces = inspect_surfaces_topology();
-        result.blocks = inspect_blocks();
-        const auto res =
-            impl_->unique_vertices_not_linked_to_a_component_vertex();
-        result.unique_vertices_not_linked_to_any_component.problems =
-            std::move( res.first );
-        result.unique_vertices_not_linked_to_any_component.messages =
-            std::move( res.second );
-        return result;
+        return impl_->inspect_brep_topology( *this );
     }
 } // namespace geode

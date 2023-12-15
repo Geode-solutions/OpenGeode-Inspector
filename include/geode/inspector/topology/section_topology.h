@@ -38,15 +38,25 @@ namespace geode
 
 namespace geode
 {
-    struct SectionInspectionResult
+    struct SectionTopologyInspectionResult
     {
-        SectionCornersInspectionResult corners;
-        SectionLinesInspectionResult lines;
-        SectionSurfacesInspectionResult surfaces;
+        SectionCornersTopologyInspectionResult corners;
+        SectionLinesTopologyInspectionResult lines;
+        SectionSurfacesTopologyInspectionResult surfaces;
 
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
             "Unique vertices not linked to any component"
         };
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, corners.string(), "\n" );
+            absl::StrAppend( &message, lines.string(), "\n" );
+            absl::StrAppend( &message, surfaces.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_not_linked_to_any_component.string(), "\n" );
+            return message;
+        }
     };
 
     /*!
@@ -61,7 +71,6 @@ namespace geode
 
     public:
         SectionTopologyInspector( const Section& section );
-        SectionTopologyInspector( const Section& section, bool verbose );
         ~SectionTopologyInspector();
 
         /*!
@@ -74,10 +83,9 @@ namespace geode
 
         bool section_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        SectionInspectionResult inspect_section_topology() const;
+        SectionTopologyInspectionResult inspect_section_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
-        const Section& section_;
     };
 } // namespace geode

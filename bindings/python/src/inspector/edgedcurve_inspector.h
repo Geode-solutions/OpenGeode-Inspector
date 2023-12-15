@@ -38,11 +38,19 @@ namespace geode
         pybind11::class_< EdgedCurveInspector,
             EdgedCurveColocation< dimension >,
             EdgedCurveDegeneration< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const EdgedCurve& >() )
-            .def( pybind11::init< const EdgedCurve&, bool >() );
+            .def( pybind11::init< const EdgedCurve& >() );
     }
     void define_edgedcurve_inspector( pybind11::module& module )
     {
+        pybind11::class_< EdgedCurveInspectionResult >(
+            module, "EdgedCurveInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "colocated_points_groups",
+                &EdgedCurveInspectionResult::colocated_points_groups )
+            .def_readwrite( "degenerated_edges",
+                &EdgedCurveInspectionResult::degenerated_edges )
+            .def( "string", &EdgedCurveInspectionResult::string );
+
         do_define_edgedcurve_inspector< 2 >( module );
         do_define_edgedcurve_inspector< 3 >( module );
     }

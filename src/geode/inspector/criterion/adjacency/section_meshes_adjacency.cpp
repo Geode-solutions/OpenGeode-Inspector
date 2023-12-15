@@ -26,8 +26,6 @@
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
-#include <geode/mesh/core/surface_mesh.h>
-
 #include <geode/model/representation/core/section.h>
 
 #include <geode/inspector/criterion/private/component_meshes_adjacency.h>
@@ -38,43 +36,27 @@ namespace geode
         : public ComponentMeshesAdjacency< 2, Section >
     {
     public:
-        Impl( const Section& brep, bool verbose )
-            : ComponentMeshesAdjacency< 2, Section >( brep, verbose )
+        Impl( const Section& section )
+            : ComponentMeshesAdjacency< 2, Section >( section )
         {
         }
     };
 
     SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
         const Section& model )
-        : impl_{ model, false }
-    {
-    }
-
-    SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
-        const Section& model, bool verbose )
-        : impl_{ model, verbose }
+        : impl_{ model }
     {
     }
 
     SectionComponentMeshesAdjacency::~SectionComponentMeshesAdjacency() {}
 
-    std::vector< uuid >
-        SectionComponentMeshesAdjacency::components_with_wrong_adjacencies()
+    SectionMeshesAdjacencyInspectionResult
+        SectionComponentMeshesAdjacency::inspect_section_meshes_adjacencies()
             const
     {
-        return impl_->surfaces_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, index_t > SectionComponentMeshesAdjacency::
-        surfaces_nb_edges_with_wrong_adjacencies() const
-    {
-        return impl_->surfaces_nb_edges_with_wrong_adjacencies();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
-        SectionComponentMeshesAdjacency::surfaces_edges_with_wrong_adjacencies()
-            const
-    {
-        return impl_->surfaces_edges_with_wrong_adjacencies();
+        SectionMeshesAdjacencyInspectionResult result;
+        result.surfaces_edges_with_wrong_adjacencies =
+            impl_->surfaces_edges_with_wrong_adjacencies();
+        return result;
     }
 } // namespace geode

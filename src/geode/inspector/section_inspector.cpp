@@ -29,25 +29,16 @@ namespace geode
 {
     SectionInspector::SectionInspector( const Section& section )
         : AddInspectors< Section,
-            SectionTopologyInspector,
-            SectionUniqueVerticesColocation,
-            SectionComponentMeshesAdjacency,
-            SectionComponentMeshesColocation,
-            SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold,
-            SectionMeshesIntersections >{ section }
+            SectionMeshesInspector,
+            SectionTopologyInspector >{ section }
     {
     }
 
-    SectionInspector::SectionInspector( const Section& section, bool verbose )
-        : AddInspectors< Section,
-            SectionTopologyInspector,
-            SectionUniqueVerticesColocation,
-            SectionComponentMeshesAdjacency,
-            SectionComponentMeshesColocation,
-            SectionComponentMeshesDegeneration,
-            SectionComponentMeshesManifold,
-            SectionMeshesIntersections >{ section, verbose }
+    SectionInspectionResult SectionInspector::inspect_section() const
     {
+        SectionInspectionResult result;
+        result.meshes = inspect_section_meshes();
+        result.topology = inspect_section_topology();
+        return result;
     }
 } // namespace geode

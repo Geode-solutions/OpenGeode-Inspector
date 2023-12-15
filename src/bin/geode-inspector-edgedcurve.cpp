@@ -40,43 +40,14 @@
 #include <geode/inspector/edgedcurve_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
-ABSL_FLAG( bool, colocation, true, "Toggle colocation criterion" );
-ABSL_FLAG( bool, degeneration, true, "Toggle degeneration criterion" );
-ABSL_FLAG( bool,
-    verbose,
-    false,
-    "Toggle verbose mode for the inspection of topology through unique "
-    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
 {
-    const auto verbose = absl::GetFlag( FLAGS_verbose );
-    absl::InlinedVector< async::task< void >, 2 > tasks;
-    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve,
-        verbose };
-    if( absl::GetFlag( FLAGS_colocation ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            geode::index_t nb{ 0 };
-            for( const auto& pt_group : inspector.colocated_points_groups() )
-            {
-                nb += pt_group.size();
-            }
-            geode::Logger::info( nb, " colocated points" );
-        } ) );
-    }
-    if( absl::GetFlag( FLAGS_degeneration ) )
-    {
-        tasks.emplace_back( async::spawn( [&inspector] {
-            const auto nb = inspector.nb_degenerated_edges();
-            geode::Logger::info( nb, " degenerated edges" );
-        } ) );
-    }
-    for( auto& task : async::when_all( tasks.begin(), tasks.end() ).get() )
-    {
-        task.get();
-    }
+    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve };
+    const auto result = inspector.inspect_edgedcurve();
+
+    geode::Logger::info( result.string() );
 }
 
 int main( int argc, char* argv[] )

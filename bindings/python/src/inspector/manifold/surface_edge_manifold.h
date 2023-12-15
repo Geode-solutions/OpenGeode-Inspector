@@ -39,11 +39,8 @@ namespace geode
             absl::StrCat( "SurfaceMeshEdgeManifold", dimension, "D" );
         pybind11::class_< SurfaceMeshEdgeManifold >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
-            .def( pybind11::init< const SurfaceMesh&, bool >() )
             .def( "mesh_edges_are_manifold",
                 &SurfaceMeshEdgeManifold::mesh_edges_are_manifold )
-            .def( "nb_non_manifold_edges",
-                &SurfaceMeshEdgeManifold::nb_non_manifold_edges )
             .def( "non_manifold_edges",
                 &SurfaceMeshEdgeManifold::non_manifold_edges );
     }

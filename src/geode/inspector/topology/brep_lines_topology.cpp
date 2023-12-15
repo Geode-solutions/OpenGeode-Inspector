@@ -240,13 +240,10 @@ namespace geode
             auto line_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
-            result.lines_not_linked_to_a_unique_vertex.emplace_back( line.id(),
-                absl::StrCat( "Line ", line.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.lines_not_linked_to_a_unique_vertex.back().second.problems =
-                std::move( line_result.first );
-            result.lines_not_linked_to_a_unique_vertex.back().second.messages =
-                std::move( line_result.second );
+            line_result.description = absl::StrCat( "Line ", line.id().string(),
+                " has mesh vertices not linked to a unique vertex." );
+            result.lines_not_linked_to_a_unique_vertex.emplace_back(
+                line.id(), line_result );
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {

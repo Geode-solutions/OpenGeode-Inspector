@@ -208,10 +208,10 @@ namespace geode
         return absl::nullopt;
     }
 
-    SectionLinesInspectionResult
+    SectionLinesTopologyInspectionResult
         SectionLinesTopology::inspect_lines_topology() const
     {
-        SectionLinesInspectionResult result;
+        SectionLinesTopologyInspectionResult result;
         for( const auto& line : section_.lines() )
         {
             if( section_.line( line.id() ).mesh().nb_vertices() == 0 )
@@ -223,13 +223,10 @@ namespace geode
             auto line_result = detail::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
-            result.lines_not_linked_to_a_unique_vertex.emplace_back( line.id(),
-                absl::StrCat( "Line ", line.id().string(),
-                    " has mesh vertices not linked to a unique vertex." ) );
-            result.lines_not_linked_to_a_unique_vertex.back().second.problems =
-                std::move( line_result.first );
-            result.lines_not_linked_to_a_unique_vertex.back().second.messages =
-                std::move( line_result.second );
+            line_result.description = absl::StrCat( "Line ", line.id().string(),
+                " has mesh vertices not linked to a unique vertex." );
+            result.lines_not_linked_to_a_unique_vertex.emplace_back(
+                line.id(), line_result );
         }
         for( const auto unique_vertex_id :
             Range{ section_.nb_unique_vertices() } )

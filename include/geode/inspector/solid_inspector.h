@@ -34,6 +34,30 @@
 
 namespace geode
 {
+    struct SolidInspectionResult
+    {
+        InspectionIssues< PolyhedronFacet >
+            polyhedron_facets_with_wrong_adjacency;
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        InspectionIssues< index_t > degenerated_edges;
+        InspectionIssues< index_t > degenerated_polyhedra;
+        InspectionIssues< index_t > non_manifold_vertices;
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
+        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets;
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message,
+                polyhedron_facets_with_wrong_adjacency.string(), "\n" );
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polyhedra.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_facets.string(), "\n" );
+            return message;
+        }
+    };
     /*!
      * Class for inspecting a SolidMesh
      * @extends SolidMeshColocation
@@ -54,8 +78,7 @@ namespace geode
 
     public:
         SolidMeshInspector( const SolidMesh< dimension >& mesh );
-
-        SolidMeshInspector( const SolidMesh< dimension >& mesh, bool verbose );
+        SolidInspectionResult inspect_solid() const;
     };
     ALIAS_3D( SolidMeshInspector );
 } // namespace geode

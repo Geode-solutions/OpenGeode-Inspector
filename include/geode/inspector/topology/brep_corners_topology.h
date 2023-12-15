@@ -27,12 +27,13 @@
 
 #include <absl/types/optional.h>
 
+#include <geode/basic/uuid.h>
+
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct uuid;
     class BRep;
 } // namespace geode
 
@@ -61,8 +62,33 @@ namespace geode
         InspectionIssues< index_t >
             unique_vertices_liked_to_not_boundary_line_corner{
                 "Indices of unique vertices linked to conner on a line but "
-                "without boundary status.)"
+                "without boundary status."
             };
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
+            for( const auto& corner_uv_issue :
+                corners_not_linked_to_a_unique_vertex )
+            {
+                absl::StrAppend(
+                    &message, corner_uv_issue.second.string(), "\n" );
+            }
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiple_corners.string(), "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiple_internals_corner.string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_not_internal_nor_boundary_corner
+                    .string(),
+                "\n" );
+            absl::StrAppend( &message,
+                unique_vertices_liked_to_not_boundary_line_corner.string(),
+                "\n" );
+            return message;
+        }
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology

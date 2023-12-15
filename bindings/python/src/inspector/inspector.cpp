@@ -59,6 +59,7 @@
 
 #include "brep_inspector.h"
 #include "edgedcurve_inspector.h"
+#include "information.h"
 #include "pointset_inspector.h"
 #include "section_inspector.h"
 #include "solid_inspector.h"
@@ -82,6 +83,7 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     pybind11::class_< geode::InspectorInspectorLibrary >(
         module, "InspectorInspectorLibrary" )
         .def( "initialize", &geode::InspectorInspectorLibrary::initialize );
+    geode::define_information( module );
     geode::define_surface_adjacency( module );
     geode::define_solid_adjacency( module );
     geode::define_section_meshes_adjacency( module );

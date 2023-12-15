@@ -23,6 +23,8 @@ add_geode_library(
     FOLDER "geode/inspector"
     SOURCES
         "common.cpp"
+        "criterion/brep_meshes_inspector.cpp"
+        "criterion/section_meshes_inspector.cpp"
         "criterion/adjacency/surface_adjacency.cpp"
         "criterion/adjacency/solid_adjacency.cpp"
         "criterion/private/component_meshes_adjacency.cpp"
@@ -69,6 +71,8 @@ add_geode_library(
         "solid_inspector.cpp"
     PUBLIC_HEADERS
         "common.h"
+        "criterion/brep_meshes_inspector.h"
+        "criterion/section_meshes_inspector.h"
         "criterion/adjacency/surface_adjacency.h"
         "criterion/adjacency/solid_adjacency.h"
         "criterion/adjacency/section_meshes_adjacency.h"

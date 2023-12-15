@@ -34,6 +34,30 @@
 
 namespace geode
 {
+    struct SurfaceInspectionResult
+    {
+        InspectionIssues< PolygonEdge > polygon_edges_with_wrong_adjacency;
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        InspectionIssues< index_t > degenerated_edges;
+        InspectionIssues< index_t > degenerated_polygons;
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
+        InspectionIssues< index_t > non_manifold_vertices;
+        InspectionIssues< std::pair< index_t, index_t > > intersecting_elements;
+
+        std::string string() const
+        {
+            std::string message{ "" };
+            absl::StrAppend(
+                &message, polygon_edges_with_wrong_adjacency.string(), "\n" );
+            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polygons.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, intersecting_elements.string(), "\n" );
+            return message;
+        }
+    };
     /*!
      * Class for inspecting a SurfaceMesh
      * @extends SurfaceMeshAdjacency
@@ -54,9 +78,8 @@ namespace geode
 
     public:
         SurfaceMeshInspector( const SurfaceMesh< dimension >& mesh );
-
-        SurfaceMeshInspector(
-            const SurfaceMesh< dimension >& mesh, bool verbose );
+        virtual ~SurfaceMeshInspector() {}
+        virtual SurfaceInspectionResult inspect_surface() const;
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
 
@@ -74,9 +97,9 @@ namespace geode
     public:
         TriangulatedSurfaceInspector(
             const TriangulatedSurface< dimension >& mesh );
+        virtual ~TriangulatedSurfaceInspector() {}
 
-        TriangulatedSurfaceInspector(
-            const TriangulatedSurface< dimension >& mesh, bool verbose );
+        virtual SurfaceInspectionResult inspect_surface() const override;
     };
     ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

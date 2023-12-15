@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 
+#include <geode/basic/logger.h>
 #include <geode/inspector/common.h>
 
 namespace geode
@@ -33,12 +34,18 @@ namespace geode
     template < typename ProblemType >
     struct InspectionIssues
     {
-        InspectionIssues( absl::string_view problem_descrption )
-            : description{ problem_descrption }
+        InspectionIssues( absl::string_view problem_description )
+            : description{ problem_description }
         {
         }
 
-        index_t number()
+        InspectionIssues()
+            : description{ "Default inspection issue message. This message "
+                           "should have been orriden." }
+        {
+        }
+
+        index_t number() const
         {
             return problems.size();
         }
@@ -48,6 +55,20 @@ namespace geode
         {
             problems.emplace_back( std::move( problem ) );
             messages.emplace_back( std::move( message ) );
+        }
+
+        std::string string() const
+        {
+            if( problems.empty() )
+            {
+                return absl::StrCat( description, " -> No Problems :)" );
+            }
+            auto message{ absl::StrCat( description ) };
+            for( const auto& issue : messages )
+            {
+                absl::StrAppend( &message, "\n ->    ", issue );
+            }
+            return message;
         }
 
         std::string description;

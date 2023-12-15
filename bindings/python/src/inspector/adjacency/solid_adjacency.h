@@ -36,11 +36,8 @@ namespace geode
         const auto name = absl::StrCat( "SolidMeshAdjacency", dimension, "D" );
         pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_has_wrong_adjacencies",
                 &SolidMeshAdjacency::mesh_has_wrong_adjacencies )
-            .def( "nb_facets_with_wrong_adjacency",
-                &SolidMeshAdjacency::nb_facets_with_wrong_adjacency )
             .def( "polyhedron_facets_with_wrong_adjacency",
                 &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency );
     }

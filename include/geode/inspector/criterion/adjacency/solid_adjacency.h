@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -46,15 +47,11 @@ namespace geode
     public:
         SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
 
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshAdjacency();
 
         bool mesh_has_wrong_adjacencies() const;
 
-        index_t nb_facets_with_wrong_adjacency() const;
-
-        std::vector< PolyhedronFacet >
+        InspectionIssues< PolyhedronFacet >
             polyhedron_facets_with_wrong_adjacency() const;
 
     private:
