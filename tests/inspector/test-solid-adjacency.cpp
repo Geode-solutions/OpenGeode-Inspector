@@ -87,7 +87,7 @@ void check_non_adjacency_no_bijection()
             == polyhedron_facet,
         "[Test] Solid facets show wrong adjacency problems." );
 }
-/*
+
 void check_non_adjacency_wrong_facet()
 {
     auto solid = geode::TetrahedralSolid3D::create();
@@ -108,17 +108,18 @@ void check_non_adjacency_wrong_facet()
         "[Test] Solid should have wrong adjacencies due to wrong facet for "
         "adjacency." );
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.nb_facets_with_wrong_adjacency() == 2,
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().number()
+            == 2,
         "[Test] Solid should have two wrong adjacencies due to wrong facet "
         "for adjacency." );
     const geode::PolyhedronFacet polyhedron_facet1{ 0, 0 };
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polyhedron_facets_with_wrong_adjacency()[0]
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[0]
             == polyhedron_facet1,
         "[Test] Solid shows wrong first facet with adjacency problems." );
     const geode::PolyhedronFacet polyhedron_facet2{ 1, 0 };
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polyhedron_facets_with_wrong_adjacency()[1]
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[1]
             == polyhedron_facet2,
         "[Test] Solid shows wrong second facet with adjacency problems." );
 }
@@ -143,22 +144,23 @@ void check_non_adjacency_inversed_tetrahedron()
         "[Test] Solid should have wrong adjacencies due to an inversed "
         "tetrahedron." );
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.nb_facets_with_wrong_adjacency() == 2,
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().number()
+            == 2,
         "[Test] Solid should have two wrong adjacencies due to an inversed "
         "tetrahedron." );
     const geode::PolyhedronFacet polyhedron_facet1{ 0, 0 };
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polyhedron_facets_with_wrong_adjacency()[0]
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[0]
             == polyhedron_facet1,
         "[Test] Solid shows wrong first facet with adjacency problems due to "
         "an inversed tetrahedron." );
     const geode::PolyhedronFacet polyhedron_facet2{ 1, 1 };
     OPENGEODE_EXCEPTION(
-        adjacency_inspector.polyhedron_facets_with_wrong_adjacency()[1]
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[1]
             == polyhedron_facet2,
         "[Test] Solid shows wrong second facet with adjacency problems due to "
         "an inversed tetrahedron." );
-}*/
+}
 
 int main()
 {
@@ -167,8 +169,8 @@ int main()
         geode::InspectorInspectorLibrary::initialize();
         check_adjacency();
         check_non_adjacency_no_bijection();
-        // check_non_adjacency_wrong_facet();
-        // check_non_adjacency_inversed_tetrahedron();
+        check_non_adjacency_wrong_facet();
+        check_non_adjacency_inversed_tetrahedron();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

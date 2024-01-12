@@ -348,7 +348,7 @@ void check_model_a1( bool string )
         launch_component_meshes_validity_checks( result.meshes, string );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
         "[Test] model_A1 has ", nb_component_meshes_issues,
-        " meshes problems instead of 13761." );
+        " meshes problems instead of 13494." );
 }
 
 void check_model_a1_valid( bool string )
@@ -371,7 +371,7 @@ void check_model_a1_valid( bool string )
         launch_component_meshes_validity_checks( result.meshes, string );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
         "[Test] model_A1_valid has ", nb_component_meshes_issues,
-        " meshes problems instead of 13761." );
+        " meshes problems instead of 13494." );
 }
 
 void check_model_mss( bool string )

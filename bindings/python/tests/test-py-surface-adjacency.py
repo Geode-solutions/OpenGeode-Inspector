@@ -46,7 +46,7 @@ def check_adjacency2D():
     if adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Surface has wrong adjacencies when it should have none.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 0:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 0:
         raise ValueError(
             "[Test] Surface has more wrong adjacencies on edges than it should.")
     if adjacency_inspector.polygon_edges_with_wrong_adjacency():
@@ -73,11 +73,11 @@ def check_non_adjacency_no_bijection2D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Surface should have a wrong adjacency due to non-bijection.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 1:
         raise ValueError(
             "[Test] Surface should have one wrong adjacency due to non-bijection.")
     polygon_edge = geode.PolygonEdge(2, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge:
         raise ValueError("[Test] Surface edges show wrong adjacency problems.")
 
 def check_non_adjacency_wrong_edge2D():
@@ -97,15 +97,15 @@ def check_non_adjacency_wrong_edge2D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Surface should have wrong adjacencies due to wrong edge for adjacency.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 2:
         raise ValueError(
             "[Test] Surface should have two wrong adjacencies due to wrong edge for adjacency.")
     polygon_edge1 = geode.PolygonEdge(0, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge1:
         raise ValueError(
             "[Test] Surface shows wrong first edge with adjacency problems.")
     polygon_edge2 = geode.PolygonEdge(1, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[1] == polygon_edge2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[1] == polygon_edge2:
         raise ValueError(
             "[Test] Surface shows wrong second edge with adjacency problems.")
 
@@ -126,15 +126,15 @@ def check_non_adjacency_inversed_triangle2D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Surface should have wrong adjacencies due to an inversed triangle.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 2:
         raise ValueError(
             "[Test] Surface should have two wrong adjacencies due to an inversed triangle.")
     polygon_edge1 = geode.PolygonEdge(0, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge1:
         raise ValueError(
             "[Test] Surface shows wrong first edge with adjacency problems due to an inversed triangle..")
     polygon_edge2 = geode.PolygonEdge(1, 0)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[1] == polygon_edge2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[1] == polygon_edge2:
         raise ValueError(
             "[Test] Surface shows wrong second edge with adjacency problems due to an inversed triangle..")
 
@@ -155,7 +155,7 @@ def check_adjacency3D():
     if adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] 3D Surface has wrong adjacencies when it should have none.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 0:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 0:
         raise ValueError(
             "[Test] 3D Surface has more wrong adjacencies on edges than it should.")
     if adjacency_inspector.polygon_edges_with_wrong_adjacency():
@@ -182,11 +182,11 @@ def check_non_adjacency_no_bijection3D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] 3D Surface should have a wrong adjacency due to non-bijection.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 1:
         raise ValueError(
             "[Test] 3D Surface should have one wrong adjacency due to non-bijection.")
     polygon_edge = geode.PolygonEdge(2, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge:
         raise ValueError(
             "[Test] 3D Surface edges show wrong adjacency problems.")
 
@@ -207,15 +207,15 @@ def check_non_adjacency_wrong_edge3D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] 3D Surface should have wrong adjacencies due to wrong edge for adjacency.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 2:
         raise ValueError(
             "[Test] 3D Surface should have two wrong adjacencies due to wrong edge for adjacency.")
     polygon_edge1 = geode.PolygonEdge(0, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge1:
         raise ValueError(
             "[Test] 3D Surface shows wrong first edge with adjacency problems.")
     polygon_edge2 = geode.PolygonEdge(1, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[1] == polygon_edge2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[1] == polygon_edge2:
         raise ValueError(
             "[Test] Surface shows wrong second edge with adjacency problems.")
 
@@ -236,15 +236,15 @@ def check_non_adjacency_inversed_triangle3D():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] 3D Surface should have wrong adjacencies due to an inversed triangle.")
-    if not adjacency_inspector.nb_edges_with_wrong_adjacency() == 2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 2:
         raise ValueError(
             "[Test] 3D Surface should have two wrong adjacencies due to an inversed triangle.")
     polygon_edge1 = geode.PolygonEdge(0, 1)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[0] == polygon_edge1:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[0] == polygon_edge1:
         raise ValueError(
             "[Test] 3D Surface shows wrong first edge with adjacency problems due to an inversed triangle..")
     polygon_edge2 = geode.PolygonEdge(1, 0)
-    if not adjacency_inspector.polygon_edges_with_wrong_adjacency()[1] == polygon_edge2:
+    if not adjacency_inspector.polygon_edges_with_wrong_adjacency().problems[1] == polygon_edge2:
         raise ValueError(
             "[Test] 3D Surface shows wrong second edge with adjacency problems due to an inversed triangle..")
 

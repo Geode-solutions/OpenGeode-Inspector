@@ -26,14 +26,32 @@
 
 namespace geode
 {
+    template < typename ProblemType >
+    void do_define_information(
+        pybind11::module& module, const std::string& typestr )
+    {
+        using InspectionIssues = geode::InspectionIssues< ProblemType >;
+        const auto name = absl::StrCat( "InspectionIssues", typestr );
+        pybind11::class_< InspectionIssues >( module, name.c_str() )
+            .def_readwrite( "description", &InspectionIssues::description )
+            .def_readwrite( "problems", &InspectionIssues::problems )
+            .def_readwrite( "messages", &InspectionIssues::messages )
+            .def( "number", &InspectionIssues::number )
+            .def( "string", &InspectionIssues::string );
+    }
     void define_information( pybind11::module& module )
     {
-        // pybind11::class_< InspectionIssues >( module, "InspectionIssues" )
-        //     // .def( pybind11::init<>() )
-        //     .def_readwrite( "description", &InspectionIssues::description )
-        //     .def_readwrite( "problems", &InspectionIssues::problems )
-        //     .def_readwrite( "messages", &InspectionIssues::messages )
-        //     .def( "number", &InspectionIssues::number )
-        //     .def( "string", &InspectionIssues::string );
+        do_define_information< index_t >( module, "Index" );
+        do_define_information< std::vector< index_t > >(
+            module, "VectorIndex" );
+        do_define_information< PolyhedronFacet >( module, "PolyhedronFacet" );
+        do_define_information< std::array< index_t, 2 > >(
+            module, "ArrayIndex2" );
+        do_define_information< PolyhedronFacetVertices >(
+            module, "PolyhedronFacetVertices" );
+        do_define_information< PolygonEdge >( module, "PolygonEdge" );
+        do_define_information< std::pair< index_t, index_t > >(
+            module, "PairIndex" );
+        do_define_information< uuid >( module, "UUID" );
     }
 } // namespace geode

@@ -46,7 +46,7 @@ def check_non_degeneration2D():
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] EdgedCurve is shown degenerated whereas it is not.")
-    if not degeneration_inspector.nb_degenerated_edges() == 0:
+    if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] EdgedCurve has more degenerated edges than it should.")
     if degeneration_inspector.degenerated_edges():
@@ -70,10 +70,10 @@ def check_degeneration_by_colocalisation2D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] EdgedCurve is shown not degenerated whereas it is.")
-    if not degeneration_inspector.nb_degenerated_edges() == 1:
+    if not degeneration_inspector.degenerated_edges().number() == 1:
         raise ValueError(
             "[Test] EdgedCurve has wrong number of degenerated edges.")
-    if not degeneration_inspector.degenerated_edges()[0] == 2:
+    if not degeneration_inspector.degenerated_edges().problems[0] == 2:
         raise ValueError("[Test] EdgedCurve has wrong degenerated edges.")
 
 
@@ -93,7 +93,7 @@ def check_non_degeneration3D():
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] (3D) EdgedCurve is shown degenerated whereas it is not.")
-    if not degeneration_inspector.nb_degenerated_edges() == 0:
+    if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] (3D) EdgedCurve has more degenerated edges than it should.")
     if degeneration_inspector.degenerated_edges():
@@ -118,10 +118,10 @@ def check_degeneration_by_colocalisation3D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] (3D) EdgedCurve is shown not degenerated whereas it is.")
-    if not degeneration_inspector.nb_degenerated_edges() == 1:
+    if not degeneration_inspector.degenerated_edges().number() == 1:
         raise ValueError(
             "[Test] (3D) EdgedCurve has wrong number of degenerated edges.")
-    if not degeneration_inspector.degenerated_edges()[0] == 2:
+    if not degeneration_inspector.degenerated_edges().problems[0] == 2:
         raise ValueError("[Test] (3D) EdgedCurve has wrong degenerated edges.")
 
 
