@@ -49,9 +49,6 @@ def check_adjacency2D():
     if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 0:
         raise ValueError(
             "[Test] Surface has more wrong adjacencies on edges than it should.")
-    if adjacency_inspector.polygon_edges_with_wrong_adjacency():
-        raise ValueError(
-            "[Test] Surface edges adjacencies are shown wrong whereas they are not.")
 
 def check_non_adjacency_no_bijection2D():
     surface = geode.TriangulatedSurface2D.create()
@@ -158,9 +155,6 @@ def check_adjacency3D():
     if not adjacency_inspector.polygon_edges_with_wrong_adjacency().number() == 0:
         raise ValueError(
             "[Test] 3D Surface has more wrong adjacencies on edges than it should.")
-    if adjacency_inspector.polygon_edges_with_wrong_adjacency():
-        raise ValueError(
-            "[Test] 3D Surface edges adjacencies are shown wrong whereas they are not.")
 
 def check_non_adjacency_no_bijection3D():
     surface = geode.TriangulatedSurface3D.create()

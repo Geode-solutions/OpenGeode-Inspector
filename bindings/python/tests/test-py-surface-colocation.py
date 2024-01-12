@@ -46,10 +46,6 @@ def check_non_colocation2D():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] Surface has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] Surface points are shown colocated whereas they are not.")
-
 
 def check_colocation2D():
     surface = geode.TriangulatedSurface2D.create()
@@ -96,10 +92,6 @@ def check_non_colocation3D():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] (3D) Surface has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] (3D) Surface points are shown colocated whereas they are not.")
-
 
 def check_colocation3D():
     surface = geode.TriangulatedSurface3D.create()

@@ -49,10 +49,6 @@ def check_non_degeneration2D():
     if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] EdgedCurve has more degenerated edges than it should.")
-    if degeneration_inspector.degenerated_edges():
-        raise ValueError(
-            "[Test] EdgedCurve has degenerated edges when it should have none.")
-
 
 def check_degeneration_by_colocalisation2D():
     curve = geode.EdgedCurve2D.create()
@@ -96,10 +92,6 @@ def check_non_degeneration3D():
     if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] (3D) EdgedCurve has more degenerated edges than it should.")
-    if degeneration_inspector.degenerated_edges():
-        raise ValueError(
-            "[Test] (3D) EdgedCurve has degenerated edges when it should have none.")
-
 
 def check_degeneration_by_colocalisation3D():
     curve = geode.EdgedCurve3D.create()

@@ -46,10 +46,6 @@ def check_non_colocation2D():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] EdgedCurve has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] EdgedCurve points are shown colocated whereas they are not.")
-
 
 def check_colocation2D():
     curve = geode.EdgedCurve2D.create()
@@ -96,10 +92,6 @@ def check_non_colocation3D():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] (3D) EdgedCurve has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] (3D) EdgedCurve points are shown colocated whereas they are not.")
-
 
 def check_colocation3D():
     curve = geode.EdgedCurve3D.create()

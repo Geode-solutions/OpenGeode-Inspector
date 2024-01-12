@@ -41,7 +41,7 @@ namespace geode
 
         InspectionIssues()
             : description{ "Default inspection issue message. This message "
-                           "should have been orriden." }
+                           "should have been overriden." }
         {
         }
 

@@ -42,8 +42,7 @@ namespace geode
 
         std::string string() const
         {
-            std::string message{ "" };
-            absl::StrAppend( &message, meshes.string(), "\n" );
+            std::string message = absl::StrCat( meshes.string(), "\n" );
             absl::StrAppend( &message, topology.string(), "\n" );
             return message;
         }

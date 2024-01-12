@@ -50,10 +50,6 @@ def check_non_degeneration():
     if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] Solid has more degenerated edges than it should.")
-    if degeneration_inspector.degenerated_edges():
-        raise ValueError(
-            "[Test] Solid has degenerated edges when it should have none.")
-
 
 def check_degeneration_by_colocalisation():
     solid = geode.TetrahedralSolid3D.create()

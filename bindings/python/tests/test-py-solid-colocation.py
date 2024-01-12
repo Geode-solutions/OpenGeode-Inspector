@@ -47,10 +47,6 @@ def check_non_colocation():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] Solid has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] Solid points are shown colocated whereas they are not.")
-
 
 def check_colocation():
     solid = geode.TetrahedralSolid3D.create()
@@ -70,7 +66,7 @@ def check_colocation():
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
             "[Test] Solid doesn't have colocated points whereas it should have several.")
-    if not colocation_inspector.colocated_points_groups() == 2:
+    if not colocation_inspector.colocated_points_groups().number() == 2:
         raise ValueError("[Test] Solid has wrong number of colocated points.")
     first_colocated_points_group = [0, 1, 6]
     if not colocation_inspector.colocated_points_groups().problems[0] == first_colocated_points_group:

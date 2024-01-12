@@ -47,10 +47,6 @@ def check_non_colocation2D():
     if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] PointSet has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] PointSet points are shown colocated whereas they are not.")
-
 
 def check_colocation2D():
     pointset = geode.PointSet2D.create()
@@ -94,13 +90,9 @@ def check_non_colocation3D():
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
             "[Test] (3D) PointSet has colocated points when it should have none.")
-    if not colocation_inspector.nb_colocated_points_groups().number() == 0:
+    if not colocation_inspector.colocated_points_groups().number() == 0:
         raise ValueError(
             "[Test] (3D) PointSet has more colocated points than it should.")
-    if colocation_inspector.colocated_points_groups():
-        raise ValueError(
-            "[Test] (3D) PointSet points are shown colocated whereas they are not.")
-
 
 def check_colocation3D():
     pointset = geode.PointSet3D.create()

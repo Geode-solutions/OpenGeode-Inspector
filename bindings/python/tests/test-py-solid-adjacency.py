@@ -51,10 +51,6 @@ def check_adjacency():
     if not adjacency_inspector.non_manifold_facets().number() == 0:
         raise ValueError(
             "[Test] Solid has more wrong adjacencies than it should.")
-    if adjacency_inspector.non_manifold_facets():
-        raise ValueError(
-            "[Test] Solid facets adjacencies are shown wrong whereas they are not.")
-
 
 def check_non_adjacency_no_bijection():
     solid = geode.TetrahedralSolid3D.create()

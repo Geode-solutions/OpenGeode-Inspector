@@ -50,10 +50,6 @@ def check_vertex_manifold():
     if manifold_inspector.non_manifold_vertices().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold vertices than it should.")
-    if manifold_inspector.non_manifold_vertices():
-        raise ValueError(
-            "[Test] Solid vertices are shown non manifold whereas they are.")
-
 
 def check_vertex_non_manifold():
     solid = geode.TetrahedralSolid3D.create()
@@ -99,11 +95,7 @@ def check_edge_manifold():
     if manifold_inspector.non_manifold_edges().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold edges than it should.")
-    if manifold_inspector.non_manifold_edges():
-        raise ValueError(
-            "[Test] Solid edges are shown non manifold whereas they are.")
-
-
+ 
 def check_edge_non_manifold():
     solid = geode.TetrahedralSolid3D.create()
     builder = geode.TetrahedralSolidBuilder3D.create(solid)
@@ -146,10 +138,6 @@ def check_facet_manifold():
     if manifold_inspector.non_manifold_facets().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold facets than it should.")
-    if manifold_inspector.non_manifold_facets():
-        raise ValueError(
-            "[Test] Solid facets are shown non manifold whereas they are.")
-
 
 def check_facet_non_manifold():
     solid = geode.TetrahedralSolid3D.create()

@@ -49,10 +49,6 @@ def check_non_degeneration2D():
     if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] Surface has more degenerated edges than it should.")
-    if degeneration_inspector.degenerated_edges():
-        raise ValueError(
-            "[Test] Surface has degenerated edges when it should have none.")
-
 
 def check_degeneration_by_colocalisation2D():
     surface = geode.TriangulatedSurface2D.create()
@@ -120,10 +116,6 @@ def check_non_degeneration3D():
     if not degeneration_inspector.degenerated_edges().number() == 0:
         raise ValueError(
             "[Test] (3D) Surface has more degenerated edges than it should.")
-    if degeneration_inspector.degenerated_edges():
-        raise ValueError(
-            "[Test] (3D) Surface has degenerated edges when it should have none.")
-
 
 def check_degeneration_by_colocalisation3D():
     surface = geode.TriangulatedSurface3D.create()

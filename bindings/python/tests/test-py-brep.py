@@ -35,7 +35,7 @@ def corners_topological_validity(result, verbose ) :
     nb_issues = 0 
     corners_not_linked_to_a_unique_vertex = result.corners_not_linked_to_a_unique_vertex
     for corner_issue in corners_not_linked_to_a_unique_vertex :
-        nb_issues += corner_issue.second.number()
+        nb_issues += corner_issue[1].number()
     corners_not_meshed = result.corners_not_meshed
     nb_issues += corners_not_meshed.number()
     unique_vertices_liked_to_not_boundary_line_corner = result.unique_vertices_liked_to_not_boundary_line_corner
@@ -55,7 +55,7 @@ def lines_topological_validity(result, verbose):
     nb_issues = 0
     lines_not_linked_to_a_unique_vertex = result.lines_not_linked_to_a_unique_vertex
     for issue in lines_not_linked_to_a_unique_vertex :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     lines_not_meshed = result.lines_not_meshed
     nb_issues += lines_not_meshed.number()
     unique_vertices_linked_to_a_line_with_invalid_embeddings = result.unique_vertices_linked_to_a_line_with_invalid_embeddings
@@ -74,7 +74,7 @@ def surfaces_topological_validity( result, verbose ) :
     nb_issues = 0
     surfaces_not_linked_to_a_unique_vertex = result.surfaces_not_linked_to_a_unique_vertex
     for issue in surfaces_not_linked_to_a_unique_vertex :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     surfaces_not_meshed = result.surfaces_not_meshed
     nb_issues += surfaces_not_meshed.number()
     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border = result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
@@ -95,7 +95,7 @@ def blocks_topological_validity(result, verbose ):
     nb_issues = 0
     blocks_not_linked_to_a_unique_vertex = result.blocks_not_linked_to_a_unique_vertex
     for issue in blocks_not_linked_to_a_unique_vertex :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     blocks_not_meshed = result.blocks_not_meshed
     nb_issues += blocks_not_meshed.number()
     unique_vertices_part_of_two_blocks_and_no_boundary_surface = result.unique_vertices_part_of_two_blocks_and_no_boundary_surface
@@ -119,10 +119,10 @@ def meshes_adjacencies_validity(result, verbose ) :
     nb_issues= 0
     surfaces_edges_with_wrong_adjacencies = result.surfaces_edges_with_wrong_adjacencies
     for issue in surfaces_edges_with_wrong_adjacencies :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     blocks_facets_with_wrong_adjacencies = result.blocks_facets_with_wrong_adjacencies
     for issue in blocks_facets_with_wrong_adjacencies :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     print(
         "BRep meshes adjacencies check: ", nb_issues, " issues." )
     if verbose :
@@ -134,9 +134,9 @@ def meshes_degenerations_validity (result, verbose) :
     nb_issues = 0
     elements = result.elements
     for degenerated_elements in elements :
-        nb_issues += degenerated_elements.second.degenerated_edges.number()
-        nb_issues += degenerated_elements.second.degenerated_polygons.number()
-        nb_issues += degenerated_elements.second.degenerated_polyhedra.number()
+        nb_issues += degenerated_elements[1].degenerated_edges.number()
+        nb_issues += degenerated_elements[1].degenerated_polygons.number()
+        nb_issues += degenerated_elements[1].degenerated_polyhedra.number()
     print(
         "BRep meshes degenerated elements check: ", nb_issues, " issues." )
     if verbose : print( result.string(), "\n" )
@@ -157,16 +157,16 @@ def meshes_manifolds_validity(result, verbose) :
     nb_issues= 0 
     meshes_non_manifold_vertices = result.meshes_non_manifold_vertices
     for issue in meshes_non_manifold_vertices :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     meshes_non_manifold_edges = result.meshes_non_manifold_edges
     for issue in meshes_non_manifold_edges :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     meshes_non_manifold_facets = result.meshes_non_manifold_facets
     for issue in meshes_non_manifold_facets :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     model_non_manifold_edges = result.model_non_manifold_edges
     for issue in model_non_manifold_edges :
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     print("BRep meshes non manifolds check: ", nb_issues, " issues." )
     if verbose : 
        print(result.string(), "\n" )
@@ -176,7 +176,7 @@ def meshes_colocations_validity(result, verbose):
     nb_issues = 0
     colocated_points_groups = result.colocated_points_groups
     for issue in colocated_points_groups:
-        nb_issues += issue.second.number()
+        nb_issues += issue[1].number()
     print(
         "BRep meshes Colocations check: ", nb_issues, " issues." )
     if verbose :
