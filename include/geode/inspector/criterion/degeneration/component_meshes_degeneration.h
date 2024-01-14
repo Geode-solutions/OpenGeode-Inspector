@@ -39,30 +39,17 @@ namespace geode
 
 namespace geode
 {
-    struct DegeneratedElements
+    struct opengeode_inspector_inspector_api DegeneratedElements
     {
         InspectionIssues< index_t > degenerated_edges;
         InspectionIssues< index_t > degenerated_polygons;
         InspectionIssues< index_t > degenerated_polyhedra;
     };
 
-    struct DegeneratedElementsInspectionResult
+    struct opengeode_inspector_inspector_api DegeneratedElementsInspectionResult
     {
         absl::flat_hash_map< uuid, DegeneratedElements > elements;
-        std::string string() const
-        {
-            std::string message{ "" };
-            for( const auto& issue : elements )
-            {
-                absl::StrAppend(
-                    &message, issue.second.degenerated_edges.string(), "\n" );
-                absl::StrAppend( &message,
-                    issue.second.degenerated_polygons.string(), "\n" );
-                absl::StrAppend( &message,
-                    issue.second.degenerated_polyhedra.string(), "\n" );
-            }
-            return message;
-        }
+        std::string string() const;
     };
 
     /*!
@@ -70,7 +57,7 @@ namespace geode
      * of a Model (BRep or Section).
      */
     template < index_t dimension, typename Model >
-    class opengeode_inspector_inspector_api ComponentMeshesDegeneration
+    class ComponentMeshesDegeneration
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 

@@ -42,7 +42,7 @@ namespace geode
 
 namespace geode
 {
-    struct BRepBlocksTopologyInspectionResult
+    struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
         InspectionIssues< uuid > blocks_not_meshed{
             "uuids of block without mesh."
@@ -59,26 +59,7 @@ namespace geode
                 "Indices of unique vertices part of a block but with incorrect "
                 "ComponentMeshVertices count"
             };
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend( &message, blocks_not_meshed.string(), "\n" );
-            for( const auto& block_uv_issue :
-                blocks_not_linked_to_a_unique_vertex )
-            {
-                absl::StrAppend(
-                    &message, block_uv_issue.second.string(), "\n" );
-            }
-            absl::StrAppend( &message,
-                unique_vertices_part_of_two_blocks_and_no_boundary_surface
-                    .string(),
-                "\n" );
-            absl::StrAppend( &message,
-                unique_vertices_with_incorrect_block_cmvs_count.string(),
-                "\n" );
-            return message;
-        }
+        std::string string() const;
     };
 
     /*!

@@ -38,6 +38,28 @@
 
 namespace geode
 {
+    std::string BRepLinesTopologyInspectionResult::string() const
+    {
+        auto message = absl::StrCat( lines_not_meshed.string(), "\n" );
+        for( const auto& line_uv_issue : lines_not_linked_to_a_unique_vertex )
+        {
+            absl::StrAppend( &message, line_uv_issue.second.string(), "\n" );
+        }
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_not_internal_nor_boundary_line.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_line_with_invalid_embeddings.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_single_and_invalid_line.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+                .string(),
+            "\n" );
+        return message;
+    }
     BRepLinesTopology::BRepLinesTopology( const BRep& brep ) : brep_( brep ) {}
 
     bool BRepLinesTopology::brep_lines_topology_is_valid(

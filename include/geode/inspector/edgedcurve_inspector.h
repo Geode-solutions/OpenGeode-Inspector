@@ -30,18 +30,11 @@
 
 namespace geode
 {
-    struct EdgedCurveInspectionResult
+    struct opengeode_inspector_inspector_api EdgedCurveInspectionResult
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups;
         InspectionIssues< index_t > degenerated_edges;
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
-            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
 
     /*!
@@ -50,10 +43,9 @@ namespace geode
      * @extends EdgedCurveDegeneration
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api EdgedCurveInspector
-        : public AddInspectors< EdgedCurve< dimension >,
-              EdgedCurveColocation< dimension >,
-              EdgedCurveDegeneration< dimension > >
+    class EdgedCurveInspector : public AddInspectors< EdgedCurve< dimension >,
+                                    EdgedCurveColocation< dimension >,
+                                    EdgedCurveDegeneration< dimension > >
     {
         OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 

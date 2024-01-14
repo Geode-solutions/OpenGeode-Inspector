@@ -38,19 +38,11 @@ namespace geode
 
 namespace geode
 {
-    struct MeshesColocationInspectionResult
+    struct opengeode_inspector_inspector_api MeshesColocationInspectionResult
     {
         absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
             colocated_points_groups;
-        std::string string() const
-        {
-            std::string message{ "" };
-            for( const auto& issue : colocated_points_groups )
-            {
-                absl::StrAppend( &message, issue.second.string(), "\n" );
-            }
-            return message;
-        }
+        std::string string() const;
     };
 
     /*!
@@ -58,7 +50,7 @@ namespace geode
      * a Model (BRep or Section).
      */
     template < index_t dimension, typename Model >
-    class opengeode_inspector_inspector_api ComponentMeshesColocation
+    class ComponentMeshesColocation
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesColocation );
 

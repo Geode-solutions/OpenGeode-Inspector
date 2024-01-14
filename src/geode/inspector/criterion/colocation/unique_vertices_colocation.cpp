@@ -144,6 +144,16 @@ namespace
 
 namespace geode
 {
+    std::string UniqueVerticesInspectionResult::string() const
+    {
+        std::string message{ "" };
+        absl::StrAppend(
+            &message, colocated_unique_vertices_groups.string(), "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_different_points.string(), "\n" );
+        return message;
+    }
+
     template < geode::index_t dimension, typename Model >
     class UniqueVerticesColocation< dimension, Model >::Impl
     {

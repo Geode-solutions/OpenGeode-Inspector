@@ -29,15 +29,10 @@
 
 namespace geode
 {
-    struct PointSetInspectionResult
+    struct opengeode_inspector_inspector_api PointSetInspectionResult
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups;
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
 
     /*!
@@ -45,9 +40,8 @@ namespace geode
      * @extends PointSetColocation
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api PointSetInspector
-        : public AddInspectors< PointSet< dimension >,
-              PointSetColocation< dimension > >
+    class PointSetInspector : public AddInspectors< PointSet< dimension >,
+                                  PointSetColocation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( PointSetInspector );
 

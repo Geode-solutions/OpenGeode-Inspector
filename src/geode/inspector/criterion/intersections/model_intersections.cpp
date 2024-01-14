@@ -546,6 +546,11 @@ namespace geode
         const Model& model_;
     };
 
+    std::string ElementsIntersectionsInspectionResult::string() const
+    {
+        return absl::StrCat( elements_intersections.string(), "\n" );
+    }
+
     template < index_t dimension, typename Model >
     ModelMeshesIntersections< dimension, Model >::ModelMeshesIntersections(
         const Model& model )

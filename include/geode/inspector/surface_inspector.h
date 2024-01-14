@@ -34,7 +34,7 @@
 
 namespace geode
 {
-    struct SurfaceInspectionResult
+    struct opengeode_inspector_inspector_api SurfaceInspectionResult
     {
         InspectionIssues< PolygonEdge > polygon_edges_with_wrong_adjacency;
         InspectionIssues< std::vector< index_t > > colocated_points_groups;
@@ -43,20 +43,7 @@ namespace geode
         InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
         InspectionIssues< index_t > non_manifold_vertices;
         InspectionIssues< std::pair< index_t, index_t > > intersecting_elements;
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend(
-                &message, polygon_edges_with_wrong_adjacency.string(), "\n" );
-            absl::StrAppend( &message, colocated_points_groups.string(), "\n" );
-            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
-            absl::StrAppend( &message, degenerated_polygons.string(), "\n" );
-            absl::StrAppend( &message, non_manifold_edges.string(), "\n" );
-            absl::StrAppend( &message, non_manifold_vertices.string(), "\n" );
-            absl::StrAppend( &message, intersecting_elements.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting a SurfaceMesh
@@ -99,7 +86,7 @@ namespace geode
             const TriangulatedSurface< dimension >& mesh );
         virtual ~TriangulatedSurfaceInspector() {}
 
-        virtual SurfaceInspectionResult inspect_surface() const override;
+        SurfaceInspectionResult inspect_surface() const final;
     };
     ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

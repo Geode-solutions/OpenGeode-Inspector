@@ -38,6 +38,24 @@
 
 namespace geode
 {
+    std::string SectionSurfacesTopologyInspectionResult::string() const
+    {
+        auto message = absl::StrCat( surfaces_not_meshed.string(), "\n" );
+        for( const auto& surface_uv_issue :
+            surfaces_not_linked_to_a_unique_vertex )
+        {
+            absl::StrAppend( &message, surface_uv_issue.second.string(), "\n" );
+        }
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                .string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                .string(),
+            "\n" );
+        return message;
+    }
     SectionSurfacesTopology::SectionSurfacesTopology( const Section& section )
         : section_( section )
     {

@@ -232,6 +232,15 @@ namespace
 
 namespace geode
 {
+    std::string MeshesColocationInspectionResult::string() const
+    {
+        std::string message{ "" };
+        for( const auto& issue : colocated_points_groups )
+        {
+            absl::StrAppend( &message, issue.second.string(), "\n" );
+        }
+        return message;
+    }
     template < geode::index_t dimension, typename Model >
     class ComponentMeshesColocation< dimension, Model >::Impl
     {

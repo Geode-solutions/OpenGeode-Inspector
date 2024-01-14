@@ -151,6 +151,20 @@ namespace
 
 namespace geode
 {
+    std::string DegeneratedElementsInspectionResult::string() const
+    {
+        std::string message{ "" };
+        for( const auto& issue : elements )
+        {
+            absl::StrAppend(
+                &message, issue.second.degenerated_edges.string(), "\n" );
+            absl::StrAppend(
+                &message, issue.second.degenerated_polygons.string(), "\n" );
+            absl::StrAppend(
+                &message, issue.second.degenerated_polyhedra.string(), "\n" );
+        }
+        return message;
+    }
     template < geode::index_t dimension, typename Model >
     class ComponentMeshesDegeneration< dimension, Model >::Impl
     {

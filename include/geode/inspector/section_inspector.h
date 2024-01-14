@@ -30,17 +30,11 @@
 
 namespace geode
 {
-    struct SectionInspectionResult
+    struct opengeode_inspector_inspector_api SectionInspectionResult
     {
         SectionMeshesInspectionResult meshes;
         SectionTopologyInspectionResult topology;
-
-        std::string string() const
-        {
-            auto message = absl::StrCat( &message, meshes.string(), "\n" );
-            absl::StrAppend( &message, topology.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting a Section model

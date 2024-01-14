@@ -194,6 +194,13 @@ namespace geode
         const Section& section_;
     };
 
+    std::string SectionTopologyInspectionResult::string() const
+    {
+        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
+            surfaces.string(), "\n",
+            unique_vertices_not_linked_to_any_component.string(), "\n" );
+    }
+
     SectionTopologyInspector::SectionTopologyInspector( const Section& section )
         : SectionCornersTopology( section ),
           SectionLinesTopology( section ),

@@ -27,6 +27,11 @@
 
 namespace geode
 {
+    std::string EdgedCurveInspectionResult::string() const
+    {
+        return absl::StrCat( colocated_points_groups.string(), "\n",
+            degenerated_edges.string(), "\n" );
+    }
     template < index_t dimension >
     EdgedCurveInspector< dimension >::EdgedCurveInspector(
         const EdgedCurve< dimension >& mesh )

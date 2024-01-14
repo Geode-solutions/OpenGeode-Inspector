@@ -27,6 +27,12 @@
 
 namespace geode
 {
+
+    std::string SectionInspectionResult::string() const
+    {
+        return absl::StrCat( meshes.string(), "\n", topology.string(), "\n" );
+    }
+
     SectionInspector::SectionInspector( const Section& section )
         : AddInspectors< Section,
             SectionMeshesInspector,

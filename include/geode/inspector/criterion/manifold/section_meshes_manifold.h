@@ -35,27 +35,15 @@
 
 namespace geode
 {
-    struct SectionMeshesManifoldInspectionResult
+    struct opengeode_inspector_inspector_api
+        SectionMeshesManifoldInspectionResult
     {
         absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             meshes_non_manifold_vertices;
         absl::flat_hash_map< uuid,
             InspectionIssues< std::array< index_t, 2 > > >
             meshes_non_manifold_edges;
-        std::string string() const
-        {
-            std::string message{ "" };
-            for( const auto& vertices_issue : meshes_non_manifold_vertices )
-            {
-                absl::StrAppend(
-                    &message, vertices_issue.second.string(), "\n" );
-            }
-            for( const auto& edges_issue : meshes_non_manifold_edges )
-            {
-                absl::StrAppend( &message, edges_issue.second.string(), "\n" );
-            }
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of

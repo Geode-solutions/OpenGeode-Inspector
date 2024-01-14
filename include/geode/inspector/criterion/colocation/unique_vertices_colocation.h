@@ -36,28 +36,19 @@ namespace geode
 
 namespace geode
 {
-    struct UniqueVerticesInspectionResult
+    struct opengeode_inspector_inspector_api UniqueVerticesInspectionResult
     {
         InspectionIssues< std::vector< index_t > >
             colocated_unique_vertices_groups;
         InspectionIssues< index_t > unique_vertices_linked_to_different_points;
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend(
-                &message, colocated_unique_vertices_groups.string(), "\n" );
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_different_points.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep
      * or Section)
      */
     template < index_t dimension, typename Model >
-    class opengeode_inspector_inspector_api UniqueVerticesColocation
+    class UniqueVerticesColocation
     {
         OPENGEODE_DISABLE_COPY( UniqueVerticesColocation );
 

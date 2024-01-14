@@ -40,21 +40,12 @@ namespace geode
 
 namespace geode
 {
-    struct SectionMeshesAdjacencyInspectionResult
+    struct opengeode_inspector_inspector_api
+        SectionMeshesAdjacencyInspectionResult
     {
         absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies;
-        std::string string() const
-        {
-            std::string message{ "" };
-            for( const auto& surface_issue :
-                surfaces_edges_with_wrong_adjacencies )
-            {
-                absl::StrAppend(
-                    &message, surface_issue.second.string(), "\n" );
-            }
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting the adjacency of the surface edges in the Component

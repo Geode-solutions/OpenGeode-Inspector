@@ -27,6 +27,15 @@
 
 namespace geode
 {
+    std::string SurfaceInspectionResult::string() const
+    {
+        return absl::StrCat( polygon_edges_with_wrong_adjacency.string(), "\n",
+            colocated_points_groups.string(), "\n", degenerated_edges.string(),
+            "\n", degenerated_polygons.string(), "\n",
+            non_manifold_edges.string(), "\n", non_manifold_vertices.string(),
+            "\n", intersecting_elements.string(), "\n" );
+    }
+
     template < index_t dimension >
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh )

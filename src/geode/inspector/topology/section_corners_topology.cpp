@@ -32,6 +32,27 @@
 
 namespace geode
 {
+    std::string SectionCornersTopologyInspectionResult::string() const
+    {
+        auto message = absl::StrCat( corners_not_meshed.string(), "\n" );
+        for( const auto& corner_uv_issue :
+            corners_not_linked_to_a_unique_vertex )
+        {
+            absl::StrAppend( &message, corner_uv_issue.second.string(), "\n" );
+        }
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_multiple_corners.string(), "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_multiple_internals_corner.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_not_internal_nor_boundary_corner.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_liked_to_not_boundary_line_corner.string(), "\n" );
+        return message;
+    }
+
     SectionCornersTopology::SectionCornersTopology( const Section& section )
         : section_( section )
     {

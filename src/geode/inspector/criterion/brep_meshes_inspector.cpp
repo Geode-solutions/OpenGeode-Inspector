@@ -25,6 +25,13 @@
 
 namespace geode
 {
+    std::string BRepMeshesInspectionResult::string() const
+    {
+        return absl::StrCat( unique_vertices_colocation.string(), "\n",
+            meshes_colocation.string(), "\n", adjacencies.string(), "\n",
+            degenerations.string(), "\n", intersections.string(), "\n",
+            manifolds.string(), "\n" );
+    }
 
     BRepMeshesInspector::BRepMeshesInspector( const BRep& brep )
         : BRepUniqueVerticesColocation( brep ),

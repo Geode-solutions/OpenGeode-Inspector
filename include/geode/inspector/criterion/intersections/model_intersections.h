@@ -38,22 +38,20 @@ namespace geode
 
 namespace geode
 {
-    struct ElementsIntersectionsInspectionResult
+    struct opengeode_inspector_inspector_api
+        ElementsIntersectionsInspectionResult
     {
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
             elements_intersections;
-        std::string string() const
-        {
-            return absl::StrCat( elements_intersections.string(), "\n" );
-        }
+        std::string string() const;
     };
 
     /*!
      * Class for inspecting the intersections of a Model meshes
      */
     template < index_t dimension, typename Model >
-    class opengeode_inspector_inspector_api ModelMeshesIntersections
+    class ModelMeshesIntersections
     {
         OPENGEODE_DISABLE_COPY( ModelMeshesIntersections );
 

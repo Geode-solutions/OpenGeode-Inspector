@@ -35,17 +35,11 @@ namespace geode
 
 namespace geode
 {
-    struct BRepInspectionResult
+    struct opengeode_inspector_inspector_api BRepInspectionResult
     {
         BRepMeshesInspectionResult meshes;
         BRepTopologyInspectionResult topology;
-
-        std::string string() const
-        {
-            std::string message = absl::StrCat( meshes.string(), "\n" );
-            absl::StrAppend( &message, topology.string(), "\n" );
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting a BRep model

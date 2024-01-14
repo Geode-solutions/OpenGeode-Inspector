@@ -42,6 +42,16 @@ namespace geode
         }
     };
 
+    std::string SectionMeshesAdjacencyInspectionResult::string() const
+    {
+        std::string message{ "" };
+        for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
+        {
+            absl::StrAppend( &message, surface_issue.second.string(), "\n" );
+        }
+        return message;
+    }
+
     SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
         const Section& model )
         : impl_{ model }

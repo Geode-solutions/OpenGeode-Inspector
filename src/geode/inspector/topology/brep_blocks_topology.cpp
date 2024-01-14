@@ -61,6 +61,20 @@ namespace
 
 namespace geode
 {
+    std::string BRepBlocksTopologyInspectionResult::string() const
+    {
+        auto message = absl::StrCat( blocks_not_meshed.string(), "\n" );
+        for( const auto& block_uv_issue : blocks_not_linked_to_a_unique_vertex )
+        {
+            absl::StrAppend( &message, block_uv_issue.second.string(), "\n" );
+        }
+        absl::StrAppend( &message,
+            unique_vertices_part_of_two_blocks_and_no_boundary_surface.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_with_incorrect_block_cmvs_count.string(), "\n" );
+        return message;
+    }
     BRepBlocksTopology::BRepBlocksTopology( const BRep& brep ) : brep_( brep )
     {
     }

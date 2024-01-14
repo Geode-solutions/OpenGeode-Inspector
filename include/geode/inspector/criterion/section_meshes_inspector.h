@@ -34,7 +34,7 @@
 
 namespace geode
 {
-    struct SectionMeshesInspectionResult
+    struct opengeode_inspector_inspector_api SectionMeshesInspectionResult
     {
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
@@ -42,18 +42,7 @@ namespace geode
         DegeneratedElementsInspectionResult degenerations;
         ElementsIntersectionsInspectionResult intersections;
         SectionMeshesManifoldInspectionResult manifolds;
-
-        std::string string() const
-        {
-            std::string message{ "" };
-            absl::StrAppend( &message, unique_vertices_colocation.string() );
-            absl::StrAppend( &message, meshes_colocation.string() );
-            absl::StrAppend( &message, adjacencies.string() );
-            absl::StrAppend( &message, degenerations.string() );
-            absl::StrAppend( &message, intersections.string() );
-            absl::StrAppend( &message, manifolds.string() );
-            return message;
-        }
+        std::string string() const;
     };
     /*!
      * Class for inspecting a Section model

@@ -27,6 +27,16 @@
 
 namespace geode
 {
+    std::string SolidInspectionResult::string() const
+    {
+        return absl::StrCat( polyhedron_facets_with_wrong_adjacency.string(),
+            "\n", colocated_points_groups.string(), "\n",
+            degenerated_edges.string(), "\n", degenerated_polyhedra.string(),
+            "\n", non_manifold_vertices.string(), "\n",
+            non_manifold_edges.string(), "\n", non_manifold_facets.string(),
+            "\n" );
+    }
+
     template < index_t dimension >
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )
