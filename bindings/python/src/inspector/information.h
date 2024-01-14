@@ -54,6 +54,7 @@ namespace geode
             module, "PairIndex" );
         do_define_information< uuid >( module, "UUID" );
         do_define_information< std::pair< geode::ComponentMeshElement,
-            geode::ComponentMeshElement > >( module, PairComponentMeshElement )
+            geode::ComponentMeshElement > >(
+            module, "PairComponentMeshElement" );
     }
 } // namespace geode
