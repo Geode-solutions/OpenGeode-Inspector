@@ -43,8 +43,8 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite(
                 "degenerated_edges", &DegeneratedElements::degenerated_edges )
-            .def_readwrite(
-                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite( "degenerated_polygons",
+                &DegeneratedElements::degenerated_polygons )
             .def_readwrite( "degenerated_polyhedra",
                 &DegeneratedElements::degenerated_polyhedra );
 
