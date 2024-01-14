@@ -149,7 +149,7 @@ def meshes_unique_vertices_validity( result, verbose ):
     nb_issues = 0
     colocated_unique_vertices_groups = result.colocated_unique_vertices_groups
     for issue in colocated_unique_vertices_groups.problems :
-        nb_issues += issue.size()
+        nb_issues += len(issue)
     unique_vertices_linked_to_different_points = result.unique_vertices_linked_to_different_points
     nb_issues += unique_vertices_linked_to_different_points.number()
     print("Section unique vertices check: ", nb_issues, " issues." )
