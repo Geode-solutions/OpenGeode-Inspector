@@ -46,7 +46,7 @@ namespace geode
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_multiple_internals_corner )
             .def_readwrite(
-                "unique_vertices_linked_not_internal_nor_boundary_corner",
+                "unique_vertices_linked_to_not_internal_nor_boundary_corner",
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
             .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
@@ -59,6 +59,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "lines_not_meshed",
                 &BRepLinesTopologyInspectionResult::lines_not_meshed )
+            .def_readwrite( "lines_not_linked_to_a_unique_vertex",
+                &BRepLinesTopologyInspectionResult::
+                    lines_not_linked_to_a_unique_vertex )
             .def_readwrite(
                 "unique_vertices_linked_to_not_internal_nor_boundary_line",
                 &BRepLinesTopologyInspectionResult::
