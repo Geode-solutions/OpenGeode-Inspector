@@ -45,7 +45,7 @@ namespace geode
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_multiple_internals_corner )
             .def_readwrite(
-                "unique_vertices_linked_not_internal_nor_boundary_corner",
+                "unique_vertices_linked_to_not_internal_nor_boundary_corner",
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
             .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
