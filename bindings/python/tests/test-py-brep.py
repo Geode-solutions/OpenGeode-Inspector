@@ -200,7 +200,7 @@ def launch_component_meshes_validity_checks(result, verbose):
     nb_invalids += meshes_degenerations_validity(result.degenerations,verbose)
     nb_invalids += meshes_intersections_validity(result.intersections,verbose)
     nb_invalids += meshes_manifolds_validity(result.manifolds,verbose)
-    nb_invalids += meshes_colocations_validity(result.colocation,verbose)
+    nb_invalids += meshes_colocations_validity(result.meshes_colocation,verbose)
     nb_invalids += meshes_unique_vertices_validity(result.unique_vertices_colocation,verbose)
     return nb_invalids
 
