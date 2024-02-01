@@ -52,7 +52,7 @@ namespace geode
         index_t unique_vertex_index ) const
     {
         bool part_of_line{ false };
-        for( const auto cmv :
+        for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() == Line3D::component_type_static() )
