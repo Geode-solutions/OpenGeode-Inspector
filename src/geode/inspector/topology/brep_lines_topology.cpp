@@ -51,9 +51,17 @@ namespace geode
     bool BRepLinesTopology::brep_vertex_lines_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        const auto lines = brep_.component_mesh_vertices(
-            unique_vertex_index, Line3D::component_type_static() );
-        if( lines.empty() )
+        bool part_of_line{ false };
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Line3D::component_type_static() )
+            {
+                part_of_line = true;
+                break;
+            }
+        }
+        if( !part_of_line )
         {
             return true;
         }
