@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2023 Geode-solutions
+ * Copyright (c) 2019 - 2024 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,9 +65,17 @@ namespace geode
     bool BRepLinesTopology::brep_lines_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        const auto lines = brep_.component_mesh_vertices(
-            unique_vertex_index, Line3D::component_type_static() );
-        if( lines.empty() )
+        bool part_of_line{ false };
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Line3D::component_type_static() )
+            {
+                part_of_line = true;
+                break;
+            }
+        }
+        if( !part_of_line )
         {
             return true;
         }
