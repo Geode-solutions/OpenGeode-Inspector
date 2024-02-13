@@ -28,13 +28,11 @@ project(OpenGeode-Inspector CXX)
 
 option(OPENGEODE_INSPECTOR_WITH_TESTS "Compile test projects" ON)
 option(OPENGEODE_INSPECTOR_WITH_PYTHON "Compile Python bindings" OFF)
+option(OPENGEODE_INSPECTOR_WITH_EXECUTABLES "Compile executable projects" ON)
 
 # Get OpenGeode-inspector dependencies
 find_package(OpenGeode REQUIRED)
 find_package(Async++ REQUIRED)
-find_package(OpenGeode-IO REQUIRED)
-find_package(OpenGeode-Geosciences REQUIRED)
-find_package(OpenGeode-GeosciencesIO REQUIRED)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
@@ -42,7 +40,12 @@ add_subdirectory(src/geode)
 
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector binaries
-add_subdirectory(src/bin)
+if(OPENGEODE_INSPECTOR_WITH_EXECUTABLES)
+    find_package(OpenGeode-IO REQUIRED)
+    find_package(OpenGeode-Geosciences REQUIRED)
+    find_package(OpenGeode-GeosciencesIO REQUIRED)
+    add_subdirectory(src/bin)
+endif()
 
 #------------------------------------------------------------------------------------------------
 # Optional modules configuration
