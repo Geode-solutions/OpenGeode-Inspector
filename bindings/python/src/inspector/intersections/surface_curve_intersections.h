@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/triangulated_surface.h>
@@ -37,16 +37,12 @@ namespace geode
         using SurfaceCurveIntersections =
             SurfaceCurveIntersections< dimension >;
         const auto name =
-            "SurfaceCurveIntersections" + std::to_string( dimension ) + "D";
+            absl::StrCat( "SurfaceCurveIntersections", dimension, "D" );
         pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
             .def( pybind11::init< const TriangulatedSurface&,
                 const EdgedCurve& >() )
-            .def( pybind11::init< const TriangulatedSurface&, const EdgedCurve&,
-                bool >() )
             .def( "meshes_have_intersections",
                 &SurfaceCurveIntersections::meshes_have_intersections )
-            .def( "nb_intersecting_elements_pair",
-                &SurfaceCurveIntersections::nb_intersecting_elements_pair )
             .def( "intersecting_elements",
                 &SurfaceCurveIntersections::intersecting_elements );
     }

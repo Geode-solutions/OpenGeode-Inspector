@@ -39,10 +39,6 @@ namespace geode
     {
     protected:
         AddInspectors( const Mesh& mesh ) : Inspectors{ mesh }... {}
-        AddInspectors( const Mesh& mesh, bool verbose )
-            : Inspectors{ mesh, verbose }...
-        {
-        }
         AddInspectors( AddInspectors&& ) = default;
     };
 } // namespace geode

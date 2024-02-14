@@ -46,124 +46,18 @@ namespace geode
         : public ComponentMeshesManifold< 3, BRep >
     {
     public:
-        Impl( const BRep& brep, bool verbose )
-            : ComponentMeshesManifold< 3, BRep >( brep, verbose )
-        {
-        }
+        Impl( const BRep& brep ) : ComponentMeshesManifold< 3, BRep >( brep ) {}
 
-        std::vector< uuid > components_non_manifold_meshes() const
-        {
-            auto non_manifold_components = ComponentMeshesManifold< 3,
-                BRep >::surfaces_non_manifold_meshes();
-            for( const auto& block : model().blocks() )
-            {
-                const SolidMeshVertexManifold3D vertex_inspector{ block.mesh(),
-                    verbose() };
-                if( !vertex_inspector.mesh_vertices_are_manifold() )
-                {
-                    non_manifold_components.push_back( block.id() );
-                    continue;
-                }
-                const SolidMeshEdgeManifold3D edge_inspector{ block.mesh(),
-                    verbose() };
-                if( !edge_inspector.mesh_edges_are_manifold() )
-                {
-                    non_manifold_components.push_back( block.id() );
-                    continue;
-                }
-                const SolidMeshFacetManifold3D facet_inspector{ block.mesh(),
-                    verbose() };
-                if( !facet_inspector.mesh_facets_are_manifold() )
-                {
-                    non_manifold_components.push_back( block.id() );
-                }
-            }
-            const auto& model_edges = model_non_manifold_edges();
-            if( !model_edges.empty() )
-            {
-                for( const auto& model_edge : model_edges )
-                {
-                    for( const auto& component_id : model_edge.second )
-                    {
-                        non_manifold_components.push_back( component_id );
-                    }
-                }
-            }
-            sort_unique( non_manifold_components );
-            return non_manifold_components;
-        }
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_vertices() const
-        {
-            auto components_nb_non_manifold_vertices =
-                ComponentMeshesManifold< 3,
-                    BRep >::surfaces_meshes_nb_non_manifold_vertices();
-            for( const auto& block : model().blocks() )
-            {
-                const SolidMeshVertexManifold3D inspector{ block.mesh(),
-                    verbose() };
-                auto nb_non_manifold_vertices =
-                    inspector.nb_non_manifold_vertices();
-                if( nb_non_manifold_vertices != 0 )
-                {
-                    components_nb_non_manifold_vertices.emplace(
-                        block.id(), nb_non_manifold_vertices );
-                }
-            }
-            return components_nb_non_manifold_vertices;
-        }
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_edges() const
-        {
-            auto components_nb_non_manifold_edges = ComponentMeshesManifold< 3,
-                BRep >::surfaces_meshes_nb_non_manifold_edges();
-            for( const auto& block : model().blocks() )
-            {
-                const SolidMeshEdgeManifold3D inspector{ block.mesh(),
-                    verbose() };
-                auto nb_non_manifold_edges = inspector.nb_non_manifold_edges();
-                if( nb_non_manifold_edges != 0 )
-                {
-                    components_nb_non_manifold_edges.emplace(
-                        block.id(), nb_non_manifold_edges );
-                }
-            }
-            return components_nb_non_manifold_edges;
-        }
-
-        absl::flat_hash_map< uuid, index_t >
-            component_meshes_nb_non_manifold_facets() const
-        {
-            absl::flat_hash_map< uuid, index_t >
-                components_nb_non_manifold_facets;
-            for( const auto& block : model().blocks() )
-            {
-                const SolidMeshFacetManifold3D inspector{ block.mesh(),
-                    verbose() };
-                auto nb_non_manifold_facets =
-                    inspector.nb_non_manifold_facets();
-                if( nb_non_manifold_facets != 0 )
-                {
-                    components_nb_non_manifold_facets.emplace(
-                        block.id(), nb_non_manifold_facets );
-                }
-            }
-            return components_nb_non_manifold_facets;
-        }
-
-        absl::flat_hash_map< uuid, std::vector< index_t > >
+        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
             component_meshes_non_manifold_vertices() const
         {
             auto components_non_manifold_vertices = ComponentMeshesManifold< 3,
                 BRep >::surfaces_meshes_non_manifold_vertices();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshVertexManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
-                if( !non_manifold_vertices.empty() )
+                if( !non_manifold_vertices.problems.empty() )
                 {
                     components_non_manifold_vertices.emplace(
                         block.id(), non_manifold_vertices );
@@ -172,17 +66,17 @@ namespace geode
             return components_non_manifold_vertices;
         }
 
-        absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
+        absl::flat_hash_map< uuid,
+            InspectionIssues< std::array< index_t, 2 > > >
             component_meshes_non_manifold_edges() const
         {
             auto components_non_manifold_edges = ComponentMeshesManifold< 3,
                 BRep >::surfaces_meshes_non_manifold_edges();
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshEdgeManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
-                if( !non_manifold_edges.empty() )
+                if( !non_manifold_edges.problems.empty() )
                 {
                     components_non_manifold_edges.emplace(
                         block.id(), non_manifold_edges );
@@ -191,17 +85,17 @@ namespace geode
             return components_non_manifold_edges;
         }
 
-        absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacetVertices > >
             component_meshes_non_manifold_facets() const
         {
-            absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
+            absl::flat_hash_map< uuid,
+                InspectionIssues< PolyhedronFacetVertices > >
                 components_non_manifold_facets;
             for( const auto& block : model().blocks() )
             {
-                const SolidMeshFacetManifold3D inspector{ block.mesh(),
-                    verbose() };
+                const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
-                if( !non_manifold_facets.empty() )
+                if( !non_manifold_facets.problems.empty() )
                 {
                     components_non_manifold_facets.emplace(
                         block.id(), non_manifold_facets );
@@ -210,7 +104,8 @@ namespace geode
             return components_non_manifold_facets;
         }
 
-        absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+        absl::flat_hash_map< std::array< index_t, 2 >,
+            InspectionIssues< uuid > >
             model_non_manifold_edges() const
         {
             using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
@@ -244,102 +139,79 @@ namespace geode
                     }
                 }
             }
-            absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
+            absl::flat_hash_map< std::array< index_t, 2 >,
+                InspectionIssues< uuid > >
                 result;
             for( auto& edge : edges )
             {
                 sort_unique( edge.second );
                 if( edge.second.size() > 1 )
                 {
-                    result.emplace( std::move( edge.first.vertices() ),
-                        std::move( edge.second ) );
-                }
-            }
-            if( verbose() )
-            {
-                for( const auto& edge : result )
-                {
-                    std::string uuid_group_string{ "" };
+                    InspectionIssues< uuid > issue{ absl::StrCat(
+                        "Model edge between unique vertices ",
+                        edge.first.vertices()[0], " and ",
+                        edge.first.vertices()[1], " is not manifold" ) };
                     for( const auto surface_uuid : edge.second )
                     {
-                        absl::StrAppend(
-                            &uuid_group_string, " ", surface_uuid.string() );
+                        issue.add_problem( surface_uuid,
+                            absl::StrCat( "Model edge between unique vertices ",
+                                edge.first.vertices()[0], " and ",
+                                edge.first.vertices()[1],
+                                " does not belong to a line but belongs to the "
+                                "surface ",
+                                surface_uuid.string() ) );
                     }
-                    geode::Logger::info( "Model edge between unique vertices ",
-                        edge.first[0], " and ", edge.first[1],
-                        " is not manifold: it does not belong to a line but "
-                        "belongs to surfaces",
-                        uuid_group_string );
+                    result.emplace( std::move( edge.first.vertices() ),
+                        std::move( issue ) );
                 }
             }
             return result;
         }
     };
 
-    BRepComponentMeshesManifold::BRepComponentMeshesManifold(
-        const BRep& model )
-        : impl_{ model, false }
+    std::string BRepMeshesManifoldInspectionResult::string() const
     {
+        std::string message{ "" };
+        for( const auto& vertices_issue : meshes_non_manifold_vertices )
+        {
+            absl::StrAppend( &message, vertices_issue.second.string(), "\n" );
+        }
+        for( const auto& edges_issue : meshes_non_manifold_edges )
+        {
+            absl::StrAppend( &message, edges_issue.second.string(), "\n" );
+        }
+        for( const auto& facets_issue : meshes_non_manifold_facets )
+        {
+            absl::StrAppend( &message, facets_issue.second.string(), "\n" );
+        }
+        for( const auto& model_edges_issue : model_non_manifold_edges )
+        {
+            absl::StrAppend(
+                &message, model_edges_issue.second.string(), "\n" );
+        }
+        return message;
     }
 
     BRepComponentMeshesManifold::BRepComponentMeshesManifold(
-        const BRep& model, bool verbose )
-        : impl_{ model, verbose }
+        const BRep& model )
+        : impl_{ model }
     {
     }
 
     BRepComponentMeshesManifold::~BRepComponentMeshesManifold() {}
 
-    std::vector< uuid >
-        BRepComponentMeshesManifold::components_non_manifold_meshes() const
+    BRepMeshesManifoldInspectionResult
+        BRepComponentMeshesManifold::inspect_brep_manifold() const
     {
-        return impl_->components_non_manifold_meshes();
+        BRepMeshesManifoldInspectionResult result;
+        result.meshes_non_manifold_vertices =
+            impl_->component_meshes_non_manifold_vertices();
+        result.meshes_non_manifold_edges =
+            impl_->component_meshes_non_manifold_edges();
+        result.meshes_non_manifold_facets =
+            impl_->component_meshes_non_manifold_facets();
+        result.model_non_manifold_edges = impl_->model_non_manifold_edges();
+        return result;
     }
 
-    absl::flat_hash_map< uuid, index_t >
-        BRepComponentMeshesManifold::component_meshes_nb_non_manifold_vertices()
-            const
-    {
-        return impl_->component_meshes_nb_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, index_t >
-        BRepComponentMeshesManifold::component_meshes_nb_non_manifold_edges()
-            const
-    {
-        return impl_->component_meshes_nb_non_manifold_edges();
-    }
-
-    absl::flat_hash_map< uuid, index_t >
-        BRepComponentMeshesManifold::component_meshes_nb_non_manifold_facets()
-            const
-    {
-        return impl_->component_meshes_nb_non_manifold_facets();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< index_t > >
-        BRepComponentMeshesManifold::component_meshes_non_manifold_vertices()
-            const
-    {
-        return impl_->component_meshes_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
-        BRepComponentMeshesManifold::component_meshes_non_manifold_edges() const
-    {
-        return impl_->component_meshes_non_manifold_edges();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< PolyhedronFacetVertices > >
-        BRepComponentMeshesManifold::component_meshes_non_manifold_facets()
-            const
-    {
-        return impl_->component_meshes_non_manifold_facets();
-    }
-
-    absl::flat_hash_map< std::array< index_t, 2 >, std::vector< uuid > >
-        BRepComponentMeshesManifold::model_non_manifold_edges() const
-    {
-        return impl_->model_non_manifold_edges();
-    }
 } // namespace geode

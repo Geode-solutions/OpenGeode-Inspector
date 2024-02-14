@@ -46,10 +46,9 @@ void check_non_degeneration2D()
     const geode::EdgedCurveDegeneration2D degeneration_inspector{ *curve };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] EdgedCurve is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 0,
         "[Test] EdgedCurve has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
-        "[Test] EdgedCurve has degenerated edges when it should have none." );
 }
 
 void check_degeneration_by_colocalisation2D()
@@ -68,9 +67,11 @@ void check_degeneration_by_colocalisation2D()
     const geode::EdgedCurveDegeneration2D degeneration_inspector{ *curve };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] EdgedCurve is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] EdgedCurve has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0] == 2,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().problems[0] == 2,
         "[Test] EdgedCurve has wrong degenerated edges." );
 }
 
@@ -90,11 +91,9 @@ void check_non_degeneration3D()
     const geode::EdgedCurveDegeneration3D degeneration_inspector{ *curve };
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) EdgedCurve is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 0,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 0,
         "[Test] (3D) EdgedCurve has more degenerated edges than it should." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().empty(),
-        "[Test] (3D) EdgedCurve has degenerated edges when it should have "
-        "none." );
 }
 
 void check_degeneration_by_colocalisation3D()
@@ -114,9 +113,11 @@ void check_degeneration_by_colocalisation3D()
     const geode::EdgedCurveDegeneration3D degeneration_inspector{ *curve };
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) EdgedCurve is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.nb_degenerated_edges() == 1,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().number() == 1,
         "[Test] (3D) EdgedCurve has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges()[0] == 2,
+    OPENGEODE_EXCEPTION(
+        degeneration_inspector.degenerated_edges().problems[0] == 2,
         "[Test] (3D) EdgedCurve has wrong degenerated edges." );
 }
 

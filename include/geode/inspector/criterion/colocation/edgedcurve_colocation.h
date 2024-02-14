@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -45,16 +46,12 @@ namespace geode
     public:
         EdgedCurveColocation( const EdgedCurve< dimension >& mesh );
 
-        EdgedCurveColocation(
-            const EdgedCurve< dimension >& mesh, bool verbose );
-
         ~EdgedCurveColocation();
 
         bool mesh_has_colocated_points() const;
 
-        index_t nb_colocated_points() const;
-
-        std::vector< std::vector< index_t > > colocated_points_groups() const;
+        InspectionIssues< std::vector< index_t > >
+            colocated_points_groups() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

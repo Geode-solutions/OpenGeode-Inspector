@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/detail/vertex_cycle.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -35,14 +35,11 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshFacetManifold = SolidMeshFacetManifold< dimension >;
         const auto name =
-            "SolidMeshFacetManifold" + std::to_string( dimension ) + "D";
+            absl::StrCat( "SolidMeshFacetManifold", dimension, "D" );
         pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_facets_are_manifold",
                 &SolidMeshFacetManifold::mesh_facets_are_manifold )
-            .def( "nb_non_manifold_facets",
-                &SolidMeshFacetManifold::nb_non_manifold_facets )
             .def( "non_manifold_facets",
                 &SolidMeshFacetManifold::non_manifold_facets );
     }

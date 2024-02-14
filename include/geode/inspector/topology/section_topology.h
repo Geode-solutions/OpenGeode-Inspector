@@ -26,17 +26,29 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 #include <geode/inspector/topology/section_corners_topology.h>
 #include <geode/inspector/topology/section_lines_topology.h>
 #include <geode/inspector/topology/section_surfaces_topology.h>
+
 namespace geode
 {
-    struct ComponentMeshVertex;
     class Section;
 } // namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api SectionTopologyInspectionResult
+    {
+        SectionCornersTopologyInspectionResult corners;
+        SectionLinesTopologyInspectionResult lines;
+        SectionSurfacesTopologyInspectionResult surfaces;
+        InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
+            "Unique vertices not linked to any component"
+        };
+        std::string string() const;
+    };
+
     /*!
      * Class for inspecting the topology of a Section model corners
      */
@@ -49,9 +61,6 @@ namespace geode
 
     public:
         SectionTopologyInspector( const Section& section );
-
-        SectionTopologyInspector( const Section& section, bool verbose );
-
         ~SectionTopologyInspector();
 
         /*!
@@ -64,43 +73,9 @@ namespace geode
 
         bool section_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        std::vector< ComponentMeshVertex >
-            component_vertices_not_linked_to_a_unique_vertex() const;
-
-        std::vector< index_t >
-            unique_vertices_not_linked_to_a_component_vertex() const;
-
-        std::vector< index_t >
-            invalid_components_topology_unique_vertices() const;
-
-        std::vector< index_t > multiple_corners_unique_vertices() const;
-
-        std::vector< index_t > multiple_internals_corner_vertices() const;
-
-        std::vector< index_t >
-            not_internal_nor_boundary_corner_vertices() const;
-
-        std::vector< index_t > line_corners_without_boundary_status() const;
-
-        std::vector< index_t >
-            part_of_not_boundary_nor_internal_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_with_invalid_internal_topology_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_invalid_unique_line_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_lines_but_not_corner_unique_vertices() const;
-
-        std::vector< index_t > part_of_invalid_surfaces_unique_vertices() const;
-
-        std::vector< index_t >
-            part_of_line_and_not_on_surface_border_unique_vertices() const;
+        SectionTopologyInspectionResult inspect_section_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
-        const Section& section_;
     };
 } // namespace geode

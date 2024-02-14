@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/edged_curve.h>
 
@@ -34,14 +34,11 @@ namespace geode
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveDegeneration = EdgedCurveDegeneration< dimension >;
         const auto name =
-            "EdgedCurveDegeneration" + std::to_string( dimension ) + "D";
+            absl::StrCat( "EdgedCurveDegeneration", dimension, "D" );
         pybind11::class_< EdgedCurveDegeneration >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
-            .def( pybind11::init< const EdgedCurve&, bool >() )
             .def( "is_mesh_degenerated",
                 &EdgedCurveDegeneration::is_mesh_degenerated )
-            .def( "nb_degenerated_edges",
-                &EdgedCurveDegeneration::nb_degenerated_edges )
             .def( "degenerated_edges",
                 &EdgedCurveDegeneration::degenerated_edges );
     }

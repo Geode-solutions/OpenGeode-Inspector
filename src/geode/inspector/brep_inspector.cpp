@@ -27,27 +27,24 @@
 
 namespace geode
 {
+    std::string BRepInspectionResult::string() const
+    {
+        return absl::StrCat( meshes.string(), "\n", topology.string(), "\n" );
+    }
+
     BRepInspector::BRepInspector( const BRep& brep )
-        : AddInspectors< BRep,
-            BRepTopologyInspector,
-            BRepUniqueVerticesColocation,
-            BRepComponentMeshesAdjacency,
-            BRepComponentMeshesColocation,
-            BRepComponentMeshesDegeneration,
-            BRepComponentMeshesManifold,
-            BRepMeshesIntersections >{ brep }
+        : AddInspectors< BRep, BRepMeshesInspector, BRepTopologyInspector >{
+              brep
+          }
     {
     }
 
-    BRepInspector::BRepInspector( const BRep& brep, bool verbose )
-        : AddInspectors< BRep,
-            BRepTopologyInspector,
-            BRepUniqueVerticesColocation,
-            BRepComponentMeshesAdjacency,
-            BRepComponentMeshesColocation,
-            BRepComponentMeshesDegeneration,
-            BRepComponentMeshesManifold,
-            BRepMeshesIntersections >{ brep, verbose }
+    BRepInspectionResult BRepInspector::inspect_brep() const
     {
+        BRepInspectionResult result;
+        result.meshes = inspect_brep_meshes();
+        result.topology = inspect_brep_topology();
+        return result;
     }
+
 } // namespace geode

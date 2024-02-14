@@ -40,23 +40,14 @@
 #include <geode/inspector/pointset_inspector.h>
 
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
-ABSL_FLAG( bool,
-    verbose,
-    false,
-    "Toggle verbose mode for the inspection of topology through unique "
-    "vertices" );
 
 template < geode::index_t dimension >
 void inspect_pointset( const geode::PointSet< dimension >& pointset )
 {
-    const auto verbose = absl::GetFlag( FLAGS_verbose );
-    const geode::PointSetInspector< dimension > inspector{ pointset, verbose };
-    geode::index_t nb{ 0 };
-    for( const auto& pt_group : inspector.colocated_points_groups() )
-    {
-        nb += pt_group.size();
-    }
-    geode::Logger::info( nb, " colocated points" );
+    const geode::PointSetInspector< dimension > inspector{ pointset };
+    const auto result = inspector.inspect_pointset();
+
+    geode::Logger::info( result.string() );
 }
 
 int main( int argc, char* argv[] )

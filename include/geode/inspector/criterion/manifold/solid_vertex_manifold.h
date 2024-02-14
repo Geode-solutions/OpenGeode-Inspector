@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -46,16 +47,11 @@ namespace geode
     public:
         SolidMeshVertexManifold( const SolidMesh< dimension >& mesh );
 
-        SolidMeshVertexManifold(
-            const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshVertexManifold();
 
         bool mesh_vertices_are_manifold() const;
 
-        index_t nb_non_manifold_vertices() const;
-
-        std::vector< index_t > non_manifold_vertices() const;
+        InspectionIssues< index_t > non_manifold_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

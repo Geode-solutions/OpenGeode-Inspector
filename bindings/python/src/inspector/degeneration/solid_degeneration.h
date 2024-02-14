@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/solid_mesh.h>
 
@@ -34,14 +34,11 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshDegeneration = SolidMeshDegeneration< dimension >;
         const auto name =
-            "SolidMeshDegeneration" + std::to_string( dimension ) + "D";
+            absl::StrCat( "SolidMeshDegeneration", dimension, "D" );
         pybind11::class_< SolidMeshDegeneration >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "is_mesh_degenerated",
                 &SolidMeshDegeneration::is_mesh_degenerated )
-            .def( "nb_degenerated_edges",
-                &SolidMeshDegeneration::nb_degenerated_edges )
             .def( "degenerated_edges",
                 &SolidMeshDegeneration::degenerated_edges );
     }

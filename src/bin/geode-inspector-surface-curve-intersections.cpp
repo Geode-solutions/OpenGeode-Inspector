@@ -50,18 +50,16 @@ ABSL_FLAG( std::string,
     "/path/my/surface.og_tsf3d",
     "Input triangulated surface" );
 ABSL_FLAG( std::string, curve, "/path/my/curve.og_edc3d", "Input curve" );
-ABSL_FLAG( bool, verbose, false, "Toggle verbose mode" );
 
 template < geode::index_t dimension >
 void inspect_surface_curve(
     const geode::TriangulatedSurface< dimension >& surface,
     const geode::EdgedCurve< dimension >& curve )
 {
-    const auto verbose = absl::GetFlag( FLAGS_verbose );
     const geode::SurfaceCurveIntersections< dimension > inspector{ surface,
-        curve, verbose };
-    const auto nb = inspector.nb_intersecting_elements_pair();
-    geode::Logger::info( nb, " pairs of intersecting triangle-edge" );
+        curve };
+    const auto result = inspector.intersecting_elements();
+    geode::Logger::info( result.string() );
 }
 
 int main( int argc, char* argv[] )

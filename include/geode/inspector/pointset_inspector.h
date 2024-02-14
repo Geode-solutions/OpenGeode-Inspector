@@ -29,21 +29,26 @@
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api PointSetInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        std::string string() const;
+    };
+
     /*!
      * Class for inspecting a PointSet
      * @extends PointSetColocation
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api PointSetInspector
-        : public AddInspectors< PointSet< dimension >,
-              PointSetColocation< dimension > >
+    class PointSetInspector : public AddInspectors< PointSet< dimension >,
+                                  PointSetColocation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( PointSetInspector );
 
     public:
         PointSetInspector( const PointSet< dimension >& mesh );
 
-        PointSetInspector( const PointSet< dimension >& mesh, bool verbose );
+        PointSetInspectionResult inspect_pointset() const;
     };
     ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

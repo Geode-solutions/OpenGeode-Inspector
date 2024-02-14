@@ -36,9 +36,8 @@ namespace geode
         : public detail::ColocationImpl< dimension, PointSet< dimension > >
     {
     public:
-        Impl( const PointSet< dimension >& mesh, bool verbose )
-            : detail::ColocationImpl< dimension, PointSet< dimension > >(
-                mesh, verbose )
+        Impl( const PointSet< dimension >& mesh )
+            : detail::ColocationImpl< dimension, PointSet< dimension > >( mesh )
         {
         }
     };
@@ -46,14 +45,7 @@ namespace geode
     template < index_t dimension >
     PointSetColocation< dimension >::PointSetColocation(
         const PointSet< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    PointSetColocation< dimension >::PointSetColocation(
-        const PointSet< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -69,13 +61,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t PointSetColocation< dimension >::nb_colocated_points() const
-    {
-        return impl_->nb_colocated_points();
-    }
-
-    template < index_t dimension >
-    std::vector< std::vector< index_t > >
+    InspectionIssues< std::vector< index_t > >
         PointSetColocation< dimension >::colocated_points_groups() const
     {
         return impl_->colocated_points_groups();

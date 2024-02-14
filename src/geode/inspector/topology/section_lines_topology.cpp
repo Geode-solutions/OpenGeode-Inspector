@@ -25,8 +25,7 @@
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
-
+#include <geode/mesh/core/edged_curve.h>
 #include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/model/mixin/core/corner.h>
@@ -38,17 +37,34 @@
 
 namespace geode
 {
-    SectionLinesTopology::SectionLinesTopology(
-        const Section& section, bool verbose )
-        : section_( section ), verbose_( verbose )
+    std::string SectionLinesTopologyInspectionResult::string() const
     {
+        auto message = absl::StrCat( lines_not_meshed.string(), "\n" );
+        for( const auto& line_uv_issue : lines_not_linked_to_a_unique_vertex )
+        {
+            absl::StrAppend( &message, line_uv_issue.second.string(), "\n" );
+        }
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_not_internal_nor_boundary_line.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_line_with_invalid_embeddings.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_a_single_and_invalid_line.string(),
+            "\n" );
+        absl::StrAppend( &message,
+            unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+                .string(),
+            "\n" );
+        return message;
     }
     SectionLinesTopology::SectionLinesTopology( const Section& section )
-        : SectionLinesTopology( section, false )
+        : section_( section )
     {
     }
 
-    bool SectionLinesTopology::section_vertex_lines_topology_is_valid(
+    bool SectionLinesTopology::section_lines_topology_is_valid(
         index_t unique_vertex_index ) const
     {
         const auto lines = section_.component_mesh_vertices(
@@ -57,20 +73,20 @@ namespace geode
         {
             return true;
         }
-        if( vertex_is_part_of_not_boundary_nor_internal_line(
+        if( vertex_is_part_of_not_internal_nor_boundary_line(
                 unique_vertex_index )
-            || vertex_is_part_of_line_with_invalid_internal_topology(
-                unique_vertex_index )
-            || vertex_is_part_of_invalid_unique_line( unique_vertex_index )
-            || vertex_has_lines_but_is_not_corner( unique_vertex_index ) )
+            || vertex_is_part_of_invalid_embedded_line( unique_vertex_index )
+            || vertex_is_part_of_invalid_single_line( unique_vertex_index )
+            || vertex_has_lines_but_is_not_a_corner( unique_vertex_index ) )
         {
             return false;
         }
         return true;
     }
 
-    bool SectionLinesTopology::vertex_is_part_of_not_boundary_nor_internal_line(
-        const index_t unique_vertex_index ) const
+    absl::optional< std::string >
+        SectionLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
+            const index_t unique_vertex_index ) const
     {
         for( const auto& line : section_.component_mesh_vertices(
                  unique_vertex_index, Line2D::component_type_static() ) )
@@ -78,21 +94,17 @@ namespace geode
             if( section_.nb_embeddings( line.component_id.id() ) < 1
                 && section_.nb_incidences( line.component_id.id() ) < 1 )
             {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        line.component_id.id().string(),
-                        "', which has no embeddings and no incidences." );
-                }
-                return true;
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is part of line with uuid '",
+                    line.component_id.id().string(),
+                    "', which is neither embedded nor incident." );
             }
         }
-        return false;
+        return absl::nullopt;
     }
 
-    bool SectionLinesTopology::
-        vertex_is_part_of_line_with_invalid_internal_topology(
+    absl::optional< std::string >
+        SectionLinesTopology::vertex_is_part_of_invalid_embedded_line(
             const index_t unique_vertex_index ) const
     {
         for( const auto& line : section_.component_mesh_vertices(
@@ -100,30 +112,22 @@ namespace geode
         {
             if( section_.nb_embeddings( line.component_id.id() ) < 1 )
             {
-                return false;
+                return absl::nullopt;
             }
             else if( section_.nb_embeddings( line.component_id.id() ) > 1 )
             {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        line.component_id.id().string(),
-                        "', which has multiple embeddings." );
-                }
-                return true;
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is part of line with uuid '",
+                    line.component_id.id().string(),
+                    "', which has multiple embeddings." );
             }
             else if( section_.nb_incidences( line.component_id.id() ) > 0 )
             {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        line.component_id.id().string(),
-                        "', which has both an embedding and "
-                        "incidence(s)." );
-                }
-                return true;
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is part of line with uuid '",
+                    line.component_id.id().string(),
+                    "', which has both an embedding and "
+                    "incidence(s)." );
             }
             for( const auto& embedding :
                 section_.embeddings( line.component_id.id() ) )
@@ -136,46 +140,37 @@ namespace geode
                             return cmv.component_id.id() == embedding.id();
                         } ) )
                 {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index, " is part of line with uuid '",
-                            line.component_id.string(),
-                            "', which is embedded in surface with uuid '",
-                            embedding.id().string(),
-                            "', but the unique vertex is not linked to the "
-                            "surface mesh vertices." );
-                    }
-                    return true;
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index, " is part of line with uuid '",
+                        line.component_id.string(),
+                        "', which is embedded in surface with uuid '",
+                        embedding.id().string(),
+                        "', but the unique vertex is not linked to the "
+                        "surface mesh vertices." );
                 }
             }
         }
-        return false;
+        return absl::nullopt;
     }
 
-    bool SectionLinesTopology::vertex_is_part_of_invalid_unique_line(
-        index_t unique_vertex_index ) const
+    absl::optional< std::string >
+        SectionLinesTopology::vertex_is_part_of_invalid_single_line(
+            index_t unique_vertex_index ) const
     {
-        const auto line_uuids =
-            detail::components_uuids( section_.component_mesh_vertices(
-                unique_vertex_index, Line2D::component_type_static() ) );
+        const auto line_uuids = detail::components_uuids(
+            section_, unique_vertex_index, Line2D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
-            return false;
+            return absl::nullopt;
         }
         const auto& line_id = line_uuids[0];
-        const auto surface_uuids =
-            detail::components_uuids( section_.component_mesh_vertices(
-                unique_vertex_index, Surface2D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() > 2 )
         {
-            if( verbose_ )
-            {
-                Logger::info( "Unique vertex with index ", unique_vertex_index,
-                    " is part of only one line, with uuid '", line_id.string(),
-                    "', but part of more than two surfaces." );
-            }
-            return true;
+            return absl::StrCat( "Unique vertex with index ",
+                unique_vertex_index, " is part of only one line, with uuid '",
+                line_id.string(), "', but part of more than two surfaces." );
         }
         if( section_.nb_embeddings( line_id ) > 0 )
         {
@@ -184,18 +179,13 @@ namespace geode
                      || !section_.Relationships::is_internal(
                          line_id, surface_uuids[0] ) ) )
             {
-                if( verbose_ )
-                {
-                    Logger::info( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is part of only one line, with uuid '",
-                        line_id.string(),
-                        "', which has embeddings, but there are more than "
-                        "one meshed surface associated to the vertex, or "
-                        "the line is not internal to the meshed surface "
-                        "associated to the vertex." );
-                }
-                return true;
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index,
+                    " is part of only one line, with uuid '", line_id.string(),
+                    "', which has embeddings, but there are more than "
+                    "one meshed surface associated to the vertex, or "
+                    "the line is not internal to the meshed surface "
+                    "associated to the vertex." );
             }
         }
         else
@@ -205,24 +195,22 @@ namespace geode
                 if( !section_.Relationships::is_boundary(
                         line_id, surface_id ) )
                 {
-                    if( verbose_ )
-                    {
-                        Logger::info( "Unique vertex with index ",
-                            unique_vertex_index, " is part of line with uuid '",
-                            line_id.string(),
-                            "', and mutiple surfaces, but the line is not "
-                            "boundary of associated surface with uuid '",
-                            surface_id.string(), "'." );
-                    }
-                    return true;
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of only one line, with uuid '",
+                        line_id.string(),
+                        "', and mutiple surfaces, but the line is not "
+                        "boundary of associated surface with uuid'",
+                        surface_id.string(), "'." );
                 }
             }
         }
-        return false;
+        return absl::nullopt;
     }
 
-    bool SectionLinesTopology::vertex_has_lines_but_is_not_corner(
-        index_t unique_vertex_index ) const
+    absl::optional< std::string >
+        SectionLinesTopology::vertex_has_lines_but_is_not_a_corner(
+            index_t unique_vertex_index ) const
     {
         if( section_.component_mesh_vertices(
                         unique_vertex_index, Line2D::component_type_static() )
@@ -233,13 +221,69 @@ namespace geode
                        unique_vertex_index, Corner2D::component_type_static() )
                    .empty() )
         {
-            if( verbose_ )
-            {
-                Logger::info( "Unique vertex with index ", unique_vertex_index,
-                    " is associated to multiple lines but no corner." );
-            }
-            return true;
+            return absl::StrCat( "Unique vertex with index ",
+                unique_vertex_index,
+                " is part of multiple lines but is not a corner." );
         }
-        return false;
+        return absl::nullopt;
     }
+
+    SectionLinesTopologyInspectionResult
+        SectionLinesTopology::inspect_lines_topology() const
+    {
+        SectionLinesTopologyInspectionResult result;
+        for( const auto& line : section_.lines() )
+        {
+            if( section_.line( line.id() ).mesh().nb_vertices() == 0 )
+            {
+                result.lines_not_meshed.add_problem(
+                    line.id(), absl::StrCat( line.id().string(),
+                                   " is a line without mesh." ) );
+            }
+            auto line_result = detail::
+                section_component_vertices_are_associated_to_unique_vertices(
+                    section_, line.component_id(), line.mesh() );
+            line_result.description = absl::StrCat( "Line ", line.id().string(),
+                " has mesh vertices not linked to a unique vertex." );
+            result.lines_not_linked_to_a_unique_vertex.emplace_back(
+                line.id(), line_result );
+        }
+        for( const auto unique_vertex_id :
+            Range{ section_.nb_unique_vertices() } )
+        {
+            if( const auto boundary_nor_internal_line =
+                    vertex_is_part_of_not_internal_nor_boundary_line(
+                        unique_vertex_id ) )
+            {
+                result.unique_vertices_linked_to_not_internal_nor_boundary_line
+                    .add_problem(
+                        unique_vertex_id, boundary_nor_internal_line.value() );
+            }
+            if( const auto invalid_internal_topology =
+                    vertex_is_part_of_invalid_embedded_line(
+                        unique_vertex_id ) )
+            {
+                result.unique_vertices_linked_to_a_line_with_invalid_embeddings
+                    .add_problem(
+                        unique_vertex_id, invalid_internal_topology.value() );
+            }
+            if( const auto invalid_unique_line =
+                    vertex_is_part_of_invalid_single_line( unique_vertex_id ) )
+            {
+                result.unique_vertices_linked_to_a_single_and_invalid_line
+                    .add_problem(
+                        unique_vertex_id, invalid_unique_line.value() );
+            }
+            if( const auto lines_but_is_not_corner =
+                    vertex_has_lines_but_is_not_a_corner( unique_vertex_id ) )
+            {
+                result
+                    .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+                    .add_problem(
+                        unique_vertex_id, lines_but_is_not_corner.value() );
+            }
+        }
+        return result;
+    }
+
 } // namespace geode

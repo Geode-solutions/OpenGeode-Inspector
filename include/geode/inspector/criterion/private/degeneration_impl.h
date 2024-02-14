@@ -24,6 +24,7 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -40,23 +41,18 @@ namespace geode
 
             virtual bool is_mesh_degenerated() const;
 
-            index_t nb_degenerated_edges() const;
-
-            std::vector< index_t > degenerated_edges() const;
+            InspectionIssues< index_t > degenerated_edges() const;
 
         private:
             bool edge_is_degenerated( index_t edge_index ) const;
 
         protected:
-            DegenerationImpl( const Mesh& mesh, bool verbose );
+            DegenerationImpl( const Mesh& mesh );
 
             const Mesh& mesh() const;
 
-            bool verbose() const;
-
         private:
             const Mesh& mesh_;
-            DEBUG_CONST bool verbose_;
         };
     } // namespace detail
 } // namespace geode

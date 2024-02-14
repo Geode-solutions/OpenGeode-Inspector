@@ -33,19 +33,35 @@ namespace geode
     {
         using SolidMesh = geode::SolidMesh< dimension >;
         using SolidMeshInspector = geode::SolidMeshInspector< dimension >;
-        const auto name =
-            "SolidMeshInspector" + std::to_string( dimension ) + "D";
+        const auto name = absl::StrCat( "SolidMeshInspector", dimension, "D" );
         pybind11::class_< SolidMeshInspector, SolidMeshAdjacency< dimension >,
             SolidMeshColocation< dimension >,
             SolidMeshDegeneration< dimension >,
             SolidMeshVertexManifold< dimension >,
             SolidMeshEdgeManifold< dimension >,
             SolidMeshFacetManifold< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() );
+            .def( pybind11::init< const SolidMesh& >() );
     }
     void define_solid_inspector( pybind11::module& module )
     {
+        pybind11::class_< SolidInspectionResult >(
+            module, "SolidInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "polyhedron_facets_with_wrong_adjacency",
+                &SolidInspectionResult::polyhedron_facets_with_wrong_adjacency )
+            .def_readwrite( "colocated_points_groups",
+                &SolidInspectionResult::colocated_points_groups )
+            .def_readwrite(
+                "degenerated_edges", &SolidInspectionResult::degenerated_edges )
+            .def_readwrite( "degenerated_polyhedra",
+                &SolidInspectionResult::degenerated_polyhedra )
+            .def_readwrite( "non_manifold_vertices",
+                &SolidInspectionResult::non_manifold_vertices )
+            .def_readwrite( "non_manifold_edges",
+                &SolidInspectionResult::non_manifold_edges )
+            .def_readwrite( "non_manifold_facets",
+                &SolidInspectionResult::non_manifold_facets )
+            .def( "string", &SolidInspectionResult::string );
         do_define_solid_inspector< 3 >( module );
     }
 } // namespace geode

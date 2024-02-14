@@ -27,6 +27,11 @@
 
 namespace geode
 {
+    std::string PointSetInspectionResult::string() const
+    {
+        return absl::StrCat( colocated_points_groups.string(), "\n" );
+    }
+
     template < index_t dimension >
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh )
@@ -36,11 +41,12 @@ namespace geode
     }
 
     template < index_t dimension >
-    PointSetInspector< dimension >::PointSetInspector(
-        const PointSet< dimension >& mesh, bool verbose )
-        : AddInspectors< PointSet< dimension >,
-            PointSetColocation< dimension > >{ mesh, verbose }
+    PointSetInspectionResult
+        PointSetInspector< dimension >::inspect_pointset() const
     {
+        PointSetInspectionResult result;
+        result.colocated_points_groups = this->colocated_points_groups();
+        return result;
     }
 
     template class opengeode_inspector_inspector_api PointSetInspector< 2 >;

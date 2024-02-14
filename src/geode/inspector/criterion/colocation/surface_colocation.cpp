@@ -36,9 +36,9 @@ namespace geode
         : public detail::ColocationImpl< dimension, SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
+        Impl( const SurfaceMesh< dimension >& mesh )
             : detail::ColocationImpl< dimension, SurfaceMesh< dimension > >(
-                mesh, verbose )
+                mesh )
         {
         }
     };
@@ -46,14 +46,7 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceMeshColocation< dimension >::SurfaceMeshColocation(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -69,13 +62,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t SurfaceMeshColocation< dimension >::nb_colocated_points() const
-    {
-        return impl_->nb_colocated_points();
-    }
-
-    template < index_t dimension >
-    std::vector< std::vector< index_t > >
+    InspectionIssues< std::vector< index_t > >
         SurfaceMeshColocation< dimension >::colocated_points_groups() const
     {
         return impl_->colocated_points_groups();

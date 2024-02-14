@@ -40,9 +40,8 @@ namespace geode
         : public detail::DegenerationImpl< SurfaceMesh< dimension > >
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh, bool verbose )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh,
-                  verbose }
+        Impl( const SurfaceMesh< dimension >& mesh )
+            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
         {
         }
 
@@ -63,27 +62,19 @@ namespace geode
             return false;
         }
 
-        index_t nb_degenerated_polygons() const
+        InspectionIssues< index_t > degenerated_polygons() const
         {
-            index_t counter{ 0 };
+            InspectionIssues< index_t > wrong_polygons{
+                "Degenerated Polygons on the Surface "
+                + this->mesh().id().string() + "."
+            };
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
                 if( polygon_is_degenerated( polygon_id ) )
                 {
-                    counter++;
-                }
-            }
-            return counter;
-        }
-
-        std::vector< index_t > degenerated_polygons() const
-        {
-            std::vector< index_t > wrong_polygons;
-            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
-            {
-                if( polygon_is_degenerated( polygon_id ) )
-                {
-                    wrong_polygons.push_back( polygon_id );
+                    wrong_polygons.add_problem( polygon_id,
+                        absl::StrCat( "Polygon ", polygon_id, " of Surface ",
+                            this->mesh().id().string(), " is degenerated." ) );
                 }
             }
             return wrong_polygons;
@@ -97,11 +88,6 @@ namespace geode
             {
                 return false;
             }
-            if( this->verbose() )
-            {
-                Logger::info( "Polygon ", polygon_id, " of Surface ",
-                    mesh.id().string(), " is degenerated." );
-            }
             return true;
         }
     };
@@ -109,14 +95,7 @@ namespace geode
     template < index_t dimension >
     SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
         const SurfaceMesh< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
-        const SurfaceMesh< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -132,27 +111,14 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t SurfaceMeshDegeneration< dimension >::nb_degenerated_edges() const
-    {
-        return impl_->nb_degenerated_edges();
-    }
-
-    template < index_t dimension >
-    index_t
-        SurfaceMeshDegeneration< dimension >::nb_degenerated_polygons() const
-    {
-        return impl_->nb_degenerated_polygons();
-    }
-
-    template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         SurfaceMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
     }
 
     template < index_t dimension >
-    std::vector< index_t >
+    InspectionIssues< index_t >
         SurfaceMeshDegeneration< dimension >::degenerated_polygons() const
     {
         return impl_->degenerated_polygons();

@@ -32,21 +32,21 @@
     pybind11::class_< suffix##ComponentMeshesColocation >(                     \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( pybind11::init< const type&, bool >() )                          \
-        .def( "components_with_colocated_points",                              \
+        .def( "inspect_meshes_point_colocations",                              \
             &suffix##ComponentMeshesColocation::                               \
-                components_with_colocated_points )                             \
-        .def( "components_nb_colocated_points",                                \
-            &suffix##ComponentMeshesColocation::                               \
-                components_nb_colocated_points )                               \
-        .def( "components_colocated_points_groups",                            \
-            &suffix##ComponentMeshesColocation::                               \
-                components_colocated_points_groups )
+                inspect_meshes_point_colocations )
 
 namespace geode
 {
     void define_models_meshes_colocation( pybind11::module& module )
     {
+        pybind11::class_< MeshesColocationInspectionResult >(
+            module, "MeshesColocationInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite( "colocated_points_groups",
+                &MeshesColocationInspectionResult::colocated_points_groups )
+            .def( "string", &MeshesColocationInspectionResult::string );
+
         PYTHON_COMPONENTS_COLOCATION( Section, Section );
         PYTHON_COMPONENTS_COLOCATION( BRep, BRep );
     }

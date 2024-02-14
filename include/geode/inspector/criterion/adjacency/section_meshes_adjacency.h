@@ -26,18 +26,27 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/pimpl.h>
+#include <geode/basic/uuid.h>
+
+#include <geode/mesh/core/surface_mesh.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
     class Section;
-    struct uuid;
-    struct PolygonEdge;
 } // namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api
+        SectionMeshesAdjacencyInspectionResult
+    {
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
+            surfaces_edges_with_wrong_adjacencies;
+        std::string string() const;
+    };
     /*!
      * Class for inspecting the adjacency of the surface edges in the Component
      * Meshes of a Section.
@@ -49,17 +58,10 @@ namespace geode
     public:
         SectionComponentMeshesAdjacency( const Section& model );
 
-        SectionComponentMeshesAdjacency( const Section& model, bool verbose );
-
         ~SectionComponentMeshesAdjacency();
 
-        std::vector< uuid > components_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            surfaces_nb_edges_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies() const;
+        SectionMeshesAdjacencyInspectionResult
+            inspect_section_meshes_adjacencies() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

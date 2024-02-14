@@ -27,6 +27,16 @@
 
 namespace geode
 {
+    std::string SolidInspectionResult::string() const
+    {
+        return absl::StrCat( polyhedron_facets_with_wrong_adjacency.string(),
+            "\n", colocated_points_groups.string(), "\n",
+            degenerated_edges.string(), "\n", degenerated_polyhedra.string(),
+            "\n", non_manifold_vertices.string(), "\n",
+            non_manifold_edges.string(), "\n", non_manifold_facets.string(),
+            "\n" );
+    }
+
     template < index_t dimension >
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )
@@ -39,18 +49,19 @@ namespace geode
             SolidMeshFacetManifold< dimension > >{ mesh }
     {
     }
-
     template < index_t dimension >
-    SolidMeshInspector< dimension >::SolidMeshInspector(
-        const SolidMesh< dimension >& mesh, bool verbose )
-        : AddInspectors< SolidMesh< dimension >,
-            SolidMeshAdjacency< dimension >,
-            SolidMeshColocation< dimension >,
-            SolidMeshDegeneration< dimension >,
-            SolidMeshVertexManifold< dimension >,
-            SolidMeshEdgeManifold< dimension >,
-            SolidMeshFacetManifold< dimension > >{ mesh, verbose }
+    SolidInspectionResult SolidMeshInspector< dimension >::inspect_solid() const
     {
+        SolidInspectionResult result;
+        result.polyhedron_facets_with_wrong_adjacency =
+            this->polyhedron_facets_with_wrong_adjacency();
+        result.colocated_points_groups = this->colocated_points_groups();
+        result.degenerated_edges = this->degenerated_edges();
+        result.degenerated_polyhedra = this->degenerated_polyhedra();
+        result.non_manifold_vertices = this->non_manifold_vertices();
+        result.non_manifold_edges = this->non_manifold_edges();
+        result.non_manifold_facets = this->non_manifold_facets();
+        return result;
     }
 
     template class opengeode_inspector_inspector_api SolidMeshInspector< 3 >;

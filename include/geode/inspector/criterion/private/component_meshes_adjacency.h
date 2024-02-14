@@ -26,6 +26,7 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -45,23 +46,15 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
 
     public:
-        std::vector< uuid > surfaces_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, index_t >
-            surfaces_nb_edges_with_wrong_adjacencies() const;
-
-        absl::flat_hash_map< uuid, std::vector< PolygonEdge > >
+        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
             surfaces_edges_with_wrong_adjacencies() const;
 
     protected:
-        ComponentMeshesAdjacency( const Model& model, bool verbose );
+        ComponentMeshesAdjacency( const Model& model );
 
         const Model& model() const;
 
-        bool verbose() const;
-
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 } // namespace geode

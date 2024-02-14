@@ -47,13 +47,9 @@ def check_vertex_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if not manifold_inspector.mesh_vertices_are_manifold():
         raise ValueError("[Test] Solid is shown non-manifold whereas it is.")
-    if manifold_inspector.nb_non_manifold_vertices() != 0:
+    if manifold_inspector.non_manifold_vertices().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold vertices than it should.")
-    if manifold_inspector.non_manifold_vertices():
-        raise ValueError(
-            "[Test] Solid vertices are shown non manifold whereas they are.")
-
 
 def check_vertex_non_manifold():
     solid = geode.TetrahedralSolid3D.create()
@@ -72,10 +68,10 @@ def check_vertex_non_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if manifold_inspector.mesh_vertices_are_manifold():
         raise ValueError("[Test] Solid is shown manifold whereas it is not.")
-    if manifold_inspector.nb_non_manifold_vertices() != 1:
+    if manifold_inspector.non_manifold_vertices().number() != 1:
         raise ValueError(
             "[Test] Solid has wrong number of non manifold vertices.")
-    if manifold_inspector.non_manifold_vertices()[0] != 3:
+    if manifold_inspector.non_manifold_vertices().problems[0] != 3:
         raise ValueError("[Test] Solid shows wrong non manifold vertex id.")
 
 
@@ -96,14 +92,10 @@ def check_edge_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if not manifold_inspector.mesh_edges_are_manifold():
         raise ValueError("[Test] Solid is shown non-manifold whereas it is.")
-    if manifold_inspector.nb_non_manifold_edges() != 0:
+    if manifold_inspector.non_manifold_edges().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold edges than it should.")
-    if manifold_inspector.non_manifold_edges():
-        raise ValueError(
-            "[Test] Solid edges are shown non manifold whereas they are.")
-
-
+ 
 def check_edge_non_manifold():
     solid = geode.TetrahedralSolid3D.create()
     builder = geode.TetrahedralSolidBuilder3D.create(solid)
@@ -120,10 +112,10 @@ def check_edge_non_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if manifold_inspector.mesh_edges_are_manifold():
         raise ValueError("[Test] Solid is shown manifold whereas it is not.")
-    if manifold_inspector.nb_non_manifold_edges() != 1:
+    if manifold_inspector.non_manifold_edges().number() != 1:
         raise ValueError(
             "[Test] Solid has wrong number of non manifold edges.")
-    non_manifold_e = manifold_inspector.non_manifold_edges()
+    non_manifold_e = manifold_inspector.non_manifold_edges().problems
     if non_manifold_e[0][0] != 2 or non_manifold_e[0][1] != 3:
         raise ValueError("[Test] Solid shows wrong non manifold edge id.")
 
@@ -143,13 +135,9 @@ def check_facet_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if manifold_inspector.mesh_facets_are_manifold():
         raise ValueError("[Test] Solid is shown non-manifold whereas it is.")
-    if manifold_inspector.nb_non_manifold_facets() != 0:
+    if manifold_inspector.non_manifold_facets().number() != 0:
         raise ValueError(
             "[Test] Solid has more non manifold facets than it should.")
-    if manifold_inspector.non_manifold_facets():
-        raise ValueError(
-            "[Test] Solid facets are shown non manifold whereas they are.")
-
 
 def check_facet_non_manifold():
     solid = geode.TetrahedralSolid3D.create()
@@ -168,10 +156,10 @@ def check_facet_non_manifold():
     manifold_inspector = geode.SolidMeshInspector3D(solid)
     if manifold_inspector.mesh_facets_are_manifold():
         raise ValueError("[Test] Solid is shown manifold whereas it is not.")
-    if manifold_inspector.nb_non_manifold_facets() != 1:
+    if manifold_inspector.non_manifold_facets().number() != 1:
         raise ValueError(
             "[Test] Solid has wrong number of non manifold facets.")
-    non_manifold_f = manifold_inspector.non_manifold_facets()
+    non_manifold_f = manifold_inspector.non_manifold_facets().problems
     if non_manifold_f[0][0] != 1 or non_manifold_f[0][1] != 2 or non_manifold_f[0][2] != 3:
         raise ValueError("[Test] Solid shows wrong non manifold facet id.")
 

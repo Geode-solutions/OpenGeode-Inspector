@@ -30,24 +30,28 @@
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api EdgedCurveInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > > colocated_points_groups;
+        InspectionIssues< index_t > degenerated_edges;
+        std::string string() const;
+    };
+
     /*!
      * Class for inspecting an EdgedCurve
      * @extends EdgedCurveColocation
      * @extends EdgedCurveDegeneration
      */
     template < index_t dimension >
-    class opengeode_inspector_inspector_api EdgedCurveInspector
-        : public AddInspectors< EdgedCurve< dimension >,
-              EdgedCurveColocation< dimension >,
-              EdgedCurveDegeneration< dimension > >
+    class EdgedCurveInspector : public AddInspectors< EdgedCurve< dimension >,
+                                    EdgedCurveColocation< dimension >,
+                                    EdgedCurveDegeneration< dimension > >
     {
         OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 
     public:
         EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
-
-        EdgedCurveInspector(
-            const EdgedCurve< dimension >& mesh, bool verbose );
+        EdgedCurveInspectionResult inspect_edgedcurve() const;
     };
     ALIAS_2D_AND_3D( EdgedCurveInspector );
 } // namespace geode

@@ -30,6 +30,7 @@
 #include <geode/mesh/core/solid_mesh.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -45,16 +46,11 @@ namespace geode
     public:
         SolidMeshFacetManifold( const SolidMesh< dimension >& mesh );
 
-        SolidMeshFacetManifold(
-            const SolidMesh< dimension >& mesh, bool verbose );
-
         ~SolidMeshFacetManifold();
 
         bool mesh_facets_are_manifold() const;
 
-        index_t nb_non_manifold_facets() const;
-
-        std::vector< PolyhedronFacetVertices > non_manifold_facets() const;
+        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

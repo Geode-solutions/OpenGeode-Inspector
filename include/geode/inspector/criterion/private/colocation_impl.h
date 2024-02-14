@@ -24,6 +24,7 @@
 #pragma once
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 #include <geode/geometry/nn_search.h>
 
@@ -38,19 +39,16 @@ namespace geode
         class ColocationImpl
         {
         protected:
-            ColocationImpl( const Mesh& mesh, bool verbose );
+            ColocationImpl( const Mesh& mesh );
 
         public:
             bool mesh_has_colocated_points() const;
 
-            index_t nb_colocated_points() const;
-
-            std::vector< std::vector< index_t > >
+            InspectionIssues< std::vector< index_t > >
                 colocated_points_groups() const;
 
         private:
             const Mesh& mesh_;
-            DEBUG_CONST bool verbose_;
         };
     } // namespace detail
 } // namespace geode

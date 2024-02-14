@@ -40,7 +40,8 @@
 
 namespace
 {
-    geode::local_index_t vertex_position_to_index( geode::Position position )
+    geode::local_index_t surface_vertex_position_to_index(
+        geode::Position position )
     {
         if( position == geode::Position::vertex0 )
         {
@@ -258,9 +259,9 @@ namespace
                     return true;
                 }
                 const auto t1_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.first );
+                    surface_vertex_position_to_index( edge_edge_inter.first );
                 const auto t2_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.second );
+                    surface_vertex_position_to_index( edge_edge_inter.second );
                 if( t1_edge_inter_pt_id == geode::NO_LID
                     || t2_edge_inter_pt_id == geode::NO_LID )
                 {
@@ -295,9 +296,9 @@ namespace
                     return true;
                 }
                 const auto edge_inter_pt_id =
-                    vertex_position_to_index( intersection.first );
+                    surface_vertex_position_to_index( intersection.first );
                 const auto t2_inter_pt_id =
-                    vertex_position_to_index( intersection.second );
+                    surface_vertex_position_to_index( intersection.second );
                 if( edge_inter_pt_id == geode::NO_LID
                     || t2_inter_pt_id == geode::NO_LID )
                 {
@@ -358,8 +359,8 @@ namespace geode
     class TriangulatedSurfaceIntersections< dimension >::Impl
     {
     public:
-        Impl( const TriangulatedSurface< dimension >& mesh, bool verbose )
-            : mesh_( mesh ), verbose_( verbose )
+        Impl( const TriangulatedSurface< dimension >& mesh )
+            : mesh_( mesh ), verbose_( false )
         {
         }
 
@@ -374,35 +375,22 @@ namespace geode
             return true;
         }
 
-        index_t nb_intersecting_elements_pair() const
-        {
-            const auto intersections = intersecting_triangles<
-                AllTriangleTriangleIntersection< dimension > >();
-            if( verbose_ )
-            {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first, " and ",
-                        triangle_pair.second, " intersect each other." );
-                }
-            }
-            return intersections.size();
-        }
-
-        std::vector< std::pair< index_t, index_t > >
+        InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
             const auto intersections = intersecting_triangles<
                 AllTriangleTriangleIntersection< dimension > >();
-            if( verbose_ )
+            InspectionIssues< std::pair< index_t, index_t > > issues{
+                "Triangle - triangle intersections."
+            };
+
+            for( const auto& triangle_pair : intersections )
             {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first, " and ",
-                        triangle_pair.second, " intersect each other." );
-                }
+                issues.add_problem( triangle_pair,
+                    absl::StrCat( "Triangles ", triangle_pair.first, " and ",
+                        triangle_pair.second, " intersect each other." ) );
             }
-            return intersections;
+            return issues;
         }
 
     private:
@@ -425,15 +413,7 @@ namespace geode
     TriangulatedSurfaceIntersections< dimension >::
         TriangulatedSurfaceIntersections(
             const TriangulatedSurface< dimension >& mesh )
-        : impl_( mesh, false )
-    {
-    }
-
-    template < index_t dimension >
-    TriangulatedSurfaceIntersections< dimension >::
-        TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh, bool verbose )
-        : impl_( mesh, verbose )
+        : impl_( mesh )
     {
     }
 
@@ -451,14 +431,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    index_t TriangulatedSurfaceIntersections<
-        dimension >::nb_intersecting_elements_pair() const
-    {
-        return impl_->nb_intersecting_elements_pair();
-    }
-
-    template < index_t dimension >
-    std::vector< std::pair< index_t, index_t > >
+    InspectionIssues< std::pair< index_t, index_t > >
         TriangulatedSurfaceIntersections< dimension >::intersecting_elements()
             const
     {

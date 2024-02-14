@@ -26,6 +26,7 @@
 #include <geode/basic/pimpl.h>
 
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
@@ -35,19 +36,24 @@ namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api UniqueVerticesInspectionResult
+    {
+        InspectionIssues< std::vector< index_t > >
+            colocated_unique_vertices_groups;
+        InspectionIssues< index_t > unique_vertices_linked_to_different_points;
+        std::string string() const;
+    };
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep
      * or Section)
      */
     template < index_t dimension, typename Model >
-    class opengeode_inspector_inspector_api UniqueVerticesColocation
+    class UniqueVerticesColocation
     {
         OPENGEODE_DISABLE_COPY( UniqueVerticesColocation );
 
     public:
         UniqueVerticesColocation( const Model& model );
-
-        UniqueVerticesColocation( const Model& model, bool verbose );
 
         ~UniqueVerticesColocation();
 
@@ -55,15 +61,7 @@ namespace geode
 
         bool model_has_colocated_unique_vertices() const;
 
-        index_t nb_colocated_unique_vertices() const;
-
-        index_t nb_unique_vertices_linked_to_different_points() const;
-
-        std::vector< std::vector< index_t > >
-            colocated_unique_vertices_groups() const;
-
-        std::vector< index_t >
-            unique_vertices_linked_to_different_points() const;
+        UniqueVerticesInspectionResult inspect_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

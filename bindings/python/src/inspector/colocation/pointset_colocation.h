@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/point_set.h>
 
@@ -33,15 +33,11 @@ namespace geode
     {
         using PointSet = PointSet< dimension >;
         using PointSetColocation = PointSetColocation< dimension >;
-        const auto name =
-            "PointSetColocation" + std::to_string( dimension ) + "D";
+        const auto name = absl::StrCat( "PointSetColocation", dimension, "D" );
         pybind11::class_< PointSetColocation >( module, name.c_str() )
             .def( pybind11::init< const PointSet& >() )
-            .def( pybind11::init< const PointSet&, bool >() )
             .def( "mesh_has_colocated_points",
                 &PointSetColocation::mesh_has_colocated_points )
-            .def( "nb_colocated_points",
-                &PointSetColocation::nb_colocated_points )
             .def( "colocated_points_groups",
                 &PointSetColocation::colocated_points_groups );
     }

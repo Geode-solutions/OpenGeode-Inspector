@@ -36,56 +36,42 @@ namespace geode
         : public ComponentMeshesManifold< 2, Section >
     {
     public:
-        Impl( const Section& section, bool verbose )
-            : ComponentMeshesManifold< 2, Section >( section, verbose )
+        Impl( const Section& section )
+            : ComponentMeshesManifold< 2, Section >( section )
         {
         }
     };
 
     SectionComponentMeshesManifold::SectionComponentMeshesManifold(
         const Section& model )
-        : impl_{ model, false }
+        : impl_{ model }
     {
     }
 
-    SectionComponentMeshesManifold::SectionComponentMeshesManifold(
-        const Section& model, bool verbose )
-        : impl_{ model, verbose }
+    std::string SectionMeshesManifoldInspectionResult::string() const
     {
+        std::string message{ "" };
+        for( const auto& vertices_issue : meshes_non_manifold_vertices )
+        {
+            absl::StrAppend( &message, vertices_issue.second.string(), "\n" );
+        }
+        for( const auto& edges_issue : meshes_non_manifold_edges )
+        {
+            absl::StrAppend( &message, edges_issue.second.string(), "\n" );
+        }
+        return message;
     }
 
     SectionComponentMeshesManifold::~SectionComponentMeshesManifold() {}
 
-    std::vector< uuid >
-        SectionComponentMeshesManifold::components_non_manifold_meshes() const
+    SectionMeshesManifoldInspectionResult
+        SectionComponentMeshesManifold::inspect_section_manifold() const
     {
-        return impl_->surfaces_non_manifold_meshes();
-    }
-
-    absl::flat_hash_map< uuid, index_t > SectionComponentMeshesManifold::
-        component_meshes_nb_non_manifold_vertices() const
-    {
-        return impl_->surfaces_meshes_nb_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, index_t >
-        SectionComponentMeshesManifold::component_meshes_nb_non_manifold_edges()
-            const
-    {
-        return impl_->surfaces_meshes_nb_non_manifold_edges();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< index_t > >
-        SectionComponentMeshesManifold::component_meshes_non_manifold_vertices()
-            const
-    {
-        return impl_->surfaces_meshes_non_manifold_vertices();
-    }
-
-    absl::flat_hash_map< uuid, std::vector< std::array< index_t, 2 > > >
-        SectionComponentMeshesManifold::component_meshes_non_manifold_edges()
-            const
-    {
-        return impl_->surfaces_meshes_non_manifold_edges();
+        SectionMeshesManifoldInspectionResult result;
+        result.meshes_non_manifold_vertices =
+            impl_->surfaces_meshes_non_manifold_vertices();
+        result.meshes_non_manifold_edges =
+            impl_->surfaces_meshes_non_manifold_edges();
+        return result;
     }
 } // namespace geode

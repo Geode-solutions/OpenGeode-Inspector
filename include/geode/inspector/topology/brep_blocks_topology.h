@@ -23,15 +23,44 @@
 
 #pragma once
 
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <absl/types/optional.h>
+
+#include <geode/basic/uuid.h>
+
 #include <geode/inspector/common.h>
+#include <geode/inspector/information.h>
 
 namespace geode
 {
+    struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
 
 namespace geode
 {
+    struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
+    {
+        InspectionIssues< uuid > blocks_not_meshed{
+            "uuids of block without mesh."
+        };
+        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
+            blocks_not_linked_to_a_unique_vertex;
+        InspectionIssues< index_t >
+            unique_vertices_part_of_two_blocks_and_no_boundary_surface{
+                "Indices of unique vertices part of two blocks and no boundary "
+                "surface (or block incident line)"
+            };
+        InspectionIssues< index_t >
+            unique_vertices_with_incorrect_block_cmvs_count{
+                "Indices of unique vertices part of a block but with incorrect "
+                "ComponentMeshVertices count"
+            };
+        std::string string() const;
+    };
 
     /*!
      * Class for inspecting the topology of a BRep model blocks through
@@ -42,21 +71,19 @@ namespace geode
     public:
         BRepBlocksTopology( const BRep& brep );
 
-        BRepBlocksTopology( const BRep& brep, bool verbose );
+        bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
 
-        /*!
-         * Checks if the brep unique vertices are parts of valid blocks,
-         * i.e. verify:
-         * If the vertex is part of multiple blocks, either it is part of
-         * exactly 2 blocks (and at least one surface which is boundary to
-         * the 2 blocks), or it is part of more than to blocks (and it is
-         * either a corner, or not a corner but part of only one line).
-         */
-        bool brep_vertex_blocks_topology_is_valid(
-            index_t unique_vertex_index ) const;
+        absl::optional< std::string >
+            unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                index_t unique_vertex_index ) const;
+
+        absl::optional< std::string >
+            unique_vertex_block_cmvs_count_is_incorrect(
+                index_t unique_vertex_index ) const;
+
+        BRepBlocksTopologyInspectionResult inspect_blocks() const;
 
     private:
         const BRep& brep_;
-        bool verbose_;
     };
 } // namespace geode

@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-#include <string>
+#include <absl/strings/str_cat.h>
 
 #include <geode/mesh/core/solid_mesh.h>
 
@@ -33,15 +33,11 @@ namespace geode
     {
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshAdjacency = SolidMeshAdjacency< dimension >;
-        const auto name =
-            "SolidMeshAdjacency" + std::to_string( dimension ) + "D";
+        const auto name = absl::StrCat( "SolidMeshAdjacency", dimension, "D" );
         pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
-            .def( pybind11::init< const SolidMesh&, bool >() )
             .def( "mesh_has_wrong_adjacencies",
                 &SolidMeshAdjacency::mesh_has_wrong_adjacencies )
-            .def( "nb_facets_with_wrong_adjacency",
-                &SolidMeshAdjacency::nb_facets_with_wrong_adjacency )
             .def( "polyhedron_facets_with_wrong_adjacency",
                 &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency );
     }

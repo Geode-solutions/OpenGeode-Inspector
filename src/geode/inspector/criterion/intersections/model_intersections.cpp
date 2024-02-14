@@ -58,7 +58,8 @@ namespace
             component_pairs;
     };
 
-    geode::local_index_t vertex_position_to_index( geode::Position position )
+    geode::local_index_t model_vertex_position_to_index(
+        geode::Position position )
     {
         if( position == geode::Position::vertex0 )
         {
@@ -322,9 +323,9 @@ namespace
                     return true;
                 }
                 const auto t1_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.first );
+                    model_vertex_position_to_index( edge_edge_inter.first );
                 const auto t2_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.second );
+                    model_vertex_position_to_index( edge_edge_inter.second );
                 if( t1_edge_inter_pt_id == geode::NO_LID
                     || t2_edge_inter_pt_id == geode::NO_LID )
                 {
@@ -360,9 +361,9 @@ namespace
                     return true;
                 }
                 const auto edge_inter_pt_id =
-                    vertex_position_to_index( intersection.first );
+                    model_vertex_position_to_index( intersection.first );
                 const auto t2_inter_pt_id =
-                    vertex_position_to_index( intersection.second );
+                    model_vertex_position_to_index( intersection.second );
                 if( edge_inter_pt_id == geode::NO_LID
                     || t2_inter_pt_id == geode::NO_LID )
                 {
@@ -426,10 +427,7 @@ namespace geode
     class ModelMeshesIntersections< dimension, Model >::Impl
     {
     public:
-        Impl( const Model& model, bool verbose )
-            : model_( model ), verbose_( verbose )
-        {
-        }
+        Impl( const Model& model ) : model_( model ) {}
 
         bool model_has_intersecting_surfaces() const
         {
@@ -442,43 +440,26 @@ namespace geode
             return true;
         }
 
-        index_t nb_intersecting_surfaces_elements_pair() const
-        {
-            const auto intersections = intersecting_triangles<
-                AllModelSurfacesIntersection< dimension, Model > >();
-            if( verbose_ )
-            {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first.element_id,
-                        " of surface ",
-                        triangle_pair.first.component_id.id().string(), " and ",
-                        triangle_pair.second.element_id, " of surface ",
-                        triangle_pair.second.component_id.id().string(),
-                        " intersect each other." );
-                }
-            }
-            return intersections.size();
-        }
-
-        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
+        InspectionIssues<
+            std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_surfaces_elements() const
         {
             const auto intersections = intersecting_triangles<
                 AllModelSurfacesIntersection< dimension, Model > >();
-            if( verbose_ )
+            InspectionIssues<
+                std::pair< ComponentMeshElement, ComponentMeshElement > >
+                issues{ "Surface intersections." };
+            for( const auto& triangle_pair : intersections )
             {
-                for( const auto& triangle_pair : intersections )
-                {
-                    Logger::info( "Triangles ", triangle_pair.first.element_id,
+                issues.add_problem( triangle_pair,
+                    absl::StrCat( "Triangles ", triangle_pair.first.element_id,
                         " of surface ",
                         triangle_pair.first.component_id.id().string(), " and ",
                         triangle_pair.second.element_id, " of surface ",
                         triangle_pair.second.component_id.id().string(),
-                        " intersect each other." );
-                }
+                        " intersect each other." ) );
             }
-            return intersections;
+            return issues;
         }
 
     private:
@@ -564,20 +545,17 @@ namespace geode
 
     private:
         const Model& model_;
-        DEBUG_CONST bool verbose_;
     };
 
-    template < index_t dimension, typename Model >
-    ModelMeshesIntersections< dimension, Model >::ModelMeshesIntersections(
-        const Model& model )
-        : impl_( model, false )
+    std::string ElementsIntersectionsInspectionResult::string() const
     {
+        return absl::StrCat( elements_intersections.string(), "\n" );
     }
 
     template < index_t dimension, typename Model >
     ModelMeshesIntersections< dimension, Model >::ModelMeshesIntersections(
-        const Model& model, bool verbose )
-        : impl_( model, verbose )
+        const Model& model )
+        : impl_( model )
     {
     }
 
@@ -594,18 +572,14 @@ namespace geode
     }
 
     template < index_t dimension, typename Model >
-    index_t ModelMeshesIntersections< dimension,
-        Model >::nb_intersecting_surfaces_elements_pair() const
+    ElementsIntersectionsInspectionResult
+        ModelMeshesIntersections< dimension, Model >::inspect_intersections()
+            const
     {
-        return impl_->nb_intersecting_surfaces_elements_pair();
-    }
-
-    template < index_t dimension, typename Model >
-    std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
-        ModelMeshesIntersections< dimension,
-            Model >::intersecting_surfaces_elements() const
-    {
-        return impl_->intersecting_surfaces_elements();
+        ElementsIntersectionsInspectionResult results;
+        results.elements_intersections =
+            impl_->intersecting_surfaces_elements();
+        return results;
     }
 
     template class opengeode_inspector_inspector_api
