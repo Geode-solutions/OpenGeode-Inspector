@@ -114,14 +114,15 @@ namespace geode
         BRepLinesTopology::vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const
     {
-        for( const auto& cmv :
+        for( const auto& line_cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Line3D::component_type_static() )
+            if( line_cmv.component_id.type()
+                != Line3D::component_type_static() )
             {
                 continue;
             }
-            const auto line_id = cmv.component_id.id();
+            const auto line_id = line_cmv.component_id.id();
             for( const auto& embedding : brep_.embeddings( line_id ) )
             {
                 if( brep_.Relationships::is_boundary(

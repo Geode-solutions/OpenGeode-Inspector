@@ -40,7 +40,8 @@
 
 namespace
 {
-    geode::local_index_t vertex_position_to_index( geode::Position position )
+    geode::local_index_t surface_vertex_position_to_index(
+        geode::Position position )
     {
         if( position == geode::Position::vertex0 )
         {
@@ -258,9 +259,9 @@ namespace
                     return true;
                 }
                 const auto t1_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.first );
+                    surface_vertex_position_to_index( edge_edge_inter.first );
                 const auto t2_edge_inter_pt_id =
-                    vertex_position_to_index( edge_edge_inter.second );
+                    surface_vertex_position_to_index( edge_edge_inter.second );
                 if( t1_edge_inter_pt_id == geode::NO_LID
                     || t2_edge_inter_pt_id == geode::NO_LID )
                 {
@@ -295,9 +296,9 @@ namespace
                     return true;
                 }
                 const auto edge_inter_pt_id =
-                    vertex_position_to_index( intersection.first );
+                    surface_vertex_position_to_index( intersection.first );
                 const auto t2_inter_pt_id =
-                    vertex_position_to_index( intersection.second );
+                    surface_vertex_position_to_index( intersection.second );
                 if( edge_inter_pt_id == geode::NO_LID
                     || t2_inter_pt_id == geode::NO_LID )
                 {

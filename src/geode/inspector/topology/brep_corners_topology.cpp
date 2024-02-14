@@ -63,34 +63,34 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            if( cmv.component_id.type() != Corner3D::component_type_static() )
             {
-                if( corner_found )
+                continue;
+            }
+            if( corner_found )
+            {
+                return false;
+            }
+            corner_found = true;
+            const auto& corner_uuid = cmv.component_id.id();
+            if( brep_.nb_embeddings( corner_uuid ) > 1 )
+            {
+                return false;
+            }
+            if( brep_.nb_embeddings( corner_uuid ) != 1 )
+            {
+                if( brep_.nb_incidences( corner_uuid ) < 1 )
                 {
                     return false;
                 }
-                corner_found = true;
-                const auto& corner_uuid = cmv.component_id.id();
-                if( brep_.nb_embeddings( corner_uuid ) > 1 )
-                {
-                    return false;
-                }
-                if( brep_.nb_embeddings( corner_uuid ) != 1 )
-                {
-                    if( brep_.nb_incidences( corner_uuid ) < 1 )
-                    {
-                        return false;
-                    }
-                }
-                else if( brep_.nb_incidences( corner_uuid ) > 1 )
-                {
-                    return false;
-                }
-                if( corner_is_part_of_line_but_not_boundary(
-                        unique_vertex_index ) )
-                {
-                    return false;
-                }
+            }
+            else if( brep_.nb_incidences( corner_uuid ) > 1 )
+            {
+                return false;
+            }
+            if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
+            {
+                return false;
             }
         }
         return true;

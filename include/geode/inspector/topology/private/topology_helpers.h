@@ -62,9 +62,9 @@ namespace geode
                 {
                     component_uuids.push_back( cmv.component_id.id() );
                 }
-                sort_unique( component_uuids );
-                return component_uuids;
             }
+            sort_unique( component_uuids );
+            return component_uuids;
         }
 
         InspectionIssues< index_t >

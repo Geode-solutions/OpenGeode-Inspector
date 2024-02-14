@@ -147,8 +147,7 @@ namespace geode
                     unique_vertex_index, " is part of surface with uuid '",
                     cmv.component_id.id().string(),
                     "', which is neither internal to nor a boundary of "
-                    "a "
-                    "block." );
+                    "a block." );
             }
         }
         return absl::nullopt;
@@ -186,8 +185,7 @@ namespace geode
                         "', which is embedded in block with uuid '",
                         embedding.id().string(),
                         "', but the unique vertex is not linked to any "
-                        "of "
-                        "the block vertices." );
+                        "of the block vertices." );
                 }
             }
         }
@@ -310,13 +308,11 @@ namespace geode
                     return absl::StrCat( "Unique vertex with index ",
                         unique_vertex_index,
                         " is part of multiple surfaces and only one "
-                        "line, "
-                        "with uuid'",
+                        "line, with uuid'",
                         line_uuids[0].string(), "', but surface with uuid '",
                         surface_id.string(),
-                        "', in which the vertex is, is neither "
-                        "incident "
-                        "to nor embedding of the line." );
+                        "', in which the vertex is, neither incident to nor "
+                        "embedding of the line." );
                 }
             }
         }
@@ -371,8 +367,7 @@ namespace geode
                             "uuid '",
                             surface_vertex.component_id.id().string(),
                             "' but the associated vertex in the "
-                            "surface "
-                            "mesh is not on the mesh border." );
+                            "surface mesh is not on the mesh border." );
                     }
                 }
             }

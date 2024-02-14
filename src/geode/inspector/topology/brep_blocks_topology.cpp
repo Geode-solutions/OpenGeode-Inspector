@@ -83,7 +83,7 @@ namespace geode
         index_t unique_vertex_index ) const
     {
         return !( unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
-                      +unique_vertex_index )
+                      unique_vertex_index )
                   || unique_vertex_block_cmvs_count_is_incorrect(
                       unique_vertex_index ) );
     }
@@ -94,29 +94,40 @@ namespace geode
     {
         const auto block_uuids = detail::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
-        const auto surface_uuids = detail::components_uuids(
-            brep_, unique_vertex_index, Surface3D::component_type_static() );
-        const auto line_uuids = detail::components_uuids(
-            brep_, unique_vertex_index, Line3D::component_type_static() );
         if( block_uuids.size() != 2 )
         {
             return absl::nullopt;
         }
-        for( const auto& surface_id : surface_uuids )
+        for( const auto& surface_cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( brep_.Relationships::is_boundary( surface_id, block_uuids[0] )
+            if( surface_cmv.component_id.type()
+                != Surface3D::component_type_static() )
+            {
+                continue;
+            }
+            if( brep_.Relationships::is_boundary(
+                    surface_cmv.component_id.id(), block_uuids[0] )
                 && brep_.Relationships::is_boundary(
-                    surface_id, block_uuids[1] ) )
+                    surface_cmv.component_id.id(), block_uuids[1] ) )
             {
                 return absl::nullopt;
             }
-            for( const auto& line_id : line_uuids )
+            for( const auto& line_cmv :
+                brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( brep_.Relationships::is_boundary( line_id, surface_id )
+                if( line_cmv.component_id.type()
+                    != Line3D::component_type_static() )
+                {
+                    continue;
+                }
+                if( brep_.Relationships::is_boundary(
+                        line_cmv.component_id.id(),
+                        surface_cmv.component_id.id() )
                     && ( brep_.Relationships::is_boundary(
-                             surface_id, block_uuids[0] )
+                             surface_cmv.component_id.id(), block_uuids[0] )
                          || brep_.Relationships::is_boundary(
-                             surface_id, block_uuids[1] ) ) )
+                             surface_cmv.component_id.id(), block_uuids[1] ) ) )
                 {
                     return absl::nullopt;
                 }
