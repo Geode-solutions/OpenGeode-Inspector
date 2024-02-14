@@ -23,8 +23,6 @@
 
 #include <geode/inspector/topology/private/topology_helpers.h>
 
-#include <geode/basic/algorithm.h>
-
 #include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
 #include <geode/mesh/core/surface_mesh.h>
@@ -60,19 +58,6 @@ namespace geode
                 }
             }
             return true;
-        }
-
-        std::vector< uuid > components_uuids(
-            absl::Span< const ComponentMeshVertex > components )
-        {
-            std::vector< uuid > component_uuids;
-            component_uuids.reserve( components.size() );
-            for( const auto& cmv : components )
-            {
-                component_uuids.push_back( cmv.component_id.id() );
-            }
-            sort_unique( component_uuids );
-            return component_uuids;
         }
 
         InspectionIssues< index_t >

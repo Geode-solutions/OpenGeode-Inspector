@@ -92,32 +92,31 @@ namespace geode
         unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
-        const auto block_cmvs = brep_.component_mesh_vertices(
-            unique_vertex_index, Block3D::component_type_static() );
-        const auto block_uuids = detail::components_uuids( block_cmvs );
+        const auto block_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Block3D::component_type_static() );
+        const auto surface_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Surface3D::component_type_static() );
+        const auto line_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Line3D::component_type_static() );
         if( block_uuids.size() != 2 )
         {
             return absl::nullopt;
         }
-        for( const auto& surface : brep_.component_mesh_vertices(
-                 unique_vertex_index, Surface3D::component_type_static() ) )
+        for( const auto& surface_id : surface_uuids )
         {
-            if( brep_.Relationships::is_boundary(
-                    surface.component_id.id(), block_uuids[0] )
+            if( brep_.Relationships::is_boundary( surface_id, block_uuids[0] )
                 && brep_.Relationships::is_boundary(
-                    surface.component_id.id(), block_uuids[1] ) )
+                    surface_id, block_uuids[1] ) )
             {
                 return absl::nullopt;
             }
-            for( const auto& line : brep_.component_mesh_vertices(
-                     unique_vertex_index, Line3D::component_type_static() ) )
+            for( const auto& line_id : line_uuids )
             {
-                if( brep_.Relationships::is_boundary(
-                        line.component_id.id(), surface.component_id.id() )
+                if( brep_.Relationships::is_boundary( line_id, surface_id )
                     && ( brep_.Relationships::is_boundary(
-                             surface.component_id.id(), block_uuids[0] )
+                             surface_id, block_uuids[0] )
                          || brep_.Relationships::is_boundary(
-                             surface.component_id.id(), block_uuids[1] ) ) )
+                             surface_id, block_uuids[1] ) ) )
                 {
                     return absl::nullopt;
                 }
@@ -133,15 +132,33 @@ namespace geode
         BRepBlocksTopology::unique_vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const
     {
-        const auto block_cmvs = brep_.component_mesh_vertices(
-            unique_vertex_index, Block3D::component_type_static() );
-        const auto block_uuids = detail::components_uuids( block_cmvs );
-        const auto corner_cmvs = brep_.component_mesh_vertices(
-            unique_vertex_index, Corner3D::component_type_static() );
-        const auto line_cmvs = brep_.component_mesh_vertices(
-            unique_vertex_index, Line3D::component_type_static() );
-        const auto surface_cmvs = brep_.component_mesh_vertices(
-            unique_vertex_index, Surface3D::component_type_static() );
+        const auto block_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Block3D::component_type_static() );
+
+        std::vector< ComponentMeshVertex > block_cmvs;
+        std::vector< ComponentMeshVertex > surface_cmvs;
+        std::vector< ComponentMeshVertex > line_cmvs;
+        std::vector< ComponentMeshVertex > corner_cmvs;
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Block3D::component_type_static() )
+            {
+                block_cmvs.push_back( cmv );
+            }
+            if( cmv.component_id.type() == Surface3D::component_type_static() )
+            {
+                surface_cmvs.push_back( cmv );
+            }
+            if( cmv.component_id.type() == Line3D::component_type_static() )
+            {
+                line_cmvs.push_back( cmv );
+            }
+            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            {
+                corner_cmvs.push_back( cmv );
+            }
+        }
         for( const auto& block_uuid : block_uuids )
         {
             const auto nb_block_cmvs = count_cmvs(
@@ -203,7 +220,8 @@ namespace geode
                         return absl::StrCat( "Unique vertex with index ",
                             unique_vertex_index, " is part of block ",
                             block_uuid.string(),
-                            " and exactly one corner and one line but has ",
+                            " and exactly one corner and one line but "
+                            "has ",
                             nb_block_cmvs,
                             " block component mesh vertices (should be "
                             "1)." );

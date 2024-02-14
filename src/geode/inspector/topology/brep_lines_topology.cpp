@@ -94,15 +94,16 @@ namespace geode
         BRepLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             index_t unique_vertex_index ) const
     {
-        for( const auto& line : brep_.component_mesh_vertices(
-                 unique_vertex_index, Line3D::component_type_static() ) )
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( brep_.nb_embeddings( line.component_id.id() ) < 1
-                && brep_.nb_incidences( line.component_id.id() ) < 1 )
+            if( cmv.component_id.type() == Line3D::component_type_static()
+                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
+                && brep_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
-                    line.component_id.id().string(),
+                    cmv.component_id.id().string(),
                     "', which is neither embedded nor incident." );
             }
         }
@@ -113,10 +114,14 @@ namespace geode
         BRepLinesTopology::vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const
     {
-        for( const auto line_id :
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Line3D::component_type_static() ) ) )
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
+            if( cmv.component_id.type() != Line3D::component_type_static() )
+            {
+                continue;
+            }
+            const auto line_id = cmv.component_id.id();
             for( const auto& embedding : brep_.embeddings( line_id ) )
             {
                 if( brep_.Relationships::is_boundary(
@@ -158,20 +163,17 @@ namespace geode
         BRepLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
-        const auto line_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Line3D::component_type_static() ) );
+        const auto line_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
             return absl::nullopt;
         }
         const auto& line_id = line_uuids[0];
-        const auto surface_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Surface3D::component_type_static() ) );
-        const auto block_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Block3D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Surface3D::component_type_static() );
+        const auto block_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Block3D::component_type_static() );
         if( surface_uuids.size() == 1 )
         {
             if( !brep_.Relationships::is_internal( line_id, surface_uuids[0] )

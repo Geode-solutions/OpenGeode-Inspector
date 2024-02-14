@@ -84,9 +84,8 @@ namespace geode
         SectionSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids =
-            detail::components_uuids( section_.component_mesh_vertices(
-                unique_vertex_index, Surface2D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() == 2 )
         {
             for( const auto& line : section_.component_mesh_vertices(

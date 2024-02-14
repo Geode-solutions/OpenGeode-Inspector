@@ -104,9 +104,17 @@ namespace geode
     bool BRepSurfacesTopology::brep_surfaces_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        const auto surfaces = brep_.component_mesh_vertices(
-            unique_vertex_index, Surface3D::component_type_static() );
-        if( surfaces.empty() )
+        bool surface_found{ false };
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Surface3D::component_type_static() )
+            {
+                surface_found = true;
+                break;
+            }
+        }
+        if( !surface_found )
         {
             return true;
         }
@@ -128,17 +136,18 @@ namespace geode
         vertex_is_part_of_not_internal_nor_boundary_surface(
             index_t unique_vertex_index ) const
     {
-        for( const auto surface_id :
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Surface3D::component_type_static() ) ) )
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( brep_.nb_embeddings( surface_id ) < 1
-                && brep_.nb_incidences( surface_id ) < 1 )
+            if( cmv.component_id.type() == Surface3D::component_type_static()
+                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
+                && brep_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of surface with uuid '",
-                    surface_id.string(),
-                    "', which is neither internal to nor a boundary of a "
+                    cmv.component_id.id().string(),
+                    "', which is neither internal to nor a boundary of "
+                    "a "
                     "block." );
             }
         }
@@ -149,9 +158,8 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             const index_t unique_vertex_index ) const
     {
-        for( const auto surface_id :
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Surface3D::component_type_static() ) ) )
+        for( const auto surface_id : detail::components_uuids( brep_,
+                 unique_vertex_index, Surface3D::component_type_static() ) )
         {
             for( const auto& embedding : brep_.embeddings( surface_id ) )
             {
@@ -177,7 +185,8 @@ namespace geode
                         surface_id.string(),
                         "', which is embedded in block with uuid '",
                         embedding.id().string(),
-                        "', but the unique vertex is not linked to any of "
+                        "', but the unique vertex is not linked to any "
+                        "of "
                         "the block vertices." );
                 }
             }
@@ -189,17 +198,15 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_single_surface(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Surface3D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() != 1 )
         {
             return absl::nullopt;
         }
         const auto& surface_id = surface_uuids[0];
-        const auto block_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Block3D::component_type_static() ) );
+        const auto block_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Block3D::component_type_static() );
         if( block_uuids.size() > 2 )
         {
             return absl::StrCat( "Unique vertex with index ",
@@ -252,16 +259,16 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_multiple_surfaces(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids =
-            detail::components_uuids( brep_.component_mesh_vertices(
-                unique_vertex_index, Surface3D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() < 2 )
         {
             return absl::nullopt;
         }
         const auto line_cmvs = brep_.component_mesh_vertices(
             unique_vertex_index, Line3D::component_type_static() );
-        const auto line_uuids = detail::components_uuids( line_cmvs );
+        const auto line_uuids = detail::components_uuids(
+            brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.empty() )
         {
             return absl::StrCat( "Unique vertex with index ",
@@ -271,11 +278,22 @@ namespace geode
         }
         if( line_uuids.size() == 1 )
         {
-            if( !brep_
-                     .component_mesh_vertices( unique_vertex_index,
-                         Corner3D::component_type_static() )
-                     .empty()
-                && line_cmvs.size() < 2 )
+            bool corner_found{ false };
+            index_t nb_cmv_lines{ 0 };
+            for( const auto cmv :
+                brep_.component_mesh_vertices( unique_vertex_index ) )
+            {
+                if( cmv.component_id.type() == Line3D::component_type_static() )
+                {
+                    nb_cmv_lines += 1;
+                }
+                else if( cmv.component_id.type()
+                         == Corner3D::component_type_static() )
+                {
+                    corner_found = true;
+                }
+            }
+            if( corner_found && nb_cmv_lines < 2 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index,
@@ -291,11 +309,13 @@ namespace geode
                 {
                     return absl::StrCat( "Unique vertex with index ",
                         unique_vertex_index,
-                        " is part of multiple surfaces and only one line, "
+                        " is part of multiple surfaces and only one "
+                        "line, "
                         "with uuid'",
                         line_uuids[0].string(), "', but surface with uuid '",
                         surface_id.string(),
-                        "', in which the vertex is, is neither incident "
+                        "', in which the vertex is, is neither "
+                        "incident "
                         "to nor embedding of the line." );
                 }
             }
@@ -314,7 +334,8 @@ namespace geode
                         "lines, but line with uuid'",
                         line_id.string(),
                         "' is neither internal, nor a boundary of at "
-                        "least two surfaces or one embedding surface." );
+                        "least two surfaces or one embedding "
+                        "surface." );
                 }
             }
         }
@@ -346,9 +367,11 @@ namespace geode
                     {
                         return absl::StrCat( "Unique vertex with index ",
                             unique_vertex_index,
-                            " is part of a line and of surface with uuid '",
+                            " is part of a line and of surface with "
+                            "uuid '",
                             surface_vertex.component_id.id().string(),
-                            "' but the associated vertex in the surface "
+                            "' but the associated vertex in the "
+                            "surface "
                             "mesh is not on the mesh border." );
                     }
                 }

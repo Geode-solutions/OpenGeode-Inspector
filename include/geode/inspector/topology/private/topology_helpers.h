@@ -25,6 +25,9 @@
 
 #include <absl/types/span.h>
 
+#include <geode/basic/algorithm.h>
+#include <geode/model/mixin/core/component_type.h>
+
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
@@ -46,8 +49,23 @@ namespace geode
 
         bool section_surfaces_are_meshed( const Section& section );
 
-        std::vector< uuid > components_uuids(
-            absl::Span< const ComponentMeshVertex > components );
+        template < typename Model >
+        std::vector< uuid > components_uuids( const Model& model,
+            index_t unique_vertex_index,
+            const geode::ComponentType& type )
+        {
+            std::vector< uuid > component_uuids;
+            for( const auto cmv :
+                model.component_mesh_vertices( unique_vertex_index ) )
+            {
+                if( cmv.component_id.type() == type )
+                {
+                    component_uuids.push_back( cmv.component_id.id() );
+                }
+                sort_unique( component_uuids );
+                return component_uuids;
+            }
+        }
 
         InspectionIssues< index_t >
             brep_component_vertices_not_associated_to_unique_vertices(

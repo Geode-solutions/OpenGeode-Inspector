@@ -20,7 +20,7 @@
  * SOFTWARE.
  *
  */
-
+#pragma once
 #include <absl/types/optional.h>
 
 #include <geode/basic/uuid.h>

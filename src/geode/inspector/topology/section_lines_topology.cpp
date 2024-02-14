@@ -157,17 +157,15 @@ namespace geode
         SectionLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
-        const auto line_uuids =
-            detail::components_uuids( section_.component_mesh_vertices(
-                unique_vertex_index, Line2D::component_type_static() ) );
+        const auto line_uuids = detail::components_uuids(
+            section_, unique_vertex_index, Line2D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
             return absl::nullopt;
         }
         const auto& line_id = line_uuids[0];
-        const auto surface_uuids =
-            detail::components_uuids( section_.component_mesh_vertices(
-                unique_vertex_index, Surface2D::component_type_static() ) );
+        const auto surface_uuids = detail::components_uuids(
+            section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() > 2 )
         {
             return absl::StrCat( "Unique vertex with index ",

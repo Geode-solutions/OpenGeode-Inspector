@@ -59,35 +59,39 @@ namespace geode
     bool BRepCornersTopology::brep_corner_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        const auto corners = brep_.component_mesh_vertices(
-            unique_vertex_index, Corner3D::component_type_static() );
-        if( corners.empty() )
+        bool corner_found{ false };
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            return true;
-        }
-        if( corners.size() != 1 )
-        {
-            return false;
-        }
-        const auto& corner_uuid = corners[0].component_id.id();
-        if( brep_.nb_embeddings( corner_uuid ) > 1 )
-        {
-            return false;
-        }
-        if( brep_.nb_embeddings( corner_uuid ) != 1 )
-        {
-            if( brep_.nb_incidences( corner_uuid ) < 1 )
+            if( cmv.component_id.type() == Corner3D::component_type_static() )
             {
-                return false;
+                if( corner_found )
+                {
+                    return false;
+                }
+                corner_found = true;
+                const auto& corner_uuid = cmv.component_id.id();
+                if( brep_.nb_embeddings( corner_uuid ) > 1 )
+                {
+                    return false;
+                }
+                if( brep_.nb_embeddings( corner_uuid ) != 1 )
+                {
+                    if( brep_.nb_incidences( corner_uuid ) < 1 )
+                    {
+                        return false;
+                    }
+                }
+                else if( brep_.nb_incidences( corner_uuid ) > 1 )
+                {
+                    return false;
+                }
+                if( corner_is_part_of_line_but_not_boundary(
+                        unique_vertex_index ) )
+                {
+                    return false;
+                }
             }
-        }
-        else if( brep_.nb_incidences( corner_uuid ) > 1 )
-        {
-            return false;
-        }
-        if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
-        {
-            return false;
         }
         return true;
     }
@@ -96,14 +100,19 @@ namespace geode
         BRepCornersTopology::unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const
     {
-        if( brep_
-                .component_mesh_vertices(
-                    unique_vertex_index, Corner3D::component_type_static() )
-                .size()
-            > 1 )
+        bool corner_found{ false };
+        for( const auto cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index, " is part of several corners." );
+            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            {
+                if( corner_found )
+                {
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index, " is part of several corners." );
+                }
+                corner_found = true;
+            }
         }
         return absl::nullopt;
     }
@@ -112,15 +121,17 @@ namespace geode
         BRepCornersTopology::corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const
     {
-        const auto corners = brep_.component_mesh_vertices(
-            unique_vertex_index, Corner3D::component_type_static() );
-        if( !corners.empty()
-            && brep_.nb_embeddings( corners[0].component_id.id() ) > 1 )
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index, " is associated to corner with uuid '",
-                corners[0].component_id.id().string(),
-                "', which has several embeddings." );
+            if( cmv.component_id.type() == Corner3D::component_type_static()
+                && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
+            {
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is associated to corner with uuid '",
+                    cmv.component_id.id().string(),
+                    "', which has several embeddings." );
+            }
         }
         return absl::nullopt;
     }
@@ -129,16 +140,18 @@ namespace geode
         BRepCornersTopology::corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const
     {
-        const auto corners = brep_.component_mesh_vertices(
-            unique_vertex_index, Corner3D::component_type_static() );
-        if( !corners.empty()
-            && brep_.nb_embeddings( corners[0].component_id.id() ) < 1
-            && brep_.nb_incidences( corners[0].component_id.id() ) < 1 )
+        for( const auto cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index, " is associated to corner with uuid '",
-                corners[0].component_id.id().string(),
-                "', which is neither internal nor boundary." );
+            if( cmv.component_id.type() == Corner3D::component_type_static()
+                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
+                && brep_.nb_incidences( cmv.component_id.id() ) < 1 )
+            {
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is associated to corner with uuid '",
+                    cmv.component_id.id().string(),
+                    "', which is neither internal nor boundary." );
+            }
         }
         return absl::nullopt;
     }
@@ -147,7 +160,7 @@ namespace geode
         BRepCornersTopology::corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const
     {
-        for( const auto cmv :
+        for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() != Corner3D::component_type_static() )
@@ -155,19 +168,24 @@ namespace geode
                 continue;
             }
             const auto& corner_uuid = cmv.component_id.id();
-            for( const auto& line : brep_.component_mesh_vertices(
-                     unique_vertex_index, Line3D::component_type_static() ) )
+            for( const auto& cmv_line :
+                brep_.component_mesh_vertices( unique_vertex_index ) )
             {
+                if( cmv_line.component_id.type()
+                    != Line3D::component_type_static() )
+                {
+                    continue;
+                }
                 if( brep_.Relationships::is_boundary(
-                        corner_uuid, line.component_id.id() ) )
+                        corner_uuid, cmv_line.component_id.id() ) )
                 {
                     continue;
                 }
                 if( brep_.Relationships::is_internal(
-                        corner_uuid, line.component_id.id() ) )
+                        corner_uuid, cmv_line.component_id.id() ) )
                 {
                     index_t line_vertex_count{ 0 };
-                    for( const auto cmv2 :
+                    for( const auto& cmv2 :
                         brep_.component_mesh_vertices( unique_vertex_index ) )
                     {
                         if( cmv2.component_id.id() == corner_uuid )
@@ -182,7 +200,7 @@ namespace geode
                             " is associated with corner with uuid '",
                             corner_uuid.string(),
                             "', which is internal to line with uuid '",
-                            line.component_id.id().string(),
+                            cmv_line.component_id.id().string(),
                             "', so line should be closed and have two "
                             "different vertices on unique vertex, but has ",
                             line_vertex_count, " vertices on it instead." );
@@ -193,7 +211,7 @@ namespace geode
                     unique_vertex_index,
                     " is associated with corner with uuid '",
                     corner_uuid.string() + "', part of line with uuid '",
-                    line.component_id.id().string(),
+                    cmv_line.component_id.id().string(),
                     "', but is neither boundary nor internal of it." );
             }
         }
