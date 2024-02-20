@@ -38,7 +38,7 @@ geode::index_t corners_topological_validity(
     geode::index_t nb_issues{ 0 };
     const auto corners_not_linked_to_a_unique_vertex =
         result.corners_not_linked_to_a_unique_vertex;
-    for( const auto corner_issue : corners_not_linked_to_a_unique_vertex )
+    for( const auto& corner_issue : corners_not_linked_to_a_unique_vertex )
     {
         nb_issues += corner_issue.second.number();
     }
@@ -73,7 +73,7 @@ geode::index_t lines_topological_validity(
     geode::index_t nb_issues{ 0 };
     const auto lines_not_linked_to_a_unique_vertex =
         result.lines_not_linked_to_a_unique_vertex;
-    for( const auto issue : lines_not_linked_to_a_unique_vertex )
+    for( const auto& issue : lines_not_linked_to_a_unique_vertex )
     {
         nb_issues += issue.second.number();
     }
@@ -111,7 +111,7 @@ geode::index_t surfaces_topological_validity(
     geode::index_t nb_issues{ 0 };
     const auto surfaces_not_linked_to_a_unique_vertex =
         result.surfaces_not_linked_to_a_unique_vertex;
-    for( const auto issue : surfaces_not_linked_to_a_unique_vertex )
+    for( const auto& issue : surfaces_not_linked_to_a_unique_vertex )
     {
         nb_issues += issue.second.number();
     }
@@ -149,7 +149,7 @@ geode::index_t meshes_adjacencies_validity(
     geode::index_t nb_issues{ 0 };
     const auto surfaces_edges_with_wrong_adjacencies =
         result.surfaces_edges_with_wrong_adjacencies;
-    for( const auto issue : surfaces_edges_with_wrong_adjacencies )
+    for( const auto& issue : surfaces_edges_with_wrong_adjacencies )
     {
         nb_issues += issue.second.number();
     }
@@ -166,7 +166,7 @@ geode::index_t meshes_degenerations_validity(
 {
     geode::index_t nb_issues{ 0 };
     const auto elements = result.elements;
-    for( const auto degenerated_elements : elements )
+    for( const auto& degenerated_elements : elements )
     {
         nb_issues += degenerated_elements.second.degenerated_edges.number();
         nb_issues += degenerated_elements.second.degenerated_polygons.number();
@@ -200,12 +200,12 @@ geode::index_t meshes_manifolds_validity(
     geode::index_t nb_issues{ 0 };
     const auto meshes_non_manifold_vertices =
         result.meshes_non_manifold_vertices;
-    for( const auto issue : meshes_non_manifold_vertices )
+    for( const auto& issue : meshes_non_manifold_vertices )
     {
         nb_issues += issue.second.number();
     }
     const auto meshes_non_manifold_edges = result.meshes_non_manifold_edges;
-    for( const auto issue : meshes_non_manifold_edges )
+    for( const auto& issue : meshes_non_manifold_edges )
     {
         nb_issues += issue.second.number();
     }
@@ -222,7 +222,7 @@ geode::index_t meshes_colocations_validity(
 {
     geode::index_t nb_issues{ 0 };
     const auto colocated_points_groups = result.colocated_points_groups;
-    for( const auto issue : colocated_points_groups )
+    for( const auto& issue : colocated_points_groups )
     {
         nb_issues += issue.second.number();
     }
@@ -240,7 +240,7 @@ geode::index_t meshes_unique_vertices_validity(
     geode::index_t nb_issues{ 0 };
     const auto colocated_unique_vertices_groups =
         result.colocated_unique_vertices_groups;
-    for( const auto issue : colocated_unique_vertices_groups.problems )
+    for( const auto& issue : colocated_unique_vertices_groups.problems )
     {
         nb_issues += issue.size();
     }

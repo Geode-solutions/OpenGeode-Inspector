@@ -130,8 +130,8 @@ namespace geode
             {
                 continue;
             }
-            for( const auto& surface_cmv : section_.component_mesh_vertices(
-                     unique_vertex_index, Surface2D::component_type_static() ) )
+            for( const auto& surface_cmv :
+                section_.component_mesh_vertices( unique_vertex_index ) )
             {
                 if( surface_cmv.component_id.type()
                     != Surface2D::component_type_static() )
