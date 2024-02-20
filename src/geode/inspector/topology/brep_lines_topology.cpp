@@ -141,10 +141,9 @@ namespace geode
                     continue;
                 }
                 if( !absl::c_any_of(
-                        brep_.component_mesh_vertices(
-                            unique_vertex_index, embedding.type() ),
+                        brep_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
-                            return cmv.component_id.id() == embedding.id();
+                            return cmv.component_id == embedding;
                         } ) )
                 {
                     return absl::StrCat( "Unique vertex with index ",
@@ -241,14 +240,22 @@ namespace geode
         BRepLinesTopology::vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const
     {
-        if( brep_.component_mesh_vertices(
-                     unique_vertex_index, Line3D::component_type_static() )
-                    .size()
-                > 1
-            && brep_
-                   .component_mesh_vertices(
-                       unique_vertex_index, Corner3D::component_type_static() )
-                   .empty() )
+        index_t nb_lines{ 0 };
+        bool is_a_corner{ false };
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            {
+                is_a_corner = true;
+            }
+            else if( cmv.component_id.type()
+                     == Line3D::component_type_static() )
+            {
+                nb_lines++;
+            }
+        }
+        if( nb_lines > 1 && !is_a_corner )
         {
             return absl::StrCat( "Unique vertex with index ",
                 unique_vertex_index,

@@ -67,9 +67,17 @@ namespace geode
     bool SectionLinesTopology::section_lines_topology_is_valid(
         index_t unique_vertex_index ) const
     {
-        const auto lines = section_.component_mesh_vertices(
-            unique_vertex_index, Line2D::component_type_static() );
-        if( lines.empty() )
+        bool is_a_line{ false };
+        for( const auto& cmv :
+            section_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Line2D::component_type_static() )
+            {
+                is_a_line = true;
+                break;
+            }
+        }
+        if( !is_a_line )
         {
             return true;
         }
@@ -88,15 +96,19 @@ namespace geode
         SectionLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             const index_t unique_vertex_index ) const
     {
-        for( const auto& line : section_.component_mesh_vertices(
-                 unique_vertex_index, Line2D::component_type_static() ) )
+        for( const auto& cmv :
+            section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( section_.nb_embeddings( line.component_id.id() ) < 1
-                && section_.nb_incidences( line.component_id.id() ) < 1 )
+            if( cmv.component_id.type() != Line2D::component_type_static() )
+            {
+                continue;
+            }
+            if( section_.nb_embeddings( cmv.component_id.id() ) < 1
+                && section_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
-                    line.component_id.id().string(),
+                    cmv.component_id.id().string(),
                     "', which is neither embedded nor incident." );
             }
         }
@@ -107,42 +119,46 @@ namespace geode
         SectionLinesTopology::vertex_is_part_of_invalid_embedded_line(
             const index_t unique_vertex_index ) const
     {
-        for( const auto& line : section_.component_mesh_vertices(
-                 unique_vertex_index, Line2D::component_type_static() ) )
+        for( const auto& line_cmv :
+            section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( section_.nb_embeddings( line.component_id.id() ) < 1 )
+            if( line_cmv.component_id.type()
+                != Line2D::component_type_static() )
+            {
+                continue;
+            }
+            if( section_.nb_embeddings( line_cmv.component_id.id() ) < 1 )
             {
                 return absl::nullopt;
             }
-            else if( section_.nb_embeddings( line.component_id.id() ) > 1 )
+            if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
-                    line.component_id.id().string(),
+                    line_cmv.component_id.id().string(),
                     "', which has multiple embeddings." );
             }
-            else if( section_.nb_incidences( line.component_id.id() ) > 0 )
+            if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
-                    line.component_id.id().string(),
+                    line_cmv.component_id.id().string(),
                     "', which has both an embedding and "
                     "incidence(s)." );
             }
             for( const auto& embedding :
-                section_.embeddings( line.component_id.id() ) )
+                section_.embeddings( line_cmv.component_id.id() ) )
             {
                 if( detail::section_surfaces_are_meshed( section_ )
                     && !absl::c_any_of(
-                        section_.component_mesh_vertices( unique_vertex_index,
-                            Surface2D::component_type_static() ),
+                        section_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
                             return cmv.component_id.id() == embedding.id();
                         } ) )
                 {
                     return absl::StrCat( "Unique vertex with index ",
                         unique_vertex_index, " is part of line with uuid '",
-                        line.component_id.string(),
+                        line_cmv.component_id.string(),
                         "', which is embedded in surface with uuid '",
                         embedding.id().string(),
                         "', but the unique vertex is not linked to the "
@@ -212,14 +228,22 @@ namespace geode
         SectionLinesTopology::vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const
     {
-        if( section_.component_mesh_vertices(
-                        unique_vertex_index, Line2D::component_type_static() )
-                    .size()
-                > 1
-            && section_
-                   .component_mesh_vertices(
-                       unique_vertex_index, Corner2D::component_type_static() )
-                   .empty() )
+        bool corner_found{ false };
+        index_t nb_cmv_lines{ 0 };
+        for( const auto& cmv :
+            section_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Line2D::component_type_static() )
+            {
+                nb_cmv_lines += 1;
+            }
+            else if( cmv.component_id.type()
+                     == Corner2D::component_type_static() )
+            {
+                corner_found = true;
+            }
+        }
+        if( nb_cmv_lines > 1 && !corner_found )
         {
             return absl::StrCat( "Unique vertex with index ",
                 unique_vertex_index,

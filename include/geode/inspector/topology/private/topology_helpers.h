@@ -55,7 +55,7 @@ namespace geode
             const geode::ComponentType& type )
         {
             std::vector< uuid > component_uuids;
-            for( const auto cmv :
+            for( const auto& cmv :
                 model.component_mesh_vertices( unique_vertex_index ) )
             {
                 if( cmv.component_id.type() == type )

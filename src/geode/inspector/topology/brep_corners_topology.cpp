@@ -101,7 +101,7 @@ namespace geode
             index_t unique_vertex_index ) const
     {
         bool corner_found{ false };
-        for( const auto cmv :
+        for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() == Corner3D::component_type_static() )
@@ -140,7 +140,7 @@ namespace geode
         BRepCornersTopology::corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const
     {
-        for( const auto cmv :
+        for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() == Corner3D::component_type_static()
