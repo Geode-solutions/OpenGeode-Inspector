@@ -131,14 +131,14 @@ namespace geode
             {
                 return absl::nullopt;
             }
-            else if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
+            if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
                     line_cmv.component_id.id().string(),
                     "', which has multiple embeddings." );
             }
-            else if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
+            if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of line with uuid '",
