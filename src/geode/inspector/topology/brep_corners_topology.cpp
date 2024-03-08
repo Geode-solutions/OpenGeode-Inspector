@@ -52,7 +52,7 @@ namespace geode
             unique_vertices_liked_to_not_boundary_line_corner.string(), "\n" );
         return message;
     }
-    BRepCornersTopology::BRepCornersTopology( const BRep& brep ) : brep_{ brep }
+    BRepCornersTopology::BRepCornersTopology( const BRep& brep ) : brep_( brep )
     {
     }
 
