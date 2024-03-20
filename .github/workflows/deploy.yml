@@ -8,5 +8,5 @@ jobs:
     uses: Geode-solutions/actions/.github/workflows/cpp-deploy.yml@master
     with:
       name: OPENGEODE_INSPECTOR
-      repos: OpenGeode;OpenGeode-IO;OpenGeode-Geosciences;OpenGeode-GeosciencesIO
+      repos: ${{ vars.REPOS }}
     secrets: inherit
