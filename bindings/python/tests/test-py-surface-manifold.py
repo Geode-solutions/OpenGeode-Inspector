@@ -46,7 +46,7 @@ def check_vertex_manifold2D():
     manifold_inspector = inspector.SurfaceMeshVertexManifold2D(surface)
     if not manifold_inspector.mesh_vertices_are_manifold():
         raise ValueError("[Test] Surface is shown non-manifold whereas it is.")
-    if not manifold_inspector.non_manifold_vertices().number() == 0:
+    if not manifold_inspector.non_manifold_vertices().nb_issues() == 0:
         raise ValueError(
             "[Test] Surface has more non manifold vertices than it should.")
 
@@ -66,10 +66,10 @@ def check_vertex_non_manifold2D():
     if manifold_inspector.mesh_vertices_are_manifold():
         raise ValueError(
             "[Test] Surface vertices are shown manifold whereas one is not.")
-    if not manifold_inspector.non_manifold_vertices().number() == 1:
+    if not manifold_inspector.non_manifold_vertices().nb_issues() == 1:
         raise ValueError(
             "[Test] Surface has wrong number of non manifold vertices.")
-    if not manifold_inspector.non_manifold_vertices().problems[0] == 1:
+    if not manifold_inspector.non_manifold_vertices().issues()[0] == 1:
         raise ValueError("[Test] Surface shows wrong non manifold vertex id.")
 
 
@@ -94,7 +94,7 @@ def check_edge_manifold2D():
     if not manifold_inspector.mesh_edges_are_manifold():
         raise ValueError(
             "[Test] Surface is shown non-manifold through edges whereas it is.")
-    if not manifold_inspector.non_manifold_edges().number() == 0:
+    if not manifold_inspector.non_manifold_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] Surface has more non manifold edges than it should.")
 
@@ -118,7 +118,7 @@ def check_edge_non_manifold2D():
     if manifold_inspector.mesh_edges_are_manifold():
         raise ValueError(
             "[Test] Surface is shown manifold through edges whereas it is not.")
-    if not manifold_inspector.non_manifold_edges().number() == 1:
+    if not manifold_inspector.non_manifold_edges().nb_issues() == 1:
         raise ValueError(
             "[Test] Surface has wrong number of non manifold edges.")
 

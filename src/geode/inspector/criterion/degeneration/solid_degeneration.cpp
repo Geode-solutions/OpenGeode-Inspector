@@ -74,7 +74,7 @@ namespace geode
             {
                 if( polyhedron_is_degenerated( polyhedron_id ) )
                 {
-                    wrong_polyhedra.add_problem( polyhedron_id,
+                    wrong_polyhedra.add_issue( polyhedron_id,
                         absl::StrCat( "Polyhedron ", polyhedron_id,
                             " of Solid ", this->mesh().id().string(),
                             " is degenerated." ) );

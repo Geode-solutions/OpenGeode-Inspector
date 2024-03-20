@@ -42,6 +42,34 @@
 
 namespace geode
 {
+    std::string BRepMeshesManifoldInspectionResult::string() const
+    {
+        std::string message;
+        for( const auto& vertices_issue : meshes_non_manifold_vertices )
+        {
+            absl::StrAppend( &message, vertices_issue.second.string(), "\n" );
+        }
+        for( const auto& edges_issue : meshes_non_manifold_edges )
+        {
+            absl::StrAppend( &message, edges_issue.second.string(), "\n" );
+        }
+        for( const auto& facets_issue : meshes_non_manifold_facets )
+        {
+            absl::StrAppend( &message, facets_issue.second.string(), "\n" );
+        }
+        for( const auto& model_edges_issue : model_non_manifold_edges )
+        {
+            absl::StrAppend(
+                &message, model_edges_issue.second.string(), "\n" );
+        }
+        if( message.empty() )
+        {
+            absl::StrAppend(
+                &message, "No manifold issues in model component meshes" );
+        }
+        return message;
+    }
+
     class BRepComponentMeshesManifold::Impl
         : public ComponentMeshesManifold< 3, BRep >
     {
@@ -57,7 +85,7 @@ namespace geode
             {
                 const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
-                if( !non_manifold_vertices.problems.empty() )
+                if( non_manifold_vertices.nb_issues() != 0 )
                 {
                     components_non_manifold_vertices.emplace(
                         block.id(), non_manifold_vertices );
@@ -76,7 +104,7 @@ namespace geode
             {
                 const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
-                if( !non_manifold_edges.problems.empty() )
+                if( non_manifold_edges.nb_issues() != 0 )
                 {
                     components_non_manifold_edges.emplace(
                         block.id(), non_manifold_edges );
@@ -95,7 +123,7 @@ namespace geode
             {
                 const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
-                if( !non_manifold_facets.problems.empty() )
+                if( non_manifold_facets.nb_issues() != 0 )
                 {
                     components_non_manifold_facets.emplace(
                         block.id(), non_manifold_facets );
@@ -139,6 +167,7 @@ namespace geode
                     }
                 }
             }
+
             absl::flat_hash_map< std::array< index_t, 2 >,
                 InspectionIssues< uuid > >
                 result;
@@ -153,7 +182,7 @@ namespace geode
                         edge.first.vertices()[1], " is not manifold" ) };
                     for( const auto surface_uuid : edge.second )
                     {
-                        issue.add_problem( surface_uuid,
+                        issue.add_issue( surface_uuid,
                             absl::StrCat( "Model edge between unique vertices ",
                                 edge.first.vertices()[0], " and ",
                                 edge.first.vertices()[1],
@@ -168,29 +197,6 @@ namespace geode
             return result;
         }
     };
-
-    std::string BRepMeshesManifoldInspectionResult::string() const
-    {
-        std::string message{ "" };
-        for( const auto& vertices_issue : meshes_non_manifold_vertices )
-        {
-            absl::StrAppend( &message, vertices_issue.second.string(), "\n" );
-        }
-        for( const auto& edges_issue : meshes_non_manifold_edges )
-        {
-            absl::StrAppend( &message, edges_issue.second.string(), "\n" );
-        }
-        for( const auto& facets_issue : meshes_non_manifold_facets )
-        {
-            absl::StrAppend( &message, facets_issue.second.string(), "\n" );
-        }
-        for( const auto& model_edges_issue : model_non_manifold_edges )
-        {
-            absl::StrAppend(
-                &message, model_edges_issue.second.string(), "\n" );
-        }
-        return message;
-    }
 
     BRepComponentMeshesManifold::BRepComponentMeshesManifold(
         const BRep& model )

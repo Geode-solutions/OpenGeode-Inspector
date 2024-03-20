@@ -48,7 +48,7 @@ def check_adjacency():
     if adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Solid shows wrong adjacencies where there are none.")
-    if not adjacency_inspector.non_manifold_facets().number() == 0:
+    if not adjacency_inspector.non_manifold_facets().nb_issues() == 0:
         raise ValueError(
             "[Test] Solid has more wrong adjacencies than it should.")
 
@@ -73,11 +73,11 @@ def check_non_adjacency_no_bijection():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Solid should have a wrong adjacency due to non-bijection.")
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().number() != 1:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().nb_issues() != 1:
         raise ValueError(
             "[Test] Solid should have one wrong adjacency due to non-bijection.")
     polyhedron_facet = geode.PolyhedronFacet(2, 1)
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[0] != polyhedron_facet:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().issues()[0] != polyhedron_facet:
         raise ValueError("[Test] Solid facets show wrong adjacency problems.")
 
 
@@ -99,15 +99,15 @@ def check_non_adjacency_wrong_facet():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError("[Test] Solid should have wrong adjacencies due to wrong facet for "
                          "adjacency.")
-    if adjacency_inspector.nb_facets_with_wrong_adjacency().number() != 2:
+    if adjacency_inspector.nb_facets_with_wrong_adjacency().nb_issues() != 2:
         raise ValueError(
             "[Test] Solid should have two wrong adjacencies due to wrong facet for adjacency.")
     polyhedron_facet1 = geode.PolyhedronFacet(0, 0)
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[0] != polyhedron_facet1:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().issues()[0] != polyhedron_facet1:
         raise ValueError(
             "[Test] Solid shows wrong first facet with adjacency problems.")
     polyhedron_facet2 = geode.PolyhedronFacet(1, 0)
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[1] != polyhedron_facet2:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().issues()[1] != polyhedron_facet2:
         raise ValueError(
             "[Test] Solid shows wrong second facet with adjacency problems.")
 
@@ -130,15 +130,15 @@ def check_non_adjacency_inversed_tetrahedron():
     if not adjacency_inspector.mesh_has_wrong_adjacencies():
         raise ValueError(
             "[Test] Solid should have wrong adjacencies due to an inversed triangle.")
-    if adjacency_inspector.nb_facets_with_wrong_adjacency().number() != 2:
+    if adjacency_inspector.nb_facets_with_wrong_adjacency().nb_issues() != 2:
         raise ValueError(
             "[Test] Solid should have two wrong adjacencies due to an inversed triangle.")
     polyhedron_facet1 = geode.PolyhedronFacet(0, 0)
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[0] != polyhedron_facet1:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().issues()[0] != polyhedron_facet1:
         raise ValueError(
             "[Test] Solid shows wrong first facet with adjacency problems due to an inversed triangle..")
     polyhedron_facet2 = geode.PolyhedronFacet(1, 1)
-    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().problems[1] != polyhedron_facet2:
+    if adjacency_inspector.polyhedron_facets_with_wrong_adjacency().issues()[1] != polyhedron_facet2:
         raise ValueError(
             "[Test] Solid shows wrong second facet with adjacency problems due to an inversed triangle..")
 

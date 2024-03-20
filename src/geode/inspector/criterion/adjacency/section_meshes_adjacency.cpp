@@ -44,10 +44,15 @@ namespace geode
 
     std::string SectionMeshesAdjacencyInspectionResult::string() const
     {
-        std::string message{ "" };
+        std::string message;
         for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
         {
             absl::StrAppend( &message, surface_issue.second.string(), "\n" );
+        }
+        if( surfaces_edges_with_wrong_adjacencies.empty() )
+        {
+            absl::StrAppend(
+                &message, "No adjacency issues in model component meshes" );
         }
         return message;
     }

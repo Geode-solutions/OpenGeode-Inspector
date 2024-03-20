@@ -48,9 +48,10 @@ namespace geode
                 "unique_vertices_linked_to_not_internal_nor_boundary_corner",
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
-            .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
+            .def_readwrite(
+                "unique_vertices_linked_to_not_boundary_line_corner",
                 &SectionCornersTopologyInspectionResult::
-                    unique_vertices_liked_to_not_boundary_line_corner )
+                    unique_vertices_linked_to_not_boundary_line_corner )
             .def( "string", &SectionCornersTopologyInspectionResult::string );
 
         pybind11::class_< SectionLinesTopologyInspectionResult >(

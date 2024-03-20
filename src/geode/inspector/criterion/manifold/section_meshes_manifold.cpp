@@ -50,7 +50,7 @@ namespace geode
 
     std::string SectionMeshesManifoldInspectionResult::string() const
     {
-        std::string message{ "" };
+        std::string message;
         for( const auto& vertices_issue : meshes_non_manifold_vertices )
         {
             absl::StrAppend( &message, vertices_issue.second.string(), "\n" );
@@ -58,6 +58,11 @@ namespace geode
         for( const auto& edges_issue : meshes_non_manifold_edges )
         {
             absl::StrAppend( &message, edges_issue.second.string(), "\n" );
+        }
+        if( message.empty() )
+        {
+            absl::StrAppend(
+                &message, "No manifold issues in model component meshes" );
         }
         return message;
     }
