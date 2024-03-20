@@ -72,7 +72,7 @@ namespace geode
             {
                 if( polygon_is_degenerated( polygon_id ) )
                 {
-                    wrong_polygons.add_problem( polygon_id,
+                    wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
                             this->mesh().id().string(), " is degenerated." ) );
                 }

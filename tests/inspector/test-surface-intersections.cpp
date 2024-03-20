@@ -53,12 +53,11 @@ void check_intersections2D()
     };
     OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
         "[Test] 2D Surface should have intersections." );
-    OPENGEODE_EXCEPTION(
-        intersections_inspector.intersecting_elements().number() == 3,
+    const auto inspection = intersections_inspector.intersecting_elements();
+    OPENGEODE_EXCEPTION( inspection.nb_issues() == 3,
         "[Test] 2D Surface should have 3 intersecting elements pair." );
     bool right_intersections{ true };
-    const auto triangles_inter =
-        intersections_inspector.intersecting_elements().problems;
+    const auto &triangles_inter = inspection.issues();
     if( triangles_inter.size() != 3 || triangles_inter[0].first != 2
         || triangles_inter[0].second != 0 || triangles_inter[1].first != 2
         || triangles_inter[1].second != 1 || triangles_inter[2].first != 0
@@ -99,14 +98,12 @@ void check_intersections3D()
     };
     OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
         "[Test] 3D Surface should have intersections." );
-    const auto nb_intersections =
-        intersections_inspector.intersecting_elements().number();
-    OPENGEODE_EXCEPTION( nb_intersections == 2,
+    const auto inspection = intersections_inspector.intersecting_elements();
+    OPENGEODE_EXCEPTION( inspection.nb_issues() == 2,
         "[Test] 3D Surface should have 2 intersecting elements pair, not ",
-        nb_intersections, "." );
+        inspection.nb_issues(), "." );
     bool right_intersections{ true };
-    const auto triangles_inter =
-        intersections_inspector.intersecting_elements().problems;
+    const auto &triangles_inter = inspection.issues();
     if( triangles_inter.size() != 2 || triangles_inter[0].first != 0
         || triangles_inter[0].second != 4 || triangles_inter[1].first != 2
         || triangles_inter[1].second != 4 )

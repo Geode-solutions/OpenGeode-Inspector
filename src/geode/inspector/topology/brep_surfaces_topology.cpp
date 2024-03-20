@@ -69,30 +69,61 @@ namespace geode
 
     std::string BRepSurfacesTopologyInspectionResult::string() const
     {
-        auto message = absl::StrCat( surfaces_not_meshed.string(), "\n" );
+        std::string message{ "" };
+        if( surfaces_not_meshed.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, surfaces_not_meshed.string(), "\n" );
+        }
         for( const auto& surface_uv_issue :
             surfaces_not_linked_to_a_unique_vertex )
         {
             absl::StrAppend( &message, surface_uv_issue.second.string(), "\n" );
         }
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_not_internal_nor_boundary_surface
-                .string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                .string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_a_single_and_invalid_surface.string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_several_and_invalid_surfaces.string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                .string(),
-            "\n" );
+        if( unique_vertices_linked_to_not_internal_nor_boundary_surface
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_not_internal_nor_boundary_surface
+                    .string(),
+                "\n" );
+        }
+        if( unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                    .string(),
+                "\n" );
+        }
+        if( unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_single_and_invalid_surface.string(),
+                "\n" );
+        }
+        if( unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_several_and_invalid_surfaces.string(),
+                "\n" );
+        }
+        if( unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                    .string(),
+                "\n" );
+        }
+        if( message == "" )
+        {
+            absl::StrAppend( &message, "No issues with surfaces topology" );
+        }
         return message;
     }
 
@@ -382,7 +413,7 @@ namespace geode
         {
             if( brep_.surface( surface.id() ).mesh().nb_vertices() == 0 )
             {
-                result.surfaces_not_meshed.add_problem(
+                result.surfaces_not_meshed.add_issue(
                     surface.id(), absl::StrCat( surface.id().string(),
                                       " is a surface without mesh." ) );
             }
@@ -390,11 +421,14 @@ namespace geode
             auto surface_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, surface.component_id(), surface.mesh() );
-            surface_result.description =
-                absl::StrCat( "Surface ", surface.id().string(),
-                    " has mesh vertices not linked to a unique vertex." );
-            result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
-                surface.id(), surface_result );
+            if( surface_result.nb_issues() != 0 )
+            {
+                surface_result.set_description(
+                    absl::StrCat( "Surface ", surface.id().string(),
+                        " has mesh vertices not linked to a unique vertex." ) );
+                result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
+                    surface.id(), std::move( surface_result ) );
+            }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
@@ -404,7 +438,7 @@ namespace geode
             {
                 result
                     .unique_vertices_linked_to_not_internal_nor_boundary_surface
-                    .add_problem( unique_vertex_id,
+                    .add_issue( unique_vertex_id,
                         not_boundary_nor_internal_surface.value() );
             }
             if( const auto invalid_internal_topology =
@@ -413,7 +447,7 @@ namespace geode
             {
                 result
                     .unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                    .add_problem(
+                    .add_issue(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
             if( const auto invalid_unique_surface =
@@ -421,7 +455,7 @@ namespace geode
                         unique_vertex_id ) )
             {
                 result.unique_vertices_linked_to_a_single_and_invalid_surface
-                    .add_problem(
+                    .add_issue(
                         unique_vertex_id, invalid_unique_surface.value() );
             }
             if( const auto invalid_multiple_surfaces =
@@ -429,7 +463,7 @@ namespace geode
                         unique_vertex_id ) )
             {
                 result.unique_vertices_linked_to_several_and_invalid_surfaces
-                    .add_problem(
+                    .add_issue(
                         unique_vertex_id, invalid_multiple_surfaces.value() );
             }
             if( const auto line_and_not_on_surface_border =
@@ -438,7 +472,7 @@ namespace geode
             {
                 result
                     .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                    .add_problem( unique_vertex_id,
+                    .add_issue( unique_vertex_id,
                         line_and_not_on_surface_border.value() );
             }
         }

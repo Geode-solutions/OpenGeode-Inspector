@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2023 Geode-solutions
+ * Copyright (c) 2019 - 2024 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,10 +33,9 @@ namespace geode
         using InspectionIssues = geode::InspectionIssues< ProblemType >;
         const auto name = absl::StrCat( "InspectionIssues", typestr );
         pybind11::class_< InspectionIssues >( module, name.c_str() )
-            .def_readwrite( "description", &InspectionIssues::description )
-            .def_readwrite( "problems", &InspectionIssues::problems )
-            .def_readwrite( "messages", &InspectionIssues::messages )
-            .def( "number", &InspectionIssues::number )
+            .def( "set_description", &InspectionIssues::set_description )
+            .def( "nb_issues", &InspectionIssues::nb_issues )
+            .def( "issues", &InspectionIssues::issues )
             .def( "string", &InspectionIssues::string );
     }
     void define_information( pybind11::module& module )

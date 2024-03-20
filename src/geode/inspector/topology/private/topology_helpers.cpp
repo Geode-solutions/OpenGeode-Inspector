@@ -66,14 +66,14 @@ namespace geode
                 const ComponentID& component_id,
                 const VertexSet& component_mesh )
         {
-            InspectionIssues< index_t > result{ "" };
+            InspectionIssues< index_t > result;
             for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
             {
                 ComponentMeshVertex component_mesh_vertex{ component_id,
                     vertex_id };
                 if( brep.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
-                    result.add_problem( vertex_id,
+                    result.add_issue( vertex_id,
                         absl::StrCat( "Vertex '", vertex_id,
                             "' is not linked to a unique vertex." ) );
                 }
@@ -94,7 +94,7 @@ namespace geode
                     vertex_id };
                 if( section.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
-                    result.add_problem( vertex_id,
+                    result.add_issue( vertex_id,
                         absl::StrCat( "Vertex '", vertex_id,
                             "' is not linked to a unique vertex." ) );
                 }

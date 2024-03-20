@@ -71,7 +71,7 @@ namespace geode
                         && !mesh_polygon_edge_has_right_adjacency(
                             polygon_edge ) )
                     {
-                        wrong_adjacency_edges.add_problem(
+                        wrong_adjacency_edges.add_issue(
                             polygon_edge, absl::StrCat( "Local edge ", edge_id,
                                               " of polygon ", polygon_id,
                                               " has wrong adjacencies." ) );

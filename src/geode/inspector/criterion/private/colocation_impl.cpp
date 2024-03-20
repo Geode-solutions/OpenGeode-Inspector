@@ -82,7 +82,7 @@ namespace
             {
                 absl::StrAppend( &point_group_string, " ", point_index );
             }
-            groups_of_colocated_points.add_problem( colocated_points_group,
+            groups_of_colocated_points.add_issue( colocated_points_group,
                 absl::StrCat( "Vertices with indices", point_group_string,
                     " are colocated at position [",
                     mesh_colocation_info

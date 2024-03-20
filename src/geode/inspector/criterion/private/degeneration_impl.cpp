@@ -75,7 +75,7 @@ namespace geode
                 {
                     const auto edge_vertices =
                         mesh_.edges().edge_vertices( edge_index );
-                    degenerated_edges_index.add_problem( edge_index,
+                    degenerated_edges_index.add_issue( edge_index,
                         absl::StrCat( "Edge between vertices with index ",
                             edge_vertices[0], " and index ", edge_vertices[1],
                             ", at position [",

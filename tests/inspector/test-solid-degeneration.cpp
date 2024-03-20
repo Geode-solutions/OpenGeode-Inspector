@@ -49,7 +49,7 @@ void check_non_degeneration()
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 0,
+        degeneration_inspector.degenerated_edges().nb_issues() == 0,
         "[Test] Solid has more degenerated edges than it should." );
 }
 
@@ -72,9 +72,9 @@ void check_degeneration_by_colocalisation()
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is shown not degenerated whereas it is." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 1,
+        degeneration_inspector.degenerated_edges().nb_issues() == 1,
         "[Test] Solid has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().issues()[0]
                              == solid->edges().edge_from_vertices( { 1, 4 } ),
         "[Test] Solid has wrong degenerated edges." );
 }
@@ -97,9 +97,9 @@ void check_degeneration_by_point_multiple_presence()
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] Solid is not shown degenerated whereas it is." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 1,
+        degeneration_inspector.degenerated_edges().nb_issues() == 1,
         "[Test] Solid has the wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().problems[0]
+    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().issues()[0]
                              == solid->edges().edge_from_vertices( { 1, 1 } ),
         "[Test] Solid shows the wrong degenerated edges." );
 }

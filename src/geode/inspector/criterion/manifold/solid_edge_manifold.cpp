@@ -140,8 +140,7 @@ namespace geode
                                 polyhedron_edge_vertices, polyhedron_id ),
                             polyhedra_around_edges_.at( polyhedron_edge ) ) )
                     {
-                        non_manifold_edges.add_problem(
-                            polyhedron_edge_vertices,
+                        non_manifold_edges.add_issue( polyhedron_edge_vertices,
                             absl::StrCat(
 
                                 "Edge between vertices with index ",

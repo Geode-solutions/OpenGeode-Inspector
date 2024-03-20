@@ -68,7 +68,7 @@ def check_intersections2D():
     intersections_inspector = inspector.SurfaceCurveIntersections2D( surface, curve )
     if not intersections_inspector.meshes_have_intersections():
         raise ValueError( "[Test] 2D Surface and Curve should have intersections." )
-    if not intersections_inspector.intersecting_elements().number() == 7:
+    if not intersections_inspector.intersecting_elements().nb_issues() == 7:
         raise ValueError( "[Test] 2D Surface and Curve should have 7 intersecting elements pair." )
 
 def check_intersections3D():
@@ -112,7 +112,7 @@ def check_intersections3D():
     intersections_inspector = inspector.SurfaceCurveIntersections3D(surface, curve )
     if not intersections_inspector.meshes_have_intersections():
         raise ValueError( "[Test] 3D Surface and Curve should have intersections." )
-    if not intersections_inspector.intersecting_elements().number() == 6:
+    if not intersections_inspector.intersecting_elements().nb_issues() == 6:
         raise ValueError( "[Test] 3D Surface and Curve should have 6 intersecting elements pair." )
 
 if __name__ == '__main__':

@@ -59,6 +59,11 @@ namespace geode
         {
             absl::StrAppend( &message, edges_issue.second.string(), "\n" );
         }
+        if( message == "" )
+        {
+            absl::StrAppend(
+                &message, "No manifold issues in model component meshes" );
+        }
         return message;
     }
 

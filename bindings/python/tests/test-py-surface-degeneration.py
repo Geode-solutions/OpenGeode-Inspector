@@ -46,7 +46,7 @@ def check_non_degeneration2D():
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] Surface is shown degenerated whereas it is not.")
-    if not degeneration_inspector.degenerated_edges().number() == 0:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] Surface has more degenerated edges than it should.")
 
@@ -66,11 +66,11 @@ def check_degeneration_by_colocalisation2D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] Surface is shown not degenerated whereas it is.")
-    if not degeneration_inspector.degenerated_edges().number() == 1:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 1:
         raise ValueError(
             "[Test] Surface has wrong number of degenerated edges.")
     surface.enable_edges()
-    if not degeneration_inspector.degenerated_edges().problems[0] == surface.edges().edge_from_vertices([1, 3]):
+    if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 3]):
         raise ValueError("[Test] Surface has wrong degenerated edges.")
 
 
@@ -89,11 +89,11 @@ def check_degeneration_by_point_multiple_presence2D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] Surface is not shown degenerated whereas it is.")
-    if not degeneration_inspector.degenerated_edges().number() == 1:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 1:
         raise ValueError(
             "[Test] Surface has the wrong number of degenerated edges.")
     surface.enable_edges()
-    if not degeneration_inspector.degenerated_edges().problems[0] == surface.edges().edge_from_vertices([1, 1]):
+    if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 1]):
         raise ValueError("[Test] Surface shows the wrong degenerated edges.")
 
 
@@ -113,7 +113,7 @@ def check_non_degeneration3D():
     if degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] (3D) Surface is shown degenerated whereas it is not.")
-    if not degeneration_inspector.degenerated_edges().number() == 0:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] (3D) Surface has more degenerated edges than it should.")
 
@@ -134,11 +134,11 @@ def check_degeneration_by_colocalisation3D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] (3D) Surface is shown not degenerated whereas it is.")
-    if not degeneration_inspector.degenerated_edges().number() == 1:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 1:
         raise ValueError(
             "[Test] (3D) Surface has wrong number of degenerated edges.")
     surface.enable_edges()
-    if not degeneration_inspector.degenerated_edges().problems[0] == surface.edges().edge_from_vertices([1, 3]):
+    if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 3]):
         raise ValueError("[Test] (3D) Surface has wrong degenerated edges.")
 
 
@@ -157,11 +157,11 @@ def check_degeneration_by_point_multiple_presence3D():
     if not degeneration_inspector.is_mesh_degenerated():
         raise ValueError(
             "[Test] (3D) Surface is not shown degenerated whereas it is.")
-    if not degeneration_inspector.degenerated_edges().number() == 1:
+    if not degeneration_inspector.degenerated_edges().nb_issues() == 1:
         raise ValueError(
             "[Test] (3D) Surface has the wrong number of degenerated edges.")
     surface.enable_edges()
-    if not degeneration_inspector.degenerated_edges().problems[0] == surface.edges().edge_from_vertices([1, 1]):
+    if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 1]):
         raise ValueError(
             "[Test] (3D) Surface shows the wrong degenerated edges.")
 

@@ -60,7 +60,7 @@ namespace geode
             {
                 if( mesh_.edge_length( edge_index ) < global_epsilon )
                 {
-                    degenerated_edges_index.add_problem( edge_index,
+                    degenerated_edges_index.add_issue( edge_index,
                         absl::StrCat( "Edge with index ", edge_index,
                             ", at position [",
                             mesh_.edge_barycenter( edge_index ).string(),

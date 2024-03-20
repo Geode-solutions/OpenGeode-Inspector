@@ -63,18 +63,37 @@ namespace geode
 {
     std::string BRepBlocksTopologyInspectionResult::string() const
     {
-        auto message = absl::StrCat( blocks_not_meshed.string(), "\n" );
+        std::string message{ "" };
+        if( blocks_not_meshed.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, blocks_not_meshed.string(), "\n" );
+        }
         for( const auto& block_uv_issue : blocks_not_linked_to_a_unique_vertex )
         {
             absl::StrAppend( &message, block_uv_issue.second.string(), "\n" );
         }
-        absl::StrAppend( &message,
-            unique_vertices_part_of_two_blocks_and_no_boundary_surface.string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_with_incorrect_block_cmvs_count.string(), "\n" );
+        if( unique_vertices_part_of_two_blocks_and_no_boundary_surface
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_part_of_two_blocks_and_no_boundary_surface
+                    .string(),
+                "\n" );
+        }
+        if( unique_vertices_with_incorrect_block_cmvs_count.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_with_incorrect_block_cmvs_count.string(),
+                "\n" );
+        }
+        if( message == "" )
+        {
+            absl::StrAppend( &message, "No issues with blocks topology" );
+        }
         return message;
     }
+
     BRepBlocksTopology::BRepBlocksTopology( const BRep& brep ) : brep_( brep )
     {
     }
@@ -276,13 +295,14 @@ namespace geode
                 continue;
             }
             auto predicted_nb_block_cmvs =
-                std::max( static_cast< index_t >( 1 ),
-                    nb_internal_surface_cmvs - nb_free_line_cmvs );
+                nb_internal_surface_cmvs < nb_free_line_cmvs + 1
+                    ? static_cast< index_t >( 1 )
+                    : nb_internal_surface_cmvs - nb_free_line_cmvs;
             if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
             {
                 predicted_nb_block_cmvs++;
             }
-            if( nb_boundary_surface_cmvs > 0 && corner_cmvs.empty() )
+            if( nb_boundary_surface_cmvs > 1 && corner_cmvs.empty() )
             {
                 predicted_nb_block_cmvs += ( nb_boundary_surface_cmvs - 2 ) / 2;
             }
@@ -309,7 +329,7 @@ namespace geode
         {
             if( brep_.block( block.id() ).mesh().nb_vertices() == 0 )
             {
-                result.blocks_not_meshed.add_problem(
+                result.blocks_not_meshed.add_issue(
                     block.id(), absl::StrCat( "Block ", block.id().string(),
                                     " is not meshed." ) );
                 continue;
@@ -317,11 +337,14 @@ namespace geode
             auto block_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
-            block_result.description =
-                absl::StrCat( "Block ", block.id().string(),
-                    " has mesh vertices not linked to a unique vertex." );
-            result.blocks_not_linked_to_a_unique_vertex.emplace_back(
-                block.id(), block_result );
+            if( block_result.nb_issues() != 0 )
+            {
+                block_result.set_description(
+                    absl::StrCat( "Block ", block.id().string(),
+                        " has mesh vertices not linked to a unique vertex." ) );
+                result.blocks_not_linked_to_a_unique_vertex.emplace_back(
+                    block.id(), std::move( block_result ) );
+            }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
@@ -331,14 +354,14 @@ namespace geode
             {
                 result
                     .unique_vertices_part_of_two_blocks_and_no_boundary_surface
-                    .add_problem( unique_vertex_id, problem_message.value() );
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     unique_vertex_block_cmvs_count_is_incorrect(
                         unique_vertex_id ) )
             {
                 result.unique_vertices_with_incorrect_block_cmvs_count
-                    .add_problem( unique_vertex_id, problem_message.value() );
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
         }
         return result;

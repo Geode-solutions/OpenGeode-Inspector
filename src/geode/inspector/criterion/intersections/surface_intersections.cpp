@@ -386,7 +386,7 @@ namespace geode
 
             for( const auto& triangle_pair : intersections )
             {
-                issues.add_problem( triangle_pair,
+                issues.add_issue( triangle_pair,
                     absl::StrCat( "Triangles ", triangle_pair.first, " and ",
                         triangle_pair.second, " intersect each other." ) );
             }

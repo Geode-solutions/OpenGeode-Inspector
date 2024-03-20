@@ -75,16 +75,16 @@ void check_intersections2D()
         *curve };
     OPENGEODE_EXCEPTION( intersections_inspector.meshes_have_intersections(),
         "[Test] 2D Surface and Curve should have intersections." );
-    OPENGEODE_EXCEPTION(
-        intersections_inspector.intersecting_elements().number() == 7,
+    const auto intersection_result =
+        intersections_inspector.intersecting_elements();
+    OPENGEODE_EXCEPTION( intersection_result.nb_issues() == 7,
         "[Test] 2D Surface and Curve should have 7 intersecting elements "
         "pair, get ",
-        intersections_inspector.intersecting_elements().number() );
+        intersection_result.nb_issues() );
     absl::flat_hash_set< std::pair< geode::index_t, geode::index_t > > answer{
         { 0, 0 }, { 0, 1 }, { 0, 2 }, { 0, 3 }, { 1, 3 }, { 1, 6 }, { 2, 6 }
     };
-    for( const auto& inter :
-        intersections_inspector.intersecting_elements().problems )
+    for( const auto& inter : intersection_result.issues() )
     {
         OPENGEODE_EXCEPTION( answer.contains( inter ),
             "[Test] 2D Surface and Curve has at least one wrong intersecting "
@@ -136,16 +136,16 @@ void check_intersections3D()
         *curve };
     OPENGEODE_EXCEPTION( intersections_inspector.meshes_have_intersections(),
         "[Test] 3D Surface and Curve should have intersections." );
-    OPENGEODE_EXCEPTION(
-        intersections_inspector.intersecting_elements().number() == 6,
+    const auto intersection_result =
+        intersections_inspector.intersecting_elements();
+    OPENGEODE_EXCEPTION( intersection_result.nb_issues() == 6,
         "[Test] 3D Surface and Curve should have 6 intersecting elements "
         "pair, get ",
-        intersections_inspector.intersecting_elements().number() );
+        intersection_result.nb_issues() );
     absl::flat_hash_set< std::pair< geode::index_t, geode::index_t > > answer{
         { 0, 0 }, { 0, 1 }, { 0, 2 }, { 0, 3 }, { 1, 3 }, { 1, 6 }, { 2, 7 }
     };
-    for( const auto& inter :
-        intersections_inspector.intersecting_elements().problems )
+    for( const auto& inter : intersection_result.issues() )
     {
         OPENGEODE_EXCEPTION( answer.contains( inter ),
             "[Test] 3D Surface and Curve has at least one wrong intersecting "

@@ -42,47 +42,6 @@
 namespace
 {
     template < geode::index_t dimension, typename Model >
-    geode::InspectionIssues< geode::uuid >
-        model_degenerated_component_meshes_base( const Model& model )
-    {
-        geode::InspectionIssues< geode::uuid > components_with_degeneration{
-            "Components with degenerated elements"
-        };
-        for( const auto& line : model.lines() )
-        {
-            const geode::EdgedCurveDegeneration< dimension > inspector{
-                line.mesh()
-            };
-            if( inspector.is_mesh_degenerated() )
-            {
-                components_with_degeneration.add_problem(
-                    line.id(), absl::StrCat( "Line ", line.id().string(),
-                                   " has degenerated elements." ) );
-            }
-        }
-        for( const auto& surface : model.surfaces() )
-        {
-            const geode::SurfaceMeshDegeneration< dimension > inspector{
-                surface.mesh()
-            };
-            if( inspector.is_mesh_degenerated() )
-            {
-                components_with_degeneration.add_problem( surface.id(),
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " has degenerated elements." ) );
-            }
-        }
-        return components_with_degeneration;
-    }
-
-    geode::InspectionIssues< geode::uuid > model_degenerated_component_meshes(
-        const geode::Section& model )
-    {
-        return model_degenerated_component_meshes_base< 2, geode::Section >(
-            model );
-    }
-
-    template < geode::index_t dimension, typename Model >
     absl::flat_hash_map< geode::uuid, geode::DegeneratedElements >
         model_components_degenerated_elements_base( const Model& model )
     {
@@ -95,7 +54,7 @@ namespace
             };
             geode::DegeneratedElements elements;
             elements.degenerated_edges = inspector.degenerated_edges();
-            if( !elements.degenerated_edges.problems.empty() )
+            if( elements.degenerated_edges.nb_issues() != 0 )
             {
                 components_degenerated_elements.emplace(
                     line.id(), std::move( elements ) );
@@ -109,8 +68,8 @@ namespace
             geode::DegeneratedElements elements;
             elements.degenerated_edges = inspector.degenerated_edges();
             elements.degenerated_polygons = inspector.degenerated_polygons();
-            if( !elements.degenerated_edges.problems.empty()
-                || !elements.degenerated_polygons.problems.empty() )
+            if( elements.degenerated_edges.nb_issues() != 0
+                || elements.degenerated_polygons.nb_issues() != 0 )
             {
                 components_degenerated_elements.emplace(
                     surface.id(), std::move( elements ) );
@@ -138,8 +97,8 @@ namespace
             geode::DegeneratedElements elements;
             elements.degenerated_edges = inspector.degenerated_edges();
             elements.degenerated_polyhedra = inspector.degenerated_polyhedra();
-            if( !elements.degenerated_edges.problems.empty()
-                || !elements.degenerated_polyhedra.problems.empty() )
+            if( elements.degenerated_edges.nb_issues() != 0
+                || elements.degenerated_polyhedra.nb_issues() != 0 )
             {
                 components_degenerated_elements.emplace(
                     block.id(), std::move( elements ) );
@@ -156,15 +115,31 @@ namespace geode
         std::string message{ "" };
         for( const auto& issue : elements )
         {
+            const auto& degenerated_elements = issue.second;
+            if( degenerated_elements.degenerated_edges.nb_issues() != 0 )
+            {
+                absl::StrAppend(
+                    &message, issue.second.degenerated_edges.string(), "\n" );
+            }
+            if( degenerated_elements.degenerated_polygons.nb_issues() != 0 )
+            {
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polygons.string(), "\n" );
+            }
+            if( degenerated_elements.degenerated_polyhedra.nb_issues() != 0 )
+            {
+                absl::StrAppend( &message,
+                    issue.second.degenerated_polyhedra.string(), "\n" );
+            }
+        }
+        if( elements.empty() )
+        {
             absl::StrAppend(
-                &message, issue.second.degenerated_edges.string(), "\n" );
-            absl::StrAppend(
-                &message, issue.second.degenerated_polygons.string(), "\n" );
-            absl::StrAppend(
-                &message, issue.second.degenerated_polyhedra.string(), "\n" );
+                &message, "No degenerated elements in model component meshes" );
         }
         return message;
     }
+
     template < geode::index_t dimension, typename Model >
     class ComponentMeshesDegeneration< dimension, Model >::Impl
     {

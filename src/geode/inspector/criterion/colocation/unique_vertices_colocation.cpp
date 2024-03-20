@@ -149,8 +149,8 @@ namespace geode
         std::string message{ "" };
         absl::StrAppend(
             &message, colocated_unique_vertices_groups.string(), "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_different_points.string(), "\n" );
+        absl::StrAppend(
+            &message, unique_vertices_linked_to_different_points.string() );
         return message;
     }
 
@@ -208,7 +208,7 @@ namespace geode
             unique_vertices_linked_to_different_points() const
         {
             InspectionIssues< index_t > vertices{
-                "Vertices linked to different points."
+                "Unique vertices linked to different points."
             };
             for( const auto unique_vertex_id :
                 Range{ model_.nb_unique_vertices() } )
@@ -217,7 +217,7 @@ namespace geode
                         model_.component_mesh_vertices( unique_vertex_id ),
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
-                    vertices.add_problem( unique_vertex_id,
+                    vertices.add_issue( unique_vertex_id,
                         absl::StrCat( "Unique vertex with index ",
                             unique_vertex_id,
                             " has component mesh vertices which are not "
@@ -235,11 +235,11 @@ namespace geode
             };
             InspectionIssues< std::vector< index_t > >
                 colocated_unique_vertices_groups{
-                    "Groups of colocated points."
+                    "Groups of colocated unique vertices."
                 };
             const auto colocated_pts_groups =
                 pointset_inspector.colocated_points_groups();
-            for( const auto& point_group : colocated_pts_groups.problems )
+            for( const auto& point_group : colocated_pts_groups.issues() )
             {
                 std::vector< index_t > fixed_point_group;
                 std::string point_group_string{ "" };
@@ -257,7 +257,7 @@ namespace geode
                 }
                 if( !fixed_point_group.empty() )
                 {
-                    colocated_unique_vertices_groups.add_problem(
+                    colocated_unique_vertices_groups.add_issue(
                         fixed_point_group,
                         absl::StrCat( "Unique vertices with indices",
                             point_group_string, " are colocated at position [",

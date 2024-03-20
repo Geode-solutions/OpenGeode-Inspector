@@ -56,7 +56,7 @@ namespace geode
                 surface.mesh()
             };
             auto non_manifold_vertices = inspector.non_manifold_vertices();
-            if( !non_manifold_vertices.problems.empty() )
+            if( non_manifold_vertices.nb_issues() != 0 )
             {
                 surfaces_non_manifold_vertices.emplace(
                     surface.id(), std::move( non_manifold_vertices ) );
@@ -79,7 +79,7 @@ namespace geode
                 surface.mesh()
             };
             auto non_manifold_edges = inspector.non_manifold_edges();
-            if( !non_manifold_edges.problems.empty() )
+            if( non_manifold_edges.nb_issues() != 0 )
             {
                 surfaces_non_manifold_edges.emplace(
                     surface.id(), std::move( non_manifold_edges ) );

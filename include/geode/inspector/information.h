@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - 2023 Geode-solutions
+ * Copyright (c) 2019 - 2024 Geode-solutions
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,52 +27,65 @@
 #include <vector>
 
 #include <geode/basic/logger.h>
+#include <geode/basic/types.h>
+
 #include <geode/inspector/common.h>
 
 namespace geode
 {
-    template < typename ProblemType >
-    struct InspectionIssues
+    template < typename IssueType >
+    class InspectionIssues
     {
-        InspectionIssues( absl::string_view problem_description )
-            : description{ problem_description }
+    public:
+        InspectionIssues( absl::string_view issue_description )
+            : description_{ issue_description }
         {
         }
 
         InspectionIssues()
-            : description{ "Default inspection issue message. This message "
-                           "should have been overriden." }
+            : description_{ "Default inspection issue message. This message "
+                            "should have been overriden." }
         {
         }
 
-        index_t number() const
+        void set_description( absl::string_view issue_description )
         {
-            return problems.size();
+            description_ = to_string( issue_description );
         }
 
-        void add_problem(
-            const ProblemType& problem, const std::string& message )
+        index_t nb_issues() const
         {
-            problems.emplace_back( std::move( problem ) );
-            messages.emplace_back( std::move( message ) );
+            return issues_.size();
+        }
+
+        void add_issue( IssueType issue, std::string message )
+        {
+            issues_.emplace_back( std::move( issue ) );
+            messages_.emplace_back( std::move( message ) );
         }
 
         std::string string() const
         {
-            if( problems.empty() )
+            if( issues_.empty() )
             {
-                return absl::StrCat( description, " -> No Problems :)" );
+                return absl::StrCat( description_, " -> No Issues :)" );
             }
-            auto message = absl::StrCat( description );
-            for( const auto& issue : messages )
+            auto message = absl::StrCat( description_ );
+            for( const auto& issue : messages_ )
             {
                 absl::StrAppend( &message, "\n ->    ", issue );
             }
             return message;
         }
 
-        std::string description;
-        std::vector< ProblemType > problems{};
-        std::vector< std::string > messages{};
+        const std::vector< IssueType >& issues() const
+        {
+            return issues_;
+        }
+
+    private:
+        std::string description_;
+        std::vector< IssueType > issues_{};
+        std::vector< std::string > messages_{};
     };
 } // namespace geode

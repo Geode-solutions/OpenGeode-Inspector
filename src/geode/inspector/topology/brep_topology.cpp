@@ -142,22 +142,20 @@ namespace geode
             return true;
         }
 
-        std::pair< std::vector< index_t >, std::vector< std::string > >
-            unique_vertices_not_linked_to_a_component_vertex() const
+        void add_unique_vertices_not_linked_to_a_component_vertex(
+            BRepTopologyInspectionResult& brep_issues ) const
         {
-            std::pair< std::vector< index_t >, std::vector< std::string > >
-                result;
+            auto& inspect_result =
+                brep_issues.unique_vertices_not_linked_to_any_component;
             for( const auto uv_id : Range{ brep_.nb_unique_vertices() } )
             {
                 if( brep_.component_mesh_vertices( uv_id ).empty() )
                 {
-                    result.first.push_back( uv_id );
-                    result.second.push_back(
+                    inspect_result.add_issue( uv_id,
                         absl::StrCat( "Unique vertex with id ", uv_id,
                             " is not linked to any component mesh vertex." ) );
                 }
             }
-            return result;
         }
 
         bool brep_topology_is_valid(
@@ -202,11 +200,7 @@ namespace geode
             result.surfaces =
                 brep_topology_inspector.inspect_surfaces_topology();
             result.blocks = brep_topology_inspector.inspect_blocks();
-            const auto res = unique_vertices_not_linked_to_a_component_vertex();
-            result.unique_vertices_not_linked_to_any_component.problems =
-                std::move( res.first );
-            result.unique_vertices_not_linked_to_any_component.messages =
-                std::move( res.second );
+            add_unique_vertices_not_linked_to_a_component_vertex( result );
             return result;
         }
 

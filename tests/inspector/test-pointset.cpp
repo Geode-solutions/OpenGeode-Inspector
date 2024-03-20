@@ -43,7 +43,7 @@ void check_non_colocation2D()
     const geode::PointSetInspector2D inspector{ *pointset };
     OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().number() == 0,
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().nb_issues() == 0,
         "[Test] PointSet has more colocated points than it should." );
 }
 
@@ -65,10 +65,10 @@ void check_colocation2D()
         "[Test] PointSet doesn't have colocated points whereas it should have "
         "several." );
     const auto colocated_points_groups = inspector.colocated_points_groups();
-    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+    OPENGEODE_EXCEPTION( colocated_points_groups.nb_issues() == 2,
         "[Test] PointSet has wrong number of colocated groups of points." );
     auto nb_colocated_points{ 0 };
-    for( const auto group : colocated_points_groups.problems )
+    for( const auto &group : colocated_points_groups.issues() )
     {
         nb_colocated_points += group.size();
     }
@@ -76,11 +76,11 @@ void check_colocation2D()
         "[Test] PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.problems[0] == first_colocated_points_group,
+        colocated_points_groups.issues()[0] == first_colocated_points_group,
         "[Test] PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.problems[1] == second_colocated_points_group,
+        colocated_points_groups.issues()[1] == second_colocated_points_group,
         "[Test] PointSet has wrong second colocated points group." );
 }
 
@@ -97,7 +97,7 @@ void check_non_colocation3D()
     const geode::PointSetInspector3D inspector{ *pointset };
     OPENGEODE_EXCEPTION( !inspector.mesh_has_colocated_points(),
         "[Test] (3D) PointSet has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().number() == 0,
+    OPENGEODE_EXCEPTION( inspector.colocated_points_groups().nb_issues() == 0,
         "[Test] (3D) PointSet has more colocated points than it should." );
 }
 
@@ -121,11 +121,11 @@ void check_colocation3D()
         "have "
         "several." );
     const auto colocated_points_groups = inspector.colocated_points_groups();
-    OPENGEODE_EXCEPTION( colocated_points_groups.number() == 2,
+    OPENGEODE_EXCEPTION( colocated_points_groups.nb_issues() == 2,
         "[Test] (3D) PointSet has wrong number of colocated groups of "
         "points." );
     auto nb_colocated_points{ 0 };
-    for( const auto group : colocated_points_groups.problems )
+    for( const auto &group : colocated_points_groups.issues() )
     {
         nb_colocated_points += group.size();
     }
@@ -133,11 +133,11 @@ void check_colocation3D()
         "[Test] (3D) PointSet has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.problems[0] == first_colocated_points_group,
+        colocated_points_groups.issues()[0] == first_colocated_points_group,
         "[Test] (3D) PointSet has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.problems[1] == second_colocated_points_group,
+        colocated_points_groups.issues()[1] == second_colocated_points_group,
         "[Test] (3D) PointSet has wrong second colocated points group." );
 }
 

@@ -75,6 +75,13 @@ namespace
 
 namespace geode
 {
+    std::string SectionTopologyInspectionResult::string() const
+    {
+        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
+            surfaces.string(), "\n",
+            unique_vertices_not_linked_to_any_component.string(), "\n" );
+    }
+
     class SectionTopologyInspector::Impl
     {
     public:
@@ -124,22 +131,20 @@ namespace geode
             return true;
         }
 
-        std::pair< std::vector< index_t >, std::vector< std::string > >
-            unique_vertices_not_linked_to_a_component_vertex() const
+        void add_unique_vertices_not_linked_to_a_component_vertex(
+            SectionTopologyInspectionResult& section_issues ) const
         {
-            std::pair< std::vector< index_t >, std::vector< std::string > >
-                result;
+            auto& inspect_result =
+                section_issues.unique_vertices_not_linked_to_any_component;
             for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
             {
                 if( section_.component_mesh_vertices( uv_id ).empty() )
                 {
-                    result.first.push_back( uv_id );
-                    result.second.push_back(
+                    inspect_result.add_issue( uv_id,
                         absl::StrCat( "Unique vertex with id ", uv_id,
                             " is not linked to any component mesh vertex." ) );
                 }
             }
-            return result;
         }
 
         bool section_topology_is_valid(
@@ -182,24 +187,13 @@ namespace geode
                 section_topology_inspector.inspect_corners_topology();
             result.lines = section_topology_inspector.inspect_lines_topology();
             result.surfaces = section_topology_inspector.inspect_surfaces();
-            const auto res = unique_vertices_not_linked_to_a_component_vertex();
-            result.unique_vertices_not_linked_to_any_component.problems =
-                std::move( res.first );
-            result.unique_vertices_not_linked_to_any_component.messages =
-                std::move( res.second );
+            add_unique_vertices_not_linked_to_a_component_vertex( result );
             return result;
         }
 
     private:
         const Section& section_;
     };
-
-    std::string SectionTopologyInspectionResult::string() const
-    {
-        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
-            surfaces.string(), "\n",
-            unique_vertices_not_linked_to_any_component.string(), "\n" );
-    }
 
     SectionTopologyInspector::SectionTopologyInspector( const Section& section )
         : SectionCornersTopology( section ),
