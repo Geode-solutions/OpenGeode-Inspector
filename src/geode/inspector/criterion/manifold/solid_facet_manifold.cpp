@@ -96,7 +96,7 @@ namespace geode
             {
                 if( nb_adjacent_polyhedra.second > 2 )
                 {
-                    non_manifold_facets.add_problem(
+                    non_manifold_facets.add_issue(
                         nb_adjacent_polyhedra.first.vertices(),
                         absl::StrCat( "Facet made of vertices with index",
                             nb_adjacent_polyhedra.first.vertices()[0], ", ",

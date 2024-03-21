@@ -423,6 +423,11 @@ namespace
 
 namespace geode
 {
+    std::string ElementsIntersectionsInspectionResult::string() const
+    {
+        return elements_intersections.string();
+    }
+
     template < index_t dimension, typename Model >
     class ModelMeshesIntersections< dimension, Model >::Impl
     {
@@ -451,7 +456,7 @@ namespace geode
                 issues{ "Surface intersections." };
             for( const auto& triangle_pair : intersections )
             {
-                issues.add_problem( triangle_pair,
+                issues.add_issue( triangle_pair,
                     absl::StrCat( "Triangles ", triangle_pair.first.element_id,
                         " of surface ",
                         triangle_pair.first.component_id.id().string(), " and ",
@@ -546,11 +551,6 @@ namespace geode
     private:
         const Model& model_;
     };
-
-    std::string ElementsIntersectionsInspectionResult::string() const
-    {
-        return absl::StrCat( elements_intersections.string(), "\n" );
-    }
 
     template < index_t dimension, typename Model >
     ModelMeshesIntersections< dimension, Model >::ModelMeshesIntersections(

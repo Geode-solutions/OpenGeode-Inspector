@@ -90,7 +90,7 @@ namespace geode
             {
                 if( edge.second > 2 )
                 {
-                    non_manifold_edges.add_problem( edge.first.vertices(),
+                    non_manifold_edges.add_issue( edge.first.vertices(),
                         absl::StrCat( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
                             edge.first.vertices()[1],

@@ -34,24 +34,50 @@ namespace geode
 {
     std::string BRepCornersTopologyInspectionResult::string() const
     {
-        auto message = absl::StrCat( corners_not_meshed.string(), "\n" );
+        std::string message;
+        if( corners_not_meshed.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
+        }
         for( const auto& corner_uv_issue :
             corners_not_linked_to_a_unique_vertex )
         {
             absl::StrAppend( &message, corner_uv_issue.second.string(), "\n" );
         }
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_multiple_corners.string(), "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_multiple_internals_corner.string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_not_internal_nor_boundary_corner.string(),
-            "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_liked_to_not_boundary_line_corner.string(), "\n" );
+        if( unique_vertices_linked_to_multiple_corners.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiple_corners.string(), "\n" );
+        }
+        if( unique_vertices_linked_to_multiple_internals_corner.nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiple_internals_corner.string(),
+                "\n" );
+        }
+        if( unique_vertices_linked_to_not_internal_nor_boundary_corner
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_not_internal_nor_boundary_corner
+                    .string(),
+                "\n" );
+        }
+        if( unique_vertices_liked_to_not_boundary_line_corner.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_liked_to_not_boundary_line_corner.string(),
+                "\n" );
+        }
+        if( message.empty() )
+        {
+            absl::StrAppend( &message, "No issues with corners topology" );
+        }
         return message;
     }
+
     BRepCornersTopology::BRepCornersTopology( const BRep& brep ) : brep_( brep )
     {
     }
@@ -226,7 +252,7 @@ namespace geode
         {
             if( brep_.corner( corner.id() ).mesh().nb_vertices() == 0 )
             {
-                result.corners_not_meshed.add_problem(
+                result.corners_not_meshed.add_issue(
                     corner.id(), absl::StrCat( "Corner ", corner.id().string(),
                                      " is not meshed." ) );
                 continue;
@@ -234,39 +260,42 @@ namespace geode
             auto corner_result = detail::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
-            corner_result.description =
-                absl::StrCat( "Corner ", corner.id().string(),
-                    " has mesh vertices not linked to a unique vertex." );
-            result.corners_not_linked_to_a_unique_vertex.emplace_back(
-                corner.id(), corner_result );
+            if( corner_result.nb_issues() != 0 )
+            {
+                corner_result.set_description(
+                    absl::StrCat( "Corner ", corner.id().string(),
+                        " has mesh vertices not linked to a unique vertex." ) );
+                result.corners_not_linked_to_a_unique_vertex.emplace_back(
+                    corner.id(), std::move( corner_result ) );
+            }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
             if( const auto problem_message =
                     unique_vertex_has_multiple_corners( unique_vertex_id ) )
             {
-                result.unique_vertices_linked_to_multiple_corners.add_problem(
+                result.unique_vertices_linked_to_multiple_corners.add_issue(
                     unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_has_multiple_embeddings( unique_vertex_id ) )
             {
                 result.unique_vertices_linked_to_multiple_internals_corner
-                    .add_problem( unique_vertex_id, problem_message.value() );
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
                 result
                     .unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .add_problem( unique_vertex_id, problem_message.value() );
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_part_of_line_but_not_boundary(
                         unique_vertex_id ) )
             {
                 result.unique_vertices_liked_to_not_boundary_line_corner
-                    .add_problem( unique_vertex_id, problem_message.value() );
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
         }
         return result;

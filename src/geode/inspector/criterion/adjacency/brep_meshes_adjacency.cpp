@@ -34,6 +34,26 @@
 
 namespace geode
 {
+    std::string BRepMeshesAdjacencyInspectionResult::string() const
+    {
+        std::string message;
+        for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
+        {
+            absl::StrAppend( &message, surface_issue.second.string(), "\n" );
+        }
+        for( const auto& block_issue : blocks_facets_with_wrong_adjacencies )
+        {
+            absl::StrAppend( &message, block_issue.second.string(), "\n" );
+        }
+        if( surfaces_edges_with_wrong_adjacencies.empty()
+            && blocks_facets_with_wrong_adjacencies.empty() )
+        {
+            absl::StrAppend(
+                &message, "No adjacency issues in model component meshes" );
+        }
+        return message;
+    }
+
     class BRepComponentMeshesAdjacency::Impl
         : public ComponentMeshesAdjacency< 3, BRep >
     {
@@ -52,7 +72,7 @@ namespace geode
                 const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
                 auto wrong_adjacencies =
                     inspector.polyhedron_facets_with_wrong_adjacency();
-                if( wrong_adjacencies.number() != 0 )
+                if( wrong_adjacencies.nb_issues() != 0 )
                 {
                     components_wrong_adjacencies.emplace(
                         block.id(), std::move( wrong_adjacencies ) );
@@ -61,20 +81,6 @@ namespace geode
             return components_wrong_adjacencies;
         }
     };
-
-    std::string BRepMeshesAdjacencyInspectionResult::string() const
-    {
-        std::string message{ "" };
-        for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
-        {
-            absl::StrAppend( &message, surface_issue.second.string(), "\n" );
-        }
-        for( const auto& block_issue : blocks_facets_with_wrong_adjacencies )
-        {
-            absl::StrAppend( &message, block_issue.second.string(), "\n" );
-        }
-        return message;
-    }
 
     BRepComponentMeshesAdjacency::BRepComponentMeshesAdjacency(
         const BRep& model )

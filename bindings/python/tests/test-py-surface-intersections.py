@@ -51,10 +51,10 @@ def check_intersections2D():
         surface)
     if not intersections_inspector.mesh_has_self_intersections():
         raise ValueError("[Test] 2D Surface should have intersections.")
-    if not intersections_inspector.intersecting_elements().number() == 3:
+    if not intersections_inspector.intersecting_elements().nb_issues() == 3:
         raise ValueError(
             "[Test] 2D Surface should have 3 intersecting elements pair.")
-    triangles_inter = intersections_inspector.intersecting_elements().problems
+    triangles_inter = intersections_inspector.intersecting_elements().issues()
     if len(triangles_inter) != 3 or triangles_inter[0][0] != 2 or triangles_inter[0][1] != 0 or triangles_inter[1][0] != 2 or triangles_inter[1][1] != 1 or triangles_inter[2][0] != 0 or triangles_inter[2][1] != 1:
         raise ValueError(
             "[Test] 2D Surface has wrong intersecting elements pairs.")
@@ -87,11 +87,11 @@ def check_intersections3D():
         surface)
     if not intersections_inspector.mesh_has_self_intersections():
         raise ValueError("[Test] 3D Surface should have intersections.")
-    nb_intersections = intersections_inspector.intersecting_elements().number()
+    nb_intersections = intersections_inspector.intersecting_elements().nb_issues()
     if not nb_intersections == 2:
         raise ValueError(
             "[Test] 3D Surface should have 2 intersecting elements pair.")
-    triangles_inter = intersections_inspector.intersecting_elements().problems
+    triangles_inter = intersections_inspector.intersecting_elements().issues()
     if len(triangles_inter) != 2 or triangles_inter[0][0] != 0 or triangles_inter[0][1] != 4 or triangles_inter[1][0] != 2 or triangles_inter[1][1] != 4:
         raise ValueError(
             "[Test] 3D Surface has wrong intersecting elements pairs.")

@@ -51,7 +51,7 @@ void check_vertex_manifold()
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_vertices_are_manifold(),
         "[Test] Solid is shown non-manifold whereas it is." );
     OPENGEODE_EXCEPTION(
-        manifold_inspector.non_manifold_vertices().number() == 0,
+        manifold_inspector.non_manifold_vertices().nb_issues() == 0,
         "[Test] Solid has more non manifold vertices than it should." );
 }
 
@@ -74,10 +74,10 @@ void check_vertex_non_manifold()
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_vertices_are_manifold(),
         "[Test] Solid is shown manifold whereas it is not." );
     OPENGEODE_EXCEPTION(
-        manifold_inspector.non_manifold_vertices().number() == 1,
+        manifold_inspector.non_manifold_vertices().nb_issues() == 1,
         "[Test] Solid has wrong number of non manifold vertices." );
     OPENGEODE_EXCEPTION(
-        manifold_inspector.non_manifold_vertices().problems[0] == 3,
+        manifold_inspector.non_manifold_vertices().issues()[0] == 3,
         "[Test] Solid shows wrong non manifold vertex id." );
 }
 
@@ -99,7 +99,8 @@ void check_edge_manifold()
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_edges_are_manifold(),
         "[Test] Solid is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().number() == 0,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_edges().nb_issues() == 0,
         "[Test] Solid has more non manifold edges than it should." );
 }
 
@@ -120,11 +121,12 @@ void check_edge_non_manifold()
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),
         "[Test] Solid is shown manifold whereas it is not." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_edges().number() == 1,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_edges().nb_issues() == 1,
         "[Test] Solid has wrong number of non manifold edges." );
     const auto non_manifold_e = manifold_inspector.non_manifold_edges();
-    OPENGEODE_EXCEPTION( non_manifold_e.problems[0][0] == 2
-                             && non_manifold_e.problems[0][1] == 3,
+    OPENGEODE_EXCEPTION( non_manifold_e.issues()[0][0] == 2
+                             && non_manifold_e.issues()[0][1] == 3,
         "[Test] Solid shows wrong non manifold edge id." );
 }
 
@@ -144,7 +146,8 @@ void check_facet_manifold()
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_facets_are_manifold(),
         "[Test] Solid is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_facets().number() == 0,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_facets().nb_issues() == 0,
         "[Test] Solid has more non manifold facets than it should." );
 }
 
@@ -166,12 +169,13 @@ void check_facet_non_manifold()
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_facets_are_manifold(),
         "[Test] Solid is shown manifold whereas it is not." );
-    OPENGEODE_EXCEPTION( manifold_inspector.non_manifold_facets().number() == 1,
+    OPENGEODE_EXCEPTION(
+        manifold_inspector.non_manifold_facets().nb_issues() == 1,
         "[Test] Solid has wrong number of non manifold facets." );
     const auto non_manifold_f = manifold_inspector.non_manifold_facets();
-    OPENGEODE_EXCEPTION( non_manifold_f.problems[0][0] == 1
-                             && non_manifold_f.problems[0][1] == 2
-                             && non_manifold_f.problems[0][2] == 3,
+    OPENGEODE_EXCEPTION( non_manifold_f.issues()[0][0] == 1
+                             && non_manifold_f.issues()[0][1] == 2
+                             && non_manifold_f.issues()[0][2] == 3,
         "[Test] Solid shows wrong non manifold facet id." );
 }
 

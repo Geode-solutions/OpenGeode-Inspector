@@ -54,7 +54,7 @@ namespace geode
             const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
             auto wrong_adjacencies =
                 inspector.polygon_edges_with_wrong_adjacency();
-            if( wrong_adjacencies.number() != 0 )
+            if( wrong_adjacencies.nb_issues() != 0 )
             {
                 components_wrong_adjacencies.emplace(
                     surface.id(), std::move( wrong_adjacencies ) );

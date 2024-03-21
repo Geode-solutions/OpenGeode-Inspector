@@ -43,6 +43,7 @@ namespace geode
         InspectionIssues< index_t > unique_vertices_linked_to_different_points;
         std::string string() const;
     };
+
     /*!
      * Class for inspecting the colocation of unique vertices in a Model (BRep
      * or Section)

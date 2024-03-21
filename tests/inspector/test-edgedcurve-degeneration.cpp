@@ -47,7 +47,7 @@ void check_non_degeneration2D()
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] EdgedCurve is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 0,
+        degeneration_inspector.degenerated_edges().nb_issues() == 0,
         "[Test] EdgedCurve has more degenerated edges than it should." );
 }
 
@@ -68,10 +68,10 @@ void check_degeneration_by_colocalisation2D()
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] EdgedCurve is shown not degenerated whereas it is." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 1,
+        degeneration_inspector.degenerated_edges().nb_issues() == 1,
         "[Test] EdgedCurve has wrong number of degenerated edges." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().problems[0] == 2,
+        degeneration_inspector.degenerated_edges().issues()[0] == 2,
         "[Test] EdgedCurve has wrong degenerated edges." );
 }
 
@@ -92,7 +92,7 @@ void check_non_degeneration3D()
     OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) EdgedCurve is shown degenerated whereas it is not." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 0,
+        degeneration_inspector.degenerated_edges().nb_issues() == 0,
         "[Test] (3D) EdgedCurve has more degenerated edges than it should." );
 }
 
@@ -114,10 +114,10 @@ void check_degeneration_by_colocalisation3D()
     OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
         "[Test] (3D) EdgedCurve is shown not degenerated whereas it is." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().number() == 1,
+        degeneration_inspector.degenerated_edges().nb_issues() == 1,
         "[Test] (3D) EdgedCurve has wrong number of degenerated edges." );
     OPENGEODE_EXCEPTION(
-        degeneration_inspector.degenerated_edges().problems[0] == 2,
+        degeneration_inspector.degenerated_edges().issues()[0] == 2,
         "[Test] (3D) EdgedCurve has wrong degenerated edges." );
 }
 
