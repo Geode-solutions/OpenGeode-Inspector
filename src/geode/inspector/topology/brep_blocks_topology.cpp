@@ -260,8 +260,8 @@ namespace geode
                 }
 
                 const auto predicted_nb_block_cmvs = nb_boundary_surface_cmvs
-                                                     - nb_boundary_line_cmvs
-                                                     + corner_cmvs.size();
+                                                     + corner_cmvs.size()
+                                                     - nb_boundary_line_cmvs;
                 if( nb_block_cmvs != predicted_nb_block_cmvs )
                 {
                     return absl::StrCat( "Unique vertex with index ",
@@ -271,8 +271,8 @@ namespace geode
                         "and of ", nb_boundary_surface_cmvs,
                         " boundary surface(s), and of ", nb_boundary_line_cmvs,
                         " line(s) on block boundaries, with ", nb_block_cmvs,
-                        " block component mesh vertices", "(should be ",
-                        predicted_nb_block_cmvs + ")." );
+                        " block component mesh vertices (should be ",
+                        predicted_nb_block_cmvs, ")." );
                 }
                 continue;
             }
