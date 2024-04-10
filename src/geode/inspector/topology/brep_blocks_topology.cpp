@@ -310,12 +310,12 @@ namespace geode
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of the block ",
-                    block_uuid.string(), ", of ", nb_internal_surface_cmvs,
-                    " internal surface(s), of ", nb_boundary_surface_cmvs,
-                    " boundary surface(s), and of ", nb_free_line_cmvs,
-                    " free line(s), with ", nb_block_cmvs,
-                    " block component mesh vertices (should be ",
-                    predicted_nb_block_cmvs, ")." );
+                    block_uuid.string(), ", has ", nb_internal_surface_cmvs,
+                    " internal surface(s) component mesh vertices (CMVs), has ",
+                    nb_boundary_surface_cmvs,
+                    " boundary surface(s) CMVs, and has ", nb_free_line_cmvs,
+                    " free line(s) CMVs, with ", nb_block_cmvs,
+                    " block CMVs (should be ", predicted_nb_block_cmvs, ")." );
             }
         }
         return absl::nullopt;

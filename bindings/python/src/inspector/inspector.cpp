@@ -25,34 +25,37 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
-#include "adjacency/brep_meshes_adjacency.h"
-#include "adjacency/section_meshes_adjacency.h"
-#include "adjacency/solid_adjacency.h"
-#include "adjacency/surface_adjacency.h"
+#include "criterion/adjacency/brep_meshes_adjacency.h"
+#include "criterion/adjacency/section_meshes_adjacency.h"
+#include "criterion/adjacency/solid_adjacency.h"
+#include "criterion/adjacency/surface_adjacency.h"
 
-#include "colocation/component_meshes_colocation.h"
-#include "colocation/edgedcurve_colocation.h"
-#include "colocation/pointset_colocation.h"
-#include "colocation/solid_colocation.h"
-#include "colocation/surface_colocation.h"
-#include "colocation/unique_vertices_colocation.h"
+#include "criterion/colocation/component_meshes_colocation.h"
+#include "criterion/colocation/edgedcurve_colocation.h"
+#include "criterion/colocation/pointset_colocation.h"
+#include "criterion/colocation/solid_colocation.h"
+#include "criterion/colocation/surface_colocation.h"
+#include "criterion/colocation/unique_vertices_colocation.h"
 
-#include "degeneration/component_meshes_degeneration.h"
-#include "degeneration/edgedcurve_degeneration.h"
-#include "degeneration/solid_degeneration.h"
-#include "degeneration/surface_degeneration.h"
+#include "criterion/degeneration/component_meshes_degeneration.h"
+#include "criterion/degeneration/edgedcurve_degeneration.h"
+#include "criterion/degeneration/solid_degeneration.h"
+#include "criterion/degeneration/surface_degeneration.h"
 
-#include "intersections/model_intersections.h"
-#include "intersections/surface_curve_intersections.h"
-#include "intersections/surface_intersections.h"
+#include "criterion/intersections/model_intersections.h"
+#include "criterion/intersections/surface_curve_intersections.h"
+#include "criterion/intersections/surface_intersections.h"
 
-#include "manifold/brep_meshes_manifold.h"
-#include "manifold/section_meshes_manifold.h"
-#include "manifold/solid_edge_manifold.h"
-#include "manifold/solid_facet_manifold.h"
-#include "manifold/solid_vertex_manifold.h"
-#include "manifold/surface_edge_manifold.h"
-#include "manifold/surface_vertex_manifold.h"
+#include "criterion/manifold/brep_meshes_manifold.h"
+#include "criterion/manifold/section_meshes_manifold.h"
+#include "criterion/manifold/solid_edge_manifold.h"
+#include "criterion/manifold/solid_facet_manifold.h"
+#include "criterion/manifold/solid_vertex_manifold.h"
+#include "criterion/manifold/surface_edge_manifold.h"
+#include "criterion/manifold/surface_vertex_manifold.h"
+
+#include "criterion/brep_meshes_inspector.h"
+#include "criterion/section_meshes_inspector.h"
 
 #include "topology/brep_topology.h"
 #include "topology/section_topology.h"
@@ -110,6 +113,8 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_section_meshes_manifold( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
+    geode::define_brep_meshes_inspector( module );
+    geode::define_section_meshes_inspector( module );
     geode::define_brep_inspector( module );
     geode::define_section_inspector( module );
     geode::define_pointset_inspector( module );
