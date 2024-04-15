@@ -32,7 +32,10 @@ namespace geode
     struct opengeode_inspector_inspector_api PointSetInspectionResult
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

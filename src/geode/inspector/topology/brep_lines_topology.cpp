@@ -87,6 +87,12 @@ namespace geode
         }
         return message;
     }
+
+    std::string BRepLinesTopologyInspectionResult::inspection_type() const
+    {
+        return "Lines topology inspection";
+    }
+
     BRepLinesTopology::BRepLinesTopology( const BRep& brep ) : brep_( brep ) {}
 
     bool BRepLinesTopology::brep_lines_topology_is_valid(

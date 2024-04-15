@@ -53,6 +53,7 @@ namespace geode
             module, trgl_name.c_str() )
             .def( pybind11::init< const TriangulatedSurface& >() );
     }
+
     void define_surface_inspector( pybind11::module& module )
     {
         pybind11::class_< SurfaceInspectionResult >(
@@ -72,7 +73,9 @@ namespace geode
                 &SurfaceInspectionResult::non_manifold_vertices )
             .def_readwrite( "intersecting_elements",
                 &SurfaceInspectionResult::intersecting_elements )
-            .def( "string", &SurfaceInspectionResult::string );
+            .def( "string", &SurfaceInspectionResult::string )
+            .def(
+                "inspection_type", &SurfaceInspectionResult::inspection_type );
 
         do_define_surface_inspector< 2 >( module );
         do_define_surface_inspector< 3 >( module );

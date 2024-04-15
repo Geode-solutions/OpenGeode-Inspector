@@ -70,6 +70,11 @@ namespace geode
         return message;
     }
 
+    std::string BRepMeshesManifoldInspectionResult::inspection_type() const
+    {
+        return "Manifold inspection";
+    }
+
     class BRepComponentMeshesManifold::Impl
         : public ComponentMeshesManifold< 3, BRep >
     {

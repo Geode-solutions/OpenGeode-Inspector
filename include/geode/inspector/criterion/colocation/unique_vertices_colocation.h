@@ -41,7 +41,10 @@ namespace geode
         InspectionIssues< std::vector< index_t > >
             colocated_unique_vertices_groups;
         InspectionIssues< index_t > unique_vertices_linked_to_different_points;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

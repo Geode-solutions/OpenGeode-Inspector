@@ -44,7 +44,10 @@ namespace geode
         InspectionIssues< index_t > non_manifold_vertices;
         InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
         InspectionIssues< PolyhedronFacetVertices > non_manifold_facets;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a SolidMesh

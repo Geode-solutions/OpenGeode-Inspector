@@ -32,22 +32,6 @@
 
 namespace geode
 {
-    class SectionComponentMeshesManifold::Impl
-        : public ComponentMeshesManifold< 2, Section >
-    {
-    public:
-        Impl( const Section& section )
-            : ComponentMeshesManifold< 2, Section >( section )
-        {
-        }
-    };
-
-    SectionComponentMeshesManifold::SectionComponentMeshesManifold(
-        const Section& model )
-        : impl_{ model }
-    {
-    }
-
     std::string SectionMeshesManifoldInspectionResult::string() const
     {
         std::string message;
@@ -65,6 +49,27 @@ namespace geode
                 &message, "No manifold issues in model component meshes" );
         }
         return message;
+    }
+
+    std::string SectionMeshesManifoldInspectionResult::inspection_type() const
+    {
+        return "Manifold inspection";
+    }
+
+    class SectionComponentMeshesManifold::Impl
+        : public ComponentMeshesManifold< 2, Section >
+    {
+    public:
+        Impl( const Section& section )
+            : ComponentMeshesManifold< 2, Section >( section )
+        {
+        }
+    };
+
+    SectionComponentMeshesManifold::SectionComponentMeshesManifold(
+        const Section& model )
+        : impl_{ model }
+    {
     }
 
     SectionComponentMeshesManifold::~SectionComponentMeshesManifold() {}

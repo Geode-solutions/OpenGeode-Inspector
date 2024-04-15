@@ -59,7 +59,10 @@ namespace geode
                 "Indices of unique vertices part of a block but with incorrect "
                 "ComponentMeshVertices count"
             };
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

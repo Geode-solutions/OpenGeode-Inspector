@@ -33,6 +33,11 @@ namespace geode
             manifolds.string(), "\n" );
     }
 
+    std::string BRepMeshesInspectionResult::inspection_type() const
+    {
+        return "Meshes Inspection";
+    }
+
     BRepMeshesInspector::BRepMeshesInspector( const BRep& brep )
         : BRepUniqueVerticesColocation( brep ),
           BRepComponentMeshesAdjacency( brep ),

@@ -43,7 +43,10 @@ namespace geode
         InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
         InspectionIssues< index_t > non_manifold_vertices;
         InspectionIssues< std::pair< index_t, index_t > > intersecting_elements;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a SurfaceMesh

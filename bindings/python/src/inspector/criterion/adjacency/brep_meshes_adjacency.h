@@ -21,27 +21,32 @@
  *
  */
 
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/brep.h>
 
-#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
 
 namespace geode
 {
-    void define_section_meshes_adjacency( pybind11::module& module )
+    void define_brep_meshes_adjacency( pybind11::module& module )
     {
-        pybind11::class_< SectionMeshesAdjacencyInspectionResult >(
-            module, "SectionMeshesAdjacencyInspectionResult" )
+        pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
+            module, "BRepMeshesAdjacencyInspectionResult" )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
-                &SectionMeshesAdjacencyInspectionResult::
+                &BRepMeshesAdjacencyInspectionResult::
                     surfaces_edges_with_wrong_adjacencies )
-            .def( "string", &SectionMeshesAdjacencyInspectionResult::string );
+            .def_readwrite( "blocks_facets_with_wrong_adjacencies",
+                &BRepMeshesAdjacencyInspectionResult::
+                    blocks_facets_with_wrong_adjacencies )
+            .def( "string", &BRepMeshesAdjacencyInspectionResult::string )
+            .def( "inspection_type",
+                &BRepMeshesAdjacencyInspectionResult::inspection_type );
 
-        pybind11::class_< SectionComponentMeshesAdjacency >(
-            module, "SectionComponentMeshesAdjacency" )
-            .def( pybind11::init< const Section& >() )
-            .def( "inspect_section_meshes_adjacencies",
-                &SectionComponentMeshesAdjacency::
-                    inspect_section_meshes_adjacencies );
+        pybind11::class_< BRepComponentMeshesAdjacency >(
+            module, "BRepComponentMeshesAdjacency" )
+            .def( pybind11::init< const BRep& >() )
+            .def( "inspect_brep_meshes_adjacencies",
+                &BRepComponentMeshesAdjacency::
+                    inspect_brep_meshes_adjacencies );
     }
 } // namespace geode

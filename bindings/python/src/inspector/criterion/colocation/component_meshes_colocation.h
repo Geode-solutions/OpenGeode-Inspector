@@ -20,35 +20,36 @@
  * SOFTWARE.
  *
  */
-#include <absl/strings/str_cat.h>
 
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/intersections/model_intersections.h>
+#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 
-#define PYTHON_MODEL_INTERSECTIONS( type, suffix )                             \
-    const auto name##type = absl::StrCat( #type, "MeshesIntersections" );      \
-    pybind11::class_< suffix##MeshesIntersections >(                           \
+#define PYTHON_COMPONENTS_COLOCATION( type, suffix )                           \
+    const auto name##type =                                                    \
+        absl::StrCat( #type, "ComponentMeshesColocation" );                    \
+    pybind11::class_< suffix##ComponentMeshesColocation >(                     \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( "model_has_intersecting_surfaces",                               \
-            &suffix##MeshesIntersections::model_has_intersecting_surfaces )    \
-        .def( "inspect_intersections",                                         \
-            &suffix##MeshesIntersections::inspect_intersections )
+        .def( "inspect_meshes_point_colocations",                              \
+            &suffix##ComponentMeshesColocation::                               \
+                inspect_meshes_point_colocations )
 
 namespace geode
 {
-    void define_model_intersections( pybind11::module& module )
+    void define_models_meshes_colocation( pybind11::module& module )
     {
-        pybind11::class_< ElementsIntersectionsInspectionResult >(
-            module, "ElementsIntersectionsInspectionResult" )
+        pybind11::class_< MeshesColocationInspectionResult >(
+            module, "MeshesColocationInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "elements_intersections",
-                &ElementsIntersectionsInspectionResult::elements_intersections )
-            .def( "string", &ElementsIntersectionsInspectionResult::string );
+            .def_readwrite( "colocated_points_groups",
+                &MeshesColocationInspectionResult::colocated_points_groups )
+            .def( "string", &MeshesColocationInspectionResult::string )
+            .def( "inspection_type",
+                &MeshesColocationInspectionResult::inspection_type );
 
-        PYTHON_MODEL_INTERSECTIONS( Section, Section );
-        PYTHON_MODEL_INTERSECTIONS( BRep, BRep );
+        PYTHON_COMPONENTS_COLOCATION( Section, Section );
+        PYTHON_COMPONENTS_COLOCATION( BRep, BRep );
     }
 } // namespace geode

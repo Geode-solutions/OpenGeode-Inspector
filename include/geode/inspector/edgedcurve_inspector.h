@@ -34,7 +34,10 @@ namespace geode
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups;
         InspectionIssues< index_t > degenerated_edges;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

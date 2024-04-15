@@ -38,7 +38,9 @@ namespace geode
             .def_readwrite( "meshes_non_manifold_edges",
                 &SectionMeshesManifoldInspectionResult::
                     meshes_non_manifold_edges )
-            .def( "string", &SectionMeshesManifoldInspectionResult::string );
+            .def( "string", &SectionMeshesManifoldInspectionResult::string )
+            .def( "inspection_type",
+                &SectionMeshesManifoldInspectionResult::inspection_type );
 
         pybind11::class_< SectionComponentMeshesManifold >(
             module, "SectionComponentMeshesManifold" )

@@ -64,7 +64,10 @@ namespace geode
                 "Indices of unique vertices linked to corner on a line but "
                 "without boundary status.)"
             };
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     class opengeode_inspector_inspector_api SectionCornersTopology

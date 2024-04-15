@@ -24,30 +24,40 @@
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
+#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
 
-#define PYTHON_COMPONENTS_COLOCATION( type, suffix )                           \
+#define PYTHON_COMPONENTS_DEGENERATION( type, suffix )                         \
     const auto name##type =                                                    \
-        absl::StrCat( #type, "ComponentMeshesColocation" );                    \
-    pybind11::class_< suffix##ComponentMeshesColocation >(                     \
+        absl::StrCat( #type, "ComponentMeshesDegeneration" );                  \
+    pybind11::class_< suffix##ComponentMeshesDegeneration >(                   \
         module, name##type.c_str() )                                           \
         .def( pybind11::init< const type& >() )                                \
-        .def( "inspect_meshes_point_colocations",                              \
-            &suffix##ComponentMeshesColocation::                               \
-                inspect_meshes_point_colocations )
+        .def( "inspect_elements",                                              \
+            &suffix##ComponentMeshesDegeneration::inspect_elements )
 
 namespace geode
 {
-    void define_models_meshes_colocation( pybind11::module& module )
+    void define_models_meshes_degeneration( pybind11::module& module )
     {
-        pybind11::class_< MeshesColocationInspectionResult >(
-            module, "MeshesColocationInspectionResult" )
+        pybind11::class_< DegeneratedElements >( module, "DegeneratedElements" )
             .def( pybind11::init<>() )
-            .def_readwrite( "colocated_points_groups",
-                &MeshesColocationInspectionResult::colocated_points_groups )
-            .def( "string", &MeshesColocationInspectionResult::string );
+            .def_readwrite(
+                "degenerated_edges", &DegeneratedElements::degenerated_edges )
+            .def_readwrite( "degenerated_polygons",
+                &DegeneratedElements::degenerated_polygons )
+            .def_readwrite( "degenerated_polyhedra",
+                &DegeneratedElements::degenerated_polyhedra );
 
-        PYTHON_COMPONENTS_COLOCATION( Section, Section );
-        PYTHON_COMPONENTS_COLOCATION( BRep, BRep );
+        pybind11::class_< DegeneratedElementsInspectionResult >(
+            module, "DegeneratedElementsInspectionResult" )
+            .def( pybind11::init<>() )
+            .def_readwrite(
+                "elements", &DegeneratedElementsInspectionResult::elements )
+            .def( "string", &DegeneratedElementsInspectionResult::string )
+            .def( "inspection_type",
+                &DegeneratedElementsInspectionResult::inspection_type );
+
+        PYTHON_COMPONENTS_DEGENERATION( Section, Section );
+        PYTHON_COMPONENTS_DEGENERATION( BRep, BRep );
     }
 } // namespace geode

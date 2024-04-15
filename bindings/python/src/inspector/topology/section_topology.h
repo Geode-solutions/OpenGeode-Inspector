@@ -52,7 +52,9 @@ namespace geode
                 "unique_vertices_linked_to_not_boundary_line_corner",
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_boundary_line_corner )
-            .def( "string", &SectionCornersTopologyInspectionResult::string );
+            .def( "string", &SectionCornersTopologyInspectionResult::string )
+            .def( "inspection_type",
+                &SectionCornersTopologyInspectionResult::inspection_type );
 
         pybind11::class_< SectionLinesTopologyInspectionResult >(
             module, "SectionLinesTopologyInspectionResult" )
@@ -78,7 +80,9 @@ namespace geode
                             "linked_to_a_corner",
                 &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
-            .def( "string", &SectionLinesTopologyInspectionResult::string );
+            .def( "string", &SectionLinesTopologyInspectionResult::string )
+            .def( "inspection_type",
+                &SectionLinesTopologyInspectionResult::inspection_type );
 
         pybind11::class_< SectionSurfacesTopologyInspectionResult >(
             module, "SectionSurfacesTopologyInspectionResult" )
@@ -96,7 +100,9 @@ namespace geode
                             "surface_border",
                 &SectionSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
-            .def( "string", &SectionSurfacesTopologyInspectionResult::string );
+            .def( "string", &SectionSurfacesTopologyInspectionResult::string )
+            .def( "inspection_type",
+                &SectionSurfacesTopologyInspectionResult::inspection_type );
 
         pybind11::class_< SectionTopologyInspectionResult >(
             module, "SectionTopologyInspectionResult" )
@@ -109,7 +115,9 @@ namespace geode
             .def_readwrite( "unique_vertices_not_linked_to_any_component",
                 &SectionTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component )
-            .def( "string", &SectionTopologyInspectionResult::string );
+            .def( "string", &SectionTopologyInspectionResult::string )
+            .def( "inspection_type",
+                &SectionTopologyInspectionResult::inspection_type );
 
         pybind11::class_< SectionTopologyInspector >(
             module, "SectionTopologyInspector" )

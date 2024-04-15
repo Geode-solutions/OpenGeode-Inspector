@@ -127,6 +127,11 @@ namespace geode
         return message;
     }
 
+    std::string BRepSurfacesTopologyInspectionResult::inspection_type() const
+    {
+        return "Surfaces topology inspection";
+    }
+
     BRepSurfacesTopology::BRepSurfacesTopology( const BRep& brep )
         : brep_( brep )
     {

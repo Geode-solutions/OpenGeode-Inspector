@@ -49,7 +49,10 @@ namespace geode
     struct opengeode_inspector_inspector_api DegeneratedElementsInspectionResult
     {
         absl::flat_hash_map< uuid, DegeneratedElements > elements;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

@@ -42,7 +42,10 @@ namespace geode
     {
         absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
             colocated_points_groups;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!

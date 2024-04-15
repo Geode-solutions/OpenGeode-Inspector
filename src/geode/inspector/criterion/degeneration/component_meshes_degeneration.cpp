@@ -140,6 +140,11 @@ namespace geode
         return message;
     }
 
+    std::string DegeneratedElementsInspectionResult::inspection_type() const
+    {
+        return "Degenerated elements inspection";
+    }
+
     template < geode::index_t dimension, typename Model >
     class ComponentMeshesDegeneration< dimension, Model >::Impl
     {

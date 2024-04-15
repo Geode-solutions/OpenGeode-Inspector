@@ -75,6 +75,11 @@ namespace geode
         return message;
     }
 
+    std::string SectionSurfacesTopologyInspectionResult::inspection_type() const
+    {
+        return "Surfaces topology inspection";
+    }
+
     SectionSurfacesTopology::SectionSurfacesTopology( const Section& section )
         : section_( section )
     {

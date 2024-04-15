@@ -82,6 +82,11 @@ namespace geode
             unique_vertices_not_linked_to_any_component.string(), "\n" );
     }
 
+    std::string SectionTopologyInspectionResult::inspection_type() const
+    {
+        return "Model topology inspection";
+    }
+
     class SectionTopologyInspector::Impl
     {
     public:

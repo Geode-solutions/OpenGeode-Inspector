@@ -57,6 +57,11 @@ namespace geode
         return message;
     }
 
+    std::string SectionMeshesAdjacencyInspectionResult::inspection_type() const
+    {
+        return "Adjacencies inspection";
+    }
+
     SectionComponentMeshesAdjacency::SectionComponentMeshesAdjacency(
         const Section& model )
         : impl_{ model }

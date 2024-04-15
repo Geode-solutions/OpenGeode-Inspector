@@ -42,7 +42,10 @@ namespace geode
         DegeneratedElementsInspectionResult degenerations;
         ElementsIntersectionsInspectionResult intersections;
         SectionMeshesManifoldInspectionResult manifolds;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a Section model

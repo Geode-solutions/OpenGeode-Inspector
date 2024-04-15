@@ -55,7 +55,10 @@ namespace geode
                 "a "
                 "surface border."
             };
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the topology of a Section model surfaces through

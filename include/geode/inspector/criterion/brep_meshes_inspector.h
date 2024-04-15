@@ -41,7 +41,10 @@ namespace geode
         DegeneratedElementsInspectionResult degenerations;
         ElementsIntersectionsInspectionResult intersections;
         BRepMeshesManifoldInspectionResult manifolds;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     /*!
