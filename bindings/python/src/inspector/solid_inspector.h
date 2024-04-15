@@ -42,6 +42,7 @@ namespace geode
             SolidMeshFacetManifold< dimension > >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() );
     }
+
     void define_solid_inspector( pybind11::module& module )
     {
         pybind11::class_< SolidInspectionResult >(
@@ -61,7 +62,8 @@ namespace geode
                 &SolidInspectionResult::non_manifold_edges )
             .def_readwrite( "non_manifold_facets",
                 &SolidInspectionResult::non_manifold_facets )
-            .def( "string", &SolidInspectionResult::string );
+            .def( "string", &SolidInspectionResult::string )
+            .def( "inspection_type", &SolidInspectionResult::inspection_type );
         do_define_solid_inspector< 3 >( module );
     }
 } // namespace geode

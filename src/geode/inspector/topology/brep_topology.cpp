@@ -84,6 +84,18 @@ namespace
 
 namespace geode
 {
+    std::string BRepTopologyInspectionResult::string() const
+    {
+        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
+            surfaces.string(), "\n", blocks.string(), "\n",
+            unique_vertices_not_linked_to_any_component.string(), "\n" );
+    }
+
+    std::string BRepTopologyInspectionResult::inspection_type() const
+    {
+        return "Model topology inspection";
+    }
+
     class BRepTopologyInspector::Impl
     {
     public:
@@ -207,13 +219,6 @@ namespace geode
     private:
         const BRep& brep_;
     };
-
-    std::string BRepTopologyInspectionResult::string() const
-    {
-        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
-            surfaces.string(), "\n", blocks.string(), "\n",
-            unique_vertices_not_linked_to_any_component.string(), "\n" );
-    }
 
     BRepTopologyInspector::BRepTopologyInspector( const BRep& brep )
         : BRepCornersTopology( brep ),

@@ -428,6 +428,11 @@ namespace geode
         return elements_intersections.string();
     }
 
+    std::string ElementsIntersectionsInspectionResult::inspection_type() const
+    {
+        return "Intersections inspection";
+    }
+
     template < index_t dimension, typename Model >
     class ModelMeshesIntersections< dimension, Model >::Impl
     {

@@ -36,6 +36,11 @@ namespace geode
             "\n", intersecting_elements.string(), "\n" );
     }
 
+    std::string SurfaceInspectionResult::inspection_type() const
+    {
+        return "SurfaceInspection";
+    }
+
     template < index_t dimension >
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh )

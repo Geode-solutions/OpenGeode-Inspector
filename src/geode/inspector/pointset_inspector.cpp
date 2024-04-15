@@ -32,6 +32,11 @@ namespace geode
         return absl::StrCat( colocated_points_groups.string(), "\n" );
     }
 
+    std::string PointSetInspectionResult::inspection_type() const
+    {
+        return "PointSet Inspection";
+    }
+
     template < index_t dimension >
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh )

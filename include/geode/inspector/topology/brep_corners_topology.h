@@ -66,6 +66,8 @@ namespace geode
             };
 
         std::string string() const;
+
+        std::string inspection_type() const;
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology

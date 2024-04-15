@@ -35,7 +35,9 @@ namespace geode
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
                 &SectionMeshesAdjacencyInspectionResult::
                     surfaces_edges_with_wrong_adjacencies )
-            .def( "string", &SectionMeshesAdjacencyInspectionResult::string );
+            .def( "string", &SectionMeshesAdjacencyInspectionResult::string )
+            .def( "inspection_type",
+                &SectionMeshesAdjacencyInspectionResult::inspection_type );
 
         pybind11::class_< SectionComponentMeshesAdjacency >(
             module, "SectionComponentMeshesAdjacency" )

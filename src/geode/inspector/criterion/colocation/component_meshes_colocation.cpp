@@ -247,6 +247,11 @@ namespace geode
         return message;
     }
 
+    std::string MeshesColocationInspectionResult::inspection_type() const
+    {
+        return "Points colocation inspection";
+    }
+
     template < geode::index_t dimension, typename Model >
     class ComponentMeshesColocation< dimension, Model >::Impl
     {

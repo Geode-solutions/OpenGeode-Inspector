@@ -44,7 +44,9 @@ namespace geode
                 "intersections", &SectionMeshesInspectionResult::intersections )
             .def_readwrite(
                 "manifolds", &SectionMeshesInspectionResult::manifolds )
-            .def( "string", &SectionMeshesInspectionResult::string );
+            .def( "string", &SectionMeshesInspectionResult::string )
+            .def( "inspection_type",
+                &SectionMeshesInspectionResult::inspection_type );
 
         pybind11::class_< SectionMeshesInspector,
             SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,

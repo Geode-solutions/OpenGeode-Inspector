@@ -78,6 +78,11 @@ namespace geode
         return message;
     }
 
+    std::string BRepCornersTopologyInspectionResult::inspection_type() const
+    {
+        return "Corners topology inspection";
+    }
+
     BRepCornersTopology::BRepCornersTopology( const BRep& brep ) : brep_( brep )
     {
     }

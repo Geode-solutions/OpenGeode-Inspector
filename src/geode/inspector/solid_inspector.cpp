@@ -37,6 +37,11 @@ namespace geode
             "\n" );
     }
 
+    std::string SolidInspectionResult::inspection_type() const
+    {
+        return "Solid Inspection";
+    }
+
     template < index_t dimension >
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )

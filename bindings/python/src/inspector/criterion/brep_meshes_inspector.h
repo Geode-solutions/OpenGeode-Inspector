@@ -44,7 +44,9 @@ namespace geode
                 "intersections", &BRepMeshesInspectionResult::intersections )
             .def_readwrite(
                 "manifolds", &BRepMeshesInspectionResult::manifolds )
-            .def( "string", &BRepMeshesInspectionResult::string );
+            .def( "string", &BRepMeshesInspectionResult::string )
+            .def( "inspection_type",
+                &BRepMeshesInspectionResult::inspection_type );
 
         pybind11::class_< BRepMeshesInspector, BRepUniqueVerticesColocation,
             BRepComponentMeshesAdjacency, BRepComponentMeshesColocation,

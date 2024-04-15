@@ -54,6 +54,11 @@ namespace geode
         return message;
     }
 
+    std::string BRepMeshesAdjacencyInspectionResult::inspection_type() const
+    {
+        return "Adjacencies inspection";
+    }
+
     class BRepComponentMeshesAdjacency::Impl
         : public ComponentMeshesAdjacency< 3, BRep >
     {

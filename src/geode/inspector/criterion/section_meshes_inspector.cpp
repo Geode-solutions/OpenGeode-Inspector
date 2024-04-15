@@ -33,6 +33,11 @@ namespace geode
             manifolds.string(), "\n" );
     }
 
+    std::string SectionMeshesInspectionResult::inspection_type() const
+    {
+        return "Meshes Inspection";
+    }
+
     SectionMeshesInspector::SectionMeshesInspector( const Section& section )
         : SectionUniqueVerticesColocation( section ),
           SectionComponentMeshesAdjacency( section ),

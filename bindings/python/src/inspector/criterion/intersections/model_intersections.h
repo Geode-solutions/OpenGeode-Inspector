@@ -46,7 +46,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "elements_intersections",
                 &ElementsIntersectionsInspectionResult::elements_intersections )
-            .def( "string", &ElementsIntersectionsInspectionResult::string );
+            .def( "string", &ElementsIntersectionsInspectionResult::string )
+            .def( "inspection_type",
+                &ElementsIntersectionsInspectionResult::inspection_type );
 
         PYTHON_MODEL_INTERSECTIONS( Section, Section );
         PYTHON_MODEL_INTERSECTIONS( BRep, BRep );

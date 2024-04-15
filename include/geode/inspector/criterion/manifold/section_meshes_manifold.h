@@ -43,7 +43,10 @@ namespace geode
         absl::flat_hash_map< uuid,
             InspectionIssues< std::array< index_t, 2 > > >
             meshes_non_manifold_edges;
+
         std::string string() const;
+
+        std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of

@@ -49,7 +49,9 @@ namespace geode
                 &EdgedCurveInspectionResult::colocated_points_groups )
             .def_readwrite( "degenerated_edges",
                 &EdgedCurveInspectionResult::degenerated_edges )
-            .def( "string", &EdgedCurveInspectionResult::string );
+            .def( "string", &EdgedCurveInspectionResult::string )
+            .def( "inspection_type",
+                &EdgedCurveInspectionResult::inspection_type );
 
         do_define_edgedcurve_inspector< 2 >( module );
         do_define_edgedcurve_inspector< 3 >( module );

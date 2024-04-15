@@ -154,6 +154,11 @@ namespace geode
         return message;
     }
 
+    std::string UniqueVerticesInspectionResult::inspection_type() const
+    {
+        return "Unique vertices colocation inspection";
+    }
+
     template < geode::index_t dimension, typename Model >
     class UniqueVerticesColocation< dimension, Model >::Impl
     {

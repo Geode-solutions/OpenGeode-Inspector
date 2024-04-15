@@ -38,7 +38,9 @@ namespace geode
             .def_readwrite( "blocks_facets_with_wrong_adjacencies",
                 &BRepMeshesAdjacencyInspectionResult::
                     blocks_facets_with_wrong_adjacencies )
-            .def( "string", &BRepMeshesAdjacencyInspectionResult::string );
+            .def( "string", &BRepMeshesAdjacencyInspectionResult::string )
+            .def( "inspection_type",
+                &BRepMeshesAdjacencyInspectionResult::inspection_type );
 
         pybind11::class_< BRepComponentMeshesAdjacency >(
             module, "BRepComponentMeshesAdjacency" )

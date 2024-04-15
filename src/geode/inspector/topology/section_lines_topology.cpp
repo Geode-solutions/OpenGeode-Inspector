@@ -87,6 +87,11 @@ namespace geode
         return message;
     }
 
+    std::string SectionLinesTopologyInspectionResult::inspection_type() const
+    {
+        return "Lines topology inspection";
+    }
+
     SectionLinesTopology::SectionLinesTopology( const Section& section )
         : section_( section )
     {
