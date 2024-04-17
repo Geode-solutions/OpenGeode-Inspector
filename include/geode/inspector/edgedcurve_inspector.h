@@ -54,6 +54,7 @@ namespace geode
 
     public:
         EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
+
         EdgedCurveInspectionResult inspect_edgedcurve() const;
     };
     ALIAS_2D_AND_3D( EdgedCurveInspector );

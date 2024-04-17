@@ -51,7 +51,9 @@ namespace geode
         pybind11::class_< TriangulatedSurfaceInspector, SurfaceMeshInspector,
             TriangulatedSurfaceIntersections< dimension > >(
             module, trgl_name.c_str() )
-            .def( pybind11::init< const TriangulatedSurface& >() );
+            .def( pybind11::init< const TriangulatedSurface& >() )
+            .def( "inspect_surface",
+                &TriangulatedSurfaceInspector::inspect_surface );
     }
 
     void define_surface_inspector( pybind11::module& module )
