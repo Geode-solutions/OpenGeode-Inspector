@@ -44,5 +44,10 @@ namespace geode
             SectionTopologyInspector >( module, "SectionInspector" )
             .def( pybind11::init< const Section& >() )
             .def( "inspect_section", &SectionInspector::inspect_section );
+
+        module.def( "inspect_section", []( const Section& section ) {
+            SectionInspector inspector{ section };
+            return inspector.inspect_section();
+        } );
     }
 } // namespace geode

@@ -135,19 +135,32 @@ namespace geode
                     {
                         continue;
                     }
-                    if( !polyhedra_around_edge_are_the_same(
-                            mesh_.polyhedra_around_edge(
-                                polyhedron_edge_vertices, polyhedron_id ),
-                            polyhedra_around_edges_.at( polyhedron_edge ) ) )
+                    try
+                    {
+                        if( !polyhedra_around_edge_are_the_same(
+                                mesh_.polyhedra_around_edge(
+                                    polyhedron_edge_vertices, polyhedron_id ),
+                                polyhedra_around_edges_.at(
+                                    polyhedron_edge ) ) )
+                        {
+                            non_manifold_edges.add_issue(
+                                polyhedron_edge_vertices,
+                                absl::StrCat(
+                                    "Edge between vertices with index ",
+                                    polyhedron_edge_vertices[0], " and index ",
+                                    polyhedron_edge_vertices[1],
+                                    ", is not manifold." ) );
+                        }
+                    }
+                    catch( const OpenGeodeException& )
                     {
                         non_manifold_edges.add_issue( polyhedron_edge_vertices,
-                            absl::StrCat(
-
-                                "Edge between vertices with index ",
+                            absl::StrCat( "Could not check manifold on edge "
+                                          "between vertices with index ",
                                 polyhedron_edge_vertices[0], " and index ",
                                 polyhedron_edge_vertices[1],
-                                ", is not manifold (Block ",
-                                mesh_.id().string(), ")." ) );
+                                "; There are probably issues with solid "
+                                "adjacencies." ) );
                     }
                 }
             }

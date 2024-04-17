@@ -40,7 +40,16 @@ namespace geode
             SolidMeshVertexManifold< dimension >,
             SolidMeshEdgeManifold< dimension >,
             SolidMeshFacetManifold< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() );
+            .def( pybind11::init< const SolidMesh& >() )
+            .def( "inspect_solid", &SolidMeshInspector::inspect_solid );
+
+        const auto inspect_function_name =
+            absl::StrCat( "inspect_solid", dimension, "D" );
+        module.def(
+            inspect_function_name.c_str(), []( const SolidMesh& solid ) {
+                SolidMeshInspector inspector{ solid };
+                return inspector.inspect_solid();
+            } );
     }
 
     void define_solid_inspector( pybind11::module& module )

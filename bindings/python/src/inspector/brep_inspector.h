@@ -41,5 +41,10 @@ namespace geode
             BRepTopologyInspector >( module, "BRepInspector" )
             .def( pybind11::init< const BRep& >() )
             .def( "inspect_brep", &BRepInspector::inspect_brep );
+
+        module.def( "inspect_brep", []( const BRep& brep ) {
+            BRepInspector inspector{ brep };
+            return inspector.inspect_brep();
+        } );
     }
 } // namespace geode

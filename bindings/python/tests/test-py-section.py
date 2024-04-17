@@ -149,8 +149,8 @@ def check_section(verbose):
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
     model_section = opengeode.load_section(
         data_dir + "/vertical_lines.og_sctn")
+    result = inspector.inspect_section(model_section)
     section_inspector = inspector.SectionInspector(model_section)
-    result = section_inspector.inspect_section()
     if section_inspector.section_topology_is_valid():
         print("model vertical_lines topology is valid.")
     else:
