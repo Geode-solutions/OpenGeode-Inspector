@@ -27,7 +27,7 @@
 #include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
 #include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
-#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/degeneration/brep_meshes_degeneration.h>
 #include <geode/inspector/criterion/intersections/model_intersections.h>
 #include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
 
@@ -37,10 +37,10 @@ namespace geode
     {
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
-        BRepMeshesAdjacencyInspectionResult adjacencies;
-        DegeneratedElementsInspectionResult degenerations;
-        ElementsIntersectionsInspectionResult intersections;
-        BRepMeshesManifoldInspectionResult manifolds;
+        BRepMeshesAdjacencyInspectionResult meshes_adjacencies;
+        BRepMeshesDegenerationInspectionResult meshes_degenerations;
+        ElementsIntersectionsInspectionResult meshes_intersections;
+        BRepMeshesManifoldInspectionResult meshes_non_manifolds;
 
         std::string string() const;
 

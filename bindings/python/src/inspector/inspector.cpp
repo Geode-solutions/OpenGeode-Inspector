@@ -37,8 +37,9 @@
 #include "criterion/colocation/surface_colocation.h"
 #include "criterion/colocation/unique_vertices_colocation.h"
 
-#include "criterion/degeneration/component_meshes_degeneration.h"
+#include "criterion/degeneration/brep_meshes_degeneration.h"
 #include "criterion/degeneration/edgedcurve_degeneration.h"
+#include "criterion/degeneration/section_meshes_degeneration.h"
 #include "criterion/degeneration/solid_degeneration.h"
 #include "criterion/degeneration/surface_degeneration.h"
 
@@ -77,6 +78,12 @@ namespace pybind11
             : map_caster< absl::flat_hash_map< Key, Value >, Key, Value >
         {
         };
+
+        template <>
+        struct type_caster< absl::string_view >
+            : string_caster< absl::string_view, true >
+        {
+        };
     } // namespace detail
 } // namespace pybind11
 
@@ -100,7 +107,8 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_edgedcurve_degeneration( module );
     geode::define_solid_degeneration( module );
     geode::define_surface_degeneration( module );
-    geode::define_models_meshes_degeneration( module );
+    geode::define_brep_meshes_degeneration( module );
+    geode::define_section_meshes_degeneration( module );
     geode::define_surface_intersections( module );
     geode::define_surface_curve_intersections( module );
     geode::define_model_intersections( module );

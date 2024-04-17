@@ -77,9 +77,9 @@ namespace geode
 {
     std::string SectionTopologyInspectionResult::string() const
     {
-        return absl::StrCat( corners.string(), "\n", lines.string(), "\n",
-            surfaces.string(), "\n",
-            unique_vertices_not_linked_to_any_component.string(), "\n" );
+        return absl::StrCat( corners.string(), lines.string(),
+            surfaces.string(),
+            unique_vertices_not_linked_to_any_component.string() );
     }
 
     std::string SectionTopologyInspectionResult::inspection_type() const

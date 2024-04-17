@@ -40,8 +40,9 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api MeshesColocationInspectionResult
     {
-        absl::flat_hash_map< uuid, InspectionIssues< std::vector< index_t > > >
-            colocated_points_groups;
+        InspectionIssuesMap< std::vector< index_t > > colocated_points_groups{
+            "Model component meshes with colocated points"
+        };
 
         std::string string() const;
 
@@ -52,7 +53,7 @@ namespace geode
      * Class for inspecting the colocation of points in the Component Meshes of
      * a Model (BRep or Section).
      */
-    template < index_t dimension, typename Model >
+    template < typename Model >
     class ComponentMeshesColocation
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesColocation );
@@ -70,6 +71,6 @@ namespace geode
     };
 
     using SectionComponentMeshesColocation =
-        ComponentMeshesColocation< 2, Section >;
-    using BRepComponentMeshesColocation = ComponentMeshesColocation< 3, BRep >;
+        ComponentMeshesColocation< Section >;
+    using BRepComponentMeshesColocation = ComponentMeshesColocation< BRep >;
 } // namespace geode

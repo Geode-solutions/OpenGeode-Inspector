@@ -45,9 +45,10 @@ namespace geode
         {
             absl::StrAppend( &message, lines_not_meshed.string(), "\n" );
         }
-        for( const auto& line_uv_issue : lines_not_linked_to_a_unique_vertex )
+        if( lines_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, line_uv_issue.second.string(), "\n" );
+            absl::StrAppend(
+                &message, lines_not_linked_to_a_unique_vertex.string(), "\n" );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
             != 0 )
@@ -81,11 +82,11 @@ namespace geode
                     .string(),
                 "\n" );
         }
-        if( message.empty() )
+        if( !message.empty() )
         {
-            absl::StrAppend( &message, "No issues with lines topology" );
+            return message;
         }
-        return message;
+        return "No issues with lines topology \n";
     }
 
     std::string BRepLinesTopologyInspectionResult::inspection_type() const
@@ -316,9 +317,8 @@ namespace geode
             if( line_result.nb_issues() != 0 )
             {
                 line_result.set_description(
-                    absl::StrCat( "Line ", line.id().string(),
-                        " has mesh vertices not linked to a unique vertex." ) );
-                result.lines_not_linked_to_a_unique_vertex.emplace_back(
+                    absl::StrCat( "Line ", line.id().string() ) );
+                result.lines_not_linked_to_a_unique_vertex.add_issues_to_map(
                     line.id(), std::move( line_result ) );
             }
         }

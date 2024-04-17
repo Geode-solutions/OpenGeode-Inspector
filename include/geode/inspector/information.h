@@ -26,8 +26,11 @@
 #include <string>
 #include <vector>
 
+#include <absl/container/flat_hash_map.h>
+
 #include <geode/basic/logger.h>
 #include <geode/basic/types.h>
+#include <geode/basic/uuid.h>
 
 #include <geode/inspector/common.h>
 
@@ -60,6 +63,11 @@ namespace geode
             messages_.emplace_back( std::move( message ) );
         }
 
+        absl::string_view description() const
+        {
+            return description_;
+        }
+
         std::string string() const
         {
             if( issues_.empty() )
@@ -86,5 +94,69 @@ namespace geode
         };
         std::vector< IssueType > issues_{};
         std::vector< std::string > messages_{};
+    };
+
+    template < typename IssueType >
+    class InspectionIssuesMap
+    {
+    public:
+        explicit InspectionIssuesMap( absl::string_view issue_description )
+            : description_{ issue_description }
+        {
+        }
+
+        InspectionIssuesMap() = default;
+
+        void set_description( absl::string_view issue_description )
+        {
+            description_ = to_string( issue_description );
+        }
+
+        absl::string_view description() const
+        {
+            return description_;
+        }
+
+        index_t nb_issues() const
+        {
+            return issues_map_.size();
+        }
+
+        void add_issues_to_map(
+            const uuid& id_to_issues, InspectionIssues< IssueType > issues )
+        {
+            if( issues.nb_issues() == 0 )
+            {
+                return;
+            }
+            issues_map_.emplace( id_to_issues, std::move( issues ) );
+        }
+
+        std::string string() const
+        {
+            if( issues_map_.empty() )
+            {
+                return absl::StrCat( description_, " -> No Issues :)" );
+            }
+            auto message = absl::StrCat( description_ );
+            for( const auto& issues : issues_map_ )
+            {
+                absl::StrAppend( &message, "\n ->  ", issues.second.string() );
+            }
+            return message;
+        }
+
+        const absl::flat_hash_map< uuid, InspectionIssues< IssueType > >&
+            issues_map() const
+        {
+            return issues_map_;
+        }
+
+    private:
+        std::string description_{
+            "Default inspection issue message. This message "
+            "should have been overriden."
+        };
+        absl::flat_hash_map< uuid, InspectionIssues< IssueType > > issues_map_;
     };
 } // namespace geode

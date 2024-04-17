@@ -42,26 +42,27 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
-            "uuids of corner without mesh."
+            "uuids of Corners without mesh."
         };
-        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
-            corners_not_linked_to_a_unique_vertex;
+        InspectionIssuesMap< index_t > corners_not_linked_to_a_unique_vertex{
+            "Corners with mesh vertices not linked to a unique vertex"
+        };
         InspectionIssues< index_t > unique_vertices_linked_to_multiple_corners{
-            "Indices of unique vertices that are part of several corners."
+            "Indices of unique vertices that are part of several Corners."
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_multiple_internals_corner{
-                "Indices of unique vertices linked to corner with several "
+                "Indices of unique vertices linked to a Corner with several "
                 "embeddings"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
-                "Indices of unique vertices linked to corner without boundary "
-                "nor internal status."
+                "Indices of unique vertices linked to a Corner without "
+                "boundary nor internal status."
             };
         InspectionIssues< index_t >
             unique_vertices_liked_to_not_boundary_line_corner{
-                "Indices of unique vertices linked to conner on a line but "
+                "Indices of unique vertices linked to a Corner on a line but "
                 "without boundary status."
             };
 

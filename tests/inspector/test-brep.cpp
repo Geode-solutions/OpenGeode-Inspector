@@ -36,28 +36,20 @@ geode::index_t corners_topological_validity(
     const geode::BRepCornersTopologyInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto corners_not_linked_to_a_unique_vertex =
-        result.corners_not_linked_to_a_unique_vertex;
-    for( const auto& corner_issue : corners_not_linked_to_a_unique_vertex )
+    for( const auto& corner_issue :
+        result.corners_not_linked_to_a_unique_vertex.issues_map() )
     {
         nb_issues += corner_issue.second.nb_issues();
     }
-    const auto corners_not_meshed = result.corners_not_meshed;
-    nb_issues += corners_not_meshed.nb_issues();
-    const auto unique_vertices_liked_to_not_boundary_line_corner =
-        result.unique_vertices_liked_to_not_boundary_line_corner;
-    nb_issues += unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
-    const auto unique_vertices_linked_to_multiple_corners =
-        result.unique_vertices_linked_to_multiple_corners;
-    nb_issues += unique_vertices_linked_to_multiple_corners.nb_issues();
-    const auto unique_vertices_linked_to_multiple_internals_corner =
-        result.unique_vertices_linked_to_multiple_internals_corner;
+    nb_issues += result.corners_not_meshed.nb_issues();
     nb_issues +=
-        unique_vertices_linked_to_multiple_internals_corner.nb_issues();
-    const auto unique_vertices_linked_to_not_internal_nor_boundary_corner =
-        result.unique_vertices_linked_to_not_internal_nor_boundary_corner;
+        result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+    nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues();
     nb_issues +=
-        unique_vertices_linked_to_not_internal_nor_boundary_corner.nb_issues();
+        result.unique_vertices_linked_to_multiple_internals_corner.nb_issues();
+    nb_issues +=
+        result.unique_vertices_linked_to_not_internal_nor_boundary_corner
+            .nb_issues();
 
     geode::Logger::info(
         "BRep Corners Topology check: ", nb_issues, " issues." );
@@ -72,31 +64,21 @@ geode::index_t lines_topological_validity(
     const geode::BRepLinesTopologyInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto lines_not_linked_to_a_unique_vertex =
-        result.lines_not_linked_to_a_unique_vertex;
-    for( const auto& issue : lines_not_linked_to_a_unique_vertex )
+    for( const auto& issue :
+        result.lines_not_linked_to_a_unique_vertex.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto lines_not_meshed = result.lines_not_meshed;
-    nb_issues += lines_not_meshed.nb_issues();
-    const auto unique_vertices_linked_to_a_line_with_invalid_embeddings =
-        result.unique_vertices_linked_to_a_line_with_invalid_embeddings;
+    nb_issues += result.lines_not_meshed.nb_issues();
+    nb_issues += result.unique_vertices_linked_to_a_line_with_invalid_embeddings
+                     .nb_issues();
     nb_issues +=
-        unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues();
-    const auto unique_vertices_linked_to_a_single_and_invalid_line =
-        result.unique_vertices_linked_to_a_single_and_invalid_line;
+        result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues();
+    nb_issues += result.unique_vertices_linked_to_not_internal_nor_boundary_line
+                     .nb_issues();
     nb_issues +=
-        unique_vertices_linked_to_a_single_and_invalid_line.nb_issues();
-    const auto unique_vertices_linked_to_not_internal_nor_boundary_line =
-        result.unique_vertices_linked_to_not_internal_nor_boundary_line;
-    nb_issues +=
-        unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues();
-    const auto unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner =
         result
-            .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner;
-    nb_issues +=
-        unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
+            .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .nb_issues();
     geode::Logger::info( "BRep Lines Topology check: ", nb_issues, " issues." );
     if( string )
@@ -110,30 +92,22 @@ geode::index_t surfaces_topological_validity(
     const geode::BRepSurfacesTopologyInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto surfaces_not_linked_to_a_unique_vertex =
-        result.surfaces_not_linked_to_a_unique_vertex;
-    for( const auto& issue : surfaces_not_linked_to_a_unique_vertex )
+    for( const auto& issue :
+        result.surfaces_not_linked_to_a_unique_vertex.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto surfaces_not_meshed = result.surfaces_not_meshed;
-    nb_issues += surfaces_not_meshed.nb_issues();
-    const auto unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border =
-        result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border;
-    nb_issues += unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+    nb_issues += result.surfaces_not_meshed.nb_issues();
+    nb_issues +=
+        result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+            .nb_issues();
+    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_surface
                      .nb_issues();
-    const auto unique_vertices_linked_to_a_single_and_invalid_surface =
-        result.unique_vertices_linked_to_a_single_and_invalid_surface;
     nb_issues +=
-        unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues();
-    const auto unique_vertices_linked_to_not_internal_nor_boundary_surface =
-        result.unique_vertices_linked_to_not_internal_nor_boundary_surface;
-    nb_issues +=
-        unique_vertices_linked_to_not_internal_nor_boundary_surface.nb_issues();
-    const auto unique_vertices_linked_to_several_and_invalid_surfaces =
-        result.unique_vertices_linked_to_several_and_invalid_surfaces;
-    nb_issues +=
-        unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues();
+        result.unique_vertices_linked_to_not_internal_nor_boundary_surface
+            .nb_issues();
+    nb_issues += result.unique_vertices_linked_to_several_and_invalid_surfaces
+                     .nb_issues();
     geode::Logger::info(
         "BRep Surfaces Topology check: ", nb_issues, " issues." );
     if( string )
@@ -147,21 +121,17 @@ geode::index_t blocks_topological_validity(
     const geode::BRepBlocksTopologyInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto blocks_not_linked_to_a_unique_vertex =
-        result.blocks_not_linked_to_a_unique_vertex;
-    for( const auto& issue : blocks_not_linked_to_a_unique_vertex )
+    for( const auto& issue :
+        result.blocks_not_linked_to_a_unique_vertex.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto blocks_not_meshed = result.blocks_not_meshed;
-    nb_issues += blocks_not_meshed.nb_issues();
-    const auto unique_vertices_part_of_two_blocks_and_no_boundary_surface =
-        result.unique_vertices_part_of_two_blocks_and_no_boundary_surface;
+    nb_issues += result.blocks_not_meshed.nb_issues();
     nb_issues +=
-        unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues();
-    const auto unique_vertices_with_incorrect_block_cmvs_count =
-        result.unique_vertices_with_incorrect_block_cmvs_count;
-    nb_issues += unique_vertices_with_incorrect_block_cmvs_count.nb_issues();
+        result.unique_vertices_part_of_two_blocks_and_no_boundary_surface
+            .nb_issues();
+    nb_issues +=
+        result.unique_vertices_with_incorrect_block_cmvs_count.nb_issues();
     geode::Logger::info(
         "BRep Blocks Topology check: ", nb_issues, " issues." );
     if( string )
@@ -185,15 +155,13 @@ geode::index_t meshes_adjacencies_validity(
     const geode::BRepMeshesAdjacencyInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto surfaces_edges_with_wrong_adjacencies =
-        result.surfaces_edges_with_wrong_adjacencies;
-    for( const auto& issue : surfaces_edges_with_wrong_adjacencies )
+    for( const auto& issue :
+        result.surfaces_edges_with_wrong_adjacencies.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto blocks_facets_with_wrong_adjacencies =
-        result.blocks_facets_with_wrong_adjacencies;
-    for( const auto& issue : blocks_facets_with_wrong_adjacencies )
+    for( const auto& issue :
+        result.blocks_facets_with_wrong_adjacencies.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
@@ -207,17 +175,23 @@ geode::index_t meshes_adjacencies_validity(
 }
 
 geode::index_t meshes_degenerations_validity(
-    const geode::DegeneratedElementsInspectionResult& result, bool string )
+    const geode::BRepMeshesDegenerationInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto elements = result.elements;
-    for( const auto& degenerated_elements : elements )
+    for( const auto& degenerated_elements :
+        result.degenerated_edges.issues_map() )
     {
-        nb_issues += degenerated_elements.second.degenerated_edges.nb_issues();
-        nb_issues +=
-            degenerated_elements.second.degenerated_polygons.nb_issues();
-        nb_issues +=
-            degenerated_elements.second.degenerated_polyhedra.nb_issues();
+        nb_issues += degenerated_elements.second.nb_issues();
+    }
+    for( const auto& degenerated_elements :
+        result.degenerated_polygons.issues_map() )
+    {
+        nb_issues += degenerated_elements.second.nb_issues();
+    }
+    for( const auto& degenerated_elements :
+        result.degenerated_polyhedra.issues_map() )
+    {
+        nb_issues += degenerated_elements.second.nb_issues();
     }
     geode::Logger::info(
         "BRep meshes degenerated elements check: ", nb_issues, " issues." );
@@ -232,8 +206,7 @@ geode::index_t meshes_intersections_validity(
     const geode::ElementsIntersectionsInspectionResult result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto elements_intersections = result.elements_intersections;
-    nb_issues += elements_intersections.nb_issues();
+    nb_issues += result.elements_intersections.nb_issues();
 
     geode::Logger::info(
         "BRep meshes element intersections check: ", nb_issues, " issues." );
@@ -248,26 +221,21 @@ geode::index_t meshes_manifolds_validity(
     const geode::BRepMeshesManifoldInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto meshes_non_manifold_vertices =
-        result.meshes_non_manifold_vertices;
-    for( const auto& issue : meshes_non_manifold_vertices )
+    for( const auto& issue : result.meshes_non_manifold_vertices.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto meshes_non_manifold_edges = result.meshes_non_manifold_edges;
-    for( const auto& issue : meshes_non_manifold_edges )
+    for( const auto& issue : result.meshes_non_manifold_edges.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto meshes_non_manifold_facets = result.meshes_non_manifold_facets;
-    for( const auto& issue : meshes_non_manifold_facets )
+    for( const auto& issue : result.meshes_non_manifold_facets.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
-    const auto model_non_manifold_edges = result.model_non_manifold_edges;
-    for( const auto& issue : model_non_manifold_edges )
+    for( const auto& issue : result.brep_non_manifold_edges.issues() )
     {
-        nb_issues += issue.second.nb_issues();
+        nb_issues += issue.component_ids.size();
     }
     geode::Logger::info(
         "BRep meshes non manifolds check: ", nb_issues, " issues." );
@@ -282,8 +250,7 @@ geode::index_t meshes_colocations_validity(
     const geode::MeshesColocationInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto& colocated_points_groups = result.colocated_points_groups;
-    for( const auto& issue : colocated_points_groups )
+    for( const auto& issue : result.colocated_points_groups.issues_map() )
     {
         nb_issues += issue.second.nb_issues();
     }
@@ -300,15 +267,11 @@ geode::index_t meshes_unique_vertices_validity(
     const geode::UniqueVerticesInspectionResult& result, bool string )
 {
     geode::index_t nb_issues{ 0 };
-    const auto colocated_unique_vertices_groups =
-        result.colocated_unique_vertices_groups;
-    for( const auto& issue : colocated_unique_vertices_groups.issues() )
+    for( const auto& issue : result.colocated_unique_vertices_groups.issues() )
     {
         nb_issues += issue.size();
     }
-    const auto unique_vertices_linked_to_different_points =
-        result.unique_vertices_linked_to_different_points;
-    nb_issues += unique_vertices_linked_to_different_points.nb_issues();
+    nb_issues += result.unique_vertices_linked_to_different_points.nb_issues();
 
     geode::Logger::info(
         "BRep unique vertices check: ", nb_issues, " issues." );
@@ -322,10 +285,14 @@ geode::index_t meshes_unique_vertices_validity(
 geode::index_t launch_component_meshes_validity_checks(
     const geode::BRepMeshesInspectionResult& result, bool string )
 {
-    auto nb_issues = meshes_adjacencies_validity( result.adjacencies, string );
-    nb_issues = meshes_degenerations_validity( result.degenerations, string );
-    nb_issues += meshes_intersections_validity( result.intersections, string );
-    nb_issues += meshes_manifolds_validity( result.manifolds, string );
+    auto nb_issues =
+        meshes_adjacencies_validity( result.meshes_adjacencies, string );
+    nb_issues =
+        meshes_degenerations_validity( result.meshes_degenerations, string );
+    nb_issues +=
+        meshes_intersections_validity( result.meshes_intersections, string );
+    nb_issues +=
+        meshes_manifolds_validity( result.meshes_non_manifolds, string );
     nb_issues +=
         meshes_colocations_validity( result.meshes_colocation, string );
     nb_issues += meshes_unique_vertices_validity(

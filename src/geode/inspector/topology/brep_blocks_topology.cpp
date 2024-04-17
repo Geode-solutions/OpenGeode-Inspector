@@ -68,9 +68,10 @@ namespace geode
         {
             absl::StrAppend( &message, blocks_not_meshed.string(), "\n" );
         }
-        for( const auto& block_uv_issue : blocks_not_linked_to_a_unique_vertex )
+        if( blocks_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, block_uv_issue.second.string(), "\n" );
+            absl::StrAppend(
+                &message, blocks_not_linked_to_a_unique_vertex.string(), "\n" );
         }
         if( unique_vertices_part_of_two_blocks_and_no_boundary_surface
                 .nb_issues()
@@ -87,11 +88,11 @@ namespace geode
                 unique_vertices_with_incorrect_block_cmvs_count.string(),
                 "\n" );
         }
-        if( message.empty() )
+        if( !message.empty() )
         {
-            absl::StrAppend( &message, "No issues with blocks topology" );
+            return message;
         }
-        return message;
+        return "No issues with blocks topology \n";
     }
 
     std::string BRepBlocksTopologyInspectionResult::inspection_type() const
@@ -345,9 +346,8 @@ namespace geode
             if( block_result.nb_issues() != 0 )
             {
                 block_result.set_description(
-                    absl::StrCat( "Block ", block.id().string(),
-                        " has mesh vertices not linked to a unique vertex." ) );
-                result.blocks_not_linked_to_a_unique_vertex.emplace_back(
+                    absl::StrCat( "Block ", block.id().string() ) );
+                result.blocks_not_linked_to_a_unique_vertex.add_issues_to_map(
                     block.id(), std::move( block_result ) );
             }
         }

@@ -25,58 +25,39 @@
 
 #include <absl/container/flat_hash_map.h>
 
-#include <geode/basic/pimpl.h>
-#include <geode/basic/uuid.h>
-
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    class Section;
-    class BRep;
+    struct uuid;
+    struct PolygonEdge;
 } // namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api DegeneratedElements
-    {
-        InspectionIssues< index_t > degenerated_edges;
-        InspectionIssues< index_t > degenerated_polygons;
-        InspectionIssues< index_t > degenerated_polyhedra;
-    };
-
-    struct opengeode_inspector_inspector_api DegeneratedElementsInspectionResult
-    {
-        absl::flat_hash_map< uuid, DegeneratedElements > elements;
-
-        std::string string() const;
-
-        std::string inspection_type() const;
-    };
-
     /*!
      * Class for inspecting the degeneration of elements in the Component Meshes
      * of a Model (BRep or Section).
      */
-    template < index_t dimension, typename Model >
+    template < typename Model >
     class ComponentMeshesDegeneration
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
     public:
+        void add_degenerated_edges(
+            InspectionIssuesMap< index_t >& issues_map ) const;
+
+        void add_degenerated_polygons(
+            InspectionIssuesMap< index_t >& issues_map ) const;
+
+    protected:
         ComponentMeshesDegeneration( const Model& model );
 
-        ~ComponentMeshesDegeneration();
-
-        DegeneratedElementsInspectionResult inspect_elements() const;
+        const Model& model() const;
 
     private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        const Model& model_;
     };
-
-    using SectionComponentMeshesDegeneration =
-        ComponentMeshesDegeneration< 2, Section >;
-    using BRepComponentMeshesDegeneration =
-        ComponentMeshesDegeneration< 3, BRep >;
 } // namespace geode

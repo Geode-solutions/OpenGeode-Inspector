@@ -40,14 +40,14 @@ namespace geode
      * Class for inspecting the adjacency of edges in the Component Meshes of
      * a Model (BRep or Section).
      */
-    template < index_t dimension, typename Model >
+    template < typename Model >
     class ComponentMeshesAdjacency
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
 
     public:
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies() const;
+        void add_surfaces_edges_with_wrong_adjacencies(
+            InspectionIssuesMap< PolygonEdge >& issues_map ) const;
 
     protected:
         ComponentMeshesAdjacency( const Model& model );

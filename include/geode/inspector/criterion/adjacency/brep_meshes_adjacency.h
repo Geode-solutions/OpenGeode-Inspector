@@ -43,10 +43,14 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepMeshesAdjacencyInspectionResult
     {
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies;
-        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-            blocks_facets_with_wrong_adjacencies;
+        InspectionIssuesMap< PolygonEdge >
+            surfaces_edges_with_wrong_adjacencies{
+                "BRep Surface mesh with wrong adjacencies on polygon edges"
+            };
+        InspectionIssuesMap< PolyhedronFacet >
+            blocks_facets_with_wrong_adjacencies{
+                "BRep Block mesh with wrong adjacencies on polyhedron facets"
+            };
 
         std::string string() const;
 

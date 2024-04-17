@@ -37,21 +37,21 @@ namespace geode
     std::string BRepMeshesAdjacencyInspectionResult::string() const
     {
         std::string message;
-        for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
+        if( surfaces_edges_with_wrong_adjacencies.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, surface_issue.second.string(), "\n" );
+            absl::StrAppend( &message,
+                surfaces_edges_with_wrong_adjacencies.string(), "\n" );
         }
-        for( const auto& block_issue : blocks_facets_with_wrong_adjacencies )
-        {
-            absl::StrAppend( &message, block_issue.second.string(), "\n" );
-        }
-        if( surfaces_edges_with_wrong_adjacencies.empty()
-            && blocks_facets_with_wrong_adjacencies.empty() )
+        if( blocks_facets_with_wrong_adjacencies.nb_issues() != 0 )
         {
             absl::StrAppend(
-                &message, "No adjacency issues in model component meshes" );
+                &message, blocks_facets_with_wrong_adjacencies.string(), "\n" );
         }
-        return message;
+        if( !message.empty() )
+        {
+            return message;
+        }
+        return "No adjacency issues in model component meshes \n";
     }
 
     std::string BRepMeshesAdjacencyInspectionResult::inspection_type() const
@@ -60,30 +60,26 @@ namespace geode
     }
 
     class BRepComponentMeshesAdjacency::Impl
-        : public ComponentMeshesAdjacency< 3, BRep >
+        : public ComponentMeshesAdjacency< BRep >
     {
     public:
-        Impl( const BRep& brep ) : ComponentMeshesAdjacency< 3, BRep >( brep )
-        {
-        }
+        Impl( const BRep& brep ) : ComponentMeshesAdjacency< BRep >( brep ) {}
 
-        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-            blocks_facets_with_wrong_adjacencies() const
+        void add_blocks_facets_with_wrong_adjacencies(
+            InspectionIssuesMap< PolyhedronFacet >&
+                components_wrong_adjacencies ) const
         {
-            absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacet > >
-                components_wrong_adjacencies;
             for( const auto& block : model().blocks() )
             {
                 const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
                 auto wrong_adjacencies =
                     inspector.polyhedron_facets_with_wrong_adjacency();
-                if( wrong_adjacencies.nb_issues() != 0 )
-                {
-                    components_wrong_adjacencies.emplace(
-                        block.id(), std::move( wrong_adjacencies ) );
-                }
+                wrong_adjacencies.set_description(
+                    absl::StrCat( "Block with uuid ", block.id().string(),
+                        " wrong polyhedron facets adjacencies" ) );
+                components_wrong_adjacencies.add_issues_to_map(
+                    block.id(), std::move( wrong_adjacencies ) );
             }
-            return components_wrong_adjacencies;
         }
     };
 
@@ -99,10 +95,10 @@ namespace geode
         BRepComponentMeshesAdjacency::inspect_brep_meshes_adjacencies() const
     {
         BRepMeshesAdjacencyInspectionResult result;
-        result.surfaces_edges_with_wrong_adjacencies =
-            impl_->surfaces_edges_with_wrong_adjacencies();
-        result.blocks_facets_with_wrong_adjacencies =
-            impl_->blocks_facets_with_wrong_adjacencies();
+        impl_->add_surfaces_edges_with_wrong_adjacencies(
+            result.surfaces_edges_with_wrong_adjacencies );
+        impl_->add_blocks_facets_with_wrong_adjacencies(
+            result.blocks_facets_with_wrong_adjacencies );
         return result;
     }
 } // namespace geode

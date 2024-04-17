@@ -28,42 +28,49 @@
 #include <geode/basic/pimpl.h>
 #include <geode/basic/uuid.h>
 
-#include <geode/model/representation/core/section.h>
-
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
+    class BRep;
+} // namespace geode
+
+namespace geode
+{
     struct opengeode_inspector_inspector_api
-        SectionMeshesManifoldInspectionResult
+        BRepMeshesDegenerationInspectionResult
     {
-        InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "Section component meshes with non manifold vertices"
+        InspectionIssuesMap< index_t > degenerated_edges{
+            "BRep component meshes with degenerated edges"
         };
-        InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{
-                "Section component meshes with non manifold edges"
-            };
+        InspectionIssuesMap< index_t > degenerated_polygons{
+            "BRep component meshes with degenerated polygons"
+        };
+        InspectionIssuesMap< index_t > degenerated_polyhedra{
+            "BRep component meshes with degenerated polyhedra"
+        };
 
         std::string string() const;
 
         std::string inspection_type() const;
     };
+
     /*!
-     * Class for inspecting the manifold property in the Component Meshes of
-     * a Section.
+     * Class for inspecting the degeneration of elements in the Component Meshes
+     * of a BRep .
      */
-    class opengeode_inspector_inspector_api SectionComponentMeshesManifold
+    class opengeode_inspector_inspector_api BRepComponentMeshesDegeneration
     {
-        OPENGEODE_DISABLE_COPY( SectionComponentMeshesManifold );
+        OPENGEODE_DISABLE_COPY( BRepComponentMeshesDegeneration );
 
     public:
-        SectionComponentMeshesManifold( const Section& section );
+        BRepComponentMeshesDegeneration( const BRep& brep );
 
-        ~SectionComponentMeshesManifold();
+        ~BRepComponentMeshesDegeneration();
 
-        SectionMeshesManifoldInspectionResult inspect_section_manifold() const;
+        BRepMeshesDegenerationInspectionResult
+            inspect_elements_degeneration() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
