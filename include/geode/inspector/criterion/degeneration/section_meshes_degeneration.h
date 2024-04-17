@@ -57,7 +57,7 @@ namespace geode
      * Class for inspecting the degeneration of elements in the Component Meshes
      * of a Section.
      */
-    class SectionComponentMeshesDegeneration
+    class opengeode_inspector_inspector_api SectionComponentMeshesDegeneration
     {
         OPENGEODE_DISABLE_COPY( SectionComponentMeshesDegeneration );
 

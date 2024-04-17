@@ -60,7 +60,7 @@ namespace geode
      * Class for inspecting the degeneration of elements in the Component Meshes
      * of a BRep .
      */
-    class BRepComponentMeshesDegeneration
+    class opengeode_inspector_inspector_api BRepComponentMeshesDegeneration
     {
         OPENGEODE_DISABLE_COPY( BRepComponentMeshesDegeneration );
 
