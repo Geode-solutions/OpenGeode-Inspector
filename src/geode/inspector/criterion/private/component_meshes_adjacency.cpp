@@ -35,42 +35,41 @@
 
 namespace geode
 {
-    template < index_t dimension, typename Model >
-    ComponentMeshesAdjacency< dimension, Model >::ComponentMeshesAdjacency(
+    template < typename Model >
+    ComponentMeshesAdjacency< Model >::ComponentMeshesAdjacency(
         const Model& model )
         : model_( model )
     {
     }
 
-    template < index_t dimension, typename Model >
-    absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-        ComponentMeshesAdjacency< dimension,
-            Model >::surfaces_edges_with_wrong_adjacencies() const
+    template < typename Model >
+    void ComponentMeshesAdjacency< Model >::
+        add_surfaces_edges_with_wrong_adjacencies(
+            InspectionIssuesMap< PolygonEdge >& components_wrong_adjacencies )
+            const
     {
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            components_wrong_adjacencies;
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshAdjacency< dimension > inspector{ surface.mesh() };
-            auto wrong_adjacencies =
-                inspector.polygon_edges_with_wrong_adjacency();
-            if( wrong_adjacencies.nb_issues() != 0 )
-            {
-                components_wrong_adjacencies.emplace(
-                    surface.id(), std::move( wrong_adjacencies ) );
-            }
+            const SurfaceMeshAdjacency< Model::dim > inspector{
+                surface.mesh()
+            };
+            auto issues = inspector.polygon_edges_with_wrong_adjacency();
+            issues.set_description(
+                absl::StrCat( "Surface ", surface.id().string(),
+                    " polygon edges with wrong adjacencies." ) );
+            components_wrong_adjacencies.add_issues_to_map(
+                surface.id(), std::move( issues ) );
         }
-        return components_wrong_adjacencies;
     }
 
-    template < index_t dimension, typename Model >
-    const Model& ComponentMeshesAdjacency< dimension, Model >::model() const
+    template < typename Model >
+    const Model& ComponentMeshesAdjacency< Model >::model() const
     {
         return model_;
     }
 
     template class opengeode_inspector_inspector_api
-        ComponentMeshesAdjacency< 2, Section >;
+        ComponentMeshesAdjacency< Section >;
     template class opengeode_inspector_inspector_api
-        ComponentMeshesAdjacency< 3, BRep >;
+        ComponentMeshesAdjacency< BRep >;
 } // namespace geode

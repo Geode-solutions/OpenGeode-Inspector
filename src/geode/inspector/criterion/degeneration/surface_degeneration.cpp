@@ -65,8 +65,7 @@ namespace geode
         InspectionIssues< index_t > degenerated_polygons() const
         {
             InspectionIssues< index_t > wrong_polygons{
-                "Degenerated Polygons on the Surface "
-                + this->mesh().id().string() + "."
+                "Degenerated Polygons."
             };
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {

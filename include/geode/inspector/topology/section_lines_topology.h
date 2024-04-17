@@ -39,28 +39,29 @@ namespace geode
         SectionLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
-            "uuids of lines without mesh."
+            "uuids of Lines without mesh."
         };
-        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
-            lines_not_linked_to_a_unique_vertex;
+        InspectionIssuesMap< index_t > lines_not_linked_to_a_unique_vertex{
+            "Lines with mesh vertices not linked to a unique vertex"
+        };
         InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_line{
-                "Indices of unique vertices linked to line without boundary "
+                "Indices of unique vertices linked to a Line without boundary "
                 "nor internal status."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
-                "Indices of unique vertices linked to a line with invalid "
+                "Indices of unique vertices linked to a Line with invalid "
                 "internal topology."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indices of unique vertices linked to only one line and this "
-                "single line is invalid."
+                "Indices of unique vertices linked to only one Line and this "
+                "single Line is invalid."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
-                "Indices of unique vertices linked to several lines but not "
+                "Indices of unique vertices linked to several Lines but not "
                 "linked to a corner."
             };
 

@@ -28,42 +28,46 @@
 #include <geode/basic/pimpl.h>
 #include <geode/basic/uuid.h>
 
-#include <geode/model/representation/core/section.h>
-
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
+    class Section;
+} // namespace geode
+
+namespace geode
+{
     struct opengeode_inspector_inspector_api
-        SectionMeshesManifoldInspectionResult
+        SectionMeshesDegenerationInspectionResult
     {
-        InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "Section component meshes with non manifold vertices"
+        InspectionIssuesMap< index_t > degenerated_edges{
+            "Section component meshes with degenerated edges"
         };
-        InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{
-                "Section component meshes with non manifold edges"
-            };
+        InspectionIssuesMap< index_t > degenerated_polygons{
+            "Section component meshes with degenerated polygons"
+        };
 
         std::string string() const;
 
         std::string inspection_type() const;
     };
+
     /*!
-     * Class for inspecting the manifold property in the Component Meshes of
-     * a Section.
+     * Class for inspecting the degeneration of elements in the Component Meshes
+     * of a Section.
      */
-    class opengeode_inspector_inspector_api SectionComponentMeshesManifold
+    class SectionComponentMeshesDegeneration
     {
-        OPENGEODE_DISABLE_COPY( SectionComponentMeshesManifold );
+        OPENGEODE_DISABLE_COPY( SectionComponentMeshesDegeneration );
 
     public:
-        SectionComponentMeshesManifold( const Section& section );
+        SectionComponentMeshesDegeneration( const Section& section );
 
-        ~SectionComponentMeshesManifold();
+        ~SectionComponentMeshesDegeneration();
 
-        SectionMeshesManifoldInspectionResult inspect_section_manifold() const;
+        SectionMeshesDegenerationInspectionResult
+            inspect_elements_degeneration() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

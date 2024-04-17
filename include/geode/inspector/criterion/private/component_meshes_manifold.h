@@ -36,18 +36,17 @@ namespace geode
      * Class for inspecting the manifold property in the Component Meshes of
      * a Model (BRep or Section).
      */
-    template < index_t dimension, typename Model >
+    template < typename Model >
     class ComponentMeshesManifold
     {
         OPENGEODE_DISABLE_COPY( ComponentMeshesManifold );
 
     public:
-        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
-            surfaces_meshes_non_manifold_vertices() const;
+        void add_surfaces_meshes_non_manifold_vertices(
+            InspectionIssuesMap< index_t >& issues_map ) const;
 
-        absl::flat_hash_map< uuid,
-            InspectionIssues< std::array< index_t, 2 > > >
-            surfaces_meshes_non_manifold_edges() const;
+        void add_surfaces_meshes_non_manifold_edges(
+            InspectionIssuesMap< std::array< index_t, 2 > >& issues_map ) const;
 
     protected:
         ComponentMeshesManifold( const Model& model );

@@ -43,8 +43,10 @@ namespace geode
     struct opengeode_inspector_inspector_api
         SectionMeshesAdjacencyInspectionResult
     {
-        absl::flat_hash_map< uuid, InspectionIssues< PolygonEdge > >
-            surfaces_edges_with_wrong_adjacencies;
+        InspectionIssuesMap< PolygonEdge >
+            surfaces_edges_with_wrong_adjacencies{
+                "Section Surface mesh with wrong adjacencies on polygon edges"
+            };
 
         std::string string() const;
 

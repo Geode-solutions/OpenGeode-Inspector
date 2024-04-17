@@ -43,7 +43,7 @@ namespace geode
     {
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
-            elements_intersections;
+            elements_intersections{ "Surface intersections." };
 
         std::string string() const;
 
@@ -53,7 +53,7 @@ namespace geode
     /*!
      * Class for inspecting the intersections of a Model meshes
      */
-    template < index_t dimension, typename Model >
+    template < typename Model >
     class ModelMeshesIntersections
     {
         OPENGEODE_DISABLE_COPY( ModelMeshesIntersections );
@@ -71,6 +71,6 @@ namespace geode
         IMPLEMENTATION_MEMBER( impl_ );
     };
 
-    using SectionMeshesIntersections = ModelMeshesIntersections< 2, Section >;
-    using BRepMeshesIntersections = ModelMeshesIntersections< 3, BRep >;
+    using SectionMeshesIntersections = ModelMeshesIntersections< Section >;
+    using BRepMeshesIntersections = ModelMeshesIntersections< BRep >;
 } // namespace geode

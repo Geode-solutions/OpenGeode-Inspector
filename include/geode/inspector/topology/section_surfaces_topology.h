@@ -40,20 +40,20 @@ namespace geode
         SectionSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
-            "uuids of surface without mesh."
+            "uuids of Surfaces without mesh."
         };
-        std::vector< std::pair< uuid, InspectionIssues< index_t > > >
-            surfaces_not_linked_to_a_unique_vertex;
+        InspectionIssuesMap< index_t > surfaces_not_linked_to_a_unique_vertex{
+            "Surfaces with mesh vertices not linked to a unique vertex"
+        };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
-                "Indices of unique vertices linked to a surface with invalid "
+                "Indices of unique vertices linked to a Surface with invalid "
                 "internal topology."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
-                "Indices of unique vertices linked to a line but not linked to "
-                "a "
-                "surface border."
+                "Indices of unique vertices linked to a Line but not linked to "
+                "a Surface border."
             };
 
         std::string string() const;

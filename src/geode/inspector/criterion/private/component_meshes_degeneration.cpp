@@ -21,75 +21,80 @@
  *
  */
 
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
+#include <geode/inspector/criterion/private/component_meshes_degeneration.h>
 
 #include <geode/basic/logger.h>
 
 #include <geode/mesh/core/surface_mesh.h>
 
+#include <geode/model/mixin/core/line.h>
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
-#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
 
 namespace geode
 {
     template < typename Model >
-    ComponentMeshesManifold< Model >::ComponentMeshesManifold(
+    ComponentMeshesDegeneration< Model >::ComponentMeshesDegeneration(
         const Model& model )
         : model_( model )
     {
     }
 
     template < typename Model >
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_vertices(
-            InspectionIssuesMap< index_t >& surfaces_non_manifold_vertices )
-            const
+    void ComponentMeshesDegeneration< Model >::add_degenerated_edges(
+        InspectionIssuesMap< index_t >& components_degenerated_edges ) const
     {
+        for( const auto& line : model_.lines() )
+        {
+            const EdgedCurveDegeneration< Model::dim > inspector{ line.mesh() };
+            auto issues = inspector.degenerated_edges();
+            issues.set_description( absl::StrCat(
+                "Line ", line.id().string(), " degenerated edges" ) );
+            components_degenerated_edges.add_issues_to_map(
+                line.id(), std::move( issues ) );
+        }
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshVertexManifold< Model::dim > inspector{
+            const geode::SurfaceMeshDegeneration< Model::dim > inspector{
                 surface.mesh()
             };
-            auto issues = inspector.non_manifold_vertices();
+            auto issues = inspector.degenerated_edges();
             issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold vertices" ) );
-            surfaces_non_manifold_vertices.add_issues_to_map(
+                "Surface ", surface.id().string(), " degenerated edges" ) );
+            components_degenerated_edges.add_issues_to_map(
                 surface.id(), std::move( issues ) );
         }
     }
 
     template < typename Model >
-
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_edges(
-            InspectionIssuesMap< std::array< index_t, 2 > >&
-                surfaces_non_manifold_edges ) const
+    void ComponentMeshesDegeneration< Model >::add_degenerated_polygons(
+        InspectionIssuesMap< index_t >& components_degenerated_polygons ) const
     {
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshEdgeManifold< Model::dim > inspector{
+            const geode::SurfaceMeshDegeneration< Model::dim > inspector{
                 surface.mesh()
             };
-            auto issues = inspector.non_manifold_edges();
+            auto issues = inspector.degenerated_polygons();
             issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold edges" ) );
-            surfaces_non_manifold_edges.add_issues_to_map(
+                "Surface ", surface.id().string(), " degenerated polygons" ) );
+            components_degenerated_polygons.add_issues_to_map(
                 surface.id(), std::move( issues ) );
         }
     }
 
     template < typename Model >
-    const Model& ComponentMeshesManifold< Model >::model() const
+    const Model& ComponentMeshesDegeneration< Model >::model() const
     {
         return model_;
     }
 
     template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< Section >;
+        ComponentMeshesDegeneration< Section >;
     template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< BRep >;
+        ComponentMeshesDegeneration< BRep >;
 } // namespace geode

@@ -39,10 +39,10 @@ namespace geode
         {
             absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
         }
-        for( const auto& corner_uv_issue :
-            corners_not_linked_to_a_unique_vertex )
+        if( corners_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, corner_uv_issue.second.string(), "\n" );
+            absl::StrAppend( &message,
+                corners_not_linked_to_a_unique_vertex.string(), "\n" );
         }
         if( unique_vertices_linked_to_multiple_corners.nb_issues() != 0 )
         {
@@ -71,11 +71,11 @@ namespace geode
                 unique_vertices_liked_to_not_boundary_line_corner.string(),
                 "\n" );
         }
-        if( message.empty() )
+        if( !message.empty() )
         {
-            absl::StrAppend( &message, "No issues with corners topology" );
+            return message;
         }
-        return message;
+        return "No issues with corners topology \n";
     }
 
     std::string BRepCornersTopologyInspectionResult::inspection_type() const
@@ -268,9 +268,8 @@ namespace geode
             if( corner_result.nb_issues() != 0 )
             {
                 corner_result.set_description(
-                    absl::StrCat( "Corner ", corner.id().string(),
-                        " has mesh vertices not linked to a unique vertex." ) );
-                result.corners_not_linked_to_a_unique_vertex.emplace_back(
+                    absl::StrCat( "Corner ", corner.id().string() ) );
+                result.corners_not_linked_to_a_unique_vertex.add_issues_to_map(
                     corner.id(), std::move( corner_result ) );
             }
         }
@@ -305,5 +304,4 @@ namespace geode
         }
         return result;
     }
-
 } // namespace geode

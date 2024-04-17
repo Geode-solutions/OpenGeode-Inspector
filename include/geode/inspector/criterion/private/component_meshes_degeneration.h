@@ -25,47 +25,39 @@
 
 #include <absl/container/flat_hash_map.h>
 
-#include <geode/basic/pimpl.h>
-#include <geode/basic/uuid.h>
-
-#include <geode/model/representation/core/section.h>
-
 #include <geode/inspector/common.h>
 #include <geode/inspector/information.h>
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        SectionMeshesManifoldInspectionResult
-    {
-        InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "Section component meshes with non manifold vertices"
-        };
-        InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{
-                "Section component meshes with non manifold edges"
-            };
+    struct uuid;
+    struct PolygonEdge;
+} // namespace geode
 
-        std::string string() const;
-
-        std::string inspection_type() const;
-    };
+namespace geode
+{
     /*!
-     * Class for inspecting the manifold property in the Component Meshes of
-     * a Section.
+     * Class for inspecting the degeneration of elements in the Component Meshes
+     * of a Model (BRep or Section).
      */
-    class opengeode_inspector_inspector_api SectionComponentMeshesManifold
+    template < typename Model >
+    class ComponentMeshesDegeneration
     {
-        OPENGEODE_DISABLE_COPY( SectionComponentMeshesManifold );
+        OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
     public:
-        SectionComponentMeshesManifold( const Section& section );
+        void add_degenerated_edges(
+            InspectionIssuesMap< index_t >& issues_map ) const;
 
-        ~SectionComponentMeshesManifold();
+        void add_degenerated_polygons(
+            InspectionIssuesMap< index_t >& issues_map ) const;
 
-        SectionMeshesManifoldInspectionResult inspect_section_manifold() const;
+    protected:
+        ComponentMeshesDegeneration( const Model& model );
+
+        const Model& model() const;
 
     private:
-        IMPLEMENTATION_MEMBER( impl_ );
+        const Model& model_;
     };
 } // namespace geode

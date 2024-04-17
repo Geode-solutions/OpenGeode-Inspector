@@ -67,7 +67,7 @@ namespace geode
             DegenerationImpl< MeshType >::degenerated_edges() const
         {
             InspectionIssues< index_t > degenerated_edges_index{
-                "Degenerated Edges on the mesh " + mesh_.id().string() + "."
+                "Degenerated Edges."
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {

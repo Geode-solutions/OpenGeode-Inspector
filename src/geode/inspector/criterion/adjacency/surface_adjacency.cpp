@@ -59,8 +59,7 @@ namespace geode
             polygon_edges_with_wrong_adjacency() const
         {
             InspectionIssues< PolygonEdge > wrong_adjacency_edges{ absl::StrCat(
-                "Polygon edges with wrong adjacency on the Surface ",
-                mesh_.id().string(), "." ) };
+                "Polygon edges with wrong adjacencies." ) };
             for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
                 for( const auto edge_id :

@@ -27,7 +27,7 @@
 #include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
 #include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
-#include <geode/inspector/criterion/degeneration/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/degeneration/section_meshes_degeneration.h>
 #include <geode/inspector/criterion/intersections/model_intersections.h>
 #include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
 #include <geode/inspector/information.h>
@@ -38,10 +38,10 @@ namespace geode
     {
         UniqueVerticesInspectionResult unique_vertices_colocation;
         MeshesColocationInspectionResult meshes_colocation;
-        SectionMeshesAdjacencyInspectionResult adjacencies;
-        DegeneratedElementsInspectionResult degenerations;
-        ElementsIntersectionsInspectionResult intersections;
-        SectionMeshesManifoldInspectionResult manifolds;
+        SectionMeshesAdjacencyInspectionResult meshes_adjacencies;
+        SectionMeshesDegenerationInspectionResult meshes_degenerations;
+        ElementsIntersectionsInspectionResult meshes_intersections;
+        SectionMeshesManifoldInspectionResult meshes_non_manifolds;
 
         std::string string() const;
 

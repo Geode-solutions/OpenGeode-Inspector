@@ -42,18 +42,28 @@ namespace geode
 
 namespace geode
 {
+    struct BRepNonManifoldEdge
+    {
+        std::array< index_t, 2 > edge;
+        std::vector< uuid > component_ids;
+    };
+
     struct opengeode_inspector_inspector_api BRepMeshesManifoldInspectionResult
     {
-        absl::flat_hash_map< uuid, InspectionIssues< index_t > >
-            meshes_non_manifold_vertices;
-        absl::flat_hash_map< uuid,
-            InspectionIssues< std::array< index_t, 2 > > >
-            meshes_non_manifold_edges;
-        absl::flat_hash_map< uuid, InspectionIssues< PolyhedronFacetVertices > >
-            meshes_non_manifold_facets;
-        absl::flat_hash_map< std::array< index_t, 2 >,
-            InspectionIssues< uuid > >
-            model_non_manifold_edges;
+        InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
+            "BRep component meshes with non manifold vertices"
+        };
+        InspectionIssuesMap< std::array< index_t, 2 > >
+            meshes_non_manifold_edges{
+                "BRep component meshes with non manifold edges"
+            };
+        InspectionIssuesMap< PolyhedronFacetVertices >
+            meshes_non_manifold_facets{
+                "BRep component meshes with non manifold facets"
+            };
+        InspectionIssues< BRepNonManifoldEdge > brep_non_manifold_edges{
+            "BRep non manifold edges"
+        };
 
         std::string string() const;
 

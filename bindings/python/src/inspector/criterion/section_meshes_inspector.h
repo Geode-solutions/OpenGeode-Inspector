@@ -36,14 +36,14 @@ namespace geode
                 &SectionMeshesInspectionResult::unique_vertices_colocation )
             .def_readwrite( "meshes_colocation",
                 &SectionMeshesInspectionResult::meshes_colocation )
-            .def_readwrite(
-                "adjacencies", &SectionMeshesInspectionResult::adjacencies )
-            .def_readwrite(
-                "degenerations", &SectionMeshesInspectionResult::degenerations )
-            .def_readwrite(
-                "intersections", &SectionMeshesInspectionResult::intersections )
-            .def_readwrite(
-                "manifolds", &SectionMeshesInspectionResult::manifolds )
+            .def_readwrite( "meshes_adjacencies",
+                &SectionMeshesInspectionResult::meshes_adjacencies )
+            .def_readwrite( "meshes_degenerations",
+                &SectionMeshesInspectionResult::meshes_degenerations )
+            .def_readwrite( "meshes_intersections",
+                &SectionMeshesInspectionResult::meshes_intersections )
+            .def_readwrite( "meshes_non_manifolds",
+                &SectionMeshesInspectionResult::meshes_non_manifolds )
             .def( "string", &SectionMeshesInspectionResult::string )
             .def( "inspection_type",
                 &SectionMeshesInspectionResult::inspection_type );

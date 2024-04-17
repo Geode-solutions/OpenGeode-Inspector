@@ -21,68 +21,68 @@
  *
  */
 
-#include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
+#include <geode/inspector/criterion/degeneration/section_meshes_degeneration.h>
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
 
+#include <geode/model/mixin/core/block.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
+#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/criterion/private/component_meshes_degeneration.h>
 
 namespace geode
 {
-    std::string SectionMeshesManifoldInspectionResult::string() const
+    std::string SectionMeshesDegenerationInspectionResult::string() const
     {
         std::string message;
-        if( meshes_non_manifold_vertices.nb_issues() != 0 )
+        if( degenerated_edges.nb_issues() != 0 )
         {
-            absl::StrAppend(
-                &message, meshes_non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
         }
-        if( meshes_non_manifold_edges.nb_issues() != 0 )
+        if( degenerated_polygons.nb_issues() != 0 )
         {
-            absl::StrAppend(
-                &message, meshes_non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polygons.string(), "\n" );
         }
         if( !message.empty() )
         {
             return message;
         }
-        return "No manifold issues in model component meshes \n";
+        return "No degeneration issues in model component meshes \n";
     }
 
-    std::string SectionMeshesManifoldInspectionResult::inspection_type() const
+    std::string
+        SectionMeshesDegenerationInspectionResult::inspection_type() const
     {
-        return "Manifold inspection";
+        return "Adjacencies inspection";
     }
 
-    class SectionComponentMeshesManifold::Impl
-        : public ComponentMeshesManifold< Section >
+    class SectionComponentMeshesDegeneration::Impl
+        : public ComponentMeshesDegeneration< Section >
     {
     public:
         Impl( const Section& section )
-            : ComponentMeshesManifold< Section >( section )
+            : ComponentMeshesDegeneration< Section >( section )
         {
         }
     };
 
-    SectionComponentMeshesManifold::SectionComponentMeshesManifold(
+    SectionComponentMeshesDegeneration::SectionComponentMeshesDegeneration(
         const Section& model )
         : impl_{ model }
     {
     }
 
-    SectionComponentMeshesManifold::~SectionComponentMeshesManifold() {}
+    SectionComponentMeshesDegeneration::~SectionComponentMeshesDegeneration() {}
 
-    SectionMeshesManifoldInspectionResult
-        SectionComponentMeshesManifold::inspect_section_manifold() const
+    SectionMeshesDegenerationInspectionResult
+        SectionComponentMeshesDegeneration::inspect_elements_degeneration()
+            const
     {
-        SectionMeshesManifoldInspectionResult result;
-        impl_->add_surfaces_meshes_non_manifold_vertices(
-            result.meshes_non_manifold_vertices );
-        impl_->add_surfaces_meshes_non_manifold_edges(
-            result.meshes_non_manifold_edges );
+        SectionMeshesDegenerationInspectionResult result;
+        impl_->add_degenerated_edges( result.degenerated_edges );
+        impl_->add_degenerated_polygons( result.degenerated_polygons );
         return result;
     }
 } // namespace geode

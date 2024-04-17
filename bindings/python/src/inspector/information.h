@@ -34,9 +34,19 @@ namespace geode
         const auto name = absl::StrCat( "InspectionIssues", typestr );
         pybind11::class_< InspectionIssues >( module, name.c_str() )
             .def( "set_description", &InspectionIssues::set_description )
+            .def( "description", &InspectionIssues::description )
             .def( "nb_issues", &InspectionIssues::nb_issues )
             .def( "issues", &InspectionIssues::issues )
             .def( "string", &InspectionIssues::string );
+
+        using InspectionIssuesMap = geode::InspectionIssuesMap< ProblemType >;
+        const auto map_name = absl::StrCat( "InspectionIssuesMap", typestr );
+        pybind11::class_< InspectionIssuesMap >( module, map_name.c_str() )
+            .def( "set_description", &InspectionIssuesMap::set_description )
+            .def( "description", &InspectionIssuesMap::description )
+            .def( "nb_issues", &InspectionIssuesMap::nb_issues )
+            .def( "issues_map", &InspectionIssuesMap::issues_map )
+            .def( "string", &InspectionIssuesMap::string );
     }
     void define_information( pybind11::module& module )
     {
@@ -52,6 +62,8 @@ namespace geode
         do_define_information< std::pair< index_t, index_t > >(
             module, "PairIndex" );
         do_define_information< uuid >( module, "UUID" );
+        do_define_information< BRepNonManifoldEdge >(
+            module, "BRepNonManifoldEdge" );
         do_define_information< std::pair< geode::ComponentMeshElement,
             geode::ComponentMeshElement > >(
             module, "PairComponentMeshElement" );

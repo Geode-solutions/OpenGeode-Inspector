@@ -76,7 +76,7 @@ namespace
         return geode::NO_LID;
     }
 
-    template < geode::index_t dimension, typename Model >
+    template < typename Model >
     class ModelSurfacesIntersectionBase
     {
     public:
@@ -88,11 +88,11 @@ namespace
               surface1_( model.surface( surface_id1 ) ),
               surface2_( model.surface( surface_id2 ) ),
               mesh1_( surface1_.template mesh<
-                      geode::TriangulatedSurface< dimension > >() ),
+                      geode::TriangulatedSurface< Model::dim > >() ),
               mesh2_( same_surface_
                           ? mesh1_
                           : surface2_.template mesh<
-                              geode::TriangulatedSurface< dimension > >() )
+                              geode::TriangulatedSurface< Model::dim > >() )
         {
         }
 
@@ -140,12 +140,12 @@ namespace
             intersecting_triangles_.emplace_back( t1_id, t2_id );
         }
 
-        const geode::TriangulatedSurface< dimension >& mesh1() const
+        const geode::TriangulatedSurface< Model::dim >& mesh1() const
         {
             return mesh1_;
         }
 
-        const geode::TriangulatedSurface< dimension >& mesh2() const
+        const geode::TriangulatedSurface< Model::dim >& mesh2() const
         {
             return mesh2_;
         }
@@ -153,23 +153,23 @@ namespace
     private:
         const Model& model_;
         DEBUG_CONST bool same_surface_;
-        const geode::Surface< dimension >& surface1_;
-        const geode::Surface< dimension >& surface2_;
-        const geode::TriangulatedSurface< dimension >& mesh1_;
-        const geode::TriangulatedSurface< dimension >& mesh2_;
+        const geode::Surface< Model::dim >& surface1_;
+        const geode::Surface< Model::dim >& surface2_;
+        const geode::TriangulatedSurface< Model::dim >& mesh1_;
+        const geode::TriangulatedSurface< Model::dim >& mesh2_;
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_triangles_;
     };
 
-    template < geode::index_t dimension, typename Model >
+    template < typename Model >
     class OneModelSurfacesIntersection
-        : public ModelSurfacesIntersectionBase< dimension, Model >
+        : public ModelSurfacesIntersectionBase< Model >
     {
     public:
         OneModelSurfacesIntersection( const Model& model,
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< dimension, Model >(
+            : ModelSurfacesIntersectionBase< Model >(
                 model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
@@ -199,15 +199,15 @@ namespace
         DEBUG_CONST bool same_surface_;
     };
 
-    template < geode::index_t dimension, typename Model >
+    template < typename Model >
     class AllModelSurfacesIntersection
-        : public ModelSurfacesIntersectionBase< dimension, Model >
+        : public ModelSurfacesIntersectionBase< Model >
     {
     public:
         AllModelSurfacesIntersection( const Model& model,
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< dimension, Model >(
+            : ModelSurfacesIntersectionBase< Model >(
                 model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
@@ -255,14 +255,13 @@ namespace
     }
 
     template <>
-    bool
-        ModelSurfacesIntersectionBase< 2, geode::Section >::triangles_intersect(
-            geode::index_t t1_id,
-            geode::index_t t2_id,
-            const geode::PolygonVertices& t1_vertices,
-            const geode::PolygonVertices& t2_vertices,
-            absl::Span< const std::array< geode::index_t, 2 > >
-                common_vertices ) const
+    bool ModelSurfacesIntersectionBase< geode::Section >::triangles_intersect(
+        geode::index_t t1_id,
+        geode::index_t t2_id,
+        const geode::PolygonVertices& t1_vertices,
+        const geode::PolygonVertices& t2_vertices,
+        absl::Span< const std::array< geode::index_t, 2 > > common_vertices )
+        const
     {
         if( common_vertices.size() == 2 )
         {
@@ -382,7 +381,7 @@ namespace
     }
 
     template <>
-    bool ModelSurfacesIntersectionBase< 3, geode::BRep >::triangles_intersect(
+    bool ModelSurfacesIntersectionBase< geode::BRep >::triangles_intersect(
         geode::index_t t1_id,
         geode::index_t t2_id,
         const geode::PolygonVertices& t1_vertices,
@@ -425,7 +424,7 @@ namespace geode
 {
     std::string ElementsIntersectionsInspectionResult::string() const
     {
-        return elements_intersections.string();
+        return absl::StrCat( elements_intersections.string(), "\n" );
     }
 
     std::string ElementsIntersectionsInspectionResult::inspection_type() const
@@ -433,8 +432,8 @@ namespace geode
         return "Intersections inspection";
     }
 
-    template < index_t dimension, typename Model >
-    class ModelMeshesIntersections< dimension, Model >::Impl
+    template < typename Model >
+    class ModelMeshesIntersections< Model >::Impl
     {
     public:
         Impl( const Model& model ) : model_( model ) {}
@@ -442,7 +441,7 @@ namespace geode
         bool model_has_intersecting_surfaces() const
         {
             const auto intersections = intersecting_triangles<
-                OneModelSurfacesIntersection< dimension, Model > >();
+                OneModelSurfacesIntersection< Model > >();
             if( intersections.empty() )
             {
                 return false;
@@ -450,18 +449,15 @@ namespace geode
             return true;
         }
 
-        InspectionIssues<
-            std::pair< ComponentMeshElement, ComponentMeshElement > >
-            intersecting_surfaces_elements() const
+        void add_intersecting_surfaces_elements(
+            InspectionIssues< std::pair< ComponentMeshElement,
+                ComponentMeshElement > >& intersection_issues ) const
         {
             const auto intersections = intersecting_triangles<
-                AllModelSurfacesIntersection< dimension, Model > >();
-            InspectionIssues<
-                std::pair< ComponentMeshElement, ComponentMeshElement > >
-                issues{ "Surface intersections." };
+                AllModelSurfacesIntersection< Model > >();
             for( const auto& triangle_pair : intersections )
             {
-                issues.add_issue( triangle_pair,
+                intersection_issues.add_issue( triangle_pair,
                     absl::StrCat( "Triangles ", triangle_pair.first.element_id,
                         " of surface ",
                         triangle_pair.first.component_id.id().string(), " and ",
@@ -469,7 +465,6 @@ namespace geode
                         triangle_pair.second.component_id.id().string(),
                         " intersect each other." ) );
             }
-            return issues;
         }
 
     private:
@@ -495,7 +490,7 @@ namespace geode
             for( const auto& surface : model_.surfaces() )
             {
                 if( surface.mesh().type_name()
-                    != TriangulatedSurface< dimension >::type_name_static() )
+                    != TriangulatedSurface< Model::dim >::type_name_static() )
                 {
                     continue;
                 }
@@ -523,10 +518,10 @@ namespace geode
                 const auto surface_uuid1 = model_tree.uuids_[components.first];
                 const auto surface_uuid2 = model_tree.uuids_[components.second];
                 if( model_.surface( surface_uuid1 ).mesh().type_name()
-                        != TriangulatedSurface< dimension >::type_name_static()
+                        != TriangulatedSurface< Model::dim >::type_name_static()
                     || model_.surface( surface_uuid2 ).mesh().type_name()
                            != TriangulatedSurface<
-                               dimension >::type_name_static() )
+                               Model::dim >::type_name_static() )
                 {
                     continue;
                 }
@@ -557,38 +552,37 @@ namespace geode
         const Model& model_;
     };
 
-    template < index_t dimension, typename Model >
-    ModelMeshesIntersections< dimension, Model >::ModelMeshesIntersections(
+    template < typename Model >
+    ModelMeshesIntersections< Model >::ModelMeshesIntersections(
         const Model& model )
         : impl_( model )
     {
     }
 
-    template < index_t dimension, typename Model >
-    ModelMeshesIntersections< dimension, Model >::~ModelMeshesIntersections()
+    template < typename Model >
+    ModelMeshesIntersections< Model >::~ModelMeshesIntersections()
     {
     }
 
-    template < index_t dimension, typename Model >
-    bool ModelMeshesIntersections< dimension,
-        Model >::model_has_intersecting_surfaces() const
+    template < typename Model >
+    bool ModelMeshesIntersections< Model >::model_has_intersecting_surfaces()
+        const
     {
         return impl_->model_has_intersecting_surfaces();
     }
 
-    template < index_t dimension, typename Model >
+    template < typename Model >
     ElementsIntersectionsInspectionResult
-        ModelMeshesIntersections< dimension, Model >::inspect_intersections()
-            const
+        ModelMeshesIntersections< Model >::inspect_intersections() const
     {
         ElementsIntersectionsInspectionResult results;
-        results.elements_intersections =
-            impl_->intersecting_surfaces_elements();
+        impl_->add_intersecting_surfaces_elements(
+            results.elements_intersections );
         return results;
     }
 
     template class opengeode_inspector_inspector_api
-        ModelMeshesIntersections< 2, Section >;
+        ModelMeshesIntersections< Section >;
     template class opengeode_inspector_inspector_api
-        ModelMeshesIntersections< 3, BRep >;
+        ModelMeshesIntersections< BRep >;
 } // namespace geode

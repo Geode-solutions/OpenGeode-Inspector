@@ -74,10 +74,10 @@ namespace geode
         {
             absl::StrAppend( &message, surfaces_not_meshed.string(), "\n" );
         }
-        for( const auto& surface_uv_issue :
-            surfaces_not_linked_to_a_unique_vertex )
+        if( surfaces_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, surface_uv_issue.second.string(), "\n" );
+            absl::StrAppend( &message,
+                surfaces_not_linked_to_a_unique_vertex.string(), "\n" );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_surface
                 .nb_issues()
@@ -120,11 +120,11 @@ namespace geode
                     .string(),
                 "\n" );
         }
-        if( message.empty() )
+        if( !message.empty() )
         {
-            absl::StrAppend( &message, "No issues with surfaces topology" );
+            return message;
         }
-        return message;
+        return "No issues with surfaces topology \n";
     }
 
     std::string BRepSurfacesTopologyInspectionResult::inspection_type() const
@@ -429,9 +429,8 @@ namespace geode
             if( surface_result.nb_issues() != 0 )
             {
                 surface_result.set_description(
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " has mesh vertices not linked to a unique vertex." ) );
-                result.surfaces_not_linked_to_a_unique_vertex.emplace_back(
+                    absl::StrCat( "Surface ", surface.id().string() ) );
+                result.surfaces_not_linked_to_a_unique_vertex.add_issues_to_map(
                     surface.id(), std::move( surface_result ) );
             }
         }

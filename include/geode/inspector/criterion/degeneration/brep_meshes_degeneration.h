@@ -33,22 +33,23 @@
 
 namespace geode
 {
-    class Section;
     class BRep;
 } // namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api DegeneratedElements
+    struct opengeode_inspector_inspector_api
+        BRepMeshesDegenerationInspectionResult
     {
-        InspectionIssues< index_t > degenerated_edges;
-        InspectionIssues< index_t > degenerated_polygons;
-        InspectionIssues< index_t > degenerated_polyhedra;
-    };
-
-    struct opengeode_inspector_inspector_api DegeneratedElementsInspectionResult
-    {
-        absl::flat_hash_map< uuid, DegeneratedElements > elements;
+        InspectionIssuesMap< index_t > degenerated_edges{
+            "BRep component meshes with degenerated edges"
+        };
+        InspectionIssuesMap< index_t > degenerated_polygons{
+            "BRep component meshes with degenerated polygons"
+        };
+        InspectionIssuesMap< index_t > degenerated_polyhedra{
+            "BRep component meshes with degenerated polyhedra"
+        };
 
         std::string string() const;
 
@@ -57,26 +58,21 @@ namespace geode
 
     /*!
      * Class for inspecting the degeneration of elements in the Component Meshes
-     * of a Model (BRep or Section).
+     * of a BRep .
      */
-    template < index_t dimension, typename Model >
-    class ComponentMeshesDegeneration
+    class BRepComponentMeshesDegeneration
     {
-        OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
+        OPENGEODE_DISABLE_COPY( BRepComponentMeshesDegeneration );
 
     public:
-        ComponentMeshesDegeneration( const Model& model );
+        BRepComponentMeshesDegeneration( const BRep& brep );
 
-        ~ComponentMeshesDegeneration();
+        ~BRepComponentMeshesDegeneration();
 
-        DegeneratedElementsInspectionResult inspect_elements() const;
+        BRepMeshesDegenerationInspectionResult
+            inspect_elements_degeneration() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-
-    using SectionComponentMeshesDegeneration =
-        ComponentMeshesDegeneration< 2, Section >;
-    using BRepComponentMeshesDegeneration =
-        ComponentMeshesDegeneration< 3, BRep >;
 } // namespace geode

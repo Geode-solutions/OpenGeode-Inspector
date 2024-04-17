@@ -33,28 +33,23 @@
 namespace geode
 {
     class SectionComponentMeshesAdjacency::Impl
-        : public ComponentMeshesAdjacency< 2, Section >
+        : public ComponentMeshesAdjacency< Section >
     {
     public:
         Impl( const Section& section )
-            : ComponentMeshesAdjacency< 2, Section >( section )
+            : ComponentMeshesAdjacency< Section >( section )
         {
         }
     };
 
     std::string SectionMeshesAdjacencyInspectionResult::string() const
     {
-        std::string message;
-        for( const auto& surface_issue : surfaces_edges_with_wrong_adjacencies )
+        if( surfaces_edges_with_wrong_adjacencies.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, surface_issue.second.string(), "\n" );
+            return absl::StrCat(
+                surfaces_edges_with_wrong_adjacencies.string(), "\n" );
         }
-        if( surfaces_edges_with_wrong_adjacencies.empty() )
-        {
-            absl::StrAppend(
-                &message, "No adjacency issues in model component meshes" );
-        }
-        return message;
+        return "No adjacency issues in model component meshes \n";
     }
 
     std::string SectionMeshesAdjacencyInspectionResult::inspection_type() const
@@ -75,8 +70,8 @@ namespace geode
             const
     {
         SectionMeshesAdjacencyInspectionResult result;
-        result.surfaces_edges_with_wrong_adjacencies =
-            impl_->surfaces_edges_with_wrong_adjacencies();
+        impl_->add_surfaces_edges_with_wrong_adjacencies(
+            result.surfaces_edges_with_wrong_adjacencies );
         return result;
     }
 } // namespace geode
