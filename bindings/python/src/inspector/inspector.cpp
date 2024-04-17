@@ -78,6 +78,12 @@ namespace pybind11
             : map_caster< absl::flat_hash_map< Key, Value >, Key, Value >
         {
         };
+
+        template <>
+        struct type_caster< absl::string_view >
+            : string_caster< absl::string_view, true >
+        {
+        };
     } // namespace detail
 } // namespace pybind11
 
