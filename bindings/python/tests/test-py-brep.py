@@ -178,8 +178,8 @@ def check_a1(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
     model_brep = opengeode.load_brep(data_dir + "/model_A1.og_brep")
+    result = inspector.inspect_brep(model_brep)
     brep_inspector = inspector.BRepInspector(model_brep)
-    result = brep_inspector.inspect_brep()
     if brep_inspector.brep_topology_is_valid():
         print("model_A1 topology is valid.")
     else:
@@ -261,7 +261,7 @@ def check_model_D(verbose):
 
 if __name__ == "__main__":
     inspector.InspectorInspectorLibrary.initialize()
-    verbose = True
+    verbose = False
     check_a1(verbose)
     check_a1_valid(verbose)
     check_model_mss(verbose)
