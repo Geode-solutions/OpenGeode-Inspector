@@ -37,13 +37,27 @@ namespace geode
     struct opengeode_inspector_inspector_api SolidInspectionResult
     {
         InspectionIssues< PolyhedronFacet >
-            polyhedron_facets_with_wrong_adjacency;
-        InspectionIssues< std::vector< index_t > > colocated_points_groups;
-        InspectionIssues< index_t > degenerated_edges;
-        InspectionIssues< index_t > degenerated_polyhedra;
-        InspectionIssues< index_t > non_manifold_vertices;
-        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
-        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets;
+            polyhedron_facets_with_wrong_adjacency{
+                "Adjacencies of facets not tested"
+            };
+        InspectionIssues< std::vector< index_t > > colocated_points_groups{
+            "Colocation of vertices not tested"
+        };
+        InspectionIssues< index_t > degenerated_edges{
+            "Degeneration of edges not tested"
+        };
+        InspectionIssues< index_t > degenerated_polyhedra{
+            "Degeneration of polyhedra not tested"
+        };
+        InspectionIssues< index_t > non_manifold_vertices{
+            "Manifold of vertices not tested"
+        };
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
+            "Manifold of edges not tested"
+        };
+        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
+            "Manifold of facets not tested"
+        };
 
         std::string string() const;
 

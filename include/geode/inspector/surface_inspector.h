@@ -36,13 +36,27 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api SurfaceInspectionResult
     {
-        InspectionIssues< PolygonEdge > polygon_edges_with_wrong_adjacency;
-        InspectionIssues< std::vector< index_t > > colocated_points_groups;
-        InspectionIssues< index_t > degenerated_edges;
-        InspectionIssues< index_t > degenerated_polygons;
-        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges;
-        InspectionIssues< index_t > non_manifold_vertices;
-        InspectionIssues< std::pair< index_t, index_t > > intersecting_elements;
+        InspectionIssues< PolygonEdge > polygon_edges_with_wrong_adjacency{
+            "Adjacencies between polygon edges not tested"
+        };
+        InspectionIssues< std::vector< index_t > > colocated_points_groups{
+            "Colocation of vertices not tested"
+        };
+        InspectionIssues< index_t > degenerated_edges{
+            "Degeneration of edges not tested"
+        };
+        InspectionIssues< index_t > degenerated_polygons{
+            "Degeneration of polygons not tested"
+        };
+        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
+            "Manifold of edges not tested"
+        };
+        InspectionIssues< index_t > non_manifold_vertices{
+            "Manifold of vertices not tested"
+        };
+        InspectionIssues< std::pair< index_t, index_t > > intersecting_elements{
+            "Intersection between mesh elements not tested"
+        };
 
         std::string string() const;
 

@@ -64,7 +64,9 @@ namespace geode
                 return inspector.inspect_surface();
             } );
 
-        module.def( "inspect_triangulated_surface",
+        const auto inspect_function_name2 =
+            absl::StrCat( "inspect_triangulated_surface", dimension, "D" );
+        module.def( inspect_function_name2.c_str(),
             []( const TriangulatedSurface& surface ) {
                 TriangulatedSurfaceInspector inspector{ surface };
                 return inspector.inspect_surface();
