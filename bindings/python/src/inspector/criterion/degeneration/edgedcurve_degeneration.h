@@ -29,7 +29,7 @@
 namespace geode
 {
     template < index_t dimension >
-    void do_define_edgedcurve_degeneration( pybind11::module& module )
+    void do_define_edged_curve_degeneration( pybind11::module& module )
     {
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveDegeneration = EdgedCurveDegeneration< dimension >;
@@ -42,9 +42,9 @@ namespace geode
             .def( "degenerated_edges",
                 &EdgedCurveDegeneration::degenerated_edges );
     }
-    void define_edgedcurve_degeneration( pybind11::module& module )
+    void define_edged_curve_degeneration( pybind11::module& module )
     {
-        do_define_edgedcurve_degeneration< 2 >( module );
-        do_define_edgedcurve_degeneration< 3 >( module );
+        do_define_edged_curve_degeneration< 2 >( module );
+        do_define_edged_curve_degeneration< 3 >( module );
     }
 } // namespace geode

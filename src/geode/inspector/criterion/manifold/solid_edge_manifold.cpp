@@ -149,7 +149,7 @@ namespace geode
                                     "Edge between vertices with index ",
                                     polyhedron_edge_vertices[0], " and index ",
                                     polyhedron_edge_vertices[1],
-                                    ", is not manifold." ) );
+                                    " is not manifold." ) );
                         }
                     }
                     catch( const OpenGeodeException& )

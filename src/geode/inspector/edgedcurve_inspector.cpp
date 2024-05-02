@@ -49,7 +49,7 @@ namespace geode
 
     template < index_t dimension >
     EdgedCurveInspectionResult
-        EdgedCurveInspector< dimension >::inspect_edgedcurve() const
+        EdgedCurveInspector< dimension >::inspect_edged_curve() const
     {
         EdgedCurveInspectionResult result;
         result.colocated_points_groups = this->colocated_points_groups();

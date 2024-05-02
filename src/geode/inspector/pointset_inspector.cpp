@@ -47,7 +47,7 @@ namespace geode
 
     template < index_t dimension >
     PointSetInspectionResult
-        PointSetInspector< dimension >::inspect_pointset() const
+        PointSetInspector< dimension >::inspect_point_set() const
     {
         PointSetInspectionResult result;
         result.colocated_points_groups = this->colocated_points_groups();

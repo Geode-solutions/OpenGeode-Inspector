@@ -31,7 +31,7 @@
 namespace geode
 {
     template < index_t dimension >
-    void do_define_edgedcurve_colocation( pybind11::module& module )
+    void do_define_edged_curve_colocation( pybind11::module& module )
     {
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveColocation = EdgedCurveColocation< dimension >;
@@ -45,9 +45,9 @@ namespace geode
             .def( "colocated_points_groups",
                 &EdgedCurveColocation::colocated_points_groups );
     }
-    void define_edgedcurve_colocation( pybind11::module& module )
+    void define_edged_curve_colocation( pybind11::module& module )
     {
-        do_define_edgedcurve_colocation< 2 >( module );
-        do_define_edgedcurve_colocation< 3 >( module );
+        do_define_edged_curve_colocation< 2 >( module );
+        do_define_edged_curve_colocation< 3 >( module );
     }
 } // namespace geode

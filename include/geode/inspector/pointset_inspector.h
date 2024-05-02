@@ -53,7 +53,7 @@ namespace geode
     public:
         PointSetInspector( const PointSet< dimension >& mesh );
 
-        PointSetInspectionResult inspect_pointset() const;
+        PointSetInspectionResult inspect_point_set() const;
     };
     ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

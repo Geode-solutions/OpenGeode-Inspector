@@ -29,7 +29,7 @@
 namespace geode
 {
     template < index_t dimension >
-    void do_define_pointset_inspector( pybind11::module& module )
+    void do_define_point_set_inspector( pybind11::module& module )
     {
         using PointSet = PointSet< dimension >;
         using PointSetInspector = PointSetInspector< dimension >;
@@ -37,18 +37,18 @@ namespace geode
         pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
             module, name.c_str() )
             .def( pybind11::init< const PointSet& >() )
-            .def( "inspect_pointset", &PointSetInspector::inspect_pointset );
+            .def( "inspect_point_set", &PointSetInspector::inspect_point_set );
 
         const auto inspect_function_name =
-            absl::StrCat( "inspect_pointset", dimension, "D" );
+            absl::StrCat( "inspect_point_set", dimension, "D" );
         module.def(
-            inspect_function_name.c_str(), []( const PointSet& pointset ) {
-                PointSetInspector inspector{ pointset };
-                return inspector.inspect_pointset();
+            inspect_function_name.c_str(), []( const PointSet& point_set ) {
+                PointSetInspector inspector{ point_set };
+                return inspector.inspect_point_set();
             } );
     }
 
-    void define_pointset_inspector( pybind11::module& module )
+    void define_point_set_inspector( pybind11::module& module )
     {
         pybind11::class_< PointSetInspectionResult >(
             module, "PointSetInspectionResult" )
@@ -59,7 +59,7 @@ namespace geode
             .def(
                 "inspection_type", &PointSetInspectionResult::inspection_type );
 
-        do_define_pointset_inspector< 2 >( module );
-        do_define_pointset_inspector< 3 >( module );
+        do_define_point_set_inspector< 2 >( module );
+        do_define_point_set_inspector< 3 >( module );
     }
 } // namespace geode

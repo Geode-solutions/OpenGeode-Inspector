@@ -42,10 +42,10 @@
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
 
 template < geode::index_t dimension >
-void inspect_edgedcurve( const geode::EdgedCurve< dimension >& edgedcurve )
+void inspect_edged_curve( const geode::EdgedCurve< dimension >& edged_curve )
 {
-    const geode::EdgedCurveInspector< dimension > inspector{ edgedcurve };
-    const auto result = inspector.inspect_edgedcurve();
+    const geode::EdgedCurveInspector< dimension > inspector{ edged_curve };
+    const auto result = inspector.inspect_edged_curve();
 
     geode::Logger::info( result.string() );
 }
@@ -68,11 +68,11 @@ int main( int argc, char* argv[] )
 
         if( geode::EdgedCurveInputFactory3D::has_creator( ext ) )
         {
-            inspect_edgedcurve( *geode::load_edged_curve< 3 >( filename ) );
+            inspect_edged_curve( *geode::load_edged_curve< 3 >( filename ) );
         }
         else if( geode::EdgedCurveInputFactory2D::has_creator( ext ) )
         {
-            inspect_edgedcurve( *geode::load_edged_curve< 2 >( filename ) );
+            inspect_edged_curve( *geode::load_edged_curve< 2 >( filename ) );
         }
         else
         {
