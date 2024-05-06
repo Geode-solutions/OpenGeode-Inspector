@@ -119,9 +119,9 @@ namespace geode
                     {
                         non_manifold_vertices.add_issue(
                             vertex_id, absl::StrCat( "Vertex with index ",
-                                           vertex_id, ", at position ",
+                                           vertex_id, ", at position [",
                                            mesh_.point( vertex_id ).string(),
-                                           ", is not manifold." ) );
+                                           "], is not manifold." ) );
                     }
                 }
                 catch( const geode::OpenGeodeException& )

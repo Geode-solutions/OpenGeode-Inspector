@@ -98,11 +98,11 @@ namespace geode
                 {
                     non_manifold_facets.add_issue(
                         nb_adjacent_polyhedra.first.vertices(),
-                        absl::StrCat( "Facet made of vertices with index",
+                        absl::StrCat( "Facet made of vertices with index ",
                             nb_adjacent_polyhedra.first.vertices()[0], ", ",
                             nb_adjacent_polyhedra.first.vertices()[1], ", ",
                             nb_adjacent_polyhedra.first.vertices()[2],
-                            ", is not manifold." ) );
+                            " is not manifold." ) );
                 }
             }
             return non_manifold_facets;

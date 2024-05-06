@@ -109,10 +109,11 @@ namespace geode
                         polyhedra_around_vertices_list[vertex_id],
                         mesh_.polyhedra_around_vertex( vertex_id ) ) )
                 {
-                    non_manifold_vertices.add_issue( vertex_id,
-                        absl::StrCat( "Vertex with index ", vertex_id,
-                            ", at position ", mesh_.point( vertex_id ).string(),
-                            ", is not manifold." ) );
+                    non_manifold_vertices.add_issue(
+                        vertex_id, absl::StrCat( "Vertex with index ",
+                                       vertex_id, ", at position [",
+                                       mesh_.point( vertex_id ).string(),
+                                       "], is not manifold." ) );
                 }
             }
             return non_manifold_vertices;

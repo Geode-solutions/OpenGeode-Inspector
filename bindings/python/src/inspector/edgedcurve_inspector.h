@@ -29,7 +29,7 @@
 namespace geode
 {
     template < index_t dimension >
-    void do_define_edgedcurve_inspector( pybind11::module& module )
+    void do_define_edged_curve_inspector( pybind11::module& module )
     {
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveInspector = geode::EdgedCurveInspector< dimension >;
@@ -39,19 +39,19 @@ namespace geode
             EdgedCurveColocation< dimension >,
             EdgedCurveDegeneration< dimension > >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
-            .def( "inspect_edgedcurve",
-                &EdgedCurveInspector::inspect_edgedcurve );
+            .def( "inspect_edged_curve",
+                &EdgedCurveInspector::inspect_edged_curve );
 
         const auto inspect_function_name =
-            absl::StrCat( "inspect_edgedcurve", dimension, "D" );
+            absl::StrCat( "inspect_edged_curve", dimension, "D" );
         module.def(
-            inspect_function_name.c_str(), []( const EdgedCurve& edgedcurve ) {
-                EdgedCurveInspector inspector{ edgedcurve };
-                return inspector.inspect_edgedcurve();
+            inspect_function_name.c_str(), []( const EdgedCurve& edged_curve ) {
+                EdgedCurveInspector inspector{ edged_curve };
+                return inspector.inspect_edged_curve();
             } );
     }
 
-    void define_edgedcurve_inspector( pybind11::module& module )
+    void define_edged_curve_inspector( pybind11::module& module )
     {
         pybind11::class_< EdgedCurveInspectionResult >(
             module, "EdgedCurveInspectionResult" )
@@ -64,7 +64,7 @@ namespace geode
             .def( "inspection_type",
                 &EdgedCurveInspectionResult::inspection_type );
 
-        do_define_edgedcurve_inspector< 2 >( module );
-        do_define_edgedcurve_inspector< 3 >( module );
+        do_define_edged_curve_inspector< 2 >( module );
+        do_define_edged_curve_inspector< 3 >( module );
     }
 } // namespace geode

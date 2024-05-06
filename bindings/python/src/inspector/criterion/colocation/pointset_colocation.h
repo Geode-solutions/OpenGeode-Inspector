@@ -29,7 +29,7 @@
 namespace geode
 {
     template < index_t dimension >
-    void do_define_pointset_colocation( pybind11::module& module )
+    void do_define_point_set_colocation( pybind11::module& module )
     {
         using PointSet = PointSet< dimension >;
         using PointSetColocation = PointSetColocation< dimension >;
@@ -41,9 +41,9 @@ namespace geode
             .def( "colocated_points_groups",
                 &PointSetColocation::colocated_points_groups );
     }
-    void define_pointset_colocation( pybind11::module& module )
+    void define_point_set_colocation( pybind11::module& module )
     {
-        do_define_pointset_colocation< 2 >( module );
-        do_define_pointset_colocation< 3 >( module );
+        do_define_point_set_colocation< 2 >( module );
+        do_define_point_set_colocation< 3 >( module );
     }
 } // namespace geode

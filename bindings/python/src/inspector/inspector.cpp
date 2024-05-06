@@ -98,13 +98,13 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_solid_adjacency( module );
     geode::define_section_meshes_adjacency( module );
     geode::define_brep_meshes_adjacency( module );
-    geode::define_edgedcurve_colocation( module );
-    geode::define_pointset_colocation( module );
+    geode::define_edged_curve_colocation( module );
+    geode::define_point_set_colocation( module );
     geode::define_surface_colocation( module );
     geode::define_solid_colocation( module );
     geode::define_models_meshes_colocation( module );
     geode::define_models_uv_colocation( module );
-    geode::define_edgedcurve_degeneration( module );
+    geode::define_edged_curve_degeneration( module );
     geode::define_solid_degeneration( module );
     geode::define_surface_degeneration( module );
     geode::define_brep_meshes_degeneration( module );
@@ -125,8 +125,8 @@ PYBIND11_MODULE( opengeode_inspector_py_inspector, module )
     geode::define_section_meshes_inspector( module );
     geode::define_brep_inspector( module );
     geode::define_section_inspector( module );
-    geode::define_pointset_inspector( module );
-    geode::define_edgedcurve_inspector( module );
+    geode::define_point_set_inspector( module );
+    geode::define_edged_curve_inspector( module );
     geode::define_surface_inspector( module );
     geode::define_solid_inspector( module );
 }

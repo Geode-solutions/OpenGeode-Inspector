@@ -42,10 +42,10 @@
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
 
 template < geode::index_t dimension >
-void inspect_pointset( const geode::PointSet< dimension >& pointset )
+void inspect_point_set( const geode::PointSet< dimension >& pointset )
 {
     const geode::PointSetInspector< dimension > inspector{ pointset };
-    const auto result = inspector.inspect_pointset();
+    const auto result = inspector.inspect_point_set();
 
     geode::Logger::info( result.string() );
 }
@@ -66,11 +66,11 @@ int main( int argc, char* argv[] )
 
         if( geode::PointSetInputFactory3D::has_creator( ext ) )
         {
-            inspect_pointset( *geode::load_point_set< 3 >( filename ) );
+            inspect_point_set( *geode::load_point_set< 3 >( filename ) );
         }
         else if( geode::PointSetInputFactory2D::has_creator( ext ) )
         {
-            inspect_pointset( *geode::load_point_set< 2 >( filename ) );
+            inspect_point_set( *geode::load_point_set< 2 >( filename ) );
         }
         else
         {

@@ -93,9 +93,7 @@ namespace geode
                     non_manifold_edges.add_issue( edge.first.vertices(),
                         absl::StrCat( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
-                            edge.first.vertices()[1],
-                            ", is not manifold (Surface ", mesh_.id().string(),
-                            ")." ) );
+                            edge.first.vertices()[1], " is not manifold." ) );
                 }
             }
             return non_manifold_edges;
