@@ -41,9 +41,9 @@ namespace geode
 
         bool is_mesh_degenerated() const
         {
-            for( const auto edge_index : Range{ mesh_.nb_edges() } )
+            for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {
-                if( mesh_.edge_length( edge_index ) < global_epsilon )
+                if( mesh_.is_edge_degenerated( edge_id ) )
                 {
                     return true;
                 }
@@ -56,15 +56,15 @@ namespace geode
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges of EdgeCurve " + mesh_.id().string() + "."
             };
-            for( const auto edge_index : Range{ mesh_.nb_edges() } )
+            for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {
-                if( mesh_.edge_length( edge_index ) < global_epsilon )
+                if( mesh_.is_edge_degenerated( edge_id ) )
                 {
-                    degenerated_edges_index.add_issue( edge_index,
-                        absl::StrCat( "Edge with index ", edge_index,
-                            ", at position [",
-                            mesh_.edge_barycenter( edge_index ).string(),
-                            "], is degenerated." ) );
+                    degenerated_edges_index.add_issue(
+                        edge_id, absl::StrCat( "Edge with index ", edge_id,
+                                     ", at position [",
+                                     mesh_.edge_barycenter( edge_id ).string(),
+                                     "], is degenerated." ) );
                 }
             }
             return degenerated_edges_index;

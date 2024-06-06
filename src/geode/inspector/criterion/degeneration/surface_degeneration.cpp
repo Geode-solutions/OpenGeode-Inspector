@@ -54,7 +54,7 @@ namespace geode
             }
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
-                if( polygon_is_degenerated( polygon_id ) )
+                if( this->mesh().is_polygon_degenerated( polygon_id ) )
                 {
                     return true;
                 }
@@ -69,7 +69,7 @@ namespace geode
             };
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
-                if( polygon_is_degenerated( polygon_id ) )
+                if( this->mesh().is_polygon_degenerated( polygon_id ) )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
@@ -77,17 +77,6 @@ namespace geode
                 }
             }
             return wrong_polygons;
-        }
-
-    private:
-        bool polygon_is_degenerated( index_t polygon_id ) const
-        {
-            const auto& mesh = this->mesh();
-            if( mesh.polygon_area( polygon_id ) > global_epsilon )
-            {
-                return false;
-            }
-            return true;
         }
     };
 
