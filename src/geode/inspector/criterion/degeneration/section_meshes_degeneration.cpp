@@ -55,7 +55,7 @@ namespace geode
     std::string
         SectionMeshesDegenerationInspectionResult::inspection_type() const
     {
-        return "Adjacencies inspection";
+        return "Degeneration inspection";
     }
 
     class SectionComponentMeshesDegeneration::Impl

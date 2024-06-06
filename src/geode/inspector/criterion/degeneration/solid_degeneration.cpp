@@ -55,7 +55,7 @@ namespace geode
             for( const auto polyhedron_id :
                 Range{ this->mesh().nb_polyhedra() } )
             {
-                if( polyhedron_is_degenerated( polyhedron_id ) )
+                if( this->mesh().is_polyhedron_degenerated( polyhedron_id ) )
                 {
                     return true;
                 }
@@ -71,7 +71,7 @@ namespace geode
             for( const auto polyhedron_id :
                 Range{ this->mesh().nb_polyhedra() } )
             {
-                if( polyhedron_is_degenerated( polyhedron_id ) )
+                if( this->mesh().is_polyhedron_degenerated( polyhedron_id ) )
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
                         absl::StrCat( "Polyhedron ", polyhedron_id,
@@ -80,17 +80,6 @@ namespace geode
                 }
             }
             return wrong_polyhedra;
-        }
-
-    private:
-        bool polyhedron_is_degenerated( index_t polyhedron_id ) const
-        {
-            const auto& mesh = this->mesh();
-            if( mesh.polyhedron_volume( polyhedron_id ) > global_epsilon )
-            {
-                return false;
-            }
-            return true;
         }
     };
 

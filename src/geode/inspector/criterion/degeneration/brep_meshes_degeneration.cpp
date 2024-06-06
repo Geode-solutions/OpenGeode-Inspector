@@ -58,7 +58,7 @@ namespace geode
 
     std::string BRepMeshesDegenerationInspectionResult::inspection_type() const
     {
-        return "Adjacencies inspection";
+        return "Degeneration inspection";
     }
 
     class BRepComponentMeshesDegeneration::Impl
