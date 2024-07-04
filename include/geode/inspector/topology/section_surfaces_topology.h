@@ -22,7 +22,7 @@
  */
 
 #pragma once
-#include <absl/types/optional.h>
+#include <optional>
 
 #include <geode/basic/uuid.h>
 
@@ -36,8 +36,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        SectionSurfacesTopologyInspectionResult
+    struct
+        opengeode_inspector_inspector_api SectionSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of Surfaces without mesh."
@@ -78,11 +78,10 @@ namespace geode
         bool section_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
-            vertex_is_part_of_invalid_embedded_surface(
-                index_t unique_vertex_index ) const;
+        std::optional< std::string > vertex_is_part_of_invalid_embedded_surface(
+            index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
+        std::optional< std::string >
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
