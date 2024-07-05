@@ -21,6 +21,8 @@
  *
  */
 
+#include <optional>
+
 #include <geode/inspector/topology/private/topology_helpers.h>
 #include <geode/inspector/topology/section_corners_topology.h>
 
@@ -139,7 +141,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const
     {
@@ -157,10 +159,10 @@ namespace geode
                 corner_found = true;
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const
     {
@@ -176,10 +178,10 @@ namespace geode
                     "', which has several embeddings." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const
     {
@@ -196,10 +198,10 @@ namespace geode
                     "', which is neither internal nor boundary." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const
     {
@@ -231,7 +233,7 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     SectionCornersTopologyInspectionResult

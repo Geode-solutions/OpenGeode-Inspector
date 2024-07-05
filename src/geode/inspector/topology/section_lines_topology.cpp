@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/section_lines_topology.h>
 
+#include <optional>
+
 #include <absl/algorithm/container.h>
 
 #include <geode/mesh/core/edged_curve.h>
@@ -126,7 +128,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             const index_t unique_vertex_index ) const
     {
@@ -146,10 +148,10 @@ namespace geode
                     "', which is neither embedded nor incident." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionLinesTopology::vertex_is_part_of_invalid_embedded_line(
             const index_t unique_vertex_index ) const
     {
@@ -163,7 +165,7 @@ namespace geode
             }
             if( section_.nb_embeddings( line_cmv.component_id.id() ) < 1 )
             {
-                return absl::nullopt;
+                return std::nullopt;
             }
             if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
             {
@@ -200,10 +202,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
@@ -211,7 +213,7 @@ namespace geode
             section_, unique_vertex_index, Line2D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         const auto& line_id = line_uuids[0];
         const auto surface_uuids = detail::components_uuids(
@@ -255,10 +257,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionLinesTopology::vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const
     {
@@ -283,7 +285,7 @@ namespace geode
                 unique_vertex_index,
                 " is part of multiple lines but is not a corner." );
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     SectionLinesTopologyInspectionResult

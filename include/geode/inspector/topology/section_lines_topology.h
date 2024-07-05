@@ -21,7 +21,7 @@
  *
  */
 #pragma once
-#include <absl/types/optional.h>
+#include <optional>
 
 #include <geode/basic/uuid.h>
 
@@ -93,17 +93,17 @@ namespace geode
         bool section_lines_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
+        std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_line(
                 const index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > vertex_is_part_of_invalid_embedded_line(
+        std::optional< std::string > vertex_is_part_of_invalid_embedded_line(
             const index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > vertex_is_part_of_invalid_single_line(
+        std::optional< std::string > vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > vertex_has_lines_but_is_not_a_corner(
+        std::optional< std::string > vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const;
 
         SectionLinesTopologyInspectionResult inspect_lines_topology() const;

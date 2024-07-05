@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/section_surfaces_topology.h>
 
+#include <optional>
+
 #include <geode/basic/algorithm.h>
 #include <geode/basic/logger.h>
 
@@ -106,7 +108,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             index_t unique_vertex_index ) const
     {
@@ -127,7 +129,7 @@ namespace geode
                     && section_.Relationships::is_boundary(
                         line_cmv.component_id.id(), surface_uuids[1] ) )
                 {
-                    return absl::nullopt;
+                    return std::nullopt;
                 }
             }
             return absl::StrCat( "Unique vertex with index ",
@@ -135,16 +137,16 @@ namespace geode
                 " is part of two surfaces, but is associated to no "
                 "line boundary of the two surfaces." );
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string > SectionSurfacesTopology::
+    std::optional< std::string > SectionSurfacesTopology::
         vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const
     {
         if( !detail::section_surfaces_are_meshed( section_ ) )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
@@ -175,7 +177,7 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     SectionSurfacesTopologyInspectionResult

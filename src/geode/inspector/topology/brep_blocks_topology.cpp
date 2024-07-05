@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/brep_blocks_topology.h>
 
+#include <optional>
+
 #include <absl/container/flat_hash_set.h>
 
 #include <geode/basic/algorithm.h>
@@ -113,7 +115,7 @@ namespace geode
                       unique_vertex_index ) );
     }
 
-    absl::optional< std::string > BRepBlocksTopology::
+    std::optional< std::string > BRepBlocksTopology::
         unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
@@ -121,7 +123,7 @@ namespace geode
             brep_, unique_vertex_index, Block3D::component_type_static() );
         if( block_uuids.size() != 2 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         for( const auto& surface_cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -136,7 +138,7 @@ namespace geode
                 && brep_.Relationships::is_boundary(
                     surface_cmv.component_id.id(), block_uuids[1] ) )
             {
-                return absl::nullopt;
+                return std::nullopt;
             }
             for( const auto& line_cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -154,7 +156,7 @@ namespace geode
                          || brep_.Relationships::is_boundary(
                              surface_cmv.component_id.id(), block_uuids[1] ) ) )
                 {
-                    return absl::nullopt;
+                    return std::nullopt;
                 }
             }
         }
@@ -164,7 +166,7 @@ namespace geode
             "surfaces." );
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepBlocksTopology::unique_vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const
     {
@@ -324,7 +326,7 @@ namespace geode
                     " block CMVs (should be ", predicted_nb_block_cmvs, ")." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     BRepBlocksTopologyInspectionResult

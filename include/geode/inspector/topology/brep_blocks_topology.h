@@ -23,11 +23,10 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <absl/types/optional.h>
 
 #include <geode/basic/uuid.h>
 
@@ -77,11 +76,11 @@ namespace geode
 
         bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
+        std::optional< std::string >
             unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
                 index_t unique_vertex_index ) const;
 
-        absl::optional< std::string >
+        std::optional< std::string >
             unique_vertex_block_cmvs_count_is_incorrect(
                 index_t unique_vertex_index ) const;
 
