@@ -35,8 +35,8 @@
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        SectionMeshesManifoldInspectionResult
+    struct
+        opengeode_inspector_inspector_api SectionMeshesManifoldInspectionResult
     {
         InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
             "Section component meshes with non manifold vertices"
@@ -59,7 +59,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionComponentMeshesManifold );
 
     public:
-        SectionComponentMeshesManifold( const Section& section );
+        explicit SectionComponentMeshesManifold( const Section& section );
 
         ~SectionComponentMeshesManifold();
 

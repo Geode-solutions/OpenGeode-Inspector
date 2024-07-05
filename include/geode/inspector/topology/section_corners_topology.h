@@ -38,8 +38,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        SectionCornersTopologyInspectionResult
+    struct
+        opengeode_inspector_inspector_api SectionCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
             "uuids of Corners without mesh."
@@ -74,7 +74,7 @@ namespace geode
     class opengeode_inspector_inspector_api SectionCornersTopology
     {
     public:
-        SectionCornersTopology( const Section& section );
+        explicit SectionCornersTopology( const Section& section );
 
         /*!
          * Checks if the section unique vertices are valid corners, i.e.

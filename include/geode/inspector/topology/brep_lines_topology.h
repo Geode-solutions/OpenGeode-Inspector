@@ -79,7 +79,7 @@ namespace geode
     class opengeode_inspector_inspector_api BRepLinesTopology
     {
     public:
-        BRepLinesTopology( const BRep& brep );
+        explicit BRepLinesTopology( const BRep& brep );
 
         /*!
          * Checks if the brep unique vertices are parts of valid lines, i.e.

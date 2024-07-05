@@ -51,7 +51,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionInspector );
 
     public:
-        SectionInspector( const Section& section );
+       explicit SectionInspector( const Section& section );
 
         SectionInspectionResult inspect_section() const;
     };

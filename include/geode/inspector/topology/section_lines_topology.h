@@ -35,8 +35,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        SectionLinesTopologyInspectionResult
+    struct
+        opengeode_inspector_inspector_api SectionLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
             "uuids of Lines without mesh."
@@ -76,7 +76,7 @@ namespace geode
     class opengeode_inspector_inspector_api SectionLinesTopology
     {
     public:
-        SectionLinesTopology( const Section& section );
+        explicit SectionLinesTopology( const Section& section );
 
         /*!
          * Checks if the section unique vertices are parts of valid lines,

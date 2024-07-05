@@ -38,8 +38,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        ElementsIntersectionsInspectionResult
+    struct
+        opengeode_inspector_inspector_api ElementsIntersectionsInspectionResult
     {
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
@@ -59,7 +59,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ModelMeshesIntersections );
 
     public:
-        ModelMeshesIntersections( const Model& model );
+        explicit ModelMeshesIntersections( const Model& model );
 
         ~ModelMeshesIntersections();
 

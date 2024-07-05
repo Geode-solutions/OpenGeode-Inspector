@@ -158,7 +158,7 @@ namespace geode
                                 vertices[e == vertices.size() - 1 ? 0
                                                                   : e + 1] } );
                         const auto info = edges.try_emplace(
-                            std::array< index_t, 2 >{ v0, v1 },
+                            Edge{ std::array< index_t, 2 >{ v0, v1 } },
                             std::vector< uuid >{ surface.id() } );
                         if( !info.second )
                         {

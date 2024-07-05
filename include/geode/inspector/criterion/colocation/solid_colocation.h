@@ -45,7 +45,7 @@ namespace geode
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
-        SolidMeshColocation( const SolidMesh< dimension >& mesh );
+        explicit SolidMeshColocation( const SolidMesh< dimension >& mesh );
 
         ~SolidMeshColocation();
 

@@ -45,7 +45,7 @@ namespace geode
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
-        SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
+        explicit SolidMeshDegeneration( const SolidMesh< dimension >& mesh );
 
         ~SolidMeshDegeneration();
 

@@ -37,14 +37,14 @@ void check_vertex_manifold2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 2. } } );
-    builder->set_point( 2, { { 2., 5. } } );
-    builder->set_point( 3, { { 3., 0. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 2., 5. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 0. } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 3, 2 } );
-    builder->set_polygon_adjacent( { { 0, 1 } }, 1 );
-    builder->set_polygon_adjacent( { { 1, 2 } }, 0 );
+    builder->set_polygon_adjacent( { 0, 1 }, 1 );
+    builder->set_polygon_adjacent( { 1, 2 }, 0 );
 
     const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_vertices_are_manifold(),
@@ -59,11 +59,11 @@ void check_vertex_non_manifold2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 2. } } );
-    builder->set_point( 2, { { 2., 5. } } );
-    builder->set_point( 3, { { 3., 0. } } );
-    builder->set_point( 4, { { 5., 3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 2., 5. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 0. } } );
+    builder->set_point( 4, geode::Point2D{ { 5., 3. } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 3, 4 } );
 
@@ -83,18 +83,18 @@ void check_edge_manifold2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 2. } } );
-    builder->set_point( 2, { { 2., 5. } } );
-    builder->set_point( 3, { { 3., 0. } } );
-    builder->set_point( 4, { { 5., 3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 2., 5. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 0. } } );
+    builder->set_point( 4, geode::Point2D{ { 5., 3. } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 4, 2 } );
     builder->create_triangle( { 1, 3, 4 } );
-    builder->set_polygon_adjacent( { { 0, 1 } }, 1 );
-    builder->set_polygon_adjacent( { { 1, 2 } }, 0 );
-    builder->set_polygon_adjacent( { { 1, 0 } }, 2 );
-    builder->set_polygon_adjacent( { { 2, 2 } }, 1 );
+    builder->set_polygon_adjacent( { 0, 1 }, 1 );
+    builder->set_polygon_adjacent( { 1, 2 }, 0 );
+    builder->set_polygon_adjacent( { 1, 0 }, 2 );
+    builder->set_polygon_adjacent( { 2, 2 }, 1 );
 
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( manifold_inspector.mesh_edges_are_manifold(),
@@ -109,17 +109,17 @@ void check_edge_non_manifold2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 2. } } );
-    builder->set_point( 2, { { 2., 5. } } );
-    builder->set_point( 3, { { 3., 0. } } );
-    builder->set_point( 4, { { 5., 3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 2., 5. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 0. } } );
+    builder->set_point( 4, geode::Point2D{ { 5., 3. } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 4, 2 } );
     builder->create_triangle( { 1, 3, 2 } );
-    builder->set_polygon_adjacent( { { 0, 1 } }, 1 );
-    builder->set_polygon_adjacent( { { 1, 2 } }, 0 );
-    builder->set_polygon_adjacent( { { 2, 2 } }, 0 );
+    builder->set_polygon_adjacent( { 0, 1 }, 1 );
+    builder->set_polygon_adjacent( { 1, 2 }, 0 );
+    builder->set_polygon_adjacent( { 2, 2 }, 0 );
 
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
     OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),

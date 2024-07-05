@@ -74,7 +74,7 @@ namespace geode
     class opengeode_inspector_inspector_api BRepCornersTopology
     {
     public:
-        BRepCornersTopology( const BRep& brep );
+        explicit BRepCornersTopology( const BRep& brep );
 
         /*!
          * Checks if the brep unique vertices are valid corners, i.e.

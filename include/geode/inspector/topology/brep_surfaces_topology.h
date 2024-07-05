@@ -36,8 +36,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        BRepSurfacesTopologyInspectionResult
+    struct
+        opengeode_inspector_inspector_api BRepSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of surface without mesh."
@@ -82,7 +82,7 @@ namespace geode
     class opengeode_inspector_inspector_api BRepSurfacesTopology
     {
     public:
-        BRepSurfacesTopology( const BRep& brep );
+        explicit BRepSurfacesTopology( const BRep& brep );
 
         /*!
          * Checks if the brep unique vertices are parts of valid surfaces,

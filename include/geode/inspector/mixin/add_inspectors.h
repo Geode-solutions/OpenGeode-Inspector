@@ -38,7 +38,7 @@ namespace geode
     class AddInspectors : public Inspectors...
     {
     protected:
-        AddInspectors( const Mesh& mesh ) : Inspectors{ mesh }... {}
+        explicit AddInspectors( const Mesh& mesh ) : Inspectors{ mesh }... {}
         AddInspectors( AddInspectors&& ) = default;
     };
 } // namespace geode

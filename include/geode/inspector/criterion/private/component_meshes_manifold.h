@@ -49,7 +49,7 @@ namespace geode
             InspectionIssuesMap< std::array< index_t, 2 > >& issues_map ) const;
 
     protected:
-        ComponentMeshesManifold( const Model& model );
+        explicit ComponentMeshesManifold( const Model& model );
 
         const Model& model() const;
 

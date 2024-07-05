@@ -99,7 +99,7 @@ namespace geode
               TriangulatedSurfaceIntersections< dimension > >
     {
     public:
-        TriangulatedSurfaceInspector(
+        explicit TriangulatedSurfaceInspector(
             const TriangulatedSurface< dimension >& mesh );
         virtual ~TriangulatedSurfaceInspector() {}
 

@@ -46,7 +46,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( TriangulatedSurfaceIntersections );
 
     public:
-        TriangulatedSurfaceIntersections(
+        explicit TriangulatedSurfaceIntersections(
             const TriangulatedSurface< dimension >& mesh );
 
         ~TriangulatedSurfaceIntersections();

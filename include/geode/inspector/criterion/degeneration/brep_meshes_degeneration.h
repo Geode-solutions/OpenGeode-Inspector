@@ -38,8 +38,8 @@ namespace geode
 
 namespace geode
 {
-    struct opengeode_inspector_inspector_api
-        BRepMeshesDegenerationInspectionResult
+    struct
+        opengeode_inspector_inspector_api BRepMeshesDegenerationInspectionResult
     {
         InspectionIssuesMap< index_t > degenerated_edges{
             "BRep component meshes with degenerated edges"
@@ -65,7 +65,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( BRepComponentMeshesDegeneration );
 
     public:
-        BRepComponentMeshesDegeneration( const BRep& brep );
+        explicit BRepComponentMeshesDegeneration( const BRep& brep );
 
         ~BRepComponentMeshesDegeneration();
 

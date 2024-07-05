@@ -35,10 +35,10 @@ void check_non_colocation2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
-    builder->set_point( 3, { { 3., 3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 3. } } );
 
     const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
@@ -53,13 +53,15 @@ void check_colocation2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 7 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 0., 2. } } );
-    builder->set_point( 2, { { 0., 0. } } );
-    builder->set_point( 3, { { 2., 0. } } );
-    builder->set_point( 4, { { 1., 4. } } );
-    builder->set_point( 5, { { 2., geode::global_epsilon / 2 } } );
-    builder->set_point( 6, { { geode::global_epsilon / 1.1, 2. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 0., 0. } } );
+    builder->set_point( 3, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 4, geode::Point2D{ { 1., 4. } } );
+    builder->set_point(
+        5, geode::Point2D{ { 2., geode::global_epsilon / 2 } } );
+    builder->set_point(
+        6, geode::Point2D{ { geode::global_epsilon / 1.1, 2. } } );
 
     const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
@@ -92,10 +94,10 @@ void check_non_colocation3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
-    builder->set_point( 3, { { 3., 3., 2. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
+    builder->set_point( 3, geode::Point3D{ { 3., 3., 2. } } );
 
     const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
     OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
@@ -110,14 +112,15 @@ void check_colocation3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 7 );
-    builder->set_point( 0, { { 0., 2., 1. } } );
-    builder->set_point( 1, { { 0., 2., 1. } } );
-    builder->set_point( 2, { { 0., 0., 0. } } );
-    builder->set_point( 3, { { 2., 0., 0. } } );
-    builder->set_point( 4, { { 1., 4., 3. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 1. } } );
+    builder->set_point( 1, geode::Point3D{ { 0., 2., 1. } } );
+    builder->set_point( 2, geode::Point3D{ { 0., 0., 0. } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 0., 0. } } );
+    builder->set_point( 4, geode::Point3D{ { 1., 4., 3. } } );
+    builder->set_point( 5, geode::Point3D{ { 2., geode::global_epsilon / 2,
+                               geode::global_epsilon / 2 } } );
     builder->set_point(
-        5, { { 2., geode::global_epsilon / 2, geode::global_epsilon / 2 } } );
-    builder->set_point( 6, { { geode::global_epsilon / 1.1, 2., 1. } } );
+        6, geode::Point3D{ { geode::global_epsilon / 1.1, 2., 1. } } );
 
     const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
     OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),

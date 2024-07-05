@@ -44,7 +44,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( PointSetColocation );
 
     public:
-        PointSetColocation( const PointSet< dimension >& mesh );
+        explicit PointSetColocation( const PointSet< dimension >& mesh );
 
         ~PointSetColocation();
 

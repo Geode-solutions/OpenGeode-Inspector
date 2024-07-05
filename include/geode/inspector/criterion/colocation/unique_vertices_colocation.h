@@ -62,7 +62,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( UniqueVerticesColocation );
 
     public:
-        UniqueVerticesColocation( const Model& model );
+        explicit UniqueVerticesColocation( const Model& model );
 
         ~UniqueVerticesColocation();
 

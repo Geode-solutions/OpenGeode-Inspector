@@ -53,7 +53,7 @@ namespace geode
             InspectionIssuesMap< index_t >& issues_map ) const;
 
     protected:
-        ComponentMeshesDegeneration( const Model& model );
+        explicit ComponentMeshesDegeneration( const Model& model );
 
         const Model& model() const;
 

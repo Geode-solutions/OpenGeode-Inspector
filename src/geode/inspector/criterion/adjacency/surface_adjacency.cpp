@@ -93,7 +93,8 @@ namespace geode
                 LRange{ mesh_.nb_polygon_edges( polygon_adj_id ) } )
             {
                 const PolygonEdge adj_edge{ polygon_adj_id, edge_id };
-                const auto adj_v0 = mesh_.polygon_vertex( adj_edge );
+                const auto adj_v0 =
+                    mesh_.polygon_vertex( PolygonVertex{ adj_edge } );
                 if( adj_v0 == v1 )
                 {
                     const auto adj_v1 =

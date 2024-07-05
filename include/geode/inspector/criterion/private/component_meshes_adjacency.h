@@ -50,7 +50,7 @@ namespace geode
             InspectionIssuesMap< PolygonEdge >& issues_map ) const;
 
     protected:
-        ComponentMeshesAdjacency( const Model& model );
+        explicit ComponentMeshesAdjacency( const Model& model );
 
         const Model& model() const;
 
