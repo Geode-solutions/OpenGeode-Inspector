@@ -23,9 +23,8 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
-
-#include <absl/types/optional.h>
 
 #include <geode/basic/uuid.h>
 
@@ -86,16 +85,16 @@ namespace geode
          */
         bool brep_corner_topology_is_valid( index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > unique_vertex_has_multiple_corners(
+        std::optional< std::string > unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > corner_has_multiple_embeddings(
+        std::optional< std::string > corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > corner_is_not_internal_nor_boundary(
+        std::optional< std::string > corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const;
 
-        absl::optional< std::string > corner_is_part_of_line_but_not_boundary(
+        std::optional< std::string > corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const;
 
         BRepCornersTopologyInspectionResult inspect_corners_topology() const;

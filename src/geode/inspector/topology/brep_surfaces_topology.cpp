@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/brep_surfaces_topology.h>
 
+#include <optional>
+
 #include <absl/algorithm/container.h>
 
 #include <geode/basic/algorithm.h>
@@ -168,7 +170,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string > BRepSurfacesTopology::
+    std::optional< std::string > BRepSurfacesTopology::
         vertex_is_part_of_not_internal_nor_boundary_surface(
             index_t unique_vertex_index ) const
     {
@@ -186,10 +188,10 @@ namespace geode
                     "a block." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             const index_t unique_vertex_index ) const
     {
@@ -224,10 +226,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepSurfacesTopology::vertex_is_part_of_invalid_single_surface(
             index_t unique_vertex_index ) const
     {
@@ -235,7 +237,7 @@ namespace geode
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() != 1 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         const auto& surface_id = surface_uuids[0];
         const auto block_uuids = detail::components_uuids(
@@ -285,10 +287,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepSurfacesTopology::vertex_is_part_of_invalid_multiple_surfaces(
             index_t unique_vertex_index ) const
     {
@@ -296,7 +298,7 @@ namespace geode
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() < 2 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         const auto line_uuids = detail::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
@@ -368,10 +370,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepSurfacesTopology::vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const
     {
@@ -379,7 +381,7 @@ namespace geode
             brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.empty() )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -408,7 +410,7 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
     BRepSurfacesTopologyInspectionResult
         BRepSurfacesTopology::inspect_surfaces_topology() const
