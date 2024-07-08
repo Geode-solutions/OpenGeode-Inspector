@@ -40,8 +40,8 @@ namespace geode
 
 namespace geode
 {
-    struct
-        opengeode_inspector_inspector_api SectionMeshesAdjacencyInspectionResult
+    struct opengeode_inspector_inspector_api
+        SectionMeshesAdjacencyInspectionResult
     {
         InspectionIssuesMap< PolygonEdge >
             surfaces_edges_with_wrong_adjacencies{

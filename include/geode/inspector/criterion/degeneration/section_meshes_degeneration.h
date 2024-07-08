@@ -38,8 +38,8 @@ namespace geode
 
 namespace geode
 {
-    struct
-        opengeode_inspector_inspector_api SectionMeshesDegenerationInspectionResult
+    struct opengeode_inspector_inspector_api
+        SectionMeshesDegenerationInspectionResult
     {
         InspectionIssuesMap< index_t > degenerated_edges{
             "Section component meshes with degenerated edges"

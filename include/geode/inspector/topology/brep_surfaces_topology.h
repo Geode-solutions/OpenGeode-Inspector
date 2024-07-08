@@ -36,8 +36,8 @@ namespace geode
 
 namespace geode
 {
-    struct
-        opengeode_inspector_inspector_api BRepSurfacesTopologyInspectionResult
+    struct opengeode_inspector_inspector_api
+        BRepSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
             "uuids of surface without mesh."

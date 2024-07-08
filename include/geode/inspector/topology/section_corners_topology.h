@@ -37,8 +37,8 @@ namespace geode
 
 namespace geode
 {
-    struct
-        opengeode_inspector_inspector_api SectionCornersTopologyInspectionResult
+    struct opengeode_inspector_inspector_api
+        SectionCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
             "uuids of Corners without mesh."
