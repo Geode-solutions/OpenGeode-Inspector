@@ -62,7 +62,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionMeshesInspector );
 
     public:
-        SectionMeshesInspector( const Section& section );
+        explicit SectionMeshesInspector( const Section& section );
 
         SectionMeshesInspectionResult inspect_section_meshes() const;
     };

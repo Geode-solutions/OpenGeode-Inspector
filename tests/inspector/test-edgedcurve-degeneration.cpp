@@ -35,9 +35,9 @@ void check_non_degeneration2D()
     auto curve = geode::EdgedCurve2D::create();
     auto builder = geode::EdgedCurveBuilder2D::create( *curve );
     builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
 
     builder->create_edge( 0, 1 );
     builder->create_edge( 1, 2 );
@@ -56,9 +56,10 @@ void check_degeneration_by_colocalisation2D()
     auto curve = geode::EdgedCurve2D::create();
     auto builder = geode::EdgedCurveBuilder2D::create( *curve );
     builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 2., geode::global_epsilon / 2 } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point(
+        2, geode::Point2D{ { 2., geode::global_epsilon / 2 } } );
 
     builder->create_edge( 0, 1 );
     builder->create_edge( 0, 2 );
@@ -80,9 +81,9 @@ void check_non_degeneration3D()
     auto curve = geode::EdgedCurve3D::create();
     auto builder = geode::EdgedCurveBuilder3D::create( *curve );
     builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
 
     builder->create_edge( 0, 1 );
     builder->create_edge( 1, 2 );
@@ -101,9 +102,9 @@ void check_degeneration_by_colocalisation3D()
     auto curve = geode::EdgedCurve3D::create();
     auto builder = geode::EdgedCurveBuilder3D::create( *curve );
     builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 2., geode::global_epsilon / 2,
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 2., geode::global_epsilon / 2,
                                0.5 + geode::global_epsilon / 2 } } );
 
     builder->create_edge( 0, 1 );

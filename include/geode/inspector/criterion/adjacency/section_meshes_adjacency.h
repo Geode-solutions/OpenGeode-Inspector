@@ -61,7 +61,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionComponentMeshesAdjacency );
 
     public:
-        SectionComponentMeshesAdjacency( const Section& model );
+        explicit SectionComponentMeshesAdjacency( const Section& model );
 
         ~SectionComponentMeshesAdjacency();
 

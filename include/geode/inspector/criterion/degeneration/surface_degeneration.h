@@ -44,7 +44,8 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceMeshDegeneration );
 
     public:
-        SurfaceMeshDegeneration( const SurfaceMesh< dimension >& mesh );
+        explicit SurfaceMeshDegeneration(
+            const SurfaceMesh< dimension >& mesh );
 
         ~SurfaceMeshDegeneration();
 

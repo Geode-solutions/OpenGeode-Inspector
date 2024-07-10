@@ -82,7 +82,7 @@ namespace geode
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
-        SolidMeshInspector( const SolidMesh< dimension >& mesh );
+        explicit SolidMeshInspector( const SolidMesh< dimension >& mesh );
         SolidInspectionResult inspect_solid() const;
     };
     ALIAS_3D( SolidMeshInspector );

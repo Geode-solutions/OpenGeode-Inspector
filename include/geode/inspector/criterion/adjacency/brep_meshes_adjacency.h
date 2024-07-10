@@ -66,7 +66,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( BRepComponentMeshesAdjacency );
 
     public:
-        BRepComponentMeshesAdjacency( const BRep& model );
+        explicit BRepComponentMeshesAdjacency( const BRep& model );
 
         ~BRepComponentMeshesAdjacency();
 

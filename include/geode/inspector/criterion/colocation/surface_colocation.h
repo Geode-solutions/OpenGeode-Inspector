@@ -44,7 +44,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceMeshColocation );
 
     public:
-        SurfaceMeshColocation( const SurfaceMesh< dimension >& mesh );
+        explicit SurfaceMeshColocation( const SurfaceMesh< dimension >& mesh );
 
         ~SurfaceMeshColocation();
 

@@ -44,7 +44,8 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceMeshVertexManifold );
 
     public:
-        SurfaceMeshVertexManifold( const SurfaceMesh< dimension >& mesh );
+        explicit SurfaceMeshVertexManifold(
+            const SurfaceMesh< dimension >& mesh );
 
         ~SurfaceMeshVertexManifold();
 

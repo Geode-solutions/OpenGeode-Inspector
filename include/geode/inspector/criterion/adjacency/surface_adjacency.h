@@ -45,7 +45,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceMeshAdjacency );
 
     public:
-        SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
+        explicit SurfaceMeshAdjacency( const SurfaceMesh< dimension >& mesh );
 
         ~SurfaceMeshAdjacency();
 

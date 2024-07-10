@@ -82,7 +82,7 @@ namespace geode
     class opengeode_inspector_inspector_api BRepSurfacesTopology
     {
     public:
-        BRepSurfacesTopology( const BRep& brep );
+        explicit BRepSurfacesTopology( const BRep& brep );
 
         /*!
          * Checks if the brep unique vertices are parts of valid surfaces,

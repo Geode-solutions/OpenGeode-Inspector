@@ -63,7 +63,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionTopologyInspector );
 
     public:
-        SectionTopologyInspector( const Section& section );
+        explicit SectionTopologyInspector( const Section& section );
         ~SectionTopologyInspector();
 
         /*!

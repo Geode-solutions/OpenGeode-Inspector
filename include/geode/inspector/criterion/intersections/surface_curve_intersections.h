@@ -47,7 +47,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceCurveIntersections );
 
     public:
-        SurfaceCurveIntersections(
+        explicit SurfaceCurveIntersections(
             const TriangulatedSurface< dimension >& surface,
             const EdgedCurve< dimension >& curve );
 

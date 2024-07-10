@@ -45,7 +45,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SolidMeshAdjacency );
 
     public:
-        SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
+        explicit SolidMeshAdjacency( const SolidMesh< dimension >& mesh );
 
         ~SolidMeshAdjacency();
 

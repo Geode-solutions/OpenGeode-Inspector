@@ -50,7 +50,8 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SurfaceMeshEdgeManifold );
 
     public:
-        SurfaceMeshEdgeManifold( const SurfaceMesh< dimension >& mesh );
+        explicit SurfaceMeshEdgeManifold(
+            const SurfaceMesh< dimension >& mesh );
 
         ~SurfaceMeshEdgeManifold();
 
