@@ -78,7 +78,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( BRepComponentMeshesManifold );
 
     public:
-        BRepComponentMeshesManifold( const BRep& brep );
+        explicit BRepComponentMeshesManifold( const BRep& brep );
 
         ~BRepComponentMeshesManifold();
 

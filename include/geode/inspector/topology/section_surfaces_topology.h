@@ -67,7 +67,7 @@ namespace geode
     class opengeode_inspector_inspector_api SectionSurfacesTopology
     {
     public:
-        SectionSurfacesTopology( const Section& section );
+        explicit SectionSurfacesTopology( const Section& section );
 
         /*!
          * Checks if the section unique vertices are parts of valid

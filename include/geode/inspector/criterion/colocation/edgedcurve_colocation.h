@@ -44,7 +44,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( EdgedCurveColocation );
 
     public:
-        EdgedCurveColocation( const EdgedCurve< dimension >& mesh );
+        explicit EdgedCurveColocation( const EdgedCurve< dimension >& mesh );
 
         ~EdgedCurveColocation();
 

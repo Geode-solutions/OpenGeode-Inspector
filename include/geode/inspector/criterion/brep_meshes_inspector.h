@@ -62,7 +62,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( BRepMeshesInspector );
 
     public:
-        BRepMeshesInspector( const BRep& brep );
+        explicit BRepMeshesInspector( const BRep& brep );
 
         BRepMeshesInspectionResult inspect_brep_meshes() const;
     };

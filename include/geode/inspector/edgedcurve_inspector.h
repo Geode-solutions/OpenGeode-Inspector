@@ -57,7 +57,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 
     public:
-        EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
+        explicit EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
 
         EdgedCurveInspectionResult inspect_edged_curve() const;
     };

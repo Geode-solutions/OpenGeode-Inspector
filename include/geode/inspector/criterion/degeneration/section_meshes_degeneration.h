@@ -62,7 +62,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( SectionComponentMeshesDegeneration );
 
     public:
-        SectionComponentMeshesDegeneration( const Section& section );
+        explicit SectionComponentMeshesDegeneration( const Section& section );
 
         ~SectionComponentMeshesDegeneration();
 

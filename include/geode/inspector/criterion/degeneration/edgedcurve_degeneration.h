@@ -44,7 +44,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( EdgedCurveDegeneration );
 
     public:
-        EdgedCurveDegeneration( const EdgedCurve< dimension >& mesh );
+        explicit EdgedCurveDegeneration( const EdgedCurve< dimension >& mesh );
 
         ~EdgedCurveDegeneration();
 
