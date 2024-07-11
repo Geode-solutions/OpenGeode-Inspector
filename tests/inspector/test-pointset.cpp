@@ -58,9 +58,9 @@ void check_colocation2D()
     builder->set_point( 3, geode::Point2D{ { 2., 0. } } );
     builder->set_point( 4, geode::Point2D{ { 1., 4. } } );
     builder->set_point(
-        5, geode::Point2D{ { 2., geode::global_epsilon / 2 } } );
+        5, geode::Point2D{ { 2., geode::GLOBAL_EPSILON / 2 } } );
     builder->set_point(
-        6, geode::Point2D{ { geode::global_epsilon / 1.1, 2. } } );
+        6, geode::Point2D{ { geode::GLOBAL_EPSILON / 1.1, 2. } } );
 
     const geode::PointSetInspector2D inspector{ *pointset };
     OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),
@@ -113,10 +113,10 @@ void check_colocation3D()
     builder->set_point( 2, geode::Point3D{ { 0., 0., 0. } } );
     builder->set_point( 3, geode::Point3D{ { 2., 0., 0. } } );
     builder->set_point( 4, geode::Point3D{ { 1., 4., 3. } } );
-    builder->set_point( 5, geode::Point3D{ { 2., geode::global_epsilon / 2,
-                               geode::global_epsilon / 2 } } );
+    builder->set_point( 5, geode::Point3D{ { 2., geode::GLOBAL_EPSILON / 2,
+                               geode::GLOBAL_EPSILON / 2 } } );
     builder->set_point(
-        6, geode::Point3D{ { geode::global_epsilon / 1.1, 2., 1. } } );
+        6, geode::Point3D{ { geode::GLOBAL_EPSILON / 1.1, 2., 1. } } );
 
     const geode::PointSetInspector3D inspector{ *pointset };
     OPENGEODE_EXCEPTION( inspector.mesh_has_colocated_points(),

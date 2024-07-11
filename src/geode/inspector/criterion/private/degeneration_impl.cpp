@@ -94,7 +94,7 @@ namespace geode
                 mesh_.edges().edge_vertices( edge_index );
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
-            return point_point_distance( p1, p2 ) < global_epsilon;
+            return point_point_distance( p1, p2 ) < GLOBAL_EPSILON;
         }
 
         template < class MeshType >
