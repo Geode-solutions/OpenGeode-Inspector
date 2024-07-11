@@ -39,7 +39,7 @@ namespace geode
         class ColocationImpl
         {
         protected:
-            ColocationImpl( const Mesh& mesh );
+            explicit ColocationImpl( const Mesh& mesh );
 
         public:
             bool mesh_has_colocated_points() const;

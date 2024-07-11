@@ -65,7 +65,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( BRepComponentMeshesDegeneration );
 
     public:
-        BRepComponentMeshesDegeneration( const BRep& brep );
+        explicit BRepComponentMeshesDegeneration( const BRep& brep );
 
         ~BRepComponentMeshesDegeneration();
 

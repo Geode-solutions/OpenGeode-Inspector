@@ -36,10 +36,10 @@ void check_non_degeneration2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
-    builder->set_point( 3, { { 3., 3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 3. } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
@@ -57,10 +57,11 @@ void check_degeneration_by_colocalisation2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
-    builder->set_point( 3, { { 2., geode::global_epsilon / 2 } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
+    builder->set_point(
+        3, geode::Point2D{ { 2., geode::global_epsilon / 2 } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
@@ -82,9 +83,9 @@ void check_degeneration_by_point_multiple_presence2D()
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2. } } );
-    builder->set_point( 1, { { 2., 0. } } );
-    builder->set_point( 2, { { 1., 4. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 2, 1 } );
@@ -105,10 +106,10 @@ void check_non_degeneration3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
-    builder->set_point( 3, { { 3., 3., 2. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
+    builder->set_point( 3, geode::Point3D{ { 3., 3., 2. } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
@@ -126,10 +127,10 @@ void check_degeneration_by_colocalisation3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 4 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
-    builder->set_point( 3, { { 2., geode::global_epsilon / 2,
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
+    builder->set_point( 3, geode::Point3D{ { 2., geode::global_epsilon / 2,
                                0.5 + geode::global_epsilon / 2 } } );
 
     builder->create_triangle( { 0, 1, 2 } );
@@ -152,9 +153,9 @@ void check_degeneration_by_point_multiple_presence3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 3 );
-    builder->set_point( 0, { { 0., 2., 0. } } );
-    builder->set_point( 1, { { 2., 0., 0.5 } } );
-    builder->set_point( 2, { { 1., 4., 1. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 1, 2, 1 } );

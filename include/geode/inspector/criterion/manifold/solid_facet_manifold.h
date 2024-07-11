@@ -44,7 +44,7 @@ namespace geode
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );
 
     public:
-        SolidMeshFacetManifold( const SolidMesh< dimension >& mesh );
+        explicit SolidMeshFacetManifold( const SolidMesh< dimension >& mesh );
 
         ~SolidMeshFacetManifold();
 

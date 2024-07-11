@@ -72,7 +72,7 @@ namespace geode
     class opengeode_inspector_inspector_api BRepBlocksTopology
     {
     public:
-        BRepBlocksTopology( const BRep& brep );
+        explicit BRepBlocksTopology( const BRep& brep );
 
         bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
 

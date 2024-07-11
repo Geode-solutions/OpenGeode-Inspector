@@ -36,11 +36,11 @@ void check_non_degeneration()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 0. } } );
-    builder->set_point( 1, { { 3., 3., -0.5 } } );
-    builder->set_point( 2, { { -0.5, 4., -1. } } );
-    builder->set_point( 3, { { 1., 3., 3. } } );
-    builder->set_point( 4, { { 1., 2., -3. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., 3., -0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { -0.5, 4., -1. } } );
+    builder->set_point( 3, geode::Point3D{ { 1., 3., 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 1., 2., -3. } } );
 
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 0, 1, 4, 2 } );
@@ -58,11 +58,12 @@ void check_degeneration_by_colocalisation()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 0. } } );
-    builder->set_point( 1, { { 3., 3., 0. } } );
-    builder->set_point( 2, { { -0.5, 4., -1. } } );
-    builder->set_point( 3, { { 1., 3., 3. } } );
-    builder->set_point( 4, { { 3., 3., -geode::global_epsilon / 2 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., 3., 0. } } );
+    builder->set_point( 2, geode::Point3D{ { -0.5, 4., -1. } } );
+    builder->set_point( 3, geode::Point3D{ { 1., 3., 3. } } );
+    builder->set_point(
+        4, geode::Point3D{ { 3., 3., -geode::global_epsilon / 2 } } );
 
     builder->create_tetrahedron( { 0, 1, 3, 2 } );
     builder->create_tetrahedron( { 0, 1, 4, 2 } );
@@ -84,10 +85,10 @@ void check_degeneration_by_point_multiple_presence()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 0. } } );
-    builder->set_point( 1, { { 3., 3., -0.5 } } );
-    builder->set_point( 2, { { -0.5, 4., -1. } } );
-    builder->set_point( 3, { { 1., 3., 3. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., 3., -0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { -0.5, 4., -1. } } );
+    builder->set_point( 3, geode::Point3D{ { 1., 3., 3. } } );
 
     builder->create_tetrahedron( { 0, 1, 3, 2 } );
     builder->create_tetrahedron( { 0, 1, 1, 2 } );

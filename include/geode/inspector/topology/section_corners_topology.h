@@ -73,7 +73,7 @@ namespace geode
     class opengeode_inspector_inspector_api SectionCornersTopology
     {
     public:
-        SectionCornersTopology( const Section& section );
+        explicit SectionCornersTopology( const Section& section );
 
         /*!
          * Checks if the section unique vertices are valid corners, i.e.

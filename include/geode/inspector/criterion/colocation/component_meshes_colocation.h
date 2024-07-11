@@ -59,7 +59,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ComponentMeshesColocation );
 
     public:
-        ComponentMeshesColocation( const Model& model );
+        explicit ComponentMeshesColocation( const Model& model );
 
         ~ComponentMeshesColocation();
 

@@ -51,7 +51,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( PointSetInspector );
 
     public:
-        PointSetInspector( const PointSet< dimension >& mesh );
+        explicit PointSetInspector( const PointSet< dimension >& mesh );
 
         PointSetInspectionResult inspect_point_set() const;
     };

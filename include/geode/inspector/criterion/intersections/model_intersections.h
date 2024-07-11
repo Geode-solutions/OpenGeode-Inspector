@@ -59,7 +59,7 @@ namespace geode
         OPENGEODE_DISABLE_COPY( ModelMeshesIntersections );
 
     public:
-        ModelMeshesIntersections( const Model& model );
+        explicit ModelMeshesIntersections( const Model& model );
 
         ~ModelMeshesIntersections();
 
