@@ -35,10 +35,10 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
+#include <geode/inspector/criterion/internal/component_meshes_manifold.h>
 #include <geode/inspector/criterion/manifold/solid_edge_manifold.h>
 #include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
 #include <geode/inspector/criterion/manifold/solid_vertex_manifold.h>
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
 
 namespace geode
 {

@@ -30,7 +30,7 @@
 #include <geode/model/representation/core/brep.h>
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
-#include <geode/inspector/criterion/private/component_meshes_degeneration.h>
+#include <geode/inspector/criterion/internal/component_meshes_degeneration.h>
 
 namespace geode
 {

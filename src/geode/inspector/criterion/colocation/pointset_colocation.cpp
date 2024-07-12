@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/colocation/pointset_colocation.h>
-#include <geode/inspector/criterion/private/colocation_impl.h>
+#include <geode/inspector/criterion/internal/colocation_impl.h>
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
@@ -33,11 +33,12 @@ namespace geode
 {
     template < index_t dimension >
     class PointSetColocation< dimension >::Impl
-        : public detail::ColocationImpl< dimension, PointSet< dimension > >
+        : public internal::ColocationImpl< dimension, PointSet< dimension > >
     {
     public:
         Impl( const PointSet< dimension >& mesh )
-            : detail::ColocationImpl< dimension, PointSet< dimension > >( mesh )
+            : internal::ColocationImpl< dimension, PointSet< dimension > >(
+                  mesh )
         {
         }
     };

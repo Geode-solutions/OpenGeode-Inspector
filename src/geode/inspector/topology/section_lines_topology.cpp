@@ -35,7 +35,7 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 namespace geode
 {
@@ -185,7 +185,7 @@ namespace geode
             for( const auto& embedding :
                 section_.embeddings( line_cmv.component_id.id() ) )
             {
-                if( detail::section_surfaces_are_meshed( section_ )
+                if( internal::section_surfaces_are_meshed( section_ )
                     && !absl::c_any_of(
                         section_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
@@ -209,14 +209,14 @@ namespace geode
         SectionLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
-        const auto line_uuids = detail::components_uuids(
+        const auto line_uuids = internal::components_uuids(
             section_, unique_vertex_index, Line2D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
             return std::nullopt;
         }
         const auto& line_id = line_uuids[0];
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() > 2 )
         {
@@ -226,7 +226,7 @@ namespace geode
         }
         if( section_.nb_embeddings( line_id ) > 0 )
         {
-            if( detail::section_surfaces_are_meshed( section_ )
+            if( internal::section_surfaces_are_meshed( section_ )
                 && ( surface_uuids.size() != 1
                      || !section_.Relationships::is_internal(
                          line_id, surface_uuids[0] ) ) )
@@ -300,7 +300,7 @@ namespace geode
                     line.id(), absl::StrCat( line.id().string(),
                                    " is a line without mesh." ) );
             }
-            auto line_result = detail::
+            auto line_result = internal::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )

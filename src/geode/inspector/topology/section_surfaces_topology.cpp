@@ -36,7 +36,7 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 namespace geode
 {
@@ -112,7 +112,7 @@ namespace geode
         SectionSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() == 2 )
         {
@@ -144,7 +144,7 @@ namespace geode
         vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const
     {
-        if( !detail::section_surfaces_are_meshed( section_ ) )
+        if( !internal::section_surfaces_are_meshed( section_ ) )
         {
             return std::nullopt;
         }
@@ -193,7 +193,7 @@ namespace geode
                                       " is a surface without mesh." ) );
             }
 
-            auto surface_result = detail::
+            auto surface_result = internal::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )
