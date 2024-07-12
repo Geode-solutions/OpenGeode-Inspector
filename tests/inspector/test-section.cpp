@@ -258,7 +258,7 @@ geode::index_t launch_component_meshes_validity_checks(
 void check_section( bool string )
 {
     const auto model_section = geode::load_section(
-        absl::StrCat( geode::data_path, "vertical_lines.og_sctn" ) );
+        absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) );
     geode::SectionInspector section_inspector{ model_section };
     auto result = section_inspector.inspect_section();
 
