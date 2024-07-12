@@ -38,7 +38,7 @@ namespace geode
     public:
         Impl( const SolidMesh< dimension >& mesh )
             : internal::ColocationImpl< dimension, SolidMesh< dimension > >(
-                  mesh )
+                mesh )
         {
         }
     };
