@@ -79,11 +79,6 @@ namespace pybind11
         {
         };
 
-        template <>
-        struct type_caster< absl::string_view >
-            : string_caster< absl::string_view, true >
-        {
-        };
     } // namespace detail
 } // namespace pybind11
 

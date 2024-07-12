@@ -40,14 +40,14 @@ namespace geode
     class InspectionIssues
     {
     public:
-        explicit InspectionIssues( absl::string_view issue_description )
+        explicit InspectionIssues( std::string_view issue_description )
             : description_{ issue_description }
         {
         }
 
         InspectionIssues() = default;
 
-        void set_description( absl::string_view issue_description )
+        void set_description( std::string_view issue_description )
         {
             description_ = to_string( issue_description );
         }
@@ -63,7 +63,7 @@ namespace geode
             messages_.emplace_back( std::move( message ) );
         }
 
-        absl::string_view description() const
+        std::string_view description() const
         {
             return description_;
         }
@@ -100,19 +100,19 @@ namespace geode
     class InspectionIssuesMap
     {
     public:
-        explicit InspectionIssuesMap( absl::string_view issue_description )
+        explicit InspectionIssuesMap( std::string_view issue_description )
             : description_{ issue_description }
         {
         }
 
         InspectionIssuesMap() = default;
 
-        void set_description( absl::string_view issue_description )
+        void set_description( std::string_view issue_description )
         {
             description_ = to_string( issue_description );
         }
 
-        absl::string_view description() const
+        std::string_view description() const
         {
             return description_;
         }
