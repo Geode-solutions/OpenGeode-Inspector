@@ -28,7 +28,7 @@
 
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
+#include <geode/inspector/criterion/internal/component_meshes_manifold.h>
 
 namespace geode
 {

@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
-#include <geode/inspector/criterion/private/degeneration_impl.h>
+#include <geode/inspector/criterion/internal/degeneration_impl.h>
 
 #include <geode/basic/pimpl_impl.h>
 #include <geode/basic/uuid.h>

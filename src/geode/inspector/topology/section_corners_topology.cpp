@@ -23,7 +23,7 @@
 
 #include <optional>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 #include <geode/inspector/topology/section_corners_topology.h>
 
 #include <geode/mesh/core/point_set.h>
@@ -248,7 +248,7 @@ namespace geode
                     "Corner " + corner.id().string() + " is not meshed." );
                 continue;
             }
-            auto corner_result = detail::
+            auto corner_result = internal::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )

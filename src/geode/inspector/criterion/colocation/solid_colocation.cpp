@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/colocation/solid_colocation.h>
-#include <geode/inspector/criterion/private/colocation_impl.h>
+#include <geode/inspector/criterion/internal/colocation_impl.h>
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
@@ -33,11 +33,11 @@ namespace geode
 {
     template < index_t dimension >
     class SolidMeshColocation< dimension >::Impl
-        : public detail::ColocationImpl< dimension, SolidMesh< dimension > >
+        : public internal::ColocationImpl< dimension, SolidMesh< dimension > >
     {
     public:
         Impl( const SolidMesh< dimension >& mesh )
-            : detail::ColocationImpl< dimension, SolidMesh< dimension > >(
+            : internal::ColocationImpl< dimension, SolidMesh< dimension > >(
                 mesh )
         {
         }

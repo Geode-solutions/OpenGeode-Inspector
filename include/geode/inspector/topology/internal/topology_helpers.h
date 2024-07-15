@@ -43,7 +43,7 @@ namespace geode
 
 namespace geode
 {
-    namespace detail
+    namespace internal
     {
         bool brep_blocks_are_meshed( const BRep& brep );
 
@@ -77,5 +77,5 @@ namespace geode
                 const Section& section,
                 const ComponentID& component_id,
                 const VertexSet& component_mesh );
-    } // namespace detail
+    } // namespace internal
 } // namespace geode

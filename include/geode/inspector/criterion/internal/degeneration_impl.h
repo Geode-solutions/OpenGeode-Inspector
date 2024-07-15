@@ -28,7 +28,7 @@
 
 namespace geode
 {
-    namespace detail
+    namespace internal
     {
         /*!
          * Implementation of the inspection of the degeneration of a Mesh
@@ -54,5 +54,5 @@ namespace geode
         private:
             const Mesh& mesh_;
         };
-    } // namespace detail
+    } // namespace internal
 } // namespace geode

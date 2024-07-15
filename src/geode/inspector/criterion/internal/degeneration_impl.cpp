@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/private/degeneration_impl.h>
+#include <geode/inspector/criterion/internal/degeneration_impl.h>
 
 #include <geode/basic/uuid.h>
 
@@ -35,7 +35,7 @@
 
 namespace geode
 {
-    namespace detail
+    namespace internal
     {
         template < class MeshType >
         DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
@@ -109,5 +109,5 @@ namespace geode
             DegenerationImpl< SurfaceMesh3D >;
         template class opengeode_inspector_inspector_api
             DegenerationImpl< SolidMesh3D >;
-    } // namespace detail
+    } // namespace internal
 } // namespace geode

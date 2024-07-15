@@ -40,7 +40,7 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 namespace
 {
@@ -119,7 +119,7 @@ namespace geode
         unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
         if( block_uuids.size() != 2 )
         {
@@ -170,7 +170,7 @@ namespace geode
         BRepBlocksTopology::unique_vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const
     {
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
 
         std::vector< ComponentMeshVertex > block_cmvs;
@@ -342,7 +342,7 @@ namespace geode
                                     " is not meshed." ) );
                 continue;
             }
-            auto block_result = detail::
+            auto block_result = internal::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
             if( block_result.nb_issues() != 0 )
