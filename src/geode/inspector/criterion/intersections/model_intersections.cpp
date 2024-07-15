@@ -59,17 +59,17 @@ namespace
     };
 
     geode::local_index_t model_vertex_position_to_index(
-        geode::Position position )
+        geode::POSITION position )
     {
-        if( position == geode::Position::vertex0 )
+        if( position == geode::POSITION::vertex0 )
         {
             return 0;
         }
-        if( position == geode::Position::vertex1 )
+        if( position == geode::POSITION::vertex1 )
         {
             return 1;
         }
-        if( position == geode::Position::vertex2 )
+        if( position == geode::POSITION::vertex2 )
         {
             return 2;
         }
@@ -274,21 +274,21 @@ namespace
             if( geode::segment_segment_intersection_detection(
                     { common_pt0, t1_third_pt }, { common_pt1, t2_third_pt } )
                         .first
-                    != geode::Position::outside
+                    != geode::POSITION::outside
                 || geode::segment_segment_intersection_detection(
                        { common_pt1, t1_third_pt },
                        { common_pt0, t2_third_pt } )
                            .first
-                       != geode::Position::outside )
+                       != geode::POSITION::outside )
             {
                 return true;
             }
             const auto t1 = mesh1_.triangle( t1_id );
             const auto t2 = mesh2_.triangle( t2_id );
             if( geode::point_triangle_position( t1_third_pt, t2 )
-                    != geode::Position::outside
+                    != geode::POSITION::outside
                 || geode::point_triangle_position( t2_third_pt, t1 )
-                       != geode::Position::outside )
+                       != geode::POSITION::outside )
             {
                 return true;
             }
@@ -312,8 +312,8 @@ namespace
                     geode::segment_segment_intersection_detection(
                         t1_edge, { mesh2_.point( edge2_vertices[0] ),
                                      mesh2_.point( edge2_vertices[1] ) } );
-                if( edge_edge_inter.first == geode::Position::outside
-                    || edge_edge_inter.first == geode::Position::parallel )
+                if( edge_edge_inter.first == geode::POSITION::outside
+                    || edge_edge_inter.first == geode::POSITION::parallel )
                 {
                     continue;
                 }
@@ -353,7 +353,7 @@ namespace
             const auto v2_id = v_id == 2 ? 0 : v_id + 1;
             const auto intersection = segment_triangle_intersection_detection(
                 { t1.vertices()[v_id], t1.vertices()[v2_id] }, t2 );
-            if( intersection.first != geode::Position::outside )
+            if( intersection.first != geode::POSITION::outside )
             {
                 if( common_vertices.size() != 1 )
                 {
@@ -397,12 +397,12 @@ namespace
             if( geode::segment_triangle_intersection_detection(
                     { mesh1_.point( common_vertices[0][0] ), t1_third_pt }, t2 )
                         .first
-                    == geode::Position::parallel
+                    == geode::POSITION::parallel
                 || geode::segment_triangle_intersection_detection(
                        { mesh1_.point( common_vertices[1][0] ), t1_third_pt },
                        t2 )
                            .first
-                       == geode::Position::parallel )
+                       == geode::POSITION::parallel )
             {
                 return true;
             }

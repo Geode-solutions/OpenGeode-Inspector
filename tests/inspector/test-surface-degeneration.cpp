@@ -61,7 +61,7 @@ void check_degeneration_by_colocalisation2D()
     builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
     builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
     builder->set_point(
-        3, geode::Point2D{ { 2., geode::global_epsilon / 2 } } );
+        3, geode::Point2D{ { 2., geode::GLOBAL_EPSILON / 2 } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );
@@ -130,8 +130,8 @@ void check_degeneration_by_colocalisation3D()
     builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
     builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
     builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
-    builder->set_point( 3, geode::Point3D{ { 2., geode::global_epsilon / 2,
-                               0.5 + geode::global_epsilon / 2 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., geode::GLOBAL_EPSILON / 2,
+                               0.5 + geode::GLOBAL_EPSILON / 2 } } );
 
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 2, 1, 3 } );

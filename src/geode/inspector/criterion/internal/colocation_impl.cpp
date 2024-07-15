@@ -110,7 +110,7 @@ namespace geode
             ColocationImpl< dimension, Mesh >::mesh_has_colocated_points() const
         {
             return mesh_points_colocated_info< dimension, Mesh >(
-                       mesh_, global_epsilon )
+                       mesh_, GLOBAL_EPSILON )
                        .nb_colocated_points()
                    > 0;
         }
@@ -121,7 +121,7 @@ namespace geode
         {
             const auto colocated_points_indices =
                 ::colocated_points_groups< dimension, Mesh >(
-                    mesh_, global_epsilon );
+                    mesh_, GLOBAL_EPSILON );
             return colocated_points_indices;
         }
 

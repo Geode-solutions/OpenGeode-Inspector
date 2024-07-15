@@ -63,7 +63,7 @@ void check_degeneration_by_colocalisation()
     builder->set_point( 2, geode::Point3D{ { -0.5, 4., -1. } } );
     builder->set_point( 3, geode::Point3D{ { 1., 3., 3. } } );
     builder->set_point(
-        4, geode::Point3D{ { 3., 3., -geode::global_epsilon / 2 } } );
+        4, geode::Point3D{ { 3., 3., -geode::GLOBAL_EPSILON / 2 } } );
 
     builder->create_tetrahedron( { 0, 1, 3, 2 } );
     builder->create_tetrahedron( { 0, 1, 4, 2 } );
