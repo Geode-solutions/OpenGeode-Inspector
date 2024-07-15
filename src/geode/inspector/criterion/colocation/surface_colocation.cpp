@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/colocation/surface_colocation.h>
-#include <geode/inspector/criterion/private/colocation_impl.h>
+#include <geode/inspector/criterion/internal/colocation_impl.h>
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
@@ -33,11 +33,11 @@ namespace geode
 {
     template < index_t dimension >
     class SurfaceMeshColocation< dimension >::Impl
-        : public detail::ColocationImpl< dimension, SurfaceMesh< dimension > >
+        : public internal::ColocationImpl< dimension, SurfaceMesh< dimension > >
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh )
-            : detail::ColocationImpl< dimension, SurfaceMesh< dimension > >(
+            : internal::ColocationImpl< dimension, SurfaceMesh< dimension > >(
                 mesh )
         {
         }

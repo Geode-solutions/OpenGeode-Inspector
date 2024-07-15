@@ -37,7 +37,7 @@
 #include <geode/model/mixin/core/surface.h>
 #include <geode/model/representation/core/brep.h>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 namespace
 {
@@ -195,7 +195,7 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             const index_t unique_vertex_index ) const
     {
-        for( const auto surface_id : detail::components_uuids( brep_,
+        for( const auto surface_id : internal::components_uuids( brep_,
                  unique_vertex_index, Surface3D::component_type_static() ) )
         {
             for( const auto& embedding : brep_.embeddings( surface_id ) )
@@ -209,7 +209,7 @@ namespace geode
                         "', which is both internal and boundary of ",
                         "block with uuid '", embedding.id().string(), "'." );
                 }
-                if( detail::brep_blocks_are_meshed( brep_ )
+                if( internal::brep_blocks_are_meshed( brep_ )
                     && !absl::c_any_of(
                         brep_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
@@ -233,14 +233,14 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_single_surface(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() != 1 )
         {
             return std::nullopt;
         }
         const auto& surface_id = surface_uuids[0];
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
         if( block_uuids.size() > 2 )
         {
@@ -251,7 +251,7 @@ namespace geode
         }
         if( brep_.nb_embeddings( surface_id ) > 0 )
         {
-            if( detail::brep_blocks_are_meshed( brep_ ) )
+            if( internal::brep_blocks_are_meshed( brep_ ) )
             {
                 if( block_uuids.size() != 1 )
                 {
@@ -294,13 +294,13 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_invalid_multiple_surfaces(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( surface_uuids.size() < 2 )
         {
             return std::nullopt;
         }
-        const auto line_uuids = detail::components_uuids(
+        const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.empty() )
         {
@@ -377,7 +377,7 @@ namespace geode
         BRepSurfacesTopology::vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const
     {
-        const auto line_uuids = detail::components_uuids(
+        const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.empty() )
         {
@@ -425,7 +425,7 @@ namespace geode
                                       " is a surface without mesh." ) );
             }
 
-            auto surface_result = detail::
+            auto surface_result = internal::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )

@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/private/colocation_impl.h>
+#include <geode/inspector/criterion/internal/colocation_impl.h>
 
 #include <geode/basic/logger.h>
 
@@ -97,7 +97,7 @@ namespace
 
 namespace geode
 {
-    namespace detail
+    namespace internal
     {
         template < index_t dimension, typename Mesh >
         ColocationImpl< dimension, Mesh >::ColocationImpl( const Mesh& mesh )
@@ -139,5 +139,5 @@ namespace geode
             ColocationImpl< 3, SurfaceMesh3D >;
         template class opengeode_inspector_inspector_api
             ColocationImpl< 3, SolidMesh3D >;
-    } // namespace detail
+    } // namespace internal
 } // namespace geode

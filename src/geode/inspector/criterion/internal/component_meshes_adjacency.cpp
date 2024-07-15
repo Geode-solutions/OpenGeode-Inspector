@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
+#include <geode/inspector/criterion/internal/component_meshes_adjacency.h>
 
 #include <geode/basic/logger.h>
 
@@ -31,65 +31,45 @@
 #include <geode/model/representation/core/brep.h>
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
-#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/criterion/adjacency/surface_adjacency.h>
 
 namespace geode
 {
     template < typename Model >
-    ComponentMeshesManifold< Model >::ComponentMeshesManifold(
+    ComponentMeshesAdjacency< Model >::ComponentMeshesAdjacency(
         const Model& model )
         : model_( model )
     {
     }
 
     template < typename Model >
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_vertices(
-            InspectionIssuesMap< index_t >& surfaces_non_manifold_vertices )
+    void ComponentMeshesAdjacency< Model >::
+        add_surfaces_edges_with_wrong_adjacencies(
+            InspectionIssuesMap< PolygonEdge >& components_wrong_adjacencies )
             const
     {
         for( const auto& surface : model_.surfaces() )
         {
-            const SurfaceMeshVertexManifold< Model::dim > inspector{
+            const SurfaceMeshAdjacency< Model::dim > inspector{
                 surface.mesh()
             };
-            auto issues = inspector.non_manifold_vertices();
-            issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold vertices" ) );
-            surfaces_non_manifold_vertices.add_issues_to_map(
+            auto issues = inspector.polygon_edges_with_wrong_adjacency();
+            issues.set_description(
+                absl::StrCat( "Surface ", surface.id().string(),
+                    " polygon edges with wrong adjacencies." ) );
+            components_wrong_adjacencies.add_issues_to_map(
                 surface.id(), std::move( issues ) );
         }
     }
 
     template < typename Model >
-
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_edges(
-            InspectionIssuesMap< std::array< index_t, 2 > >&
-                surfaces_non_manifold_edges ) const
-    {
-        for( const auto& surface : model_.surfaces() )
-        {
-            const SurfaceMeshEdgeManifold< Model::dim > inspector{
-                surface.mesh()
-            };
-            auto issues = inspector.non_manifold_edges();
-            issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold edges" ) );
-            surfaces_non_manifold_edges.add_issues_to_map(
-                surface.id(), std::move( issues ) );
-        }
-    }
-
-    template < typename Model >
-    const Model& ComponentMeshesManifold< Model >::model() const
+    const Model& ComponentMeshesAdjacency< Model >::model() const
     {
         return model_;
     }
 
     template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< Section >;
+        ComponentMeshesAdjacency< Section >;
     template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< BRep >;
+        ComponentMeshesAdjacency< BRep >;
 } // namespace geode

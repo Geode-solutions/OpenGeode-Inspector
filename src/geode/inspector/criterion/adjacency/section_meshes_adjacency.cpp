@@ -28,7 +28,7 @@
 
 #include <geode/model/representation/core/section.h>
 
-#include <geode/inspector/criterion/private/component_meshes_adjacency.h>
+#include <geode/inspector/criterion/internal/component_meshes_adjacency.h>
 
 namespace geode
 {

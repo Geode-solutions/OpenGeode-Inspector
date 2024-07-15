@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 #include <geode/mesh/core/point_set.h>
 #include <geode/mesh/core/solid_mesh.h>
@@ -34,7 +34,7 @@
 
 namespace geode
 {
-    namespace detail
+    namespace internal
     {
         bool brep_blocks_are_meshed( const BRep& brep )
         {
@@ -101,5 +101,5 @@ namespace geode
             }
             return result;
         }
-    } // namespace detail
+    } // namespace internal
 } // namespace geode

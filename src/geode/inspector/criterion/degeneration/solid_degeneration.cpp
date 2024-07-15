@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/criterion/degeneration/solid_degeneration.h>
-#include <geode/inspector/criterion/private/degeneration_impl.h>
+#include <geode/inspector/criterion/internal/degeneration_impl.h>
 
 #include <geode/basic/logger.h>
 #include <geode/basic/pimpl_impl.h>
@@ -37,17 +37,17 @@ namespace geode
 {
     template < index_t dimension >
     class SolidMeshDegeneration< dimension >::Impl
-        : public detail::DegenerationImpl< SolidMesh< dimension > >
+        : public internal::DegenerationImpl< SolidMesh< dimension > >
     {
     public:
         Impl( const SolidMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SolidMesh< dimension > >{ mesh }
+            : internal::DegenerationImpl< SolidMesh< dimension > >{ mesh }
         {
         }
 
         bool is_mesh_degenerated() const final
         {
-            if( this->detail::DegenerationImpl<
+            if( this->internal::DegenerationImpl<
                     SolidMesh< dimension > >::is_mesh_degenerated() )
             {
                 return true;

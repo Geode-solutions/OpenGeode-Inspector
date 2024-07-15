@@ -22,7 +22,7 @@
  */
 
 #include <geode/inspector/topology/brep_corners_topology.h>
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.h>
 
 #include <optional>
 
@@ -264,7 +264,7 @@ namespace geode
                                      " is not meshed." ) );
                 continue;
             }
-            auto corner_result = detail::
+            auto corner_result = internal::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )
