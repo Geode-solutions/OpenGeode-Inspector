@@ -21,13 +21,13 @@
  *
  */
 
-#include <geode/inspector/criterion/adjacency/solid_adjacency.h>
+#include <geode/inspector/criterion/adjacency/solid_adjacency.hpp>
 
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
 namespace geode
 {

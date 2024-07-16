@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/internal/component_meshes_adjacency.h>
+#include <geode/inspector/criterion/internal/component_meshes_adjacency.hpp>
 
 namespace geode
 {

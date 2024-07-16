@@ -21,15 +21,15 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
-#include <geode/inspector/criterion/internal/degeneration_impl.h>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.hpp>
+#include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/geometry/point.h>
+#include <geode/geometry/point.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
 namespace geode
 {

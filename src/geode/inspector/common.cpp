@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/common.h>
+#include <geode/inspector/common.hpp>
 
-#include <geode/model/common.h>
+#include <geode/model/common.hpp>
 
 namespace geode
 {

@@ -21,24 +21,24 @@
  *
  */
 
-#include <geode/inspector/criterion/manifold/brep_meshes_manifold.h>
+#include <geode/inspector/criterion/manifold/brep_meshes_manifold.hpp>
 
-#include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/algorithm.hpp>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/solid_mesh.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/criterion/internal/component_meshes_manifold.h>
-#include <geode/inspector/criterion/manifold/solid_edge_manifold.h>
-#include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
-#include <geode/inspector/criterion/manifold/solid_vertex_manifold.h>
+#include <geode/inspector/criterion/internal/component_meshes_manifold.hpp>
+#include <geode/inspector/criterion/manifold/solid_edge_manifold.hpp>
+#include <geode/inspector/criterion/manifold/solid_facet_manifold.hpp>
+#include <geode/inspector/criterion/manifold/solid_vertex_manifold.hpp>
 
 namespace geode
 {

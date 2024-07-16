@@ -23,14 +23,14 @@
 
 #include <optional>
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
-#include <geode/inspector/topology/section_corners_topology.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
+#include <geode/inspector/topology/section_corners_topology.hpp>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/mesh/core/point_set.hpp>
 
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/representation/core/section.hpp>
 
 namespace geode
 {

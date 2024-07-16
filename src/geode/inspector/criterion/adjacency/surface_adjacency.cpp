@@ -21,12 +21,12 @@
  *
  */
 
-#include <geode/inspector/criterion/adjacency/surface_adjacency.h>
+#include <geode/inspector/criterion/adjacency/surface_adjacency.hpp>
 
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 namespace geode
 {

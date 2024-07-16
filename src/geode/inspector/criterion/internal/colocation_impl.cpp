@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/inspector/criterion/internal/colocation_impl.h>
+#include <geode/inspector/criterion/internal/colocation_impl.hpp>
 
-#include <geode/basic/logger.h>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/point_set.h>
-#include <geode/mesh/core/solid_mesh.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/point_set.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/geometry/point.h>
+#include <geode/geometry/point.hpp>
 
 namespace
 {

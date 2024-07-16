@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/tests_config.h>
+#include <geode/tests_config.hpp>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/helpers/convert_model_meshes.h>
-#include <geode/model/representation/core/section.h>
-#include <geode/model/representation/io/section_input.h>
+#include <geode/model/helpers/convert_model_meshes.hpp>
+#include <geode/model/representation/core/section.hpp>
+#include <geode/model/representation/io/section_input.hpp>
 
-#include <geode/inspector/section_inspector.h>
+#include <geode/inspector/section_inspector.hpp>
 
 geode::index_t corners_topological_validity(
     const geode::SectionCornersTopologyInspectionResult& result, bool string )

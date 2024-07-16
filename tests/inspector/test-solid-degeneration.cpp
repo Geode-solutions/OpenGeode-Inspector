@@ -21,15 +21,15 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/tetrahedral_solid_builder.h>
-#include <geode/mesh/core/solid_edges.h>
-#include <geode/mesh/core/tetrahedral_solid.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/tetrahedral_solid_builder.hpp>
+#include <geode/mesh/core/solid_edges.hpp>
+#include <geode/mesh/core/tetrahedral_solid.hpp>
 
-#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
+#include <geode/inspector/criterion/degeneration/solid_degeneration.hpp>
 
 void check_non_degeneration()
 {

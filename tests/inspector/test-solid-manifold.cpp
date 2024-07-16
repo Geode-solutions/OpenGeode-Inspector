@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
+#include <geode/geometry/point.hpp>
 
-#include <geode/mesh/builder/tetrahedral_solid_builder.h>
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/tetrahedral_solid.h>
+#include <geode/mesh/builder/tetrahedral_solid_builder.hpp>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/tetrahedral_solid.hpp>
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/inspector/solid_inspector.hpp>
 
 void check_vertex_manifold()
 {

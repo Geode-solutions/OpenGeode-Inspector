@@ -21,26 +21,26 @@
  *
  */
 
-#include <geode/inspector/topology/brep_blocks_topology.h>
+#include <geode/inspector/topology/brep_blocks_topology.hpp>
 
 #include <optional>
 
 #include <absl/container/flat_hash_set.h>
 
-#include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/algorithm.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/relationships.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace
 {

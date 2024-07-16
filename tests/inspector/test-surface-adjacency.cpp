@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/triangulated_surface_builder.h>
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/triangulated_surface_builder.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
-#include <geode/inspector/criterion/adjacency/surface_adjacency.h>
+#include <geode/inspector/criterion/adjacency/surface_adjacency.hpp>
 
 void check_adjacency2D()
 {

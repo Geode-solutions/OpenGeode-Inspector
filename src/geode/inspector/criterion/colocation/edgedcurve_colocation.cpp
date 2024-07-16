@@ -21,13 +21,13 @@
  *
  */
 
-#include <geode/inspector/criterion/colocation/edgedcurve_colocation.h>
-#include <geode/inspector/criterion/internal/colocation_impl.h>
+#include <geode/inspector/criterion/colocation/edgedcurve_colocation.hpp>
+#include <geode/inspector/criterion/internal/colocation_impl.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
 namespace geode
 {

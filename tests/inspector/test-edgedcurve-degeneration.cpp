@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/edged_curve_builder.h>
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/edged_curve_builder.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
 
-#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.hpp>
 
 void check_non_degeneration2D()
 {

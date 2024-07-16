@@ -21,17 +21,17 @@
  *
  */
 
-#include <geode/inspector/criterion/internal/degeneration_impl.h>
+#include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
-#include <geode/basic/uuid.h>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/mesh/core/solid_edges.h>
-#include <geode/mesh/core/solid_mesh.h>
-#include <geode/mesh/core/surface_edges.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/solid_edges.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_edges.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/geometry/distance.h>
-#include <geode/geometry/point.h>
+#include <geode/geometry/distance.hpp>
+#include <geode/geometry/point.hpp>
 
 namespace geode
 {

@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/point_set_builder.h>
-#include <geode/mesh/core/point_set.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/point_set_builder.hpp>
+#include <geode/mesh/core/point_set.hpp>
 
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/pointset_inspector.hpp>
 
 void check_non_colocation2D()
 {

@@ -21,7 +21,7 @@
  *
  */
 
-#include <geode/inspector/criterion/brep_meshes_inspector.h>
+#include <geode/inspector/criterion/brep_meshes_inspector.hpp>
 
 namespace geode
 {
