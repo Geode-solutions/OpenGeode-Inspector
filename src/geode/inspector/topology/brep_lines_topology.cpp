@@ -21,22 +21,22 @@
  *
  */
 
-#include <geode/inspector/topology/brep_lines_topology.h>
+#include <geode/inspector/topology/brep_lines_topology.hpp>
 
 #include <optional>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace geode
 {

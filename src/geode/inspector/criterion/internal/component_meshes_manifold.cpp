@@ -21,18 +21,18 @@
  *
  */
 
-#include <geode/inspector/criterion/internal/component_meshes_manifold.h>
+#include <geode/inspector/criterion/internal/component_meshes_manifold.hpp>
 
-#include <geode/basic/logger.h>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
-#include <geode/inspector/criterion/manifold/surface_vertex_manifold.h>
+#include <geode/inspector/criterion/manifold/surface_edge_manifold.hpp>
+#include <geode/inspector/criterion/manifold/surface_vertex_manifold.hpp>
 
 namespace geode
 {

@@ -21,27 +21,27 @@
  *
  */
 
-#include <geode/inspector/criterion/intersections/model_intersections.h>
+#include <geode/inspector/criterion/intersections/model_intersections.hpp>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/geometry/aabb.h>
-#include <geode/geometry/basic_objects/segment.h>
-#include <geode/geometry/basic_objects/triangle.h>
-#include <geode/geometry/information.h>
-#include <geode/geometry/intersection_detection.h>
-#include <geode/geometry/position.h>
+#include <geode/geometry/aabb.hpp>
+#include <geode/geometry/basic_objects/segment.hpp>
+#include <geode/geometry/basic_objects/triangle.hpp>
+#include <geode/geometry/information.hpp>
+#include <geode/geometry/intersection_detection.hpp>
+#include <geode/geometry/position.hpp>
 
-#include <geode/mesh/core/triangulated_surface.h>
-#include <geode/mesh/helpers/aabb_surface_helpers.h>
+#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 
-#include <geode/model/helpers/aabb_model_helpers.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/helpers/aabb_model_helpers.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
 namespace
 {
@@ -92,7 +92,7 @@ namespace
               mesh2_( same_surface_
                           ? mesh1_
                           : surface2_.template mesh<
-                              geode::TriangulatedSurface< Model::dim > >() )
+                                geode::TriangulatedSurface< Model::dim > >() )
         {
         }
 
@@ -170,7 +170,7 @@ namespace
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
             : ModelSurfacesIntersectionBase< Model >(
-                model, surface_id1, surface_id2 ),
+                  model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -208,7 +208,7 @@ namespace
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
             : ModelSurfacesIntersectionBase< Model >(
-                model, surface_id1, surface_id2 ),
+                  model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }

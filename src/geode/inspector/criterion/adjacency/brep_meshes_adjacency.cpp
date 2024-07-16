@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/criterion/adjacency/solid_adjacency.h>
-#include <geode/inspector/criterion/internal/component_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/solid_adjacency.hpp>
+#include <geode/inspector/criterion/internal/component_meshes_adjacency.hpp>
 
 namespace geode
 {

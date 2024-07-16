@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/brep_topology.h>
+#include <geode/inspector/topology/brep_topology.hpp>
 
 namespace geode
 {

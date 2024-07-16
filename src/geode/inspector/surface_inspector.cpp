@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/surface_inspector.h>
+#include <geode/inspector/surface_inspector.hpp>
 
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
 namespace geode
 {
@@ -45,11 +45,11 @@ namespace geode
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh )
         : AddInspectors< SurfaceMesh< dimension >,
-            SurfaceMeshAdjacency< dimension >,
-            SurfaceMeshColocation< dimension >,
-            SurfaceMeshDegeneration< dimension >,
-            SurfaceMeshEdgeManifold< dimension >,
-            SurfaceMeshVertexManifold< dimension > >{ mesh }
+              SurfaceMeshAdjacency< dimension >,
+              SurfaceMeshColocation< dimension >,
+              SurfaceMeshDegeneration< dimension >,
+              SurfaceMeshEdgeManifold< dimension >,
+              SurfaceMeshVertexManifold< dimension > >{ mesh }
     {
     }
 

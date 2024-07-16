@@ -22,10 +22,10 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/inspector/criterion/manifold/solid_facet_manifold.h>
+#include <geode/inspector/criterion/manifold/solid_facet_manifold.hpp>
 
 namespace geode
 {

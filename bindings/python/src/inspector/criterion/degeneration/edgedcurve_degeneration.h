@@ -22,9 +22,9 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
-#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.h>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.hpp>
 
 namespace geode
 {

@@ -21,10 +21,10 @@
  *
  */
 
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/colocation/unique_vertices_colocation.h>
+#include <geode/inspector/criterion/colocation/unique_vertices_colocation.hpp>
 
 namespace geode
 {

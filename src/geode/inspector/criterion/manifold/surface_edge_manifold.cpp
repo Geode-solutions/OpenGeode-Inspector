@@ -21,15 +21,15 @@
  *
  */
 
-#include <geode/inspector/criterion/manifold/surface_edge_manifold.h>
+#include <geode/inspector/criterion/manifold/surface_edge_manifold.hpp>
 
 #include <absl/container/flat_hash_map.h>
 
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 namespace
 {

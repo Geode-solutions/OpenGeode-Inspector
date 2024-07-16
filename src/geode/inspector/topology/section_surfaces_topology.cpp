@@ -21,22 +21,22 @@
  *
  */
 
-#include <geode/inspector/topology/section_surfaces_topology.h>
+#include <geode/inspector/topology/section_surfaces_topology.hpp>
 
 #include <optional>
 
-#include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/algorithm.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/relationships.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace geode
 {

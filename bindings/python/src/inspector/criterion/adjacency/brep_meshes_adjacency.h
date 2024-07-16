@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.hpp>
 
 namespace geode
 {

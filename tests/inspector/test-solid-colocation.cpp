@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/tetrahedral_solid_builder.h>
-#include <geode/mesh/core/tetrahedral_solid.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/tetrahedral_solid_builder.hpp>
+#include <geode/mesh/core/tetrahedral_solid.hpp>
 
-#include <geode/inspector/criterion/colocation/solid_colocation.h>
+#include <geode/inspector/criterion/colocation/solid_colocation.hpp>
 
 void check_non_colocation()
 {

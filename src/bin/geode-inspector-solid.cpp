@@ -27,23 +27,23 @@
 
 #include <async++.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/filename.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/filename.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/hybrid_solid.h>
-#include <geode/mesh/core/mesh_factory.h>
-#include <geode/mesh/core/polyhedral_solid.h>
-#include <geode/mesh/core/regular_grid_solid.h>
-#include <geode/mesh/core/tetrahedral_solid.h>
-#include <geode/mesh/io/hybrid_solid_input.h>
-#include <geode/mesh/io/polyhedral_solid_input.h>
-#include <geode/mesh/io/regular_grid_input.h>
-#include <geode/mesh/io/tetrahedral_solid_input.h>
+#include <geode/mesh/core/hybrid_solid.hpp>
+#include <geode/mesh/core/mesh_factory.hpp>
+#include <geode/mesh/core/polyhedral_solid.hpp>
+#include <geode/mesh/core/regular_grid_solid.hpp>
+#include <geode/mesh/core/tetrahedral_solid.hpp>
+#include <geode/mesh/io/hybrid_solid_input.hpp>
+#include <geode/mesh/io/polyhedral_solid_input.hpp>
+#include <geode/mesh/io/regular_grid_input.hpp>
+#include <geode/mesh/io/tetrahedral_solid_input.hpp>
 
-#include <geode/io/mesh/common.h>
+#include <geode/io/mesh/common.hpp>
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/inspector/solid_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
 

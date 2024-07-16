@@ -22,10 +22,10 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/intersections/model_intersections.h>
+#include <geode/inspector/criterion/intersections/model_intersections.hpp>
 
 #define PYTHON_MODEL_INTERSECTIONS( type, suffix )                             \
     const auto name##type = absl::StrCat( #type, "MeshesIntersections" );      \

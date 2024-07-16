@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.h>
+#include <geode/inspector/criterion/adjacency/section_meshes_adjacency.hpp>
 
 namespace geode
 {

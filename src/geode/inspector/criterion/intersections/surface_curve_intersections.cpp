@@ -21,24 +21,24 @@
  *
  */
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
+#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/geometry/aabb.h>
-#include <geode/geometry/basic_objects/segment.h>
-#include <geode/geometry/basic_objects/triangle.h>
-#include <geode/geometry/information.h>
-#include <geode/geometry/intersection_detection.h>
-#include <geode/geometry/position.h>
+#include <geode/geometry/aabb.hpp>
+#include <geode/geometry/basic_objects/segment.hpp>
+#include <geode/geometry/basic_objects/triangle.hpp>
+#include <geode/geometry/information.hpp>
+#include <geode/geometry/intersection_detection.hpp>
+#include <geode/geometry/position.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/triangulated_surface.h>
-#include <geode/mesh/helpers/aabb_edged_curve_helpers.h>
-#include <geode/mesh/helpers/aabb_surface_helpers.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/helpers/aabb_edged_curve_helpers.hpp>
+#include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 
 namespace
 {

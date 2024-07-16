@@ -27,17 +27,17 @@
 
 #include <async++.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/filename.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/filename.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/mesh_factory.h>
-#include <geode/mesh/core/point_set.h>
-#include <geode/mesh/io/point_set_input.h>
+#include <geode/mesh/core/mesh_factory.hpp>
+#include <geode/mesh/core/point_set.hpp>
+#include <geode/mesh/io/point_set_input.hpp>
 
-#include <geode/io/mesh/common.h>
+#include <geode/io/mesh/common.hpp>
 
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/pointset_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
 

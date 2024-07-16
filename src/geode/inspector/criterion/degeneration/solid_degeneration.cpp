@@ -21,17 +21,17 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/solid_degeneration.h>
-#include <geode/inspector/criterion/internal/degeneration_impl.h>
+#include <geode/inspector/criterion/degeneration/solid_degeneration.hpp>
+#include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/geometry/basic_objects/tetrahedron.h>
-#include <geode/geometry/mensuration.h>
+#include <geode/geometry/basic_objects/tetrahedron.hpp>
+#include <geode/geometry/mensuration.hpp>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/solid_mesh.hpp>
 
 namespace geode
 {

@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/edgedcurve_inspector.h>
+#include <geode/inspector/edgedcurve_inspector.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
 namespace geode
 {
@@ -42,8 +42,8 @@ namespace geode
     EdgedCurveInspector< dimension >::EdgedCurveInspector(
         const EdgedCurve< dimension >& mesh )
         : AddInspectors< EdgedCurve< dimension >,
-            EdgedCurveColocation< dimension >,
-            EdgedCurveDegeneration< dimension > >{ mesh }
+              EdgedCurveColocation< dimension >,
+              EdgedCurveDegeneration< dimension > >{ mesh }
     {
     }
 

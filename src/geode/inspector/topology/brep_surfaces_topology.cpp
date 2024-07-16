@@ -21,23 +21,23 @@
  *
  */
 
-#include <geode/inspector/topology/brep_surfaces_topology.h>
+#include <geode/inspector/topology/brep_surfaces_topology.hpp>
 
 #include <optional>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/algorithm.h>
+#include <geode/basic/algorithm.hpp>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace
 {

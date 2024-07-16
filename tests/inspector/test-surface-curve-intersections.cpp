@@ -23,16 +23,16 @@
 
 #include <absl/container/flat_hash_set.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/edged_curve_builder.h>
-#include <geode/mesh/builder/triangulated_surface_builder.h>
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/edged_curve_builder.hpp>
+#include <geode/mesh/builder/triangulated_surface_builder.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
+#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 void check_intersections2D()
 {

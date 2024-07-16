@@ -22,9 +22,9 @@
  */
 #include <string>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/inspector/solid_inspector.hpp>
 
 namespace geode
 {

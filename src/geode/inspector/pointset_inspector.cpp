@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/pointset_inspector.hpp>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/mesh/core/point_set.hpp>
 
 namespace geode
 {
@@ -41,7 +41,7 @@ namespace geode
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh )
         : AddInspectors< PointSet< dimension >,
-            PointSetColocation< dimension > >{ mesh }
+              PointSetColocation< dimension > >{ mesh }
     {
     }
 

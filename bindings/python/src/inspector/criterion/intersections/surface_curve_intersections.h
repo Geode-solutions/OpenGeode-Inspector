@@ -22,10 +22,10 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
+#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 namespace geode
 {

@@ -22,9 +22,9 @@
  */
 #include <string>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/mesh/core/point_set.hpp>
 
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/pointset_inspector.hpp>
 
 namespace geode
 {

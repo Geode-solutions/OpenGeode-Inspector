@@ -21,10 +21,10 @@
  *
  */
 
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/colocation/component_meshes_colocation.h>
+#include <geode/inspector/criterion/colocation/component_meshes_colocation.hpp>
 
 #define PYTHON_COMPONENTS_COLOCATION( type, suffix )                           \
     const auto name##type =                                                    \

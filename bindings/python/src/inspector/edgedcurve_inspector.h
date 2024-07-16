@@ -22,9 +22,9 @@
  */
 #include <string>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
-#include <geode/inspector/edgedcurve_inspector.h>
+#include <geode/inspector/edgedcurve_inspector.hpp>
 
 namespace geode
 {

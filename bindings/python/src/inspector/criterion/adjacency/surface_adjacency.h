@@ -22,9 +22,9 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/inspector/criterion/adjacency/surface_adjacency.h>
+#include <geode/inspector/criterion/adjacency/surface_adjacency.hpp>
 
 namespace geode
 {

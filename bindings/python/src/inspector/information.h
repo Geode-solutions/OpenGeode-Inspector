@@ -22,7 +22,7 @@
  */
 #include <string>
 
-#include <geode/inspector/information.h>
+#include <geode/inspector/information.hpp>
 
 namespace geode
 {

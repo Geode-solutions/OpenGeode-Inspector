@@ -22,9 +22,9 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/mesh/core/point_set.hpp>
 
-#include <geode/inspector/criterion/colocation/pointset_colocation.h>
+#include <geode/inspector/criterion/colocation/pointset_colocation.hpp>
 
 namespace geode
 {

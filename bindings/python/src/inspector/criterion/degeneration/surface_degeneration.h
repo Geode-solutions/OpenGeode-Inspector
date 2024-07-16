@@ -22,9 +22,9 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.hpp>
 
 namespace geode
 {

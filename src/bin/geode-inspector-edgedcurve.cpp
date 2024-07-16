@@ -27,17 +27,17 @@
 
 #include <async++.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/filename.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/filename.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/mesh_factory.h>
-#include <geode/mesh/io/edged_curve_input.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/mesh_factory.hpp>
+#include <geode/mesh/io/edged_curve_input.hpp>
 
-#include <geode/io/mesh/common.h>
+#include <geode/io/mesh/common.hpp>
 
-#include <geode/inspector/edgedcurve_inspector.h>
+#include <geode/inspector/edgedcurve_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
 

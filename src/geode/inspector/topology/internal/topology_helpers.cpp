@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/inspector/topology/internal/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
-#include <geode/mesh/core/point_set.h>
-#include <geode/mesh/core/solid_mesh.h>
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/point_set.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/core/section.hpp>
 
 namespace geode
 {
