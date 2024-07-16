@@ -45,11 +45,11 @@ namespace geode
     SurfaceMeshInspector< dimension >::SurfaceMeshInspector(
         const SurfaceMesh< dimension >& mesh )
         : AddInspectors< SurfaceMesh< dimension >,
-              SurfaceMeshAdjacency< dimension >,
-              SurfaceMeshColocation< dimension >,
-              SurfaceMeshDegeneration< dimension >,
-              SurfaceMeshEdgeManifold< dimension >,
-              SurfaceMeshVertexManifold< dimension > >{ mesh }
+            SurfaceMeshAdjacency< dimension >,
+            SurfaceMeshColocation< dimension >,
+            SurfaceMeshDegeneration< dimension >,
+            SurfaceMeshEdgeManifold< dimension >,
+            SurfaceMeshVertexManifold< dimension > >{ mesh }
     {
     }
 
