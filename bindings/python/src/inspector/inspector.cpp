@@ -21,9 +21,9 @@
  *
  */
 
-#include "pybind11/iostream.hpp"
-#include "pybind11/pybind11.hpp"
-#include "pybind11/stl.hpp"
+#include "pybind11/iostream.h"
+#include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 #include "criterion/adjacency/brep_meshes_adjacency.hpp"
 #include "criterion/adjacency/section_meshes_adjacency.hpp"
