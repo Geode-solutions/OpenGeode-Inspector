@@ -21,20 +21,22 @@
  *
  */
 
-#include <geode/inspector/topology/section_surfaces_topology.h>
+#include <geode/inspector/topology/section_surfaces_topology.hpp>
 
-#include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
+#include <optional>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/basic/algorithm.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/relationships.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/section.hpp>
+
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace geode
 {
@@ -106,11 +108,11 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             index_t unique_vertex_index ) const
     {
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() == 2 )
         {
@@ -127,7 +129,7 @@ namespace geode
                     && section_.Relationships::is_boundary(
                         line_cmv.component_id.id(), surface_uuids[1] ) )
                 {
-                    return absl::nullopt;
+                    return std::nullopt;
                 }
             }
             return absl::StrCat( "Unique vertex with index ",
@@ -135,16 +137,16 @@ namespace geode
                 " is part of two surfaces, but is associated to no "
                 "line boundary of the two surfaces." );
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string > SectionSurfacesTopology::
+    std::optional< std::string > SectionSurfacesTopology::
         vertex_is_part_of_line_and_not_on_surface_border(
             index_t unique_vertex_index ) const
     {
-        if( !detail::section_surfaces_are_meshed( section_ ) )
+        if( !internal::section_surfaces_are_meshed( section_ ) )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
@@ -175,7 +177,7 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     SectionSurfacesTopologyInspectionResult
@@ -191,7 +193,7 @@ namespace geode
                                       " is a surface without mesh." ) );
             }
 
-            auto surface_result = detail::
+            auto surface_result = internal::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )

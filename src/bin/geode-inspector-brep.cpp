@@ -28,16 +28,16 @@
 
 #include <async++.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/filename.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/filename.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/io/brep_input.h>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/io/brep_input.hpp>
 
-#include <geode/io/model/common.h>
+#include <geode/io/model/common.hpp>
 
-#include <geode/inspector/brep_inspector.h>
+#include <geode/inspector/brep_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/model.og_brep", "Input model" );
 

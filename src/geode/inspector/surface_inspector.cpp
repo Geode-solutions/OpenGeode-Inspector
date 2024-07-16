@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/surface_inspector.h>
+#include <geode/inspector/surface_inspector.hpp>
 
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
 namespace geode
 {

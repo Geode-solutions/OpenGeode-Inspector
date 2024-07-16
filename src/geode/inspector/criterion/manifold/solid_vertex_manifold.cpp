@@ -21,15 +21,15 @@
  *
  */
 
-#include <geode/inspector/criterion/manifold/solid_vertex_manifold.h>
+#include <geode/inspector/criterion/manifold/solid_vertex_manifold.hpp>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/geometry/point.h>
+#include <geode/geometry/point.hpp>
 
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/solid_mesh.hpp>
 
 namespace
 {

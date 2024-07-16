@@ -21,20 +21,22 @@
  *
  */
 
-#include <geode/inspector/topology/brep_lines_topology.h>
+#include <geode/inspector/topology/brep_lines_topology.hpp>
+
+#include <optional>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace geode
 {
@@ -124,7 +126,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             index_t unique_vertex_index ) const
     {
@@ -141,10 +143,10 @@ namespace geode
                     "', which is neither embedded nor incident." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepLinesTopology::vertex_is_part_of_invalid_embedded_line(
             index_t unique_vertex_index ) const
     {
@@ -170,7 +172,7 @@ namespace geode
                         embedding.id().string() + "'." );
                 }
                 if( embedding.type() == Block3D::component_type_static()
-                    && !detail::brep_blocks_are_meshed( brep_ ) )
+                    && !internal::brep_blocks_are_meshed( brep_ ) )
                 {
                     continue;
                 }
@@ -190,23 +192,23 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepLinesTopology::vertex_is_part_of_invalid_single_line(
             index_t unique_vertex_index ) const
     {
-        const auto line_uuids = detail::components_uuids(
+        const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
         if( line_uuids.size() != 1 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         const auto& line_id = line_uuids[0];
-        const auto surface_uuids = detail::components_uuids(
+        const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
         if( surface_uuids.size() == 1 )
         {
@@ -227,9 +229,9 @@ namespace geode
         }
         else if( surface_uuids.empty() )
         {
-            if( !detail::brep_blocks_are_meshed( brep_ ) )
+            if( !internal::brep_blocks_are_meshed( brep_ ) )
             {
-                return absl::nullopt;
+                return std::nullopt;
             }
             if( block_uuids.size() != 1 )
             {
@@ -267,10 +269,10 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepLinesTopology::vertex_has_lines_but_is_not_a_corner(
             index_t unique_vertex_index ) const
     {
@@ -295,7 +297,7 @@ namespace geode
                 unique_vertex_index,
                 " is part of multiple lines but is not a corner." );
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     BRepLinesTopologyInspectionResult
@@ -311,7 +313,7 @@ namespace geode
                                    " is a line without mesh." ) );
             }
 
-            auto line_result = detail::
+            auto line_result = internal::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )

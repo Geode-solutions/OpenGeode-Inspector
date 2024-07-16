@@ -21,33 +21,33 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/surface_degeneration.h>
-#include <geode/inspector/criterion/private/degeneration_impl.h>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.hpp>
+#include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
-#include <geode/basic/uuid.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/uuid.hpp>
 
-#include <geode/geometry/basic_objects/triangle.h>
-#include <geode/geometry/mensuration.h>
+#include <geode/geometry/basic_objects/triangle.hpp>
+#include <geode/geometry/mensuration.hpp>
 
-#include <geode/mesh/core/surface_mesh.h>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 namespace geode
 {
     template < index_t dimension >
     class SurfaceMeshDegeneration< dimension >::Impl
-        : public detail::DegenerationImpl< SurfaceMesh< dimension > >
+        : public internal::DegenerationImpl< SurfaceMesh< dimension > >
     {
     public:
         Impl( const SurfaceMesh< dimension >& mesh )
-            : detail::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
+            : internal::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
         {
         }
 
         bool is_mesh_degenerated() const final
         {
-            if( this->detail::DegenerationImpl<
+            if( this->internal::DegenerationImpl<
                     SurfaceMesh< dimension > >::is_mesh_degenerated() )
             {
                 return true;

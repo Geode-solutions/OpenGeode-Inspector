@@ -21,24 +21,24 @@
  *
  */
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
+#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 #include <absl/algorithm/container.h>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/geometry/aabb.h>
-#include <geode/geometry/basic_objects/segment.h>
-#include <geode/geometry/basic_objects/triangle.h>
-#include <geode/geometry/information.h>
-#include <geode/geometry/intersection_detection.h>
-#include <geode/geometry/position.h>
+#include <geode/geometry/aabb.hpp>
+#include <geode/geometry/basic_objects/segment.hpp>
+#include <geode/geometry/basic_objects/triangle.hpp>
+#include <geode/geometry/information.hpp>
+#include <geode/geometry/intersection_detection.hpp>
+#include <geode/geometry/position.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/triangulated_surface.h>
-#include <geode/mesh/helpers/aabb_edged_curve_helpers.h>
-#include <geode/mesh/helpers/aabb_surface_helpers.h>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/helpers/aabb_edged_curve_helpers.hpp>
+#include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 
 namespace
 {
@@ -130,7 +130,7 @@ namespace
         {
             if( geode::point_triangle_position(
                     segment.vertices()[ev].get(), triangle )
-                == geode::Position::inside )
+                == geode::POSITION::inside )
             {
                 return true;
             }
@@ -143,11 +143,11 @@ namespace
                 surface_.point( edge_vertices[1] ) };
             const auto result =
                 geode::segment_segment_intersection_detection( segment, edge );
-            if( result.first == geode::Position::inside )
+            if( result.first == geode::POSITION::inside )
             {
                 return true;
             }
-            if( result.second == geode::Position::inside )
+            if( result.second == geode::POSITION::inside )
             {
                 return true;
             }
@@ -165,41 +165,41 @@ namespace
         {
             if( geode::point_triangle_position(
                     segment.vertices()[ev].get(), triangle )
-                == geode::Position::inside )
+                == geode::POSITION::inside )
             {
                 return true;
             }
         }
         const auto result =
             geode::segment_triangle_intersection_detection( segment, triangle );
-        if( result.first == geode::Position::outside
-            || result.second == geode::Position::outside )
+        if( result.first == geode::POSITION::outside
+            || result.second == geode::POSITION::outside )
         {
             return false;
         }
 
-        if( result.first == geode::Position::inside )
+        if( result.first == geode::POSITION::inside )
         {
             return true;
         }
 
-        if( result.second == geode::Position::inside
-            || result.second == geode::Position::edge0
-            || result.second == geode::Position::edge1
-            || result.second == geode::Position::edge2 )
+        if( result.second == geode::POSITION::inside
+            || result.second == geode::POSITION::edge0
+            || result.second == geode::POSITION::edge1
+            || result.second == geode::POSITION::edge2 )
         {
             return true;
         }
 
-        if( result.first == geode::Position::parallel )
+        if( result.first == geode::POSITION::parallel )
         {
             for( const auto ev : geode::LRange{ 2 } )
             {
                 const auto position = geode::point_triangle_position(
                     segment.vertices()[ev].get(), triangle );
-                if( position != geode::Position::vertex0
-                    && position != geode::Position::vertex1
-                    && position != geode::Position::vertex2 )
+                if( position != geode::POSITION::vertex0
+                    && position != geode::POSITION::vertex1
+                    && position != geode::POSITION::vertex2 )
                 {
                     return true;
                 }

@@ -21,14 +21,14 @@
  *
  */
 
-#include <geode/inspector/criterion/manifold/section_meshes_manifold.h>
+#include <geode/inspector/criterion/manifold/section_meshes_manifold.hpp>
 
-#include <geode/basic/logger.h>
-#include <geode/basic/pimpl_impl.h>
+#include <geode/basic/logger.hpp>
+#include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/model/representation/core/section.h>
+#include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/private/component_meshes_manifold.h>
+#include <geode/inspector/criterion/internal/component_meshes_manifold.hpp>
 
 namespace geode
 {

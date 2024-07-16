@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/tests_config.h>
+#include <geode/tests_config.hpp>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/helpers/convert_model_meshes.h>
-#include <geode/model/representation/core/section.h>
-#include <geode/model/representation/io/section_input.h>
+#include <geode/model/helpers/convert_model_meshes.hpp>
+#include <geode/model/representation/core/section.hpp>
+#include <geode/model/representation/io/section_input.hpp>
 
-#include <geode/inspector/section_inspector.h>
+#include <geode/inspector/section_inspector.hpp>
 
 geode::index_t corners_topological_validity(
     const geode::SectionCornersTopologyInspectionResult& result, bool string )
@@ -258,7 +258,7 @@ geode::index_t launch_component_meshes_validity_checks(
 void check_section( bool string )
 {
     const auto model_section = geode::load_section(
-        absl::StrCat( geode::data_path, "vertical_lines.og_sctn" ) );
+        absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) );
     geode::SectionInspector section_inspector{ model_section };
     auto result = section_inspector.inspect_section();
 

@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/brep_inspector.h>
+#include <geode/inspector/brep_inspector.hpp>
 
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/representation/core/brep.hpp>
 
 namespace geode
 {

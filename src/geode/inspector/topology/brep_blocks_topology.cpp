@@ -21,24 +21,26 @@
  *
  */
 
-#include <geode/inspector/topology/brep_blocks_topology.h>
+#include <geode/inspector/topology/brep_blocks_topology.hpp>
+
+#include <optional>
 
 #include <absl/container/flat_hash_set.h>
 
-#include <geode/basic/algorithm.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/algorithm.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/core/solid_mesh.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/model/mixin/core/block.h>
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/mixin/core/relationships.h>
-#include <geode/model/mixin/core/surface.h>
-#include <geode/model/representation/core/brep.h>
+#include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/mixin/core/relationships.hpp>
+#include <geode/model/mixin/core/surface.hpp>
+#include <geode/model/representation/core/brep.hpp>
 
-#include <geode/inspector/topology/private/topology_helpers.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace
 {
@@ -113,15 +115,15 @@ namespace geode
                       unique_vertex_index ) );
     }
 
-    absl::optional< std::string > BRepBlocksTopology::
+    std::optional< std::string > BRepBlocksTopology::
         unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
     {
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
         if( block_uuids.size() != 2 )
         {
-            return absl::nullopt;
+            return std::nullopt;
         }
         for( const auto& surface_cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -136,7 +138,7 @@ namespace geode
                 && brep_.Relationships::is_boundary(
                     surface_cmv.component_id.id(), block_uuids[1] ) )
             {
-                return absl::nullopt;
+                return std::nullopt;
             }
             for( const auto& line_cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -154,7 +156,7 @@ namespace geode
                          || brep_.Relationships::is_boundary(
                              surface_cmv.component_id.id(), block_uuids[1] ) ) )
                 {
-                    return absl::nullopt;
+                    return std::nullopt;
                 }
             }
         }
@@ -164,11 +166,11 @@ namespace geode
             "surfaces." );
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         BRepBlocksTopology::unique_vertex_block_cmvs_count_is_incorrect(
             index_t unique_vertex_index ) const
     {
-        const auto block_uuids = detail::components_uuids(
+        const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
 
         std::vector< ComponentMeshVertex > block_cmvs;
@@ -324,7 +326,7 @@ namespace geode
                     " block CMVs (should be ", predicted_nb_block_cmvs, ")." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     BRepBlocksTopologyInspectionResult
@@ -340,7 +342,7 @@ namespace geode
                                     " is not meshed." ) );
                 continue;
             }
-            auto block_result = detail::
+            auto block_result = internal::
                 brep_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
             if( block_result.nb_issues() != 0 )

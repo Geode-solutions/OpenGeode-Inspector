@@ -25,49 +25,49 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
-#include "criterion/adjacency/brep_meshes_adjacency.h"
-#include "criterion/adjacency/section_meshes_adjacency.h"
-#include "criterion/adjacency/solid_adjacency.h"
-#include "criterion/adjacency/surface_adjacency.h"
+#include "criterion/adjacency/brep_meshes_adjacency.hpp"
+#include "criterion/adjacency/section_meshes_adjacency.hpp"
+#include "criterion/adjacency/solid_adjacency.hpp"
+#include "criterion/adjacency/surface_adjacency.hpp"
 
-#include "criterion/colocation/component_meshes_colocation.h"
-#include "criterion/colocation/edgedcurve_colocation.h"
-#include "criterion/colocation/pointset_colocation.h"
-#include "criterion/colocation/solid_colocation.h"
-#include "criterion/colocation/surface_colocation.h"
-#include "criterion/colocation/unique_vertices_colocation.h"
+#include "criterion/colocation/component_meshes_colocation.hpp"
+#include "criterion/colocation/edgedcurve_colocation.hpp"
+#include "criterion/colocation/pointset_colocation.hpp"
+#include "criterion/colocation/solid_colocation.hpp"
+#include "criterion/colocation/surface_colocation.hpp"
+#include "criterion/colocation/unique_vertices_colocation.hpp"
 
-#include "criterion/degeneration/brep_meshes_degeneration.h"
-#include "criterion/degeneration/edgedcurve_degeneration.h"
-#include "criterion/degeneration/section_meshes_degeneration.h"
-#include "criterion/degeneration/solid_degeneration.h"
-#include "criterion/degeneration/surface_degeneration.h"
+#include "criterion/degeneration/brep_meshes_degeneration.hpp"
+#include "criterion/degeneration/edgedcurve_degeneration.hpp"
+#include "criterion/degeneration/section_meshes_degeneration.hpp"
+#include "criterion/degeneration/solid_degeneration.hpp"
+#include "criterion/degeneration/surface_degeneration.hpp"
 
-#include "criterion/intersections/model_intersections.h"
-#include "criterion/intersections/surface_curve_intersections.h"
-#include "criterion/intersections/surface_intersections.h"
+#include "criterion/intersections/model_intersections.hpp"
+#include "criterion/intersections/surface_curve_intersections.hpp"
+#include "criterion/intersections/surface_intersections.hpp"
 
-#include "criterion/manifold/brep_meshes_manifold.h"
-#include "criterion/manifold/section_meshes_manifold.h"
-#include "criterion/manifold/solid_edge_manifold.h"
-#include "criterion/manifold/solid_facet_manifold.h"
-#include "criterion/manifold/solid_vertex_manifold.h"
-#include "criterion/manifold/surface_edge_manifold.h"
-#include "criterion/manifold/surface_vertex_manifold.h"
+#include "criterion/manifold/brep_meshes_manifold.hpp"
+#include "criterion/manifold/section_meshes_manifold.hpp"
+#include "criterion/manifold/solid_edge_manifold.hpp"
+#include "criterion/manifold/solid_facet_manifold.hpp"
+#include "criterion/manifold/solid_vertex_manifold.hpp"
+#include "criterion/manifold/surface_edge_manifold.hpp"
+#include "criterion/manifold/surface_vertex_manifold.hpp"
 
-#include "criterion/brep_meshes_inspector.h"
-#include "criterion/section_meshes_inspector.h"
+#include "criterion/brep_meshes_inspector.hpp"
+#include "criterion/section_meshes_inspector.hpp"
 
-#include "topology/brep_topology.h"
-#include "topology/section_topology.h"
+#include "topology/brep_topology.hpp"
+#include "topology/section_topology.hpp"
 
-#include "brep_inspector.h"
-#include "edgedcurve_inspector.h"
-#include "information.h"
-#include "pointset_inspector.h"
-#include "section_inspector.h"
-#include "solid_inspector.h"
-#include "surface_inspector.h"
+#include "brep_inspector.hpp"
+#include "edgedcurve_inspector.hpp"
+#include "information.hpp"
+#include "pointset_inspector.hpp"
+#include "section_inspector.hpp"
+#include "solid_inspector.hpp"
+#include "surface_inspector.hpp"
 
 namespace pybind11
 {
@@ -79,11 +79,6 @@ namespace pybind11
         {
         };
 
-        template <>
-        struct type_caster< absl::string_view >
-            : string_caster< absl::string_view, true >
-        {
-        };
     } // namespace detail
 } // namespace pybind11
 

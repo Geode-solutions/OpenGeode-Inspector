@@ -27,16 +27,16 @@
 
 #include <async++.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/filename.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/filename.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/representation/core/section.h>
-#include <geode/model/representation/io/section_input.h>
+#include <geode/model/representation/core/section.hpp>
+#include <geode/model/representation/io/section_input.hpp>
 
-#include <geode/io/model/common.h>
+#include <geode/io/model/common.hpp>
 
-#include <geode/inspector/section_inspector.h>
+#include <geode/inspector/section_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/model.og_sctn", "Input model" );
 

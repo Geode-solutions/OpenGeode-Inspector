@@ -21,14 +21,16 @@
  *
  */
 
-#include <geode/inspector/topology/private/topology_helpers.h>
-#include <geode/inspector/topology/section_corners_topology.h>
+#include <optional>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/inspector/topology/internal/topology_helpers.hpp>
+#include <geode/inspector/topology/section_corners_topology.hpp>
 
-#include <geode/model/mixin/core/corner.h>
-#include <geode/model/mixin/core/line.h>
-#include <geode/model/representation/core/section.h>
+#include <geode/mesh/core/point_set.hpp>
+
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
+#include <geode/model/representation/core/section.hpp>
 
 namespace geode
 {
@@ -139,7 +141,7 @@ namespace geode
         return true;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const
     {
@@ -157,10 +159,10 @@ namespace geode
                 corner_found = true;
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_has_multiple_embeddings(
             index_t unique_vertex_index ) const
     {
@@ -176,10 +178,10 @@ namespace geode
                     "', which has several embeddings." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_is_not_internal_nor_boundary(
             index_t unique_vertex_index ) const
     {
@@ -196,10 +198,10 @@ namespace geode
                     "', which is neither internal nor boundary." );
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
-    absl::optional< std::string >
+    std::optional< std::string >
         SectionCornersTopology::corner_is_part_of_line_but_not_boundary(
             index_t unique_vertex_index ) const
     {
@@ -231,7 +233,7 @@ namespace geode
                 }
             }
         }
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     SectionCornersTopologyInspectionResult
@@ -246,7 +248,7 @@ namespace geode
                     "Corner " + corner.id().string() + " is not meshed." );
                 continue;
             }
-            auto corner_result = detail::
+            auto corner_result = internal::
                 section_component_vertices_are_associated_to_unique_vertices(
                     section_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )

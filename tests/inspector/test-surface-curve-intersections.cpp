@@ -23,46 +23,46 @@
 
 #include <absl/container/flat_hash_set.h>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
-#include <geode/mesh/builder/edged_curve_builder.h>
-#include <geode/mesh/builder/triangulated_surface_builder.h>
-#include <geode/mesh/core/edged_curve.h>
-#include <geode/mesh/core/triangulated_surface.h>
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/edged_curve_builder.hpp>
+#include <geode/mesh/builder/triangulated_surface_builder.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/triangulated_surface.hpp>
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.h>
+#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 void check_intersections2D()
 {
     auto surface = geode::TriangulatedSurface2D::create();
     auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0. } } );
-    builder->set_point( 1, { { 3., -1. } } );
-    builder->set_point( 2, { { 3., 3. } } );
-    builder->set_point( 3, { { 0., -3. } } );
-    builder->set_point( 4, { { 3., -3. } } );
+    builder->set_point( 0, geode::Point2D{ { 0., 0. } } );
+    builder->set_point( 1, geode::Point2D{ { 3., -1. } } );
+    builder->set_point( 2, geode::Point2D{ { 3., 3. } } );
+    builder->set_point( 3, geode::Point2D{ { 0., -3. } } );
+    builder->set_point( 4, geode::Point2D{ { 3., -3. } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 0, 1, 3 } );
     builder->create_triangle( { 1, 3, 4 } );
-    builder->set_polygon_adjacent( { { 0, 0 } }, 1 );
-    builder->set_polygon_adjacent( { { 1, 0 } }, 0 );
-    builder->set_polygon_adjacent( { { 1, 1 } }, 2 );
-    builder->set_polygon_adjacent( { { 2, 0 } }, 1 );
+    builder->set_polygon_adjacent( { 0, 0 }, 1 );
+    builder->set_polygon_adjacent( { 1, 0 }, 0 );
+    builder->set_polygon_adjacent( { 1, 1 }, 2 );
+    builder->set_polygon_adjacent( { 2, 0 }, 1 );
 
     auto curve = geode::EdgedCurve2D::create();
     auto curve_builder = geode::EdgedCurveBuilder2D::create( *curve );
     curve_builder->create_vertices( 8 );
-    curve_builder->set_point( 0, { { 5., 0. } } );
-    curve_builder->set_point( 1, { { 3., 0. } } );
-    curve_builder->set_point( 2, { { 2., 0. } } );
-    curve_builder->set_point( 3, { { 1., 0. } } );
-    curve_builder->set_point( 4, { { -1., 0. } } );
-    curve_builder->set_point( 5, { { 0., -3. } } );
-    curve_builder->set_point( 6, { { 3., -3. } } );
-    curve_builder->set_point( 7, { { 1.5, -2. } } );
+    curve_builder->set_point( 0, geode::Point2D{ { 5., 0. } } );
+    curve_builder->set_point( 1, geode::Point2D{ { 3., 0. } } );
+    curve_builder->set_point( 2, geode::Point2D{ { 2., 0. } } );
+    curve_builder->set_point( 3, geode::Point2D{ { 1., 0. } } );
+    curve_builder->set_point( 4, geode::Point2D{ { -1., 0. } } );
+    curve_builder->set_point( 5, geode::Point2D{ { 0., -3. } } );
+    curve_builder->set_point( 6, geode::Point2D{ { 3., -3. } } );
+    curve_builder->set_point( 7, geode::Point2D{ { 1.5, -2. } } );
     curve_builder->create_edge( 0, 1 );
     curve_builder->create_edge( 1, 2 );
     curve_builder->create_edge( 2, 3 );
@@ -98,31 +98,31 @@ void check_intersections3D()
     auto surface = geode::TriangulatedSurface3D::create();
     auto builder = geode::TriangulatedSurfaceBuilder3D::create( *surface );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 0 } } );
-    builder->set_point( 1, { { 3., -1., 0 } } );
-    builder->set_point( 2, { { 3., 3., 0 } } );
-    builder->set_point( 3, { { 0., -3., 0 } } );
-    builder->set_point( 4, { { 3., -3., 0 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 0 } } );
+    builder->set_point( 1, geode::Point3D{ { 3., -1., 0 } } );
+    builder->set_point( 2, geode::Point3D{ { 3., 3., 0 } } );
+    builder->set_point( 3, geode::Point3D{ { 0., -3., 0 } } );
+    builder->set_point( 4, geode::Point3D{ { 3., -3., 0 } } );
     builder->create_triangle( { 0, 1, 2 } );
     builder->create_triangle( { 0, 1, 3 } );
     builder->create_triangle( { 1, 3, 4 } );
-    builder->set_polygon_adjacent( { { 0, 0 } }, 1 );
-    builder->set_polygon_adjacent( { { 1, 0 } }, 0 );
-    builder->set_polygon_adjacent( { { 1, 1 } }, 2 );
-    builder->set_polygon_adjacent( { { 2, 0 } }, 1 );
+    builder->set_polygon_adjacent( { 0, 0 }, 1 );
+    builder->set_polygon_adjacent( { 1, 0 }, 0 );
+    builder->set_polygon_adjacent( { 1, 1 }, 2 );
+    builder->set_polygon_adjacent( { 2, 0 }, 1 );
 
     auto curve = geode::EdgedCurve3D::create();
     auto curve_builder = geode::EdgedCurveBuilder3D::create( *curve );
     curve_builder->create_vertices( 9 );
-    curve_builder->set_point( 0, { { 5., 0., 1 } } );
-    curve_builder->set_point( 1, { { 3., 0., 0 } } );
-    curve_builder->set_point( 2, { { 2., 0., 0 } } );
-    curve_builder->set_point( 3, { { 1., 0., 0 } } );
-    curve_builder->set_point( 4, { { -1., 0., 0 } } );
-    curve_builder->set_point( 5, { { 0., -3., 0 } } );
-    curve_builder->set_point( 6, { { 3., -3., 0 } } );
-    curve_builder->set_point( 7, { { 1.5, -2., 2 } } );
-    curve_builder->set_point( 8, { { 2, -2., -2 } } );
+    curve_builder->set_point( 0, geode::Point3D{ { 5., 0., 1 } } );
+    curve_builder->set_point( 1, geode::Point3D{ { 3., 0., 0 } } );
+    curve_builder->set_point( 2, geode::Point3D{ { 2., 0., 0 } } );
+    curve_builder->set_point( 3, geode::Point3D{ { 1., 0., 0 } } );
+    curve_builder->set_point( 4, geode::Point3D{ { -1., 0., 0 } } );
+    curve_builder->set_point( 5, geode::Point3D{ { 0., -3., 0 } } );
+    curve_builder->set_point( 6, geode::Point3D{ { 3., -3., 0 } } );
+    curve_builder->set_point( 7, geode::Point3D{ { 1.5, -2., 2 } } );
+    curve_builder->set_point( 8, geode::Point3D{ { 2, -2., -2 } } );
     curve_builder->create_edge( 0, 1 );
     curve_builder->create_edge( 1, 2 );
     curve_builder->create_edge( 2, 3 );

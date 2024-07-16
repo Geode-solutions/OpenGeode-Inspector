@@ -21,27 +21,27 @@
  *
  */
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/geometry/point.h>
+#include <geode/geometry/point.hpp>
 
-#include <geode/mesh/builder/tetrahedral_solid_builder.h>
-#include <geode/mesh/core/detail/vertex_cycle.h>
-#include <geode/mesh/core/tetrahedral_solid.h>
+#include <geode/mesh/builder/tetrahedral_solid_builder.hpp>
+#include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/tetrahedral_solid.hpp>
 
-#include <geode/inspector/solid_inspector.h>
+#include <geode/inspector/solid_inspector.hpp>
 
 void check_vertex_manifold()
 {
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 1, 4, 2, 3 } );
     builder->set_polyhedron_adjacent( { 0, 0 }, 1 );
@@ -60,13 +60,13 @@ void check_vertex_non_manifold()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 7 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
-    builder->set_point( 5, { { 3., .5, 0. } } );
-    builder->set_point( 6, { { .5, 3., .5 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
+    builder->set_point( 5, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 6, geode::Point3D{ { .5, 3., .5 } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 5, 4, 6, 3 } );
 
@@ -86,11 +86,11 @@ void check_edge_manifold()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 1, 4, 2, 3 } );
     builder->set_polyhedron_adjacent( { 0, 0 }, 1 );
@@ -109,12 +109,12 @@ void check_edge_non_manifold()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 6 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
-    builder->set_point( 5, { { 3., .5, 0. } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
+    builder->set_point( 5, geode::Point3D{ { 3., .5, 0. } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 5, 4, 2, 3 } );
 
@@ -135,11 +135,11 @@ void check_facet_manifold()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 5 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 1, 4, 2, 3 } );
 
@@ -156,12 +156,12 @@ void check_facet_non_manifold()
     auto solid = geode::TetrahedralSolid3D::create();
     auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
     builder->create_vertices( 6 );
-    builder->set_point( 0, { { 0., 0., 2. } } );
-    builder->set_point( 1, { { 3., .5, 0. } } );
-    builder->set_point( 2, { { .5, 3., .5 } } );
-    builder->set_point( 3, { { 2., 1.5, 3. } } );
-    builder->set_point( 4, { { 3.5, 2.5, -.5 } } );
-    builder->set_point( 5, { { 4., 3., -.5 } } );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
+    builder->set_point( 5, geode::Point3D{ { 4., 3., -.5 } } );
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 1, 4, 2, 3 } );
     builder->create_tetrahedron( { 1, 5, 2, 3 } );

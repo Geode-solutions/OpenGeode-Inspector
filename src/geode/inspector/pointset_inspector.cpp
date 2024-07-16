@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/pointset_inspector.h>
+#include <geode/inspector/pointset_inspector.hpp>
 
-#include <geode/mesh/core/point_set.h>
+#include <geode/mesh/core/point_set.hpp>
 
 namespace geode
 {

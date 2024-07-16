@@ -21,9 +21,9 @@
  *
  */
 
-#include <geode/inspector/edgedcurve_inspector.h>
+#include <geode/inspector/edgedcurve_inspector.hpp>
 
-#include <geode/mesh/core/edged_curve.h>
+#include <geode/mesh/core/edged_curve.hpp>
 
 namespace geode
 {

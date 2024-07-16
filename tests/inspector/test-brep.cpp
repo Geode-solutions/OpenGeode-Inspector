@@ -21,16 +21,16 @@
  *
  */
 
-#include <geode/tests_config.h>
+#include <geode/tests_config.hpp>
 
-#include <geode/basic/assert.h>
-#include <geode/basic/logger.h>
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
 
-#include <geode/model/helpers/convert_model_meshes.h>
-#include <geode/model/representation/core/brep.h>
-#include <geode/model/representation/io/brep_input.h>
+#include <geode/model/helpers/convert_model_meshes.hpp>
+#include <geode/model/representation/core/brep.hpp>
+#include <geode/model/representation/io/brep_input.hpp>
 
-#include <geode/inspector/brep_inspector.h>
+#include <geode/inspector/brep_inspector.hpp>
 
 geode::index_t corners_topological_validity(
     const geode::BRepCornersTopologyInspectionResult& result, bool string )
@@ -303,7 +303,7 @@ geode::index_t launch_component_meshes_validity_checks(
 void check_model_a1( bool string )
 {
     const auto model_brep = geode::load_brep(
-        absl::StrCat( geode::data_path, "model_A1.og_brep" ) );
+        absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
@@ -325,7 +325,7 @@ void check_model_a1( bool string )
 void check_model_a1_valid( bool string )
 {
     const auto model_brep = geode::load_brep(
-        absl::StrCat( geode::data_path, "model_A1_valid.og_brep" ) );
+        absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
@@ -348,7 +348,7 @@ void check_model_a1_valid( bool string )
 void check_model_mss( bool string )
 {
     const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::data_path, "mss.og_brep" ) );
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
@@ -369,7 +369,7 @@ void check_model_mss( bool string )
 void check_model_D( bool string )
 {
     const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::data_path, "model_D.og_brep" ) );
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
