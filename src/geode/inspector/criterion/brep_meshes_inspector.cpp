@@ -30,7 +30,7 @@ namespace geode
         return absl::StrCat( unique_vertices_colocation.string(),
             meshes_colocation.string(), meshes_adjacencies.string(),
             meshes_degenerations.string(), meshes_intersections.string(),
-            meshes_non_manifolds.string() );
+            meshes_non_manifolds.string(), meshes_negative_elements.string() );
     }
 
     std::string BRepMeshesInspectionResult::inspection_type() const
@@ -44,6 +44,7 @@ namespace geode
           BRepComponentMeshesColocation( brep ),
           BRepComponentMeshesDegeneration( brep ),
           BRepComponentMeshesManifold( brep ),
+          BRepComponentMeshesNegativeElements( brep ),
           BRepMeshesIntersections( brep )
     {
     }
@@ -57,6 +58,7 @@ namespace geode
         result.meshes_degenerations = inspect_elements_degeneration();
         result.meshes_intersections = inspect_intersections();
         result.meshes_non_manifolds = inspect_brep_manifold();
+        result.meshes_negative_elements = inspect_negative_elements();
         return result;
     }
 } // namespace geode

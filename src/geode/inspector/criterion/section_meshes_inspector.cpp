@@ -30,7 +30,7 @@ namespace geode
         return absl::StrCat( unique_vertices_colocation.string(),
             meshes_colocation.string(), meshes_adjacencies.string(),
             meshes_degenerations.string(), meshes_intersections.string(),
-            meshes_non_manifolds.string() );
+            meshes_non_manifolds.string(), meshes_negative_elements.string() );
     }
 
     std::string SectionMeshesInspectionResult::inspection_type() const
@@ -44,6 +44,7 @@ namespace geode
           SectionComponentMeshesColocation( section ),
           SectionComponentMeshesDegeneration( section ),
           SectionComponentMeshesManifold( section ),
+          SectionComponentMeshesNegativeElements( section ),
           SectionMeshesIntersections( section )
     {
     }
@@ -58,6 +59,7 @@ namespace geode
         result.meshes_degenerations = inspect_elements_degeneration();
         result.meshes_intersections = inspect_intersections();
         result.meshes_non_manifolds = inspect_section_manifold();
+        result.meshes_negative_elements = inspect_negative_elements();
         return result;
     }
 } // namespace geode

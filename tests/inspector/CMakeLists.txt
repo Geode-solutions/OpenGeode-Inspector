@@ -126,6 +126,15 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-surface-negative-elements.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_test(
     SOURCE "test-solid-manifold.cpp"
     DEPENDENCIES
         OpenGeode::basic
@@ -133,6 +142,16 @@ add_geode_test(
         OpenGeode::mesh
         ${PROJECT_NAME}::inspector
 )
+
+add_geode_test(
+    SOURCE "test-solid-negative-elements.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspector
+)
+
 add_geode_test(
     SOURCE "test-brep.cpp"
     DEPENDENCIES

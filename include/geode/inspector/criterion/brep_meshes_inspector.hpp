@@ -30,6 +30,7 @@
 #include <geode/inspector/criterion/degeneration/brep_meshes_degeneration.hpp>
 #include <geode/inspector/criterion/intersections/model_intersections.hpp>
 #include <geode/inspector/criterion/manifold/brep_meshes_manifold.hpp>
+#include <geode/inspector/criterion/negative_elements/brep_meshes_negative_elements.hpp>
 
 namespace geode
 {
@@ -41,6 +42,7 @@ namespace geode
         BRepMeshesDegenerationInspectionResult meshes_degenerations;
         ElementsIntersectionsInspectionResult meshes_intersections;
         BRepMeshesManifoldInspectionResult meshes_non_manifolds;
+        BRepMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
         std::string string() const;
 
@@ -57,6 +59,7 @@ namespace geode
           public BRepComponentMeshesColocation,
           public BRepComponentMeshesDegeneration,
           public BRepComponentMeshesManifold,
+          public BRepComponentMeshesNegativeElements,
           public BRepMeshesIntersections
     {
         OPENGEODE_DISABLE_COPY( BRepMeshesInspector );

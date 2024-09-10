@@ -26,10 +26,8 @@
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
-#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/degeneration/solid_degeneration.hpp>
 #include <geode/inspector/criterion/internal/component_meshes_degeneration.hpp>
 
 namespace geode

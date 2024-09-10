@@ -21,41 +21,27 @@
  *
  */
 
-#include <geode/inspector/criterion/degeneration/surface_degeneration.hpp>
+#include <geode/inspector/criterion/negative_elements/surface_negative_elements.hpp>
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
 
-#include <geode/geometry/basic_objects/triangle.hpp>
-#include <geode/geometry/mensuration.hpp>
-
 #include <geode/mesh/core/surface_mesh.hpp>
-
-#include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
 namespace geode
 {
     template < index_t dimension >
-    class SurfaceMeshDegeneration< dimension >::Impl
-        : public internal::DegenerationImpl< SurfaceMesh< dimension > >
+    class SurfaceMeshNegativeElements< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh )
-            : internal::DegenerationImpl< SurfaceMesh< dimension > >{ mesh }
-        {
-        }
+        Impl( const SurfaceMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
-        bool is_mesh_degenerated() const final
+        bool mesh_has_negative_elements() const
         {
-            if( this->internal::DegenerationImpl<
-                    SurfaceMesh< dimension > >::is_mesh_degenerated() )
+            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
-                return true;
-            }
-            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
-            {
-                if( this->mesh().is_polygon_degenerated( polygon_id ) )
+                if( mesh_.polygon_area( polygon_id ) < 0 )
                 {
                     return true;
                 }
@@ -63,58 +49,51 @@ namespace geode
             return false;
         }
 
-        InspectionIssues< index_t > degenerated_polygons() const
+        InspectionIssues< index_t > negative_polygons() const
         {
-            InspectionIssues< index_t > wrong_polygons{
-                "Degenerated Polygons."
-            };
-            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            InspectionIssues< index_t > wrong_polygons{ "Negative Polygons." };
+            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
-                if( this->mesh().is_polygon_degenerated( polygon_id ) )
+                if( mesh_.polygon_area( polygon_id ) < 0 )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
-                            this->mesh().id().string(), " is degenerated." ) );
+                            mesh_.id().string(), " has a negative area." ) );
                 }
             }
             return wrong_polygons;
         }
+
+    private:
+        const SurfaceMesh< dimension >& mesh_;
     };
 
     template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::SurfaceMeshDegeneration(
+    SurfaceMeshNegativeElements< dimension >::SurfaceMeshNegativeElements(
         const SurfaceMesh< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration()
+    SurfaceMeshNegativeElements< dimension >::~SurfaceMeshNegativeElements()
     {
     }
 
     template < index_t dimension >
-    bool SurfaceMeshDegeneration< dimension >::is_mesh_degenerated() const
+    bool SurfaceMeshNegativeElements< dimension >::mesh_has_negative_elements()
+        const
     {
-        return impl_->is_mesh_degenerated();
-    }
-
-    template < index_t dimension >
-    InspectionIssues< index_t >
-        SurfaceMeshDegeneration< dimension >::degenerated_edges() const
-    {
-        return impl_->degenerated_edges();
+        return impl_->mesh_has_negative_elements();
     }
 
     template < index_t dimension >
     InspectionIssues< index_t >
-        SurfaceMeshDegeneration< dimension >::degenerated_polygons() const
+        SurfaceMeshNegativeElements< dimension >::negative_polygons() const
     {
-        return impl_->degenerated_polygons();
+        return impl_->negative_polygons();
     }
 
     template class opengeode_inspector_inspector_api
-        SurfaceMeshDegeneration< 2 >;
-    template class opengeode_inspector_inspector_api
-        SurfaceMeshDegeneration< 3 >;
+        SurfaceMeshNegativeElements< 2 >;
 } // namespace geode

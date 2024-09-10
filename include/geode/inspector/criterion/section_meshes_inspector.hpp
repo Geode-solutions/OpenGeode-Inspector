@@ -30,6 +30,7 @@
 #include <geode/inspector/criterion/degeneration/section_meshes_degeneration.hpp>
 #include <geode/inspector/criterion/intersections/model_intersections.hpp>
 #include <geode/inspector/criterion/manifold/section_meshes_manifold.hpp>
+#include <geode/inspector/criterion/negative_elements/section_meshes_negative_elements.hpp>
 #include <geode/inspector/information.hpp>
 
 namespace geode
@@ -42,6 +43,7 @@ namespace geode
         SectionMeshesDegenerationInspectionResult meshes_degenerations;
         ElementsIntersectionsInspectionResult meshes_intersections;
         SectionMeshesManifoldInspectionResult meshes_non_manifolds;
+        SectionMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
         std::string string() const;
 
@@ -57,6 +59,7 @@ namespace geode
           public SectionComponentMeshesColocation,
           public SectionComponentMeshesDegeneration,
           public SectionComponentMeshesManifold,
+          public SectionComponentMeshesNegativeElements,
           public SectionMeshesIntersections
     {
         OPENGEODE_DISABLE_COPY( SectionMeshesInspector );

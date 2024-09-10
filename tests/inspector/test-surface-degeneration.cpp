@@ -101,6 +101,7 @@ void check_degeneration_by_point_multiple_presence2D()
                              == surface->edges().edge_from_vertices( { 1, 1 } ),
         "[Test] Surface shows the wrong degenerated edges." );
 }
+
 void check_non_degeneration3D()
 {
     auto surface = geode::TriangulatedSurface3D::create();
