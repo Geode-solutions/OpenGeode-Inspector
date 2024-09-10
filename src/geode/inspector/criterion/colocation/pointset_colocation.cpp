@@ -38,7 +38,7 @@ namespace geode
     public:
         Impl( const PointSet< dimension >& mesh )
             : internal::ColocationImpl< dimension, PointSet< dimension > >(
-                mesh )
+                  mesh )
         {
         }
     };

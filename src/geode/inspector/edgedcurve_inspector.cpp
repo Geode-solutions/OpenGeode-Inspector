@@ -42,8 +42,8 @@ namespace geode
     EdgedCurveInspector< dimension >::EdgedCurveInspector(
         const EdgedCurve< dimension >& mesh )
         : AddInspectors< EdgedCurve< dimension >,
-            EdgedCurveColocation< dimension >,
-            EdgedCurveDegeneration< dimension > >{ mesh }
+              EdgedCurveColocation< dimension >,
+              EdgedCurveDegeneration< dimension > >{ mesh }
     {
     }
 

@@ -92,7 +92,7 @@ namespace
               mesh2_( same_surface_
                           ? mesh1_
                           : surface2_.template mesh<
-                              geode::TriangulatedSurface< Model::dim > >() )
+                                geode::TriangulatedSurface< Model::dim > >() )
         {
         }
 
@@ -170,7 +170,7 @@ namespace
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
             : ModelSurfacesIntersectionBase< Model >(
-                model, surface_id1, surface_id2 ),
+                  model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -208,7 +208,7 @@ namespace
             const geode::uuid& surface_id1,
             const geode::uuid& surface_id2 )
             : ModelSurfacesIntersectionBase< Model >(
-                model, surface_id1, surface_id2 ),
+                  model, surface_id1, surface_id2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }

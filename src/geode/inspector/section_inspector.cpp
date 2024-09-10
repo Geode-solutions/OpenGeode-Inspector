@@ -40,8 +40,8 @@ namespace geode
 
     SectionInspector::SectionInspector( const Section& section )
         : AddInspectors< Section,
-            SectionMeshesInspector,
-            SectionTopologyInspector >{ section }
+              SectionMeshesInspector,
+              SectionTopologyInspector >{ section }
     {
     }
 

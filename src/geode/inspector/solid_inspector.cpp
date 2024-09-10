@@ -46,12 +46,12 @@ namespace geode
     SolidMeshInspector< dimension >::SolidMeshInspector(
         const SolidMesh< dimension >& mesh )
         : AddInspectors< SolidMesh< dimension >,
-            SolidMeshAdjacency< dimension >,
-            SolidMeshColocation< dimension >,
-            SolidMeshDegeneration< dimension >,
-            SolidMeshVertexManifold< dimension >,
-            SolidMeshEdgeManifold< dimension >,
-            SolidMeshFacetManifold< dimension > >{ mesh }
+              SolidMeshAdjacency< dimension >,
+              SolidMeshColocation< dimension >,
+              SolidMeshDegeneration< dimension >,
+              SolidMeshVertexManifold< dimension >,
+              SolidMeshEdgeManifold< dimension >,
+              SolidMeshFacetManifold< dimension > >{ mesh }
     {
     }
     template < index_t dimension >
