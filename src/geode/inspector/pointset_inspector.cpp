@@ -41,7 +41,7 @@ namespace geode
     PointSetInspector< dimension >::PointSetInspector(
         const PointSet< dimension >& mesh )
         : AddInspectors< PointSet< dimension >,
-            PointSetColocation< dimension > >{ mesh }
+              PointSetColocation< dimension > >{ mesh }
     {
     }
 

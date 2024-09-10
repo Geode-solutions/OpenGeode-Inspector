@@ -38,7 +38,7 @@ namespace geode
     public:
         Impl( const EdgedCurve< dimension >& mesh )
             : internal::ColocationImpl< dimension, EdgedCurve< dimension > >(
-                mesh )
+                  mesh )
         {
         }
     };

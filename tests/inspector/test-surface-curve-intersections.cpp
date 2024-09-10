@@ -148,8 +148,8 @@ void check_intersections3D()
     for( const auto& inter : intersection_result.issues() )
     {
         OPENGEODE_EXCEPTION( answer.contains( inter ),
-            "[Test] 3D Surface and Curve has at least one wrong intersecting "
-            "elements pair: (triangle = ",
+            "[Test] 3D Surface and Curve should have at least one wrong "
+            "intersecting elements pair: (triangle = ",
             inter.first, ", edge = ", inter.second, ")" );
     }
 }
