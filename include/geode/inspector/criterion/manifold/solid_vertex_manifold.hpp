@@ -49,9 +49,9 @@ namespace geode
 
         ~SolidMeshVertexManifold();
 
-        bool mesh_vertices_are_manifold() const;
+        [[nodiscard]] bool mesh_vertices_are_manifold() const;
 
-        InspectionIssues< index_t > non_manifold_vertices() const;
+        [[nodiscard]] InspectionIssues< index_t > non_manifold_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

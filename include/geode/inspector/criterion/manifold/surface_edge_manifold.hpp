@@ -55,9 +55,10 @@ namespace geode
 
         ~SurfaceMeshEdgeManifold();
 
-        bool mesh_edges_are_manifold() const;
+        [[nodiscard]] bool mesh_edges_are_manifold() const;
 
-        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const;
+        [[nodiscard]] InspectionIssues< std::array< index_t, 2 > >
+            non_manifold_edges() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

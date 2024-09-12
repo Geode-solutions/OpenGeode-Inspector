@@ -58,9 +58,9 @@ namespace geode
             "Intersection between mesh elements not tested"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a SurfaceMesh
@@ -82,8 +82,10 @@ namespace geode
 
     public:
         SurfaceMeshInspector( const SurfaceMesh< dimension >& mesh );
-        virtual ~SurfaceMeshInspector() {}
-        virtual SurfaceInspectionResult inspect_surface() const;
+
+        virtual ~SurfaceMeshInspector() = default;
+
+        [[nodiscard]] virtual SurfaceInspectionResult inspect_surface() const;
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
 
@@ -101,9 +103,8 @@ namespace geode
     public:
         explicit TriangulatedSurfaceInspector(
             const TriangulatedSurface< dimension >& mesh );
-        virtual ~TriangulatedSurfaceInspector() {}
 
-        SurfaceInspectionResult inspect_surface() const final;
+        [[nodiscard]] SurfaceInspectionResult inspect_surface() const final;
     };
     ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode

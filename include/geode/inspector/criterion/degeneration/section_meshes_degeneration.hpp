@@ -48,9 +48,9 @@ namespace geode
             "Section component meshes with degenerated polygons"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -66,7 +66,7 @@ namespace geode
 
         ~SectionComponentMeshesDegeneration();
 
-        SectionMeshesDegenerationInspectionResult
+        [[nodiscard]] SectionMeshesDegenerationInspectionResult
             inspect_elements_degeneration() const;
 
     private:

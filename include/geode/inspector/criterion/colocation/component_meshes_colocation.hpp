@@ -44,9 +44,9 @@ namespace geode
             "Model component meshes with colocated points"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -63,7 +63,7 @@ namespace geode
 
         ~ComponentMeshesColocation();
 
-        MeshesColocationInspectionResult
+        [[nodiscard]] MeshesColocationInspectionResult
             inspect_meshes_point_colocations() const;
 
     private:

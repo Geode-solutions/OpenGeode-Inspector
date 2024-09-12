@@ -40,9 +40,9 @@ namespace geode
         BRepMeshesInspectionResult meshes;
         BRepTopologyInspectionResult topology;
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a BRep model
@@ -58,6 +58,6 @@ namespace geode
     public:
         explicit BRepInspector( const BRep& brep );
 
-        BRepInspectionResult inspect_brep() const;
+        [[nodiscard]] BRepInspectionResult inspect_brep() const;
     };
 } // namespace geode

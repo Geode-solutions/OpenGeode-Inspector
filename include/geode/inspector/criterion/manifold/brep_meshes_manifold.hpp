@@ -65,9 +65,9 @@ namespace geode
             "BRep non manifold edges"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of
@@ -82,7 +82,8 @@ namespace geode
 
         ~BRepComponentMeshesManifold();
 
-        BRepMeshesManifoldInspectionResult inspect_brep_manifold() const;
+        [[nodiscard]] BRepMeshesManifoldInspectionResult
+            inspect_brep_manifold() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

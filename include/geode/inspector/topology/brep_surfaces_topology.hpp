@@ -71,9 +71,9 @@ namespace geode
                 "a Surface border."
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the topology of a BRep model surfaces through
@@ -100,28 +100,31 @@ namespace geode
          * internal or boundary to at least 2 of the surfaces the vertex is
          * in).
          */
-        bool brep_surfaces_topology_is_valid(
+        [[nodiscard]] bool brep_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_surface(
                 index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_embedded_surface(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_embedded_surface(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_single_surface(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_surface(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_multiple_surfaces(
                 index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
-        BRepSurfacesTopologyInspectionResult inspect_surfaces_topology() const;
+        [[nodiscard]] BRepSurfacesTopologyInspectionResult
+            inspect_surfaces_topology() const;
 
     private:
         const BRep& brep_;

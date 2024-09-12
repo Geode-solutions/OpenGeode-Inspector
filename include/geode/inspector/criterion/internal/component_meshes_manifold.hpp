@@ -51,7 +51,7 @@ namespace geode
     protected:
         explicit ComponentMeshesManifold( const Model& model );
 
-        const Model& model() const;
+        [[nodiscard]] const Model& model() const;
 
     private:
         const Model& model_;

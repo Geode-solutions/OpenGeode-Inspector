@@ -52,9 +52,9 @@ namespace geode
                 "BRep Block mesh with wrong adjacencies on polyhedron facets"
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -70,7 +70,7 @@ namespace geode
 
         ~BRepComponentMeshesAdjacency();
 
-        BRepMeshesAdjacencyInspectionResult
+        [[nodiscard]] BRepMeshesAdjacencyInspectionResult
             inspect_brep_meshes_adjacencies() const;
 
     private:

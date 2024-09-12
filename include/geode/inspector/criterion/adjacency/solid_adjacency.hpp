@@ -49,9 +49,9 @@ namespace geode
 
         ~SolidMeshAdjacency();
 
-        bool mesh_has_wrong_adjacencies() const;
+        [[nodiscard]] bool mesh_has_wrong_adjacencies() const;
 
-        InspectionIssues< PolyhedronFacet >
+        [[nodiscard]] InspectionIssues< PolyhedronFacet >
             polyhedron_facets_with_wrong_adjacency() const;
 
     private:

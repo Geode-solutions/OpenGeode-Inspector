@@ -52,7 +52,7 @@ namespace geode
             description_ = to_string( issue_description );
         }
 
-        index_t nb_issues() const
+        [[nodiscard]] index_t nb_issues() const
         {
             return issues_.size();
         }
@@ -63,12 +63,12 @@ namespace geode
             messages_.emplace_back( std::move( message ) );
         }
 
-        std::string_view description() const
+        [[nodiscard]] std::string_view description() const
         {
             return description_;
         }
 
-        std::string string() const
+        [[nodiscard]] std::string string() const
         {
             if( issues_.empty() )
             {
@@ -82,7 +82,7 @@ namespace geode
             return message;
         }
 
-        const std::vector< IssueType >& issues() const
+        [[nodiscard]] const std::vector< IssueType >& issues() const
         {
             return issues_;
         }
@@ -112,12 +112,12 @@ namespace geode
             description_ = to_string( issue_description );
         }
 
-        std::string_view description() const
+        [[nodiscard]] std::string_view description() const
         {
             return description_;
         }
 
-        index_t nb_issues() const
+        [[nodiscard]] index_t nb_issues() const
         {
             return issues_map_.size();
         }
@@ -132,7 +132,7 @@ namespace geode
             issues_map_.emplace( id_to_issues, std::move( issues ) );
         }
 
-        std::string string() const
+        [[nodiscard]] std::string string() const
         {
             if( issues_map_.empty() )
             {
@@ -146,7 +146,8 @@ namespace geode
             return message;
         }
 
-        const absl::flat_hash_map< uuid, InspectionIssues< IssueType > >&
+        [[nodiscard]] const absl::flat_hash_map< uuid,
+            InspectionIssues< IssueType > >&
             issues_map() const
         {
             return issues_map_;

@@ -42,9 +42,9 @@ namespace geode
             explicit ColocationImpl( const Mesh& mesh );
 
         public:
-            bool mesh_has_colocated_points() const;
+            [[nodiscard]] bool mesh_has_colocated_points() const;
 
-            InspectionIssues< std::vector< index_t > >
+            [[nodiscard]] InspectionIssues< std::vector< index_t > >
                 colocated_points_groups() const;
 
         private:

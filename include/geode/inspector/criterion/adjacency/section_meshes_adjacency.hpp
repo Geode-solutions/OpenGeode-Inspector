@@ -48,9 +48,9 @@ namespace geode
                 "Section Surface mesh with wrong adjacencies on polygon edges"
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the adjacency of the surface edges in the Component
@@ -65,7 +65,7 @@ namespace geode
 
         ~SectionComponentMeshesAdjacency();
 
-        SectionMeshesAdjacencyInspectionResult
+        [[nodiscard]] SectionMeshesAdjacencyInspectionResult
             inspect_section_meshes_adjacencies() const;
 
     private:

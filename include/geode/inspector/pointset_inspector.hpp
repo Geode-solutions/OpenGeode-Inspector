@@ -35,9 +35,9 @@ namespace geode
             "Colocation of vertices not tested"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -53,7 +53,7 @@ namespace geode
     public:
         explicit PointSetInspector( const PointSet< dimension >& mesh );
 
-        PointSetInspectionResult inspect_point_set() const;
+        [[nodiscard]] PointSetInspectionResult inspect_point_set() const;
     };
     ALIAS_2D_AND_3D( PointSetInspector );
 } // namespace geode

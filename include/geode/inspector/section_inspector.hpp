@@ -35,9 +35,9 @@ namespace geode
         SectionMeshesInspectionResult meshes;
         SectionTopologyInspectionResult topology;
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a Section model
@@ -53,6 +53,6 @@ namespace geode
     public:
         explicit SectionInspector( const Section& section );
 
-        SectionInspectionResult inspect_section() const;
+        [[nodiscard]] SectionInspectionResult inspect_section() const;
     };
 } // namespace geode

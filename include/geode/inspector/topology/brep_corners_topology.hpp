@@ -65,9 +65,9 @@ namespace geode
                 "without boundary status."
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     class opengeode_inspector_inspector_api BRepCornersTopology
@@ -83,21 +83,26 @@ namespace geode
          * block).
          * Each corner is a boundary of every line it is associated to.
          */
-        bool brep_corner_topology_is_valid( index_t unique_vertex_index ) const;
-
-        std::optional< std::string > unique_vertex_has_multiple_corners(
+        [[nodiscard]] bool brep_corner_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        std::optional< std::string > corner_has_multiple_embeddings(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            unique_vertex_has_multiple_corners(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string > corner_is_not_internal_nor_boundary(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            corner_has_multiple_embeddings( index_t unique_vertex_index ) const;
 
-        std::optional< std::string > corner_is_part_of_line_but_not_boundary(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            corner_is_not_internal_nor_boundary(
+                index_t unique_vertex_index ) const;
 
-        BRepCornersTopologyInspectionResult inspect_corners_topology() const;
+        [[nodiscard]] std::optional< std::string >
+            corner_is_part_of_line_but_not_boundary(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] BRepCornersTopologyInspectionResult
+            inspect_corners_topology() const;
 
     private:
         const BRep& brep_;

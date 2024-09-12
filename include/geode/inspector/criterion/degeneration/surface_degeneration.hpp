@@ -49,11 +49,11 @@ namespace geode
 
         ~SurfaceMeshDegeneration();
 
-        bool is_mesh_degenerated() const;
+        [[nodiscard]] bool is_mesh_degenerated() const;
 
-        InspectionIssues< index_t > degenerated_edges() const;
+        [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
 
-        InspectionIssues< index_t > degenerated_polygons() const;
+        [[nodiscard]] InspectionIssues< index_t > degenerated_polygons() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

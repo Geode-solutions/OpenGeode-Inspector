@@ -51,9 +51,9 @@ namespace geode
             "BRep component meshes with degenerated polyhedra"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -69,7 +69,7 @@ namespace geode
 
         ~BRepComponentMeshesDegeneration();
 
-        BRepMeshesDegenerationInspectionResult
+        [[nodiscard]] BRepMeshesDegenerationInspectionResult
             inspect_elements_degeneration() const;
 
     private:

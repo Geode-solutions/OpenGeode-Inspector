@@ -39,17 +39,17 @@ namespace geode
         public:
             virtual ~DegenerationImpl();
 
-            virtual bool is_mesh_degenerated() const;
+            [[nodiscard]] virtual bool is_mesh_degenerated() const;
 
-            InspectionIssues< index_t > degenerated_edges() const;
+            [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
 
         private:
-            bool edge_is_degenerated( index_t edge_index ) const;
+            [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;
 
         protected:
             explicit DegenerationImpl( const Mesh& mesh );
 
-            const Mesh& mesh() const;
+            [[nodiscard]] const Mesh& mesh() const;
 
         private:
             const Mesh& mesh_;

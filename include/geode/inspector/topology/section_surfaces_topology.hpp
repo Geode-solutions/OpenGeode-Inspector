@@ -56,9 +56,9 @@ namespace geode
                 "a Surface border."
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the topology of a Section model surfaces through
@@ -75,17 +75,19 @@ namespace geode
          * If a unique vertex is part of two surfaces, it is part of a least
          * one line which is boundary of the two blocks.
          */
-        bool section_vertex_surfaces_topology_is_valid(
+        [[nodiscard]] bool section_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_embedded_surface(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_embedded_surface(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
 
-        SectionSurfacesTopologyInspectionResult inspect_surfaces() const;
+        [[nodiscard]] SectionSurfacesTopologyInspectionResult
+            inspect_surfaces() const;
 
     private:
         const Section& section_;

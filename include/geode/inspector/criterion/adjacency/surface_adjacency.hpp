@@ -49,9 +49,9 @@ namespace geode
 
         ~SurfaceMeshAdjacency();
 
-        bool mesh_has_wrong_adjacencies() const;
+        [[nodiscard]] bool mesh_has_wrong_adjacencies() const;
 
-        InspectionIssues< PolygonEdge >
+        [[nodiscard]] InspectionIssues< PolygonEdge >
             polygon_edges_with_wrong_adjacency() const;
 
     private:

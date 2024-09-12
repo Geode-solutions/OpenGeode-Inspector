@@ -45,12 +45,13 @@ namespace geode
 {
     namespace internal
     {
-        bool brep_blocks_are_meshed( const BRep& brep );
+        [[nodiscard]] bool brep_blocks_are_meshed( const BRep& brep );
 
-        bool section_surfaces_are_meshed( const Section& section );
+        [[nodiscard]] bool section_surfaces_are_meshed(
+            const Section& section );
 
         template < typename Model >
-        std::vector< uuid > components_uuids( const Model& model,
+        [[nodiscard]] std::vector< uuid > components_uuids( const Model& model,
             index_t unique_vertex_index,
             const geode::ComponentType& type )
         {
@@ -67,12 +68,12 @@ namespace geode
             return component_uuids;
         }
 
-        InspectionIssues< index_t >
+        [[nodiscard]] InspectionIssues< index_t >
             brep_component_vertices_not_associated_to_unique_vertices(
                 const BRep& brep,
                 const ComponentID& component_id,
                 const VertexSet& component_mesh );
-        InspectionIssues< index_t >
+        [[nodiscard]] InspectionIssues< index_t >
             section_component_vertices_are_associated_to_unique_vertices(
                 const Section& section,
                 const ComponentID& component_id,
