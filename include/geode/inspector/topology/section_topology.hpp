@@ -47,9 +47,9 @@ namespace geode
             "Unique vertices not linked to any component"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -70,13 +70,16 @@ namespace geode
          * Checks if the section is topologically valid through the unique
          * vertices.
          */
-        bool section_topology_is_valid() const;
+        [[nodiscard]] bool section_topology_is_valid() const;
 
-        bool section_meshed_components_are_linked_to_unique_vertices() const;
+        [[nodiscard]] bool
+            section_meshed_components_are_linked_to_unique_vertices() const;
 
-        bool section_unique_vertices_are_linked_to_a_component_vertex() const;
+        [[nodiscard]] bool
+            section_unique_vertices_are_linked_to_a_component_vertex() const;
 
-        SectionTopologyInspectionResult inspect_section_topology() const;
+        [[nodiscard]] SectionTopologyInspectionResult
+            inspect_section_topology() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

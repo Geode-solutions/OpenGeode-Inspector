@@ -65,9 +65,9 @@ namespace geode
                 "linked to a corner."
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the topology of a Section model lines through
@@ -90,23 +90,27 @@ namespace geode
          * boundary of all the surfaces the vertex is in.
          * If the vertex is part of multiple lines, it is also a corner.
          */
-        bool section_lines_topology_is_valid(
+        [[nodiscard]] bool section_lines_topology_is_valid(
             index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_line(
                 const index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_embedded_line(
-            const index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_embedded_line(
+                const index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_single_line(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_line(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_has_lines_but_is_not_a_corner(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_has_lines_but_is_not_a_corner(
+                index_t unique_vertex_index ) const;
 
-        SectionLinesTopologyInspectionResult inspect_lines_topology() const;
+        [[nodiscard]] SectionLinesTopologyInspectionResult
+            inspect_lines_topology() const;
 
     private:
         const Section& section_;

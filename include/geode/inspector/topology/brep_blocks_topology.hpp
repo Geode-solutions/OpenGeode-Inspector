@@ -60,9 +60,9 @@ namespace geode
                 "ComponentMeshVertices count"
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -74,17 +74,18 @@ namespace geode
     public:
         explicit BRepBlocksTopology( const BRep& brep );
 
-        bool brep_blocks_topology_is_valid( index_t unique_vertex_index ) const;
+        [[nodiscard]] bool brep_blocks_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
                 index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             unique_vertex_block_cmvs_count_is_incorrect(
                 index_t unique_vertex_index ) const;
 
-        BRepBlocksTopologyInspectionResult inspect_blocks() const;
+        [[nodiscard]] BRepBlocksTopologyInspectionResult inspect_blocks() const;
 
     private:
         const BRep& brep_;

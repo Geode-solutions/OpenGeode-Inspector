@@ -51,9 +51,9 @@ namespace geode
 
         ~TriangulatedSurfaceIntersections();
 
-        bool mesh_has_self_intersections() const;
+        [[nodiscard]] bool mesh_has_self_intersections() const;
 
-        InspectionIssues< std::pair< index_t, index_t > >
+        [[nodiscard]] InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const;
 
     private:

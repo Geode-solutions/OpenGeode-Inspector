@@ -39,9 +39,9 @@ namespace geode
             "Degeneration of edges not tested"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -59,7 +59,7 @@ namespace geode
     public:
         explicit EdgedCurveInspector( const EdgedCurve< dimension >& mesh );
 
-        EdgedCurveInspectionResult inspect_edged_curve() const;
+        [[nodiscard]] EdgedCurveInspectionResult inspect_edged_curve() const;
     };
     ALIAS_2D_AND_3D( EdgedCurveInspector );
 } // namespace geode

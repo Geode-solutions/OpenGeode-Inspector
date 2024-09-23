@@ -44,9 +44,9 @@ namespace geode
         BRepMeshesManifoldInspectionResult meshes_non_manifolds;
         BRepMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -67,6 +67,6 @@ namespace geode
     public:
         explicit BRepMeshesInspector( const BRep& brep );
 
-        BRepMeshesInspectionResult inspect_brep_meshes() const;
+        [[nodiscard]] BRepMeshesInspectionResult inspect_brep_meshes() const;
     };
 } // namespace geode

@@ -53,14 +53,14 @@ namespace geode
 
         ~SurfaceCurveIntersections();
 
-        bool meshes_have_intersections() const;
+        [[nodiscard]] bool meshes_have_intersections() const;
 
         /* Returns all pairs of intersecting triangles and edges.
          * First element of each pair is a triangle index in the
          * TriangulatedSurface, second element of each pair is an edge index in
          * the EdgedCurve.
          */
-        InspectionIssues< std::pair< index_t, index_t > >
+        [[nodiscard]] InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const;
 
     private:

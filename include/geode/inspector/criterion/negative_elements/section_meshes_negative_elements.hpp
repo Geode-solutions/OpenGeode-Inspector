@@ -45,9 +45,9 @@ namespace geode
             "Section surface meshes with negative polygons"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -65,7 +65,7 @@ namespace geode
 
         ~SectionComponentMeshesNegativeElements();
 
-        SectionMeshesNegativeElementsInspectionResult
+        [[nodiscard]] SectionMeshesNegativeElementsInspectionResult
             inspect_negative_elements() const;
 
     private:

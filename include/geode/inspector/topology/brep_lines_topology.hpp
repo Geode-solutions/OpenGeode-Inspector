@@ -67,9 +67,9 @@ namespace geode
                 "linked to a Corner."
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the topology of a BRep model lines through their
@@ -90,22 +90,27 @@ namespace geode
          * multiple surfaces.
          * If the vertex is part of multiple lines, it is also a corner.
          */
-        bool brep_lines_topology_is_valid( index_t unique_vertex_index ) const;
+        [[nodiscard]] bool brep_lines_topology_is_valid(
+            index_t unique_vertex_index ) const;
 
-        std::optional< std::string >
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_line(
                 index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_embedded_line(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_embedded_line(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_is_part_of_invalid_single_line(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_line(
+                index_t unique_vertex_index ) const;
 
-        std::optional< std::string > vertex_has_lines_but_is_not_a_corner(
-            index_t unique_vertex_index ) const;
+        [[nodiscard]] std::optional< std::string >
+            vertex_has_lines_but_is_not_a_corner(
+                index_t unique_vertex_index ) const;
 
-        BRepLinesTopologyInspectionResult inspect_lines_topology() const;
+        [[nodiscard]] BRepLinesTopologyInspectionResult
+            inspect_lines_topology() const;
 
     private:
         const BRep& brep_;

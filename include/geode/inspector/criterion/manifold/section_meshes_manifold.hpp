@@ -46,9 +46,9 @@ namespace geode
                 "Section component meshes with non manifold edges"
             };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting the manifold property in the Component Meshes of
@@ -63,7 +63,8 @@ namespace geode
 
         ~SectionComponentMeshesManifold();
 
-        SectionMeshesManifoldInspectionResult inspect_section_manifold() const;
+        [[nodiscard]] SectionMeshesManifoldInspectionResult
+            inspect_section_manifold() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

@@ -59,9 +59,9 @@ namespace geode
             "Manifold of facets not tested"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a SolidMesh
@@ -83,7 +83,8 @@ namespace geode
 
     public:
         explicit SolidMeshInspector( const SolidMesh< dimension >& mesh );
-        SolidInspectionResult inspect_solid() const;
+
+        [[nodiscard]] SolidInspectionResult inspect_solid() const;
     };
     ALIAS_3D( SolidMeshInspector );
 } // namespace geode

@@ -48,9 +48,10 @@ namespace geode
 
         ~SolidMeshFacetManifold();
 
-        bool mesh_facets_are_manifold() const;
+        [[nodiscard]] bool mesh_facets_are_manifold() const;
 
-        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets() const;
+        [[nodiscard]] InspectionIssues< PolyhedronFacetVertices >
+            non_manifold_facets() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

@@ -47,9 +47,9 @@ namespace geode
             "different positions"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -66,11 +66,13 @@ namespace geode
 
         ~UniqueVerticesColocation();
 
-        bool model_has_unique_vertices_linked_to_different_points() const;
+        [[nodiscard]] bool
+            model_has_unique_vertices_linked_to_different_points() const;
 
-        bool model_has_colocated_unique_vertices() const;
+        [[nodiscard]] bool model_has_colocated_unique_vertices() const;
 
-        UniqueVerticesInspectionResult inspect_unique_vertices() const;
+        [[nodiscard]] UniqueVerticesInspectionResult
+            inspect_unique_vertices() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

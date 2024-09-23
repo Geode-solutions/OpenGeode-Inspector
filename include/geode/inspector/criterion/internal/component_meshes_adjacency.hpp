@@ -52,7 +52,7 @@ namespace geode
     protected:
         explicit ComponentMeshesAdjacency( const Model& model );
 
-        const Model& model() const;
+        [[nodiscard]] const Model& model() const;
 
     private:
         const Model& model_;

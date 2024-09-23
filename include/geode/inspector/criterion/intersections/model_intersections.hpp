@@ -45,9 +45,9 @@ namespace geode
             std::pair< ComponentMeshElement, ComponentMeshElement > >
             elements_intersections{ "Surface intersections." };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -63,9 +63,10 @@ namespace geode
 
         ~ModelMeshesIntersections();
 
-        bool model_has_intersecting_surfaces() const;
+        [[nodiscard]] bool model_has_intersecting_surfaces() const;
 
-        ElementsIntersectionsInspectionResult inspect_intersections() const;
+        [[nodiscard]] ElementsIntersectionsInspectionResult
+            inspect_intersections() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

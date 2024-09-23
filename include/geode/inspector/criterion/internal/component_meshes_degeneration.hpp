@@ -55,7 +55,7 @@ namespace geode
     protected:
         explicit ComponentMeshesDegeneration( const Model& model );
 
-        const Model& model() const;
+        [[nodiscard]] const Model& model() const;
 
     private:
         const Model& model_;

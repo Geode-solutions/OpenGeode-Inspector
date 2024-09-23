@@ -50,9 +50,9 @@ namespace geode
 
         ~SurfaceMeshNegativeElements();
 
-        bool mesh_has_negative_elements() const;
+        [[nodiscard]] bool mesh_has_negative_elements() const;
 
-        InspectionIssues< index_t > negative_polygons() const;
+        [[nodiscard]] InspectionIssues< index_t > negative_polygons() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

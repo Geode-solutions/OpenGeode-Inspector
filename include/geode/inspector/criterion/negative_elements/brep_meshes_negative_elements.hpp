@@ -45,9 +45,9 @@ namespace geode
             "BRep block meshes with negative polyhedra"
         };
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
 
     /*!
@@ -63,7 +63,7 @@ namespace geode
 
         ~BRepComponentMeshesNegativeElements();
 
-        BRepMeshesNegativeElementsInspectionResult
+        [[nodiscard]] BRepMeshesNegativeElementsInspectionResult
             inspect_negative_elements() const;
 
     private:

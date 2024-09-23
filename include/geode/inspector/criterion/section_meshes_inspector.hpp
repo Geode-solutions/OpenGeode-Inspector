@@ -45,9 +45,9 @@ namespace geode
         SectionMeshesManifoldInspectionResult meshes_non_manifolds;
         SectionMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
-        std::string string() const;
+        [[nodiscard]] std::string string() const;
 
-        std::string inspection_type() const;
+        [[nodiscard]] std::string inspection_type() const;
     };
     /*!
      * Class for inspecting a Section model
@@ -67,6 +67,7 @@ namespace geode
     public:
         explicit SectionMeshesInspector( const Section& section );
 
-        SectionMeshesInspectionResult inspect_section_meshes() const;
+        [[nodiscard]] SectionMeshesInspectionResult
+            inspect_section_meshes() const;
     };
 } // namespace geode
