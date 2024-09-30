@@ -36,10 +36,11 @@ namespace
     using Edge = geode::detail::VertexCycle< std::array< geode::index_t, 2 > >;
 
     template < geode::index_t dimension >
-    absl::flat_hash_map< Edge, geode::local_index_t > edge_to_polygons_around(
-        const geode::SurfaceMesh< dimension >& mesh )
+    absl::flat_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+        edge_to_polygons_around( const geode::SurfaceMesh< dimension >& mesh )
     {
-        absl::flat_hash_map< Edge, geode::local_index_t > polygons_around_edges;
+        absl::flat_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+            polygons_around_edges;
         for( const auto polygon_id : geode::Range{ mesh.nb_polygons() } )
         {
             for( const auto polygon_edge_id :
@@ -50,10 +51,19 @@ namespace
                         { polygon_id, polygon_edge_id } )
                 };
                 if( !polygons_around_edges
-                         .try_emplace( polygon_edge_vertex_cycle, 1 )
+                         .try_emplace( polygon_edge_vertex_cycle,
+                             std::pair< geode::local_index_t, bool >{
+                                 1, false } )
                          .second )
                 {
-                    polygons_around_edges[polygon_edge_vertex_cycle] += 1;
+                    polygons_around_edges[polygon_edge_vertex_cycle].first += 1;
+                }
+                const auto adj =
+                    mesh.polygon_adjacent( { polygon_id, polygon_edge_id } );
+                if( !adj )
+                {
+                    polygons_around_edges[polygon_edge_vertex_cycle].second =
+                        true;
                 }
             }
         }
@@ -73,7 +83,11 @@ namespace geode
         {
             for( const auto& edge : edge_to_polygons_around( mesh_ ) )
             {
-                if( edge.second > 2 )
+                if( edge.second.second && edge.second.first != 1 )
+                {
+                    return false;
+                }
+                if( !edge.second.second && edge.second.first != 2 )
                 {
                     return false;
                 }
@@ -88,7 +102,14 @@ namespace geode
             };
             for( const auto& edge : edge_to_polygons_around( mesh_ ) )
             {
-                if( edge.second > 2 )
+                if( edge.second.second && edge.second.first != 1 )
+                {
+                    non_manifold_edges.add_issue( edge.first.vertices(),
+                        absl::StrCat( "Edge between vertices with index ",
+                            edge.first.vertices()[0], " and index ",
+                            edge.first.vertices()[1], " is not manifold." ) );
+                }
+                if( !edge.second.second && edge.second.first != 2 )
                 {
                     non_manifold_edges.add_issue( edge.first.vertices(),
                         absl::StrCat( "Edge between vertices with index ",
