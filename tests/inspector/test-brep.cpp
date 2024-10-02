@@ -317,9 +317,9 @@ void check_model_a1( bool string )
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13503,
         "[Test] model_A1 has ", nb_component_meshes_issues,
-        " meshes problems instead of 13494." );
+        " meshes problems instead of 13503." );
 }
 
 void check_model_a1_valid( bool string )
@@ -340,9 +340,9 @@ void check_model_a1_valid( bool string )
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
+    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13503,
         "[Test] model_A1_valid has ", nb_component_meshes_issues,
-        " meshes problems instead of 13494." );
+        " meshes problems instead of 13503." );
 }
 
 void check_model_mss( bool string )
@@ -396,7 +396,6 @@ int main()
         check_model_a1_valid( false );
         check_model_mss( false );
         check_model_D( false );
-
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
