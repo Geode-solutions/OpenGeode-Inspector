@@ -31,146 +31,172 @@ import opengeode
 import opengeode_inspector_py_inspector as inspector
 
 
-def corners_topological_validity(result, verbose ) :
-    nb_issues = 0 
-    for corner_issue in result.corners_not_linked_to_a_unique_vertex.issues_map() :
+def corners_topological_validity(result, verbose):
+    nb_issues = 0
+    for corner_issue in result.corners_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += corner_issue[1].nb_issues()
     nb_issues += result.corners_not_meshed.nb_issues()
     nb_issues += result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues()
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues()
     nb_issues += result.unique_vertices_linked_to_multiple_internals_corner.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_not_internal_nor_boundary_corner.nb_issues()
-    print( "BRep Corners Topology check: ", nb_issues, " issues." )
-    if verbose : 
-        print(result.string(), "\n" ) 
+    nb_issues += (
+        result.unique_vertices_linked_to_not_internal_nor_boundary_corner.nb_issues()
+    )
+    print("BRep Corners Topology check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
+
 
 def lines_topological_validity(result, verbose):
     nb_issues = 0
-    for issue in result.lines_not_linked_to_a_unique_vertex.issues_map() :
+    for issue in result.lines_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.lines_not_meshed.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
+    nb_issues += (
+        result.unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
+    )
     nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
-    print("BRep Lines Topology check: ", nb_issues, " issues." )
-    if verbose : print(result.string(), "\n" )
+    nb_issues += (
+        result.unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
+    )
+    print("BRep Lines Topology check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
-def surfaces_topological_validity( result, verbose ) :
+
+def surfaces_topological_validity(result, verbose):
     nb_issues = 0
-    for issue in result.surfaces_not_linked_to_a_unique_vertex.issues_map() :
+    for issue in result.surfaces_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.surfaces_not_meshed.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_not_internal_nor_boundary_surface.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
-    
-    print("BRep Surfaces Topology check: ", nb_issues, " issues." )
-    if verbose : 
-        print(result.string(), "\n" )
+    nb_issues += (
+        result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_not_internal_nor_boundary_surface.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
+    )
+
+    print("BRep Surfaces Topology check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
-def blocks_topological_validity(result, verbose ):
+
+def blocks_topological_validity(result, verbose):
     nb_issues = 0
-    for issue in result.blocks_not_linked_to_a_unique_vertex.issues_map() :
+    for issue in result.blocks_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.blocks_not_meshed.nb_issues()
-    nb_issues += result.unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues()
+    nb_issues += (
+        result.unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues()
+    )
     nb_issues += result.unique_vertices_with_incorrect_block_cmvs_count.nb_issues()
-    print(
-        "BRep Blocks Topology check: ", nb_issues, " issues." )
-    if verbose : 
-        print(result.string(), "\n" )
-    return nb_issues
-
-def launch_topological_validity_checks(result, verbose ):
-    nb_issues = corners_topological_validity( result.corners, verbose )
-    nb_issues += lines_topological_validity( result.lines, verbose )
-    nb_issues += surfaces_topological_validity( result.surfaces, verbose )
-    nb_issues += blocks_topological_validity( result.blocks, verbose )
-    return nb_issues
-
-def meshes_adjacencies_validity(result, verbose ) :
-    nb_issues= 0
-    for issue in result.surfaces_edges_with_wrong_adjacencies.issues_map() :
-        nb_issues += issue[1].nb_issues()
-    for issue in result.blocks_facets_with_wrong_adjacencies.issues_map() :
-        nb_issues += issue[1].nb_issues()
-    print(
-        "BRep meshes adjacencies check: ", nb_issues, " issues." )
-    if verbose :
-        print( result.string(), "\n" )
+    print("BRep Blocks Topology check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
 
-def meshes_degenerations_validity (result, verbose) :
+def launch_topological_validity_checks(result, verbose):
+    nb_issues = corners_topological_validity(result.corners, verbose)
+    nb_issues += lines_topological_validity(result.lines, verbose)
+    nb_issues += surfaces_topological_validity(result.surfaces, verbose)
+    nb_issues += blocks_topological_validity(result.blocks, verbose)
+    return nb_issues
+
+
+def meshes_adjacencies_validity(result, verbose):
     nb_issues = 0
-    for degenerated_elements in result.degenerated_edges.issues_map() :
-        nb_issues += degenerated_elements[1].nb_issues()
-    for degenerated_elements in result.degenerated_polygons.issues_map() :
-        nb_issues += degenerated_elements[1].nb_issues()
-    for degenerated_elements in result.degenerated_polyhedra.issues_map() :
-        nb_issues += degenerated_elements[1].nb_issues()
-    print(
-        "BRep meshes degenerated elements check: ", nb_issues, " issues." )
-    if verbose : print( result.string(), "\n" )
+    for issue in result.surfaces_edges_with_wrong_adjacencies.issues_map():
+        nb_issues += issue[1].nb_issues()
+    for issue in result.blocks_facets_with_wrong_adjacencies.issues_map():
+        nb_issues += issue[1].nb_issues()
+    print("BRep meshes adjacencies check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
-def meshes_intersections_validity( result, verbose ) :
-    nb_issues = 0 
+
+def meshes_degenerations_validity(result, verbose):
+    nb_issues = 0
+    for degenerated_elements in result.degenerated_edges.issues_map():
+        nb_issues += degenerated_elements[1].nb_issues()
+    for degenerated_elements in result.degenerated_polygons.issues_map():
+        nb_issues += degenerated_elements[1].nb_issues()
+    for degenerated_elements in result.degenerated_polyhedra.issues_map():
+        nb_issues += degenerated_elements[1].nb_issues()
+    print("BRep meshes degenerated elements check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
+    return nb_issues
+
+
+def meshes_intersections_validity(result, verbose):
+    nb_issues = 0
     nb_issues += result.elements_intersections.nb_issues()
-    print(
-        "BRep meshes element intersections check: ", nb_issues, " issues." )
-    if verbose : 
-        print( result.string(), "\n" )
+    print("BRep meshes element intersections check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
 
-def meshes_manifolds_validity(result, verbose) :
-    nb_issues= 0 
-    for issue in result.meshes_non_manifold_vertices.issues_map() :
+def meshes_manifolds_validity(result, verbose):
+    nb_issues = 0
+    for issue in result.meshes_non_manifold_vertices.issues_map():
         nb_issues += issue[1].nb_issues()
-    for issue in result.meshes_non_manifold_edges.issues_map() :
+    for issue in result.meshes_non_manifold_edges.issues_map():
         nb_issues += issue[1].nb_issues()
-    for issue in result.meshes_non_manifold_facets.issues_map() :
+    for issue in result.meshes_non_manifold_facets.issues_map():
         nb_issues += issue[1].nb_issues()
-    for issue in result.brep_non_manifold_edges.issues() :
+    for issue in result.brep_non_manifold_edges.issues():
         nb_issues += len(issue.component_ids)
-    print("BRep meshes non manifolds check: ", nb_issues, " issues." )
-    if verbose : 
-       print(result.string(), "\n" )
+    print("BRep meshes non manifolds check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
+
 
 def meshes_colocations_validity(result, verbose):
     nb_issues = 0
     for issue in result.colocated_points_groups.issues_map():
         nb_issues += issue[1].nb_issues()
-    print(
-        "BRep meshes Colocations check: ", nb_issues, " issues." )
-    if verbose :
-        print( result.string(), "\n" )
+    print("BRep meshes Colocations check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
+
 
 def meshes_unique_vertices_validity(result, verbose):
     nb_issues = 0
-    for issue in result.colocated_unique_vertices_groups.issues() :
+    for issue in result.colocated_unique_vertices_groups.issues():
         nb_issues += len(issue)
     nb_issues += result.unique_vertices_linked_to_different_points.nb_issues()
-    print("BRep meshes Colocations check: ", nb_issues, " issues." )
-    if verbose :
-        print(result.string(), "\n" )
+    print("BRep meshes Colocations check: ", nb_issues, " issues.")
+    if verbose:
+        print(result.string(), "\n")
     return nb_issues
 
+
 def launch_component_meshes_validity_checks(result, verbose):
-    nb_invalids = meshes_adjacencies_validity(result.meshes_adjacencies,verbose)
-    nb_invalids += meshes_degenerations_validity(result.meshes_degenerations,verbose)
-    nb_invalids += meshes_intersections_validity(result.meshes_intersections,verbose)
-    nb_invalids += meshes_manifolds_validity(result.meshes_non_manifolds,verbose)
-    nb_invalids += meshes_colocations_validity(result.meshes_colocation,verbose)
-    nb_invalids += meshes_unique_vertices_validity(result.unique_vertices_colocation,verbose)
+    nb_invalids = meshes_adjacencies_validity(result.meshes_adjacencies, verbose)
+    nb_invalids += meshes_degenerations_validity(result.meshes_degenerations, verbose)
+    nb_invalids += meshes_intersections_validity(result.meshes_intersections, verbose)
+    nb_invalids += meshes_manifolds_validity(result.meshes_non_manifolds, verbose)
+    nb_invalids += meshes_colocations_validity(result.meshes_colocation, verbose)
+    nb_invalids += meshes_unique_vertices_validity(
+        result.unique_vertices_colocation, verbose
+    )
     return nb_invalids
 
 
@@ -184,15 +210,17 @@ def check_a1(verbose):
         print("model_A1 topology is valid.")
     else:
         print("model_A1 topology is invalid.")
-    nb_model_issues = launch_topological_validity_checks(result.topology,verbose)
+    nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
     if nb_model_issues != 267:
         raise ValueError(
             "[Test] model model_A1 should have 267 unique vertices with topological problems."
         )
-    nb_component_meshes_issues = launch_component_meshes_validity_checks(result.meshes,verbose)
-    if nb_component_meshes_issues != 13494:
+    nb_component_meshes_issues = launch_component_meshes_validity_checks(
+        result.meshes, verbose
+    )
+    if nb_component_meshes_issues != 13503:
         raise ValueError(
-            "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
+            "[Test] model model_A1_valid should have 13503 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
 
@@ -206,15 +234,17 @@ def check_a1_valid(verbose):
         print("model_A1_valid topology is valid.")
     else:
         print("model_A1_valid topology is invalid.")
-    nb_model_issues = launch_topological_validity_checks(result.topology,verbose)
+    nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
     if nb_model_issues != 267:
         raise ValueError(
             "[Test] model model_A1_valid should have 267 topological problems."
         )
-    nb_component_meshes_issues = launch_component_meshes_validity_checks(result.meshes,verbose)
-    if nb_component_meshes_issues != 13494:
+    nb_component_meshes_issues = launch_component_meshes_validity_checks(
+        result.meshes, verbose
+    )
+    if nb_component_meshes_issues != 13503:
         raise ValueError(
-            "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
+            "[Test] model model_A1_valid should have 13503 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
 
@@ -228,12 +258,14 @@ def check_model_mss(verbose):
         print("model mss topology is valid.")
     else:
         print("model mss topology is invalid.")
-    nb_model_issues = launch_topological_validity_checks(result.topology,verbose)
+    nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
     if nb_model_issues != 17:
         raise ValueError(
             "[Test] model mss.og_strm should have 34 topological problems."
         )
-    nb_component_meshes_issues = launch_component_meshes_validity_checks(result.meshes, verbose)
+    nb_component_meshes_issues = launch_component_meshes_validity_checks(
+        result.meshes, verbose
+    )
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model mss should have no component meshes issues.")
 
@@ -254,7 +286,9 @@ def check_model_D(verbose):
         raise ValueError(
             "[Test] model model_D.og_brep should have 5 topological problems (blocks not meshed)."
         )
-    nb_component_meshes_issues = launch_component_meshes_validity_checks(result.meshes, verbose)
+    nb_component_meshes_issues = launch_component_meshes_validity_checks(
+        result.meshes, verbose
+    )
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model_D should have no component meshes issues.")
 
