@@ -48,6 +48,12 @@ namespace geode
         std::vector< uuid > component_ids;
     };
 
+    struct BRepNonManifoldFacet
+    {
+        std::array< index_t, 3 > facet;
+        std::vector< uuid > component_ids;
+    };
+
     struct opengeode_inspector_inspector_api BRepMeshesManifoldInspectionResult
     {
         InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
@@ -63,6 +69,10 @@ namespace geode
             };
         InspectionIssues< BRepNonManifoldEdge > brep_non_manifold_edges{
             "BRep non manifold edges"
+        };
+
+        InspectionIssues< BRepNonManifoldFacet > brep_non_manifold_facets{
+            "BRep non manifold facets"
         };
 
         [[nodiscard]] std::string string() const;

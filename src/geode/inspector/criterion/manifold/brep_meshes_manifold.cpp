@@ -28,10 +28,12 @@
 #include <geode/basic/pimpl_impl.hpp>
 
 #include <geode/mesh/core/detail/vertex_cycle.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
@@ -39,6 +41,56 @@
 #include <geode/inspector/criterion/manifold/solid_edge_manifold.hpp>
 #include <geode/inspector/criterion/manifold/solid_facet_manifold.hpp>
 #include <geode/inspector/criterion/manifold/solid_vertex_manifold.hpp>
+
+namespace
+{
+    bool is_vertex_on_free_border( const geode::Surface3D& surface,
+        geode::index_t vertex,
+        const geode::BRep& model )
+    {
+        const auto unique_vertex =
+            model.unique_vertex( { surface.component_id(), vertex } );
+        for( const auto& cmv : model.component_mesh_vertices( unique_vertex ) )
+        {
+            if( cmv.component_id.type()
+                != geode::Line3D::component_type_static() )
+            {
+                continue;
+            }
+            if( !model.relation_index( cmv.component_id.id(), surface.id() )
+                     .has_value() )
+            {
+                continue;
+            }
+            if( model.is_internal(
+                    model.line( cmv.component_id.id() ), surface ) )
+            {
+                continue;
+            }
+            if( model.nb_incidences( cmv.component_id.id() ) > 1 )
+            {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    std::vector< bool > vertices_on_free_border(
+        const geode::Surface3D& surface,
+        const geode::SurfaceMesh3D& surface_mesh,
+        const geode::BRep& model )
+    {
+        std::vector< bool > is_on_free_border(
+            surface_mesh.nb_vertices(), false );
+        for( const auto vertex : geode::Range{ surface_mesh.nb_vertices() } )
+        {
+            is_on_free_border[vertex] =
+                is_vertex_on_free_border( surface, vertex, model );
+        }
+        return is_on_free_border;
+    }
+} // namespace
 
 namespace geode
 {
@@ -187,6 +239,89 @@ namespace geode
                         BRepNonManifoldEdge{
                             edge.first.vertices(), edge.second },
                         message );
+                    continue;
+                }
+                const auto& surface = model().surface( edge.second[0] );
+                const auto& mesh = surface.mesh();
+                const auto is_on_free_border =
+                    vertices_on_free_border( surface, mesh, model() );
+                geode::index_t first_edge_vertex;
+                geode::index_t second_edge_vertex;
+                for( const auto& cmv : model().component_mesh_vertices(
+                         edge.first.vertices()[0] ) )
+                {
+                    if( cmv.component_id.id() == surface.id() )
+                    {
+                        first_edge_vertex = cmv.vertex;
+                        break;
+                    }
+                }
+                for( const auto& cmv : model().component_mesh_vertices(
+                         edge.first.vertices()[1] ) )
+                {
+                    if( cmv.component_id.id() == surface.id() )
+                    {
+                        second_edge_vertex = cmv.vertex;
+                        break;
+                    }
+                }
+                if( !is_on_free_border[first_edge_vertex]
+                    || !is_on_free_border[second_edge_vertex] )
+                {
+                    continue;
+                }
+                std::string message = absl::StrCat(
+                    "Model edge between unique vertices ",
+                    edge.first.vertices()[0], " and ", edge.first.vertices()[1],
+                    " is not manifold: it has 2 point on the free border "
+                    "without being on the border of surface " );
+                absl::StrAppend( &message, edge.second[0].string(), ", " );
+                issues.add_issue(
+                    BRepNonManifoldEdge{ edge.first.vertices(), edge.second },
+                    message );
+            }
+            for( const auto& line : model().lines() )
+            {
+                const auto& mesh = line.mesh();
+                if( mesh.nb_edges() == 1
+                    && model().nb_embedding_surfaces( line ) > 0 )
+                {
+                    std::string message = absl::StrCat(
+                        "Model edge between unique unique vertices ",
+                        mesh.edge_vertices( 0 )[0], " and ",
+                        mesh.edge_vertices( 0 )[1],
+                        " is not manifold: it belongs to an internal line with "
+                        "only one edge" );
+                    issues.add_issue(
+                        BRepNonManifoldEdge{ mesh.edge_vertices( 0 ), {} },
+                        message );
+                }
+            }
+        }
+
+        void add_model_non_manifold_facets(
+            InspectionIssues< BRepNonManifoldFacet >& issues ) const
+        {
+            for( const auto& surface : model().surfaces() )
+            {
+                const auto& mesh = surface.mesh();
+                if( mesh.nb_polygons() == 1
+                    && model().nb_embedding_blocks( surface ) > 0 )
+                {
+                    std::string message =
+                        absl::StrCat( "Model facet between unique vertices ",
+                            mesh.polygon_vertices( 0 )[0], "  ",
+                            mesh.polygon_vertices( 0 )[1], " and ",
+                            mesh.polygon_vertices( 0 )[2],
+                            " is not manifold: it belongs to an internal "
+                            "surface with only one facet" );
+                    issues.add_issue(
+                        BRepNonManifoldFacet{
+                            { mesh.polygon_vertices( 0 )[0],
+                                mesh.polygon_vertices( 0 )[1],
+                                mesh.polygon_vertices( 0 )[2] },
+                            {} },
+                        message );
                 }
             }
         }
@@ -211,6 +346,7 @@ namespace geode
         impl_->add_component_meshes_non_manifold_facets(
             result.meshes_non_manifold_facets );
         impl_->add_model_non_manifold_edges( result.brep_non_manifold_edges );
+        impl_->add_model_non_manifold_facets( result.brep_non_manifold_facets );
         return result;
     }
 
