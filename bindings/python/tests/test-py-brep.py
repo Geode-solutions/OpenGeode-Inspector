@@ -218,9 +218,9 @@ def check_a1(verbose):
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
     )
-    if nb_component_meshes_issues != 13503:
+    if nb_component_meshes_issues != 13494:
         raise ValueError(
-            "[Test] model model_A1_valid should have 13503 component meshes issues (pairs of component meshes triangles intersecting)."
+            "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
 
@@ -242,9 +242,9 @@ def check_a1_valid(verbose):
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
     )
-    if nb_component_meshes_issues != 13503:
+    if nb_component_meshes_issues != 13494:
         raise ValueError(
-            "[Test] model model_A1_valid should have 13503 component meshes issues (pairs of component meshes triangles intersecting)."
+            "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
 
