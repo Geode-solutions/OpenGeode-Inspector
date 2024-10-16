@@ -209,6 +209,7 @@ namespace geode
     }
 
     SectionTopologyInspector::~SectionTopologyInspector() = default;
+
     bool SectionTopologyInspector::section_topology_is_valid() const
     {
         return impl_->section_topology_is_valid( *this );
