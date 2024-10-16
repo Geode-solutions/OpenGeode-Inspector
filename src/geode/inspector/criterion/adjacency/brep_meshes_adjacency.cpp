@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/adjacency/brep_meshes_adjacency.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -89,16 +91,21 @@ namespace geode
     {
     }
 
-    BRepComponentMeshesAdjacency::~BRepComponentMeshesAdjacency() {}
+    BRepComponentMeshesAdjacency::~BRepComponentMeshesAdjacency() = default;
 
     BRepMeshesAdjacencyInspectionResult
         BRepComponentMeshesAdjacency::inspect_brep_meshes_adjacencies() const
     {
         BRepMeshesAdjacencyInspectionResult result;
-        impl_->add_surfaces_edges_with_wrong_adjacencies(
-            result.surfaces_edges_with_wrong_adjacencies );
-        impl_->add_blocks_facets_with_wrong_adjacencies(
-            result.blocks_facets_with_wrong_adjacencies );
+        async::parallel_invoke(
+            [&result, this] {
+                impl_->add_surfaces_edges_with_wrong_adjacencies(
+                    result.surfaces_edges_with_wrong_adjacencies );
+            },
+            [&result, this] {
+                impl_->add_blocks_facets_with_wrong_adjacencies(
+                    result.blocks_facets_with_wrong_adjacencies );
+            } );
         return result;
     }
 } // namespace geode

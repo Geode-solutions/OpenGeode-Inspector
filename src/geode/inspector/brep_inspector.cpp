@@ -23,6 +23,8 @@
 
 #include <geode/inspector/brep_inspector.hpp>
 
+#include <async++.h>
+
 #include <geode/model/representation/core/brep.hpp>
 
 namespace geode
@@ -47,8 +49,13 @@ namespace geode
     BRepInspectionResult BRepInspector::inspect_brep() const
     {
         BRepInspectionResult result;
-        result.meshes = inspect_brep_meshes();
-        result.topology = inspect_brep_topology();
+        async::parallel_invoke(
+            [&result, this] {
+                result.meshes = inspect_brep_meshes();
+            },
+            [&result, this] {
+                result.topology = inspect_brep_topology();
+            } );
         return result;
     }
 

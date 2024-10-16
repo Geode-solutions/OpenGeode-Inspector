@@ -123,9 +123,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SolidMeshAdjacency< dimension >::~SolidMeshAdjacency()
-    {
-    }
+    SolidMeshAdjacency< dimension >::~SolidMeshAdjacency() = default;
 
     template < index_t dimension >
     bool SolidMeshAdjacency< dimension >::mesh_has_wrong_adjacencies() const

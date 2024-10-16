@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/colocation/unique_vertices_colocation.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -278,9 +280,7 @@ namespace geode
     }
 
     template < typename Model >
-    UniqueVerticesColocation< Model >::~UniqueVerticesColocation()
-    {
-    }
+    UniqueVerticesColocation< Model >::~UniqueVerticesColocation() = default;
 
     template < typename Model >
     bool UniqueVerticesColocation<
@@ -302,10 +302,15 @@ namespace geode
         UniqueVerticesColocation< Model >::inspect_unique_vertices() const
     {
         UniqueVerticesInspectionResult result;
-        impl_->add_colocated_unique_vertices_groups(
-            result.colocated_unique_vertices_groups );
-        impl_->add_unique_vertices_linked_to_different_points(
-            result.unique_vertices_linked_to_different_points );
+        async::parallel_invoke(
+            [&result, this] {
+                impl_->add_colocated_unique_vertices_groups(
+                    result.colocated_unique_vertices_groups );
+            },
+            [&result, this] {
+                impl_->add_unique_vertices_linked_to_different_points(
+                    result.unique_vertices_linked_to_different_points );
+            } );
         return result;
     }
 

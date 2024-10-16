@@ -51,9 +51,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    PointSetColocation< dimension >::~PointSetColocation()
-    {
-    }
+    PointSetColocation< dimension >::~PointSetColocation() = default;
 
     template < index_t dimension >
     bool PointSetColocation< dimension >::mesh_has_colocated_points() const

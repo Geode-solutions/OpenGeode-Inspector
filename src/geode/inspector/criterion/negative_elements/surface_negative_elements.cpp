@@ -76,9 +76,8 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshNegativeElements< dimension >::~SurfaceMeshNegativeElements()
-    {
-    }
+    SurfaceMeshNegativeElements< dimension >::~SurfaceMeshNegativeElements() =
+        default;
 
     template < index_t dimension >
     bool SurfaceMeshNegativeElements< dimension >::mesh_has_negative_elements()

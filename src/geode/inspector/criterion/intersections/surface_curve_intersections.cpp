@@ -276,9 +276,8 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceCurveIntersections< dimension >::~SurfaceCurveIntersections()
-    {
-    }
+    SurfaceCurveIntersections< dimension >::~SurfaceCurveIntersections() =
+        default;
 
     template < index_t dimension >
     bool SurfaceCurveIntersections< dimension >::meshes_have_intersections()

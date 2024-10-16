@@ -96,13 +96,15 @@ namespace geode
             {
                 if( nb_adjacent_polyhedra.second > 2 )
                 {
+                    std::string message{ "Facet made of vertices with index " };
+                    for( const auto vertex_id :
+                        nb_adjacent_polyhedra.first.vertices() )
+                    {
+                        absl::StrAppend( &message, vertex_id, ", " );
+                    }
+                    absl::StrAppend( &message, "is not manifold." );
                     non_manifold_facets.add_issue(
-                        nb_adjacent_polyhedra.first.vertices(),
-                        absl::StrCat( "Facet made of vertices with index ",
-                            nb_adjacent_polyhedra.first.vertices()[0], ", ",
-                            nb_adjacent_polyhedra.first.vertices()[1], ", ",
-                            nb_adjacent_polyhedra.first.vertices()[2],
-                            " is not manifold." ) );
+                        nb_adjacent_polyhedra.first.vertices(), message );
                 }
             }
             return non_manifold_facets;
@@ -120,9 +122,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SolidMeshFacetManifold< dimension >::~SolidMeshFacetManifold()
-    {
-    }
+    SolidMeshFacetManifold< dimension >::~SolidMeshFacetManifold() = default;
 
     template < index_t dimension >
     bool SolidMeshFacetManifold< dimension >::mesh_facets_are_manifold() const

@@ -81,9 +81,8 @@ namespace geode
     {
     }
 
-    BRepComponentMeshesNegativeElements::~BRepComponentMeshesNegativeElements()
-    {
-    }
+    BRepComponentMeshesNegativeElements::
+        ~BRepComponentMeshesNegativeElements() = default;
 
     BRepMeshesNegativeElementsInspectionResult
         BRepComponentMeshesNegativeElements::inspect_negative_elements() const

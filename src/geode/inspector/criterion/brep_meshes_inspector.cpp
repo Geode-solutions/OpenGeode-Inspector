@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/brep_meshes_inspector.hpp>
 
+#include <async++.h>
+
 namespace geode
 {
     std::string BRepMeshesInspectionResult::string() const
@@ -52,13 +54,28 @@ namespace geode
     BRepMeshesInspectionResult BRepMeshesInspector::inspect_brep_meshes() const
     {
         BRepMeshesInspectionResult result;
-        result.unique_vertices_colocation = inspect_unique_vertices();
-        result.meshes_colocation = inspect_meshes_point_colocations();
-        result.meshes_adjacencies = inspect_brep_meshes_adjacencies();
-        result.meshes_degenerations = inspect_elements_degeneration();
-        result.meshes_intersections = inspect_intersections();
-        result.meshes_non_manifolds = inspect_brep_manifold();
-        result.meshes_negative_elements = inspect_negative_elements();
+        async::parallel_invoke(
+            [&result, this] {
+                result.unique_vertices_colocation = inspect_unique_vertices();
+            },
+            [&result, this] {
+                result.meshes_colocation = inspect_meshes_point_colocations();
+            },
+            [&result, this] {
+                result.meshes_adjacencies = inspect_brep_meshes_adjacencies();
+            },
+            [&result, this] {
+                result.meshes_degenerations = inspect_elements_degeneration();
+            },
+            [&result, this] {
+                result.meshes_intersections = inspect_intersections();
+            },
+            [&result, this] {
+                result.meshes_non_manifolds = inspect_brep_manifold();
+            },
+            [&result, this] {
+                result.meshes_negative_elements = inspect_negative_elements();
+            } );
         return result;
     }
 } // namespace geode

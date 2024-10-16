@@ -89,9 +89,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration()
-    {
-    }
+    SurfaceMeshDegeneration< dimension >::~SurfaceMeshDegeneration() = default;
 
     template < index_t dimension >
     bool SurfaceMeshDegeneration< dimension >::is_mesh_degenerated() const

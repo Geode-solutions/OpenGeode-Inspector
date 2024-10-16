@@ -51,9 +51,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshColocation< dimension >::~SurfaceMeshColocation()
-    {
-    }
+    SurfaceMeshColocation< dimension >::~SurfaceMeshColocation() = default;
 
     template < index_t dimension >
     bool SurfaceMeshColocation< dimension >::mesh_has_colocated_points() const

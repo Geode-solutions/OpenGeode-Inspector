@@ -23,6 +23,8 @@
 
 #include <geode/inspector/surface_inspector.hpp>
 
+#include <async++.h>
+
 #include <geode/mesh/core/triangulated_surface.hpp>
 
 namespace geode
@@ -58,13 +60,27 @@ namespace geode
         SurfaceMeshInspector< dimension >::inspect_surface() const
     {
         SurfaceInspectionResult result;
-        result.polygon_edges_with_wrong_adjacency =
-            this->polygon_edges_with_wrong_adjacency();
-        result.colocated_points_groups = this->colocated_points_groups();
-        result.degenerated_edges = this->degenerated_edges();
-        result.degenerated_polygons = this->degenerated_polygons();
-        result.non_manifold_edges = this->non_manifold_edges();
-        result.non_manifold_vertices = this->non_manifold_vertices();
+        async::parallel_invoke(
+            [&result, this] {
+                result.polygon_edges_with_wrong_adjacency =
+                    this->polygon_edges_with_wrong_adjacency();
+            },
+            [&result, this] {
+                result.colocated_points_groups =
+                    this->colocated_points_groups();
+            },
+            [&result, this] {
+                result.degenerated_edges = this->degenerated_edges();
+            },
+            [&result, this] {
+                result.degenerated_polygons = this->degenerated_polygons();
+            },
+            [&result, this] {
+                result.non_manifold_edges = this->non_manifold_edges();
+            },
+            [&result, this] {
+                result.non_manifold_vertices = this->non_manifold_vertices();
+            } );
         return result;
     }
 

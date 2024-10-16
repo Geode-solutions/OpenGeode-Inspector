@@ -23,6 +23,8 @@
 
 #include <geode/inspector/edgedcurve_inspector.hpp>
 
+#include <async++.h>
+
 #include <geode/mesh/core/edged_curve.hpp>
 
 namespace geode
@@ -52,8 +54,14 @@ namespace geode
         EdgedCurveInspector< dimension >::inspect_edged_curve() const
     {
         EdgedCurveInspectionResult result;
-        result.colocated_points_groups = this->colocated_points_groups();
-        result.degenerated_edges = this->degenerated_edges();
+        async::parallel_invoke(
+            [&result, this] {
+                result.colocated_points_groups =
+                    this->colocated_points_groups();
+            },
+            [&result, this] {
+                result.degenerated_edges = this->degenerated_edges();
+            } );
         return result;
     }
 

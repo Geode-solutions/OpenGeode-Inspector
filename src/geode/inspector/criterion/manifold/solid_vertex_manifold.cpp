@@ -131,9 +131,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SolidMeshVertexManifold< dimension >::~SolidMeshVertexManifold()
-    {
-    }
+    SolidMeshVertexManifold< dimension >::~SolidMeshVertexManifold() = default;
 
     template < index_t dimension >
     bool

@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/brep_topology.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -207,11 +209,22 @@ namespace geode
             const BRepTopologyInspector& brep_topology_inspector ) const
         {
             BRepTopologyInspectionResult result;
-            result.corners = brep_topology_inspector.inspect_corners_topology();
-            result.lines = brep_topology_inspector.inspect_lines_topology();
-            result.surfaces =
-                brep_topology_inspector.inspect_surfaces_topology();
-            result.blocks = brep_topology_inspector.inspect_blocks();
+            async::parallel_invoke(
+                [&result, &brep_topology_inspector] {
+                    result.corners =
+                        brep_topology_inspector.inspect_corners_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.lines =
+                        brep_topology_inspector.inspect_lines_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.surfaces =
+                        brep_topology_inspector.inspect_surfaces_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.blocks = brep_topology_inspector.inspect_blocks();
+                } );
             add_unique_vertices_not_linked_to_a_component_vertex( result );
             return result;
         }
@@ -229,7 +242,7 @@ namespace geode
     {
     }
 
-    BRepTopologyInspector::~BRepTopologyInspector() {}
+    BRepTopologyInspector::~BRepTopologyInspector() = default;
 
     bool BRepTopologyInspector::brep_topology_is_valid() const
     {

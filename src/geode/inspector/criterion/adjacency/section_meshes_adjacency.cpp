@@ -63,7 +63,8 @@ namespace geode
     {
     }
 
-    SectionComponentMeshesAdjacency::~SectionComponentMeshesAdjacency() {}
+    SectionComponentMeshesAdjacency::~SectionComponentMeshesAdjacency() =
+        default;
 
     SectionMeshesAdjacencyInspectionResult
         SectionComponentMeshesAdjacency::inspect_section_meshes_adjacencies()

@@ -23,6 +23,8 @@
 
 #include <geode/inspector/section_inspector.hpp>
 
+#include <async++.h>
+
 #include <geode/model/representation/core/section.hpp>
 
 namespace geode
@@ -48,8 +50,13 @@ namespace geode
     SectionInspectionResult SectionInspector::inspect_section() const
     {
         SectionInspectionResult result;
-        result.meshes = inspect_section_meshes();
-        result.topology = inspect_section_topology();
+        async::parallel_invoke(
+            [&result, this] {
+                result.meshes = inspect_section_meshes();
+            },
+            [&result, this] {
+                result.topology = inspect_section_topology();
+            } );
         return result;
     }
 } // namespace geode
