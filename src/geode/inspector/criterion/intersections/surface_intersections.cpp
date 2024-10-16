@@ -419,9 +419,7 @@ namespace geode
 
     template < index_t dimension >
     TriangulatedSurfaceIntersections<
-        dimension >::~TriangulatedSurfaceIntersections()
-    {
-    }
+        dimension >::~TriangulatedSurfaceIntersections() = default;
 
     template < index_t dimension >
     bool TriangulatedSurfaceIntersections<

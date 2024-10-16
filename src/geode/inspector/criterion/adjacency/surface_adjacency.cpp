@@ -122,9 +122,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshAdjacency< dimension >::~SurfaceMeshAdjacency()
-    {
-    }
+    SurfaceMeshAdjacency< dimension >::~SurfaceMeshAdjacency() = default;
 
     template < index_t dimension >
     bool SurfaceMeshAdjacency< dimension >::mesh_has_wrong_adjacencies() const

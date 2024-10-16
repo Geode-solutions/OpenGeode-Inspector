@@ -51,9 +51,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    EdgedCurveColocation< dimension >::~EdgedCurveColocation()
-    {
-    }
+    EdgedCurveColocation< dimension >::~EdgedCurveColocation() = default;
 
     template < index_t dimension >
     bool EdgedCurveColocation< dimension >::mesh_has_colocated_points() const

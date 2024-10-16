@@ -131,9 +131,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshEdgeManifold< dimension >::~SurfaceMeshEdgeManifold()
-    {
-    }
+    SurfaceMeshEdgeManifold< dimension >::~SurfaceMeshEdgeManifold() = default;
 
     template < index_t dimension >
     bool SurfaceMeshEdgeManifold< dimension >::mesh_edges_are_manifold() const

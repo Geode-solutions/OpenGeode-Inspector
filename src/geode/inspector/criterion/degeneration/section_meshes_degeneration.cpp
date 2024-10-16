@@ -72,7 +72,8 @@ namespace geode
     {
     }
 
-    SectionComponentMeshesDegeneration::~SectionComponentMeshesDegeneration() {}
+    SectionComponentMeshesDegeneration::~SectionComponentMeshesDegeneration() =
+        default;
 
     SectionMeshesDegenerationInspectionResult
         SectionComponentMeshesDegeneration::inspect_elements_degeneration()

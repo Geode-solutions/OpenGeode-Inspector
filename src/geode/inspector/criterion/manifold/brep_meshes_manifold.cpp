@@ -245,7 +245,7 @@ namespace geode
     {
     }
 
-    BRepComponentMeshesManifold::~BRepComponentMeshesManifold() {}
+    BRepComponentMeshesManifold::~BRepComponentMeshesManifold() = default;
 
     BRepMeshesManifoldInspectionResult
         BRepComponentMeshesManifold::inspect_brep_manifold() const

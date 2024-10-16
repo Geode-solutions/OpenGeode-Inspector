@@ -84,9 +84,7 @@ namespace geode
     }
 
     SectionComponentMeshesNegativeElements::
-        ~SectionComponentMeshesNegativeElements()
-    {
-    }
+        ~SectionComponentMeshesNegativeElements() = default;
 
     SectionMeshesNegativeElementsInspectionResult
         SectionComponentMeshesNegativeElements::inspect_negative_elements()

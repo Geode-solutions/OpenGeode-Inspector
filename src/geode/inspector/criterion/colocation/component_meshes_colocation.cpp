@@ -265,9 +265,7 @@ namespace geode
     }
 
     template < typename Model >
-    ComponentMeshesColocation< Model >::~ComponentMeshesColocation()
-    {
-    }
+    ComponentMeshesColocation< Model >::~ComponentMeshesColocation() = default;
 
     template < typename Model >
     MeshesColocationInspectionResult

@@ -51,9 +51,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    SolidMeshColocation< dimension >::~SolidMeshColocation()
-    {
-    }
+    SolidMeshColocation< dimension >::~SolidMeshColocation() = default;
 
     template < index_t dimension >
     bool SolidMeshColocation< dimension >::mesh_has_colocated_points() const

@@ -96,7 +96,8 @@ namespace geode
     {
     }
 
-    BRepComponentMeshesDegeneration::~BRepComponentMeshesDegeneration() {}
+    BRepComponentMeshesDegeneration::~BRepComponentMeshesDegeneration() =
+        default;
 
     BRepMeshesDegenerationInspectionResult
         BRepComponentMeshesDegeneration::inspect_elements_degeneration() const

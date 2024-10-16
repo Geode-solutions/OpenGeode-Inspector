@@ -135,6 +135,7 @@ add_geode_library(
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES
+        Async++
         OpenGeode::geometry
         OpenGeode::mesh
         OpenGeode::model

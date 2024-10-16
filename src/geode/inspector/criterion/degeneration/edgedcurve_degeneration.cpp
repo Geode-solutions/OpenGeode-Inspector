@@ -82,9 +82,7 @@ namespace geode
     }
 
     template < index_t dimension >
-    EdgedCurveDegeneration< dimension >::~EdgedCurveDegeneration()
-    {
-    }
+    EdgedCurveDegeneration< dimension >::~EdgedCurveDegeneration() = default;
 
     template < index_t dimension >
     bool EdgedCurveDegeneration< dimension >::is_mesh_degenerated() const

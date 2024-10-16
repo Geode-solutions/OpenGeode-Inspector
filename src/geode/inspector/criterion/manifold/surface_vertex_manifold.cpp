@@ -144,9 +144,8 @@ namespace geode
     }
 
     template < index_t dimension >
-    SurfaceMeshVertexManifold< dimension >::~SurfaceMeshVertexManifold()
-    {
-    }
+    SurfaceMeshVertexManifold< dimension >::~SurfaceMeshVertexManifold() =
+        default;
 
     template < index_t dimension >
     bool SurfaceMeshVertexManifold< dimension >::mesh_vertices_are_manifold()

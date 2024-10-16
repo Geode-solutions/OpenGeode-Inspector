@@ -560,9 +560,7 @@ namespace geode
     }
 
     template < typename Model >
-    ModelMeshesIntersections< Model >::~ModelMeshesIntersections()
-    {
-    }
+    ModelMeshesIntersections< Model >::~ModelMeshesIntersections() = default;
 
     template < typename Model >
     bool ModelMeshesIntersections< Model >::model_has_intersecting_surfaces()

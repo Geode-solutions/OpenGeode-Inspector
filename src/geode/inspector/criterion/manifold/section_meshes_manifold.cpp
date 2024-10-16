@@ -73,7 +73,7 @@ namespace geode
     {
     }
 
-    SectionComponentMeshesManifold::~SectionComponentMeshesManifold() {}
+    SectionComponentMeshesManifold::~SectionComponentMeshesManifold() = default;
 
     SectionMeshesManifoldInspectionResult
         SectionComponentMeshesManifold::inspect_section_manifold() const

@@ -23,6 +23,8 @@
 
 #include <geode/inspector/solid_inspector.hpp>
 
+#include <async++.h>
+
 #include <geode/mesh/core/solid_mesh.hpp>
 
 namespace geode
@@ -54,18 +56,35 @@ namespace geode
               SolidMeshFacetManifold< dimension > >{ mesh }
     {
     }
+
     template < index_t dimension >
     SolidInspectionResult SolidMeshInspector< dimension >::inspect_solid() const
     {
         SolidInspectionResult result;
-        result.polyhedron_facets_with_wrong_adjacency =
-            this->polyhedron_facets_with_wrong_adjacency();
-        result.colocated_points_groups = this->colocated_points_groups();
-        result.degenerated_edges = this->degenerated_edges();
-        result.degenerated_polyhedra = this->degenerated_polyhedra();
-        result.non_manifold_vertices = this->non_manifold_vertices();
-        result.non_manifold_edges = this->non_manifold_edges();
-        result.non_manifold_facets = this->non_manifold_facets();
+        async::parallel_invoke(
+            [&result, this] {
+                result.polyhedron_facets_with_wrong_adjacency =
+                    this->polyhedron_facets_with_wrong_adjacency();
+            },
+            [&result, this] {
+                result.colocated_points_groups =
+                    this->colocated_points_groups();
+            },
+            [&result, this] {
+                result.degenerated_edges = this->degenerated_edges();
+            },
+            [&result, this] {
+                result.degenerated_polyhedra = this->degenerated_polyhedra();
+            },
+            [&result, this] {
+                result.non_manifold_vertices = this->non_manifold_vertices();
+            },
+            [&result, this] {
+                result.non_manifold_edges = this->non_manifold_edges();
+            },
+            [&result, this] {
+                result.non_manifold_facets = this->non_manifold_facets();
+            } );
         return result;
     }
 
