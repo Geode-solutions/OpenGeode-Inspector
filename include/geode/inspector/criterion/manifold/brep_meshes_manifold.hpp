@@ -50,7 +50,7 @@ namespace geode
 
     struct BRepNonManifoldFacet
     {
-        std::array< index_t, 3 > facet;
+        PolygonVertices facet;
         std::vector< uuid > component_ids;
     };
 

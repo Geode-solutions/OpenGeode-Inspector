@@ -32,6 +32,7 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/model/helpers/component_mesh_polygons.hpp>
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/surface.hpp>
@@ -198,14 +199,21 @@ namespace geode
                 if( mesh.nb_edges() == 1
                     && model().nb_embedding_surfaces( line ) > 0 )
                 {
-                    std::string message = absl::StrCat(
-                        "Model edge between unique unique vertices ",
-                        mesh.edge_vertices( 0 )[0], " and ",
-                        mesh.edge_vertices( 0 )[1],
-                        " is not manifold: it belongs to an internal line with "
-                        "only one edge" );
-                    issues.add_issue(
-                        BRepNonManifoldEdge{ mesh.edge_vertices( 0 ), {} },
+                    std::array< index_t, 2 > edge_unique_vertices;
+                    for( const auto edge_vertex : LRange{ 2 } )
+                    {
+                        edge_unique_vertices[edge_vertex] =
+                            model().unique_vertex( { line.component_id(),
+                                mesh.edge_vertex( { 0, edge_vertex } ) } );
+                    }
+                    std::string message =
+                        absl::StrCat( "Model edge between unique vertices ",
+                            edge_unique_vertices[0], " and ",
+                            edge_unique_vertices[1],
+                            " is not manifold: it belongs to internal line ",
+                            line.id().string(), " with only one edge" );
+                    issues.add_issue( BRepNonManifoldEdge{ edge_unique_vertices,
+                                          { line.id() } },
                         message );
                 }
             }
@@ -220,19 +228,19 @@ namespace geode
                 if( mesh.nb_polygons() == 1
                     && model().nb_embedding_blocks( surface ) > 0 )
                 {
+                    auto facet_vertices =
+                        polygon_unique_vertices( model(), surface, 0 );
                     std::string message =
-                        absl::StrCat( "Model facet between unique vertices ",
-                            mesh.polygon_vertices( 0 )[0], "  ",
-                            mesh.polygon_vertices( 0 )[1], " and ",
-                            mesh.polygon_vertices( 0 )[2],
-                            " is not manifold: it belongs to an internal "
-                            "surface with only one facet" );
-                    issues.add_issue(
-                        BRepNonManifoldFacet{
-                            { mesh.polygon_vertices( 0 )[0],
-                                mesh.polygon_vertices( 0 )[1],
-                                mesh.polygon_vertices( 0 )[2] },
-                            {} },
+                        "Model facet between unique vertices ";
+                    for( const auto polygon_vertex : facet_vertices )
+                    {
+                        absl::StrAppend( &message, polygon_vertex, " " );
+                    }
+                    absl::StrAppend( &message,
+                        " is not manifold: it belongs to an internal "
+                        "surface with only one facet" );
+                    issues.add_issue( BRepNonManifoldFacet{ facet_vertices,
+                                          { surface.id() } },
                         message );
                 }
             }
