@@ -32,24 +32,24 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( TriangulatedSurface );
+    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
 } // namespace geode
 
 namespace geode
 {
     /*!
-     * Class for inspecting the intersections of TriangulatedSurfaces
+     * Class for inspecting the intersections of SurfaceMeshes
      */
     template < index_t dimension >
-    class TriangulatedSurfaceIntersections
+    class SurfaceMeshIntersections
     {
-        OPENGEODE_DISABLE_COPY( TriangulatedSurfaceIntersections );
+        OPENGEODE_DISABLE_COPY( SurfaceMeshIntersections );
 
     public:
-        explicit TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh );
+        explicit SurfaceMeshIntersections(
+            const SurfaceMesh< dimension >& mesh );
 
-        ~TriangulatedSurfaceIntersections();
+        ~SurfaceMeshIntersections();
 
         [[nodiscard]] bool mesh_has_self_intersections() const;
 
@@ -59,5 +59,5 @@ namespace geode
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };
-    ALIAS_2D_AND_3D( TriangulatedSurfaceIntersections );
+    ALIAS_2D_AND_3D( SurfaceMeshIntersections );
 } // namespace geode

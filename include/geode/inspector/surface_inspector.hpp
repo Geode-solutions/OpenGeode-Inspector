@@ -76,7 +76,8 @@ namespace geode
                                      SurfaceMeshColocation< dimension >,
                                      SurfaceMeshDegeneration< dimension >,
                                      SurfaceMeshEdgeManifold< dimension >,
-                                     SurfaceMeshVertexManifold< dimension > >
+                                     SurfaceMeshVertexManifold< dimension >,
+                                     SurfaceMeshIntersections< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 
@@ -88,23 +89,4 @@ namespace geode
         [[nodiscard]] virtual SurfaceInspectionResult inspect_surface() const;
     };
     ALIAS_2D_AND_3D( SurfaceMeshInspector );
-
-    /*!
-     * Class for inspecting a TriangulatedSurface
-     * @extends SurfaceMeshInspector
-     * @extends TriangulatedSurfaceIntersections
-     */
-    template < index_t dimension >
-    class TriangulatedSurfaceInspector
-        : public SurfaceMeshInspector< dimension >,
-          public AddInspectors< TriangulatedSurface< dimension >,
-              TriangulatedSurfaceIntersections< dimension > >
-    {
-    public:
-        explicit TriangulatedSurfaceInspector(
-            const TriangulatedSurface< dimension >& mesh );
-
-        [[nodiscard]] SurfaceInspectionResult inspect_surface() const final;
-    };
-    ALIAS_2D_AND_3D( TriangulatedSurfaceInspector );
 } // namespace geode
