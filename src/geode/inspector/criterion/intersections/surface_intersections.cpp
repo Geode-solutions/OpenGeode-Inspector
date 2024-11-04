@@ -29,24 +29,19 @@
 #include <geode/basic/pimpl_impl.hpp>
 
 #include <geode/geometry/aabb.hpp>
-#include <geode/geometry/basic_objects/segment.hpp>
-#include <geode/geometry/basic_objects/triangle.hpp>
 #include <geode/geometry/information.hpp>
-#include <geode/geometry/intersection_detection.hpp>
-#include <geode/geometry/position.hpp>
 
-#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 #include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 #include <geode/mesh/helpers/detail/mesh_intersection_detection.hpp>
 
 namespace
 {
     template < geode::index_t dimension >
-    class TriangleTriangleIntersection
+    class PolygonPolygonIntersection
     {
     public:
-        TriangleTriangleIntersection(
-            const geode::TriangulatedSurface< dimension >& mesh,
+        PolygonPolygonIntersection( const geode::SurfaceMesh< dimension >& mesh,
             bool stop_at_first_intersection )
             : mesh_( mesh ),
               stop_at_first_intersection_{ stop_at_first_intersection }
@@ -54,62 +49,62 @@ namespace
         }
 
         std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_triangles()
+            intersecting_polygons()
         {
-            return std::move( intersecting_triangles_ );
+            return std::move( intersecting_polygons_ );
         }
 
-        bool operator()( geode::index_t t1_id, geode::index_t t2_id )
+        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
         {
-            if( t1_id == t2_id )
+            if( p1_id == p2_id )
             {
                 return false;
             }
-            const auto t1_vertices = this->mesh().polygon_vertices( t1_id );
-            const auto t2_vertices = this->mesh().polygon_vertices( t2_id );
+            const auto p1_vertices = this->mesh().polygon_vertices( p1_id );
+            const auto p2_vertices = this->mesh().polygon_vertices( p2_id );
             if( geode::detail::polygons_intersection_detection<
                     geode::SurfaceMesh< dimension > >(
-                    mesh_, t1_vertices, t2_vertices ) )
+                    mesh_, p1_vertices, p2_vertices ) )
             {
-                this->emplace( t1_id, t2_id );
+                this->emplace( p1_id, p2_id );
                 return stop_at_first_intersection_;
             }
             return false;
         }
 
     protected:
-        void emplace( geode::index_t t1_id, geode::index_t t2_id )
+        void emplace( geode::index_t p1_id, geode::index_t p2_id )
         {
-            intersecting_triangles_.emplace_back( t1_id, t2_id );
+            intersecting_polygons_.emplace_back( p1_id, p2_id );
         }
 
-        const geode::TriangulatedSurface< dimension >& mesh() const
+        const geode::SurfaceMesh< dimension >& mesh() const
         {
             return mesh_;
         }
 
     private:
-        const geode::TriangulatedSurface< dimension >& mesh_;
+        const geode::SurfaceMesh< dimension >& mesh_;
         bool stop_at_first_intersection_;
         std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_triangles_;
+            intersecting_polygons_;
     };
 } // namespace
 
 namespace geode
 {
     template < index_t dimension >
-    class TriangulatedSurfaceIntersections< dimension >::Impl
+    class SurfaceMeshIntersections< dimension >::Impl
     {
     public:
-        Impl( const TriangulatedSurface< dimension >& mesh )
+        Impl( const SurfaceMesh< dimension >& mesh )
             : mesh_( mesh ), verbose_( false )
         {
         }
 
         bool mesh_has_self_intersections() const
         {
-            const auto intersections = intersecting_triangles( true );
+            const auto intersections = intersecting_polygons( true );
             if( intersections.empty() )
             {
                 return false;
@@ -120,65 +115,63 @@ namespace geode
         InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
-            const auto intersections = intersecting_triangles( false );
+            const auto intersections = intersecting_polygons( false );
             InspectionIssues< std::pair< index_t, index_t > > issues{
-                "Triangle - triangle intersections."
+                "Polygon - polygon intersections."
             };
 
-            for( const auto& triangle_pair : intersections )
+            for( const auto& polygon_pair : intersections )
             {
-                issues.add_issue( triangle_pair,
-                    absl::StrCat( "Triangles ", triangle_pair.first, " and ",
-                        triangle_pair.second, " intersect each other." ) );
+                issues.add_issue( polygon_pair,
+                    absl::StrCat( "Polygons ", polygon_pair.first, " and ",
+                        polygon_pair.second, " intersect each other." ) );
             }
             return issues;
         }
 
     private:
-        std::vector< std::pair< index_t, index_t > > intersecting_triangles(
+        std::vector< std::pair< index_t, index_t > > intersecting_polygons(
             bool stop_at_first_intersection ) const
         {
             const auto surface_aabb = create_aabb_tree( mesh_ );
-            TriangleTriangleIntersection< dimension > action{ mesh_,
+            PolygonPolygonIntersection< dimension > action{ mesh_,
                 stop_at_first_intersection };
             surface_aabb.compute_self_element_bbox_intersections( action );
-            return action.intersecting_triangles();
+            return action.intersecting_polygons();
         }
 
     private:
-        const TriangulatedSurface< dimension >& mesh_;
+        const SurfaceMesh< dimension >& mesh_;
         DEBUG_CONST bool verbose_;
     };
 
     template < index_t dimension >
-    TriangulatedSurfaceIntersections< dimension >::
-        TriangulatedSurfaceIntersections(
-            const TriangulatedSurface< dimension >& mesh )
+    SurfaceMeshIntersections< dimension >::SurfaceMeshIntersections(
+        const SurfaceMesh< dimension >& mesh )
         : impl_( mesh )
     {
     }
 
     template < index_t dimension >
-    TriangulatedSurfaceIntersections<
-        dimension >::~TriangulatedSurfaceIntersections() = default;
+    SurfaceMeshIntersections< dimension >::~SurfaceMeshIntersections() =
+        default;
 
     template < index_t dimension >
-    bool TriangulatedSurfaceIntersections<
-        dimension >::mesh_has_self_intersections() const
+    bool SurfaceMeshIntersections< dimension >::mesh_has_self_intersections()
+        const
     {
         return impl_->mesh_has_self_intersections();
     }
 
     template < index_t dimension >
     InspectionIssues< std::pair< index_t, index_t > >
-        TriangulatedSurfaceIntersections< dimension >::intersecting_elements()
-            const
+        SurfaceMeshIntersections< dimension >::intersecting_elements() const
     {
         return impl_->intersecting_elements();
     }
 
     template class opengeode_inspector_inspector_api
-        TriangulatedSurfaceIntersections< 2 >;
+        SurfaceMeshIntersections< 2 >;
     template class opengeode_inspector_inspector_api
-        TriangulatedSurfaceIntersections< 3 >;
+        SurfaceMeshIntersections< 3 >;
 } // namespace geode

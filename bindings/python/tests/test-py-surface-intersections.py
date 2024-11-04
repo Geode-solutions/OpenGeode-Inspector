@@ -47,7 +47,7 @@ def check_intersections2D():
     builder.set_polygon_adjacent(geode.PolygonEdge(1, 1), 2)
     builder.set_polygon_adjacent(geode.PolygonEdge(2, 0), 1)
 
-    intersections_inspector = inspector.TriangulatedSurfaceIntersections2D(
+    intersections_inspector = inspector.SurfaceMeshIntersections2D(
         surface)
     if not intersections_inspector.mesh_has_self_intersections():
         raise ValueError("[Test] 2D Surface should have intersections.")
@@ -83,7 +83,7 @@ def check_intersections3D():
     builder.set_polygon_adjacent(geode.PolygonEdge(2, 1), 3)
     builder.set_polygon_adjacent(geode.PolygonEdge(3, 0), 2)
 
-    intersections_inspector = inspector.TriangulatedSurfaceIntersections3D(
+    intersections_inspector = inspector.SurfaceMeshIntersections3D(
         surface)
     if not intersections_inspector.mesh_has_self_intersections():
         raise ValueError("[Test] 3D Surface should have intersections.")

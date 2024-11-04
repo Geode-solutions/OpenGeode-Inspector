@@ -25,7 +25,7 @@
 
 #include <async++.h>
 
-#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 namespace geode
 {
@@ -51,7 +51,8 @@ namespace geode
               SurfaceMeshColocation< dimension >,
               SurfaceMeshDegeneration< dimension >,
               SurfaceMeshEdgeManifold< dimension >,
-              SurfaceMeshVertexManifold< dimension > >{ mesh }
+              SurfaceMeshVertexManifold< dimension >,
+              SurfaceMeshIntersections< dimension > >{ mesh }
     {
     }
 
@@ -80,33 +81,13 @@ namespace geode
             },
             [&result, this] {
                 result.non_manifold_vertices = this->non_manifold_vertices();
+            },
+            [&result, this] {
+                result.intersecting_elements = this->intersecting_elements();
             } );
-        return result;
-    }
-
-    template < index_t dimension >
-    TriangulatedSurfaceInspector< dimension >::TriangulatedSurfaceInspector(
-        const TriangulatedSurface< dimension >& mesh )
-        : SurfaceMeshInspector< dimension >{ mesh },
-          AddInspectors< TriangulatedSurface< dimension >,
-              TriangulatedSurfaceIntersections< dimension > >{ mesh }
-    {
-    }
-
-    template < index_t dimension >
-    SurfaceInspectionResult
-        TriangulatedSurfaceInspector< dimension >::inspect_surface() const
-    {
-        auto result = SurfaceMeshInspector< dimension >::inspect_surface();
-        result.intersecting_elements = this->intersecting_elements();
         return result;
     }
 
     template class opengeode_inspector_inspector_api SurfaceMeshInspector< 2 >;
     template class opengeode_inspector_inspector_api SurfaceMeshInspector< 3 >;
-
-    template class opengeode_inspector_inspector_api
-        TriangulatedSurfaceInspector< 2 >;
-    template class opengeode_inspector_inspector_api
-        TriangulatedSurfaceInspector< 3 >;
 } // namespace geode

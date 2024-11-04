@@ -22,7 +22,7 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/inspector/criterion/intersections/surface_intersections.hpp>
 
@@ -31,18 +31,16 @@ namespace geode
     template < index_t dimension >
     void do_define_surface_intersections( pybind11::module& module )
     {
-        using TriangulatedSurface = TriangulatedSurface< dimension >;
-        using TriangulatedSurfaceIntersections =
-            TriangulatedSurfaceIntersections< dimension >;
+        using SurfaceMesh = SurfaceMesh< dimension >;
+        using SurfaceMeshIntersections = SurfaceMeshIntersections< dimension >;
         const auto name =
-            absl::StrCat( "TriangulatedSurfaceIntersections", dimension, "D" );
-        pybind11::class_< TriangulatedSurfaceIntersections >(
-            module, name.c_str() )
-            .def( pybind11::init< const TriangulatedSurface& >() )
+            absl::StrCat( "SurfaceMeshIntersections", dimension, "D" );
+        pybind11::class_< SurfaceMeshIntersections >( module, name.c_str() )
+            .def( pybind11::init< const SurfaceMesh& >() )
             .def( "mesh_has_self_intersections",
-                &TriangulatedSurfaceIntersections::mesh_has_self_intersections )
+                &SurfaceMeshIntersections::mesh_has_self_intersections )
             .def( "intersecting_elements",
-                &TriangulatedSurfaceIntersections::intersecting_elements );
+                &SurfaceMeshIntersections::intersecting_elements );
     }
     void define_surface_intersections( pybind11::module& module )
     {
