@@ -29,6 +29,7 @@
 #include <geode/basic/uuid.hpp>
 
 #include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/representation/core/brep.hpp>
 
