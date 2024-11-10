@@ -30,6 +30,7 @@
 #include <geode/inspector/criterion/manifold/solid_edge_manifold.hpp>
 #include <geode/inspector/criterion/manifold/solid_facet_manifold.hpp>
 #include <geode/inspector/criterion/manifold/solid_vertex_manifold.hpp>
+#include <geode/inspector/criterion/negative_elements/solid_negative_elements.hpp>
 #include <geode/inspector/mixin/add_inspectors.hpp>
 
 namespace geode
@@ -58,6 +59,9 @@ namespace geode
         InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
             "Manifold of facets not tested"
         };
+        InspectionIssues< index_t > negative_polyhedra{
+            "Negative polyhedra not tested"
+        };
 
         [[nodiscard]] std::string string() const;
 
@@ -76,7 +80,8 @@ namespace geode
               SolidMeshDegeneration< dimension >,
               SolidMeshVertexManifold< dimension >,
               SolidMeshEdgeManifold< dimension >,
-              SolidMeshFacetManifold< dimension > >
+              SolidMeshFacetManifold< dimension >,
+              SolidMeshNegativeElements< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SolidMeshInspector );
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );

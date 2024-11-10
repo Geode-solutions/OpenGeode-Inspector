@@ -36,7 +36,7 @@ namespace geode
             degenerated_edges.string(), "\n", degenerated_polyhedra.string(),
             "\n", non_manifold_vertices.string(), "\n",
             non_manifold_edges.string(), "\n", non_manifold_facets.string(),
-            "\n" );
+            "\n", negative_polyhedra.string(), "\n" );
     }
 
     std::string SolidInspectionResult::inspection_type() const
@@ -53,7 +53,8 @@ namespace geode
               SolidMeshDegeneration< dimension >,
               SolidMeshVertexManifold< dimension >,
               SolidMeshEdgeManifold< dimension >,
-              SolidMeshFacetManifold< dimension > >{ mesh }
+              SolidMeshFacetManifold< dimension >,
+              SolidMeshNegativeElements< dimension > >{ mesh }
     {
     }
 
@@ -84,6 +85,9 @@ namespace geode
             },
             [&result, this] {
                 result.non_manifold_facets = this->non_manifold_facets();
+            },
+            [&result, this] {
+                result.negative_polyhedra = this->negative_polyhedra();
             } );
         return result;
     }
