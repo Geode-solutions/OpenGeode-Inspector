@@ -28,6 +28,9 @@
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
+#include <geode/mesh/core/solid_mesh.hpp>
+
+#include <geode/model/helpers/component_mesh_polygons.hpp>
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
@@ -78,10 +81,42 @@ namespace geode
                     inspector.polyhedron_facets_with_wrong_adjacency();
                 wrong_adjacencies.set_description(
                     absl::StrCat( "Block with uuid ", block.id().string(),
-                        " wrong polyhedron facets adjacencies" ) );
+                        " polyhedron facets adjacencies issues" ) );
+                const auto& mesh = block.mesh();
+                for( const auto polyhedron_id : Range{ mesh.nb_polyhedra() } )
+                {
+                    for( const auto facet_id :
+                        LRange{ mesh.nb_polyhedron_facets( polyhedron_id ) } )
+                    {
+                        const PolyhedronFacet polyhedron_facet{ polyhedron_id,
+                            facet_id };
+                        if( mesh.is_polyhedron_facet_on_border(
+                                polyhedron_facet )
+                            && !polyhedron_facet_is_on_a_surface(
+                                block, polyhedron_facet ) )
+                        {
+                            wrong_adjacencies.add_issue( polyhedron_facet,
+                                absl::StrCat( "Local facet ", facet_id,
+                                    " of polyhedron ", polyhedron_id,
+                                    " has no adjacencies but is not part of a "
+                                    "model Surface." ) );
+                        }
+                    }
+                }
                 components_wrong_adjacencies.add_issues_to_map(
                     block.id(), std::move( wrong_adjacencies ) );
             }
+        }
+
+    private:
+        bool polyhedron_facet_is_on_a_surface( const Block3D& block,
+            const PolyhedronFacet& polyhedron_facet ) const
+        {
+            const auto facet_unique_vertices =
+                polygon_unique_vertices( model(), block, polyhedron_facet );
+            return !detail::surface_component_mesh_polygons(
+                model(), facet_unique_vertices )
+                        .empty();
         }
     };
 

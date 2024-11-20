@@ -27,11 +27,27 @@
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/model/helpers/component_mesh_edges.hpp>
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 #include <geode/model/representation/core/section.hpp>
 
 #include <geode/inspector/criterion/adjacency/surface_adjacency.hpp>
+
+namespace
+{
+    template < typename Model >
+    bool polygon_edge_is_on_a_line( const Model& model,
+        const geode::Surface< Model::dim >& surface,
+        const geode::PolygonEdge& polygon_edge )
+    {
+        const auto edge_unique_vertices =
+            geode::edge_unique_vertices( model, surface, polygon_edge );
+        return !geode::detail::line_component_mesh_edges(
+            model, edge_unique_vertices )
+                    .empty();
+    }
+} // namespace
 
 namespace geode
 {
@@ -54,9 +70,27 @@ namespace geode
                 surface.mesh()
             };
             auto issues = inspector.polygon_edges_with_wrong_adjacency();
-            issues.set_description(
-                absl::StrCat( "Surface ", surface.id().string(),
-                    " polygon edges with wrong adjacencies." ) );
+            issues.set_description( absl::StrCat( "Surface ",
+                surface.id().string(), " polygon edges adjacency issues." ) );
+            const auto& mesh = surface.mesh();
+            for( const auto polygon_id : Range{ mesh.nb_polygons() } )
+            {
+                for( const auto edge_id :
+                    LRange{ mesh.nb_polygon_edges( polygon_id ) } )
+                {
+                    const PolygonEdge polygon_edge{ polygon_id, edge_id };
+                    if( mesh.is_edge_on_border( polygon_edge )
+                        && !polygon_edge_is_on_a_line(
+                            model_, surface, polygon_edge ) )
+                    {
+                        issues.add_issue( polygon_edge,
+                            absl::StrCat( "Local edge ", edge_id,
+                                " of polygon ", polygon_id,
+                                " has no adjacencies but is not part of a "
+                                "model Line." ) );
+                    }
+                }
+            }
             components_wrong_adjacencies.add_issues_to_map(
                 surface.id(), std::move( issues ) );
         }
