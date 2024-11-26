@@ -45,7 +45,7 @@ namespace geode
     {
         InspectionIssuesMap< PolygonEdge >
             surfaces_edges_with_wrong_adjacencies{
-                "Section Surface mesh with wrong adjacencies on polygon edges"
+                "Section Surface mesh polygon edges adjacencies issues"
             };
 
         [[nodiscard]] std::string string() const;

@@ -68,7 +68,6 @@ namespace
 
 namespace geode
 {
-
     std::string BRepSurfacesTopologyInspectionResult::string() const
     {
         std::string message;
@@ -391,27 +390,29 @@ namespace geode
                 continue;
             }
             const auto& surface = brep_.surface( cmv.component_id.id() );
-            if( !surface.mesh().is_vertex_on_border( cmv.vertex ) )
+            if( surface.mesh().is_vertex_on_border( cmv.vertex ) )
             {
-                for( const auto& line_id : line_uuids )
+                continue;
+            }
+            for( const auto& line_id : line_uuids )
+            {
+                const auto& line = brep_.line( line_id );
+                if( brep_.is_boundary( line, surface )
+                    || brep_.is_internal( line, surface ) )
                 {
-                    const auto& line = brep_.line( line_id );
-                    if( brep_.is_boundary( line, surface )
-                        || brep_.is_internal( line, surface ) )
-                    {
-                        return absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is part of a line and of surface with "
-                            "uuid '",
-                            cmv.component_id.id().string(),
-                            "' but the associated vertex in the "
-                            "surface mesh is not on the mesh border." );
-                    }
+                    return absl::StrCat( "Unique vertex with index ",
+                        unique_vertex_index,
+                        " is part of a line and of surface with "
+                        "uuid '",
+                        cmv.component_id.id().string(),
+                        "' but the associated vertex in the "
+                        "surface mesh is not on the mesh border." );
                 }
             }
         }
         return std::nullopt;
     }
+
     BRepSurfacesTopologyInspectionResult
         BRepSurfacesTopology::inspect_surfaces_topology() const
     {
