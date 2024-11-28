@@ -45,11 +45,11 @@ namespace geode
     {
         InspectionIssuesMap< PolygonEdge >
             surfaces_edges_with_wrong_adjacencies{
-                "BRep Surface mesh with wrong adjacencies on polygon edges"
+                "BRep Surface mesh with polygon edges adjacencies issues"
             };
         InspectionIssuesMap< PolyhedronFacet >
             blocks_facets_with_wrong_adjacencies{
-                "BRep Block mesh with wrong adjacencies on polyhedron facets"
+                "BRep Block mesh with polyhedron facets adjacencies issues"
             };
 
         [[nodiscard]] std::string string() const;
