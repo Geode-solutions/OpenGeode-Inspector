@@ -44,6 +44,67 @@
 
 namespace
 {
+    std::vector< geode::uuid > block_boundary_surfaces(
+        const geode::BRep& brep, const geode::Block3D& block )
+    {
+        std::vector< geode::uuid > block_boundary_uuids;
+        block_boundary_uuids.reserve( brep.nb_boundaries( block.id() ) );
+        for( const auto& boundary_surface : brep.boundaries( block ) )
+        {
+            block_boundary_uuids.push_back( boundary_surface.id() );
+        }
+        return block_boundary_uuids;
+    }
+
+    bool is_line_incident_to_other_block_boundary_surf(
+        const geode::Line3D& line,
+        const geode::BRep& brep,
+        const std::vector< geode::uuid >& block_boundary_uuids,
+        const geode::uuid& bsurf_uuid )
+    {
+        for( const auto& incident_surface : brep.incidences( line ) )
+        {
+            if( incident_surface.id() == bsurf_uuid )
+            {
+                continue;
+            }
+            if( absl::c_find( block_boundary_uuids, incident_surface.id() )
+                != block_boundary_uuids.end() )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector< geode::uuid > inspect_boundary_surfaces(
+        const geode::BRep& brep )
+    {
+        std::vector< geode::uuid > wrong_boundary_surfaces;
+        for( const auto& block : brep.blocks() )
+        {
+            const auto block_boundary_uuids =
+                block_boundary_surfaces( brep, block );
+            for( const auto& bsurf_uuid : block_boundary_uuids )
+            {
+                const auto& surface = brep.surface( bsurf_uuid );
+                for( const auto& line : brep.boundaries( surface ) )
+                {
+                    if( is_line_incident_to_other_block_boundary_surf(
+                            line, brep, block_boundary_uuids, bsurf_uuid ) )
+                    {
+                        continue;
+                    }
+                    wrong_boundary_surfaces.push_back( bsurf_uuid );
+                    break;
+                }
+            }
+        }
+        return wrong_boundary_surfaces;
+    }
+} // namespace
+namespace
+{
     template < typename Condition >
     geode::index_t count_cmvs(
         absl::Span< const geode::ComponentMeshVertex > cmvs,
@@ -66,6 +127,11 @@ namespace geode
     std::string BRepBlocksTopologyInspectionResult::string() const
     {
         std::string message;
+        if( wrong_block_boundary_surface.nb_issues() != 0 )
+        {
+            absl::StrAppend(
+                &message, wrong_block_boundary_surface.string(), "\n" );
+        }
         if( blocks_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, blocks_not_meshed.string(), "\n" );
@@ -370,6 +436,13 @@ namespace geode
                 result.unique_vertices_with_incorrect_block_cmvs_count
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
+        }
+        for( const auto wrong_bsurf : inspect_boundary_surfaces( brep_ ) )
+        {
+            result.wrong_block_boundary_surface.add_issue( wrong_bsurf,
+                absl::StrCat( "Boundary surface ", wrong_bsurf.string(),
+                    " contains a line not incident to "
+                    "any other block boundary surface." ) );
         }
         return result;
     }
