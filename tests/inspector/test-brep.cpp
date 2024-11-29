@@ -387,6 +387,34 @@ void check_model_D( bool string )
         nb_component_meshes_issues, " meshes problems instead of 0." );
 }
 
+void check_wrong_bsurfaces_model()
+{
+    const auto model_brep = geode::load_brep( absl::StrCat(
+        geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
+    const geode::BRepInspector brep_inspector{ model_brep };
+    const auto result = brep_inspector.inspect_brep();
+    OPENGEODE_EXCEPTION(
+        result.topology.blocks.wrong_block_boundary_surface.nb_issues() == 3,
+        absl::StrCat(
+            "[Test] Wrong number of wrong block boundary surfaces detected: "
+            "should be 3, and it is ",
+            result.topology.blocks.wrong_block_boundary_surface.nb_issues(),
+            "." ) );
+    std::vector< geode::uuid > wrong_bsurf{
+        geode::uuid{ "00000000-78d4-4e10-8000-0000cb3a3a27" },
+        geode::uuid{ "00000000-7a4e-4a1c-8000-00003732de1f" },
+        geode::uuid{ "00000000-980f-49d4-8000-00002f79374e" }
+    };
+    for( const auto& issue :
+        result.topology.blocks.wrong_block_boundary_surface.issues() )
+    {
+        OPENGEODE_EXCEPTION(
+            absl::c_find( wrong_bsurf, issue ) != wrong_bsurf.end(),
+            "[Test] Surface (", issue.string(),
+            ") is detected as a wrong boundary surface but is not one." );
+    }
+}
+
 int main()
 {
     try
@@ -396,6 +424,7 @@ int main()
         check_model_a1_valid( false );
         check_model_mss( false );
         check_model_D( false );
+        check_wrong_bsurfaces_model();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

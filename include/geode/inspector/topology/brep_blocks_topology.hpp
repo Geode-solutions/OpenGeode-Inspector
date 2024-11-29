@@ -46,6 +46,9 @@ namespace geode
         InspectionIssues< uuid > blocks_not_meshed{
             "uuids of Blocks without mesh."
         };
+        InspectionIssues< uuid > wrong_block_boundary_surface{
+            "uuids of surfaces boundary to a block when they should not."
+        };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
             "Blocks with mesh vertices not linked to a unique vertex"
         };
