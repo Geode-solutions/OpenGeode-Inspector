@@ -56,15 +56,15 @@ namespace
         return block_boundary_uuids;
     }
 
-    bool is_line_incident_to_other_block_boundary_surf(
+    bool is_line_incident_to_other_block_boundary_surface(
         const geode::Line3D& line,
         const geode::BRep& brep,
         absl::Span< const geode::uuid > block_boundary_uuids,
-        const geode::uuid& bsurf_uuid )
+        const geode::uuid& boundary_surface_id )
     {
         for( const auto& incident_surface : brep.incidences( line ) )
         {
-            if( incident_surface.id() == bsurf_uuid )
+            if( incident_surface.id() == boundary_surface_id )
             {
                 continue;
             }
@@ -90,7 +90,7 @@ namespace
                 const auto& surface = brep.surface( bsurf_uuid );
                 for( const auto& line : brep.boundaries( surface ) )
                 {
-                    if( is_line_incident_to_other_block_boundary_surf(
+                    if( is_line_incident_to_other_block_boundary_surface(
                             line, brep, block_boundary_uuids, bsurf_uuid ) )
                     {
                         continue;
