@@ -59,7 +59,7 @@ namespace
     bool is_line_incident_to_other_block_boundary_surf(
         const geode::Line3D& line,
         const geode::BRep& brep,
-        const std::vector< geode::uuid >& block_boundary_uuids,
+        absl::Span< const geode::uuid > block_boundary_uuids,
         const geode::uuid& bsurf_uuid )
     {
         for( const auto& incident_surface : brep.incidences( line ) )
@@ -102,9 +102,7 @@ namespace
         }
         return wrong_boundary_surfaces;
     }
-} // namespace
-namespace
-{
+
     template < typename Condition >
     geode::index_t count_cmvs(
         absl::Span< const geode::ComponentMeshVertex > cmvs,
@@ -437,7 +435,7 @@ namespace geode
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
         }
-        for( const auto wrong_bsurf : inspect_boundary_surfaces( brep_ ) )
+        for( const auto& wrong_bsurf : inspect_boundary_surfaces( brep_ ) )
         {
             result.wrong_block_boundary_surface.add_issue( wrong_bsurf,
                 absl::StrCat( "Boundary surface ", wrong_bsurf.string(),
