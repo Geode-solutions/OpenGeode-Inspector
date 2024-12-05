@@ -50,10 +50,12 @@ namespace
         bool operator()(
             geode::index_t first_component, geode::index_t second_component )
         {
+            std::lock_guard< std::mutex > lock( mutex );
             component_pairs.emplace_back( first_component, second_component );
             return false;
         }
 
+        std::mutex mutex;
         std::vector< std::pair< geode::index_t, geode::index_t > >
             component_pairs;
     };

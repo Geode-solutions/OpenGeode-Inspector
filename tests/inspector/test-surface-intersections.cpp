@@ -56,10 +56,18 @@ void check_intersections2D()
         "[Test] 2D Surface should have 3 intersecting elements pair." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
-    if( triangles_inter.size() != 3 || triangles_inter[0].first != 2
-        || triangles_inter[0].second != 0 || triangles_inter[1].first != 2
-        || triangles_inter[1].second != 1 || triangles_inter[2].first != 0
-        || triangles_inter[2].second != 1 )
+    if( absl::c_find( triangles_inter, std::make_pair( 2u, 0u ) )
+        == triangles_inter.end() )
+    {
+        right_intersections = false;
+    }
+    if( absl::c_find( triangles_inter, std::make_pair( 2u, 1u ) )
+        == triangles_inter.end() )
+    {
+        right_intersections = false;
+    }
+    if( absl::c_find( triangles_inter, std::make_pair( 0u, 1u ) )
+        == triangles_inter.end() )
     {
         right_intersections = false;
     }
@@ -100,9 +108,13 @@ void check_intersections3D()
         inspection.nb_issues(), "." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
-    if( triangles_inter.size() != 2 || triangles_inter[0].first != 0
-        || triangles_inter[0].second != 4 || triangles_inter[1].first != 2
-        || triangles_inter[1].second != 4 )
+    if( absl::c_find( triangles_inter, std::make_pair( 0u, 4u ) )
+        == triangles_inter.end() )
+    {
+        right_intersections = false;
+    }
+    if( absl::c_find( triangles_inter, std::make_pair( 2u, 4u ) )
+        == triangles_inter.end() )
     {
         right_intersections = false;
     }

@@ -65,6 +65,7 @@ namespace
 
         void emplace( geode::index_t triangle_id, geode::index_t edge_id )
         {
+            std::lock_guard< std::mutex > lock( mutex_ );
             intersecting_elements_.emplace_back( triangle_id, edge_id );
         }
 
@@ -73,6 +74,7 @@ namespace
         const geode::EdgedCurve< dimension >& curve_;
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_elements_;
+        std::mutex mutex_;
     };
 
     template < geode::index_t dimension >

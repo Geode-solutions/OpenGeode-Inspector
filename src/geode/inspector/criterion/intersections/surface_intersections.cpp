@@ -75,6 +75,7 @@ namespace
     protected:
         void emplace( geode::index_t p1_id, geode::index_t p2_id )
         {
+            std::lock_guard< std::mutex > lock( mutex_ );
             intersecting_polygons_.emplace_back( p1_id, p2_id );
         }
 
@@ -88,6 +89,7 @@ namespace
         bool stop_at_first_intersection_;
         std::vector< std::pair< geode::index_t, geode::index_t > >
             intersecting_polygons_;
+        std::mutex mutex_;
     };
 } // namespace
 
