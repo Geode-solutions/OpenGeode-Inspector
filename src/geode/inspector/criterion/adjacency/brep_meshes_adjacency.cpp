@@ -90,10 +90,16 @@ namespace geode
                     {
                         const PolyhedronFacet polyhedron_facet{ polyhedron_id,
                             facet_id };
-                        if( mesh.is_polyhedron_facet_on_border(
-                                polyhedron_facet )
-                            && !polyhedron_facet_is_on_a_surface(
-                                block, polyhedron_facet ) )
+                        if( !mesh.is_polyhedron_facet_on_border(
+                                polyhedron_facet ) )
+                        {
+                            continue;
+                        }
+                        const auto is_on_surface =
+                            polyhedron_facet_is_on_a_surface(
+                                block, polyhedron_facet );
+                        if( is_on_surface.has_value()
+                            && !is_on_surface.value() )
                         {
                             wrong_adjacencies.add_issue( polyhedron_facet,
                                 absl::StrCat( "Local facet ", facet_id,
@@ -109,11 +115,16 @@ namespace geode
         }
 
     private:
-        bool polyhedron_facet_is_on_a_surface( const Block3D& block,
+        absl::optional< bool > polyhedron_facet_is_on_a_surface(
+            const Block3D& block,
             const PolyhedronFacet& polyhedron_facet ) const
         {
             const auto facet_unique_vertices =
                 polygon_unique_vertices( model(), block, polyhedron_facet );
+            if( absl::c_contains( facet_unique_vertices, geode::NO_ID ) )
+            {
+                return std::nullopt;
+            }
             return !detail::surface_component_mesh_polygons(
                 model(), facet_unique_vertices )
                         .empty();
