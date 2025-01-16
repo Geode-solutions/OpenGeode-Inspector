@@ -43,6 +43,9 @@ namespace
     {
         const auto edge_unique_vertices =
             geode::edge_unique_vertices( model, surface, polygon_edge );
+        OPENGEODE_EXCEPTION( edge_unique_vertices[0] != geode::NO_ID
+                                 && edge_unique_vertices[1] != geode::NO_ID,
+            "[ComponentMeshesAdjacency] Missing unique_vertices" );
         return !geode::detail::line_component_mesh_edges(
             model, edge_unique_vertices )
                     .empty();
@@ -79,10 +82,22 @@ namespace geode
                     LRange{ mesh.nb_polygon_edges( polygon_id ) } )
                 {
                     const PolygonEdge polygon_edge{ polygon_id, edge_id };
-                    if( mesh.is_edge_on_border( polygon_edge )
-                        && !polygon_edge_is_on_a_line(
-                            model_, surface, polygon_edge ) )
+                    try
                     {
+                        if( mesh.is_edge_on_border( polygon_edge )
+                            && !polygon_edge_is_on_a_line(
+                                model_, surface, polygon_edge ) )
+                        {
+                            issues.add_issue( polygon_edge,
+                                absl::StrCat( "Local edge ", edge_id,
+                                    " of polygon ", polygon_id,
+                                    " has no adjacencies but is not part of a "
+                                    "model Line." ) );
+                        }
+                    }
+                    catch( const OpenGeodeException& e )
+                    {
+                        Logger::warn( e.what() );
                         issues.add_issue( polygon_edge,
                             absl::StrCat( "Local edge ", edge_id,
                                 " of polygon ", polygon_id,

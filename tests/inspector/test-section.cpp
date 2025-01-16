@@ -30,6 +30,8 @@
 #include <geode/model/representation/core/section.hpp>
 #include <geode/model/representation/io/section_input.hpp>
 
+#include <geode/geosciences_io/model/common.hpp>
+
 #include <geode/inspector/section_inspector.hpp>
 
 geode::index_t corners_topological_validity(
@@ -276,12 +278,26 @@ void check_section( bool string )
         nb_component_meshes_issues, " meshes problems instead of 0." );
 }
 
+void check_section_test()
+{
+    const auto model_section =
+        geode::load_section( absl::StrCat( geode::DATA_PATH, "test.shp" ) );
+    geode::SectionInspector section_inspector{ model_section };
+    auto result = section_inspector.inspect_section();
+
+    geode::Logger::info( "vertical_lines section topology is ",
+        section_inspector.section_topology_is_valid() ? "valid." : "invalid." );
+}
+
 int main()
 {
     try
     {
         geode::InspectorInspectorLibrary::initialize();
+        geode::GeosciencesIOModelLibrary::initialize();
+        geode::Logger::set_level( geode::Logger::LEVEL::trace );
         check_section( false );
+        check_section_test();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
