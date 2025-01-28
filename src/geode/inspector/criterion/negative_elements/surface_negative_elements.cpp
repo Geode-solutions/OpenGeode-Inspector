@@ -27,6 +27,10 @@
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
 
+#include <geode/geometry/basic_objects/triangle.hpp>
+#include <geode/geometry/information.hpp>
+#include <geode/geometry/sign.hpp>
+
 #include <geode/mesh/core/surface_mesh.hpp>
 
 namespace geode
@@ -41,7 +45,7 @@ namespace geode
         {
             for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
-                if( mesh_.polygon_area( polygon_id ) < 0 )
+                if( polygon_has_negative_area( polygon_id ) )
                 {
                     return true;
                 }
@@ -54,7 +58,7 @@ namespace geode
             InspectionIssues< index_t > wrong_polygons{ "Negative Polygons." };
             for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
-                if( mesh_.polygon_area( polygon_id ) < 0 )
+                if( polygon_has_negative_area( polygon_id ) )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
@@ -62,6 +66,21 @@ namespace geode
                 }
             }
             return wrong_polygons;
+        }
+
+    private:
+        bool polygon_has_negative_area( index_t polygon_id ) const
+        {
+            if( mesh_.nb_polygon_vertices( polygon_id ) == 4 )
+            {
+                Triangle< dimension > triangle{
+                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 0 } ) ),
+                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 1 } ) ),
+                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 2 } ) )
+                };
+                return triangle_area_sign( triangle ) == Sign::negative;
+            }
+            return mesh_.polygon_area( polygon_id ) < 0;
         }
 
     private:
