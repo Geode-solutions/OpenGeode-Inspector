@@ -27,6 +27,10 @@
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
 
+#include <geode/geometry/basic_objects/tetrahedron.hpp>
+#include <geode/geometry/information.hpp>
+#include <geode/geometry/sign.hpp>
+
 #include <geode/mesh/core/solid_mesh.hpp>
 
 namespace geode
@@ -41,7 +45,7 @@ namespace geode
         {
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
-                if( mesh_.polyhedron_volume( polyhedron_id ) < 0 )
+                if( polyhedron_has_negative_volume( polyhedron_id ) )
                 {
                     return true;
                 }
@@ -56,7 +60,7 @@ namespace geode
             };
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
-                if( mesh_.polyhedron_volume( polyhedron_id ) < 0 )
+                if( polyhedron_has_negative_volume( polyhedron_id ) )
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
                         absl::StrCat( "Polyhedron ", polyhedron_id,
@@ -65,6 +69,24 @@ namespace geode
                 }
             }
             return wrong_polyhedra;
+        }
+
+    private:
+        bool polyhedron_has_negative_volume( index_t polyhedron_id ) const
+        {
+            if( mesh_.nb_polyhedron_vertices( polyhedron_id ) == 4 )
+            {
+                Tetrahedron tetrahedron{ mesh_.point( mesh_.polyhedron_vertex(
+                                             { polyhedron_id, 0 } ) ),
+                    mesh_.point(
+                        mesh_.polyhedron_vertex( { polyhedron_id, 1 } ) ),
+                    mesh_.point(
+                        mesh_.polyhedron_vertex( { polyhedron_id, 2 } ) ),
+                    mesh_.point(
+                        mesh_.polyhedron_vertex( { polyhedron_id, 3 } ) ) };
+                return tetrahedron_volume_sign( tetrahedron ) == Sign::negative;
+            }
+            return mesh_.polyhedron_volume( polyhedron_id ) < 0;
         }
 
     private:
