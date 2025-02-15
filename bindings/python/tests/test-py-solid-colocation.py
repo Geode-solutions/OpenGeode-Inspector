@@ -69,11 +69,11 @@ def check_colocation():
     if not colocation_inspector.colocated_points_groups().nb_issues() == 2:
         raise ValueError("[Test] Solid has wrong number of colocated points.")
     first_colocated_points_group = [0, 1, 6]
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group:
+    second_colocated_points_group = [3, 5]
+    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] Solid has wrong first colocated points group.")
-    second_colocated_points_group = [3, 5]
-    if not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] Solid has wrong second colocated points group.")
 

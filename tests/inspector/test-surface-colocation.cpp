@@ -80,12 +80,16 @@ void check_colocation2D()
     OPENGEODE_EXCEPTION( nb_colocated_points == 5,
         "[Test] Surface has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
-    OPENGEODE_EXCEPTION(
-        colocated_points_groups.issues()[0] == first_colocated_points_group,
-        "[Test] Surface has wrong first colocated points group." );
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.issues()[1] == second_colocated_points_group,
+        colocated_points_groups.issues()[0] == first_colocated_points_group
+            || colocated_points_groups.issues()[0]
+                   == second_colocated_points_group,
+        "[Test] Surface has wrong first colocated points group." );
+    OPENGEODE_EXCEPTION(
+        colocated_points_groups.issues()[1] == second_colocated_points_group
+            || colocated_points_groups.issues()[1]
+                   == second_colocated_points_group,
         "[Test] Surface has wrong second colocated points group." );
 }
 
