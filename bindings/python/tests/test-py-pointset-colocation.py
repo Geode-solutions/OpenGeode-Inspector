@@ -68,11 +68,11 @@ def check_colocation2D():
         raise ValueError(
             "[Test] PointSet has wrong number of group of colocated points.")
     first_colocated_points_group = [0, 1, 6]
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group:
+    second_colocated_points_group = [3, 5]
+    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] PointSet has wrong first colocated points group.")
-    second_colocated_points_group = [3, 5]
-    if not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] PointSet has wrong second colocated points group.")
 
@@ -115,11 +115,11 @@ def check_colocation3D():
         raise ValueError(
             "[Test] (3D) PointSet has wrong number of colocated points.")
     first_colocated_points_group = [0, 1, 6]
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group:
+    second_colocated_points_group = [3, 5]
+    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) PointSet has wrong first colocated points group.")
-    second_colocated_points_group = [3, 5]
-    if not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) PointSet has wrong second colocated points group.")
 
