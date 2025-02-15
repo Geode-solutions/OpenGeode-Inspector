@@ -115,10 +115,10 @@ def check_colocation3D():
             "[Test] (3D) EdgedCurve has wrong number ofgroup of colocated points.")
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    if not not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
+    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) EdgedCurve has wrong first colocated points group.")
-    if not not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) EdgedCurve has wrong second colocated points group.")
 
