@@ -29,6 +29,13 @@ if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
 import opengeode as geode
 import opengeode_inspector_py_inspector as inspector
 
+def are_values_equal(values1, values2):
+    if len(values1) != len(values2):
+        return False
+    for value in values1:
+        if value not in values2:
+            return False
+    return True
 
 def check_non_colocation2D():
     surface = geode.TriangulatedSurface2D.create()
@@ -76,6 +83,10 @@ def check_colocation2D():
     print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
     print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
     print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], first_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], second_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], first_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], second_colocated_points_group) )
     if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] Surface has wrong first colocated points group.")
@@ -131,6 +142,10 @@ def check_colocation3D():
     print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
     print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
     print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], first_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], second_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], first_colocated_points_group) )
+    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], second_colocated_points_group) )
     if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) Surface has wrong first colocated points group.")
