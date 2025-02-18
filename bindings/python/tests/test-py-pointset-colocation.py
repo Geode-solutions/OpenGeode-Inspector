@@ -71,27 +71,16 @@ def check_colocation2D():
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
             "[Test] PointSet doesn't have colocated points whereas it should have several.")
-    if not colocation_inspector.colocated_points_groups().nb_issues() == 2:
+    issues = colocation_inspector.colocated_points_groups()
+    if not issues.nb_issues() == 2:
         raise ValueError(
             "[Test] PointSet has wrong number of group of colocated points.")
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    for group in colocation_inspector.colocated_points_groups().issues():
-        for point in group:
-            print(point)
-    print("compare")
-    print( colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], first_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], second_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], first_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], second_colocated_points_group) )
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
+    if not issues.issues()[0] == first_colocated_points_group and not issues.issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] PointSet has wrong first colocated points group.")
-    if colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not issues.issues()[1] == first_colocated_points_group and not issues.issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] PointSet has wrong second colocated points group.")
 
@@ -130,27 +119,16 @@ def check_colocation3D():
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
             "[Test] (3D) PointSet doesn't have colocated points whereas it should have several.")
-    if not colocation_inspector.colocated_points_groups().nb_issues() == 2:
+    issues = colocation_inspector.colocated_points_groups()
+    if not issues.nb_issues() == 2:
         raise ValueError(
             "[Test] (3D) PointSet has wrong number of colocated points.")
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    for group in colocation_inspector.colocated_points_groups().issues():
-        for point in group:
-            print(point)
-    print("compare")
-    print( colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
-    print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], first_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[0], second_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], first_colocated_points_group) )
-    print( are_values_equal(colocation_inspector.colocated_points_groups().issues()[1], second_colocated_points_group) )
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
+    if not issues.issues()[0] == first_colocated_points_group and not issues.issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) PointSet has wrong first colocated points group.")
-    if not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not issues.issues()[1] == first_colocated_points_group and not issues.issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) PointSet has wrong second colocated points group.")
 
