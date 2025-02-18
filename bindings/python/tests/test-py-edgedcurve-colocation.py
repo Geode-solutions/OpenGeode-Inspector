@@ -71,6 +71,11 @@ def check_colocation2D():
     for group in colocation_inspector.colocated_points_groups().issues():
         for point in group:
             print(point)
+    print("compare")
+    print( colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
     if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] EdgedCurve has wrong first colocated points group.")
@@ -121,6 +126,11 @@ def check_colocation3D():
     for group in colocation_inspector.colocated_points_groups().issues():
         for point in group:
             print(point)
+    print("compare")
+    print( colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group )
+    print( colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group )
     if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] (3D) EdgedCurve has wrong first colocated points group.")
