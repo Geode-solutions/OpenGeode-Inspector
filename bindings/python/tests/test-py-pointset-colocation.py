@@ -30,14 +30,6 @@ if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
 import opengeode_inspector_py_inspector as inspector
 print(dir(inspector))
 
-def are_values_equal(values1, values2):
-    if len(values1) != len(values2):
-        return False
-    for value in values1:
-        if value not in values2:
-            return False
-    return True
-
 def check_non_colocation2D():
     pointset = geode.PointSet2D.create()
     builder = geode.PointSetBuilder2D.create(pointset)
