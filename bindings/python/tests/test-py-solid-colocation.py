@@ -29,7 +29,6 @@ if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
 import opengeode as geode
 import opengeode_inspector_py_inspector as inspector
 
-
 def check_non_colocation():
     solid = geode.TetrahedralSolid3D.create()
     builder = geode.TetrahedralSolidBuilder3D.create(solid)
@@ -66,14 +65,15 @@ def check_colocation():
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
             "[Test] Solid doesn't have colocated points whereas it should have several.")
-    if not colocation_inspector.colocated_points_groups().nb_issues() == 2:
+    issues = colocation_inspector.colocated_points_groups()
+    if not issues.nb_issues() == 2:
         raise ValueError("[Test] Solid has wrong number of colocated points.")
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    if not colocation_inspector.colocated_points_groups().issues()[0] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[0] == second_colocated_points_group:
+    if not issues.issues()[0] == first_colocated_points_group and not issues.issues()[0] == second_colocated_points_group:
         raise ValueError(
             "[Test] Solid has wrong first colocated points group.")
-    if not colocation_inspector.colocated_points_groups().issues()[1] == first_colocated_points_group and not colocation_inspector.colocated_points_groups().issues()[1] == second_colocated_points_group:
+    if not issues.issues()[1] == first_colocated_points_group and not issues.issues()[1] == second_colocated_points_group:
         raise ValueError(
             "[Test] Solid has wrong second colocated points group.")
 

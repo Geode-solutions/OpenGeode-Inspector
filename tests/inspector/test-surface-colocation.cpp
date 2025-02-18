@@ -87,7 +87,7 @@ void check_colocation2D()
                    == second_colocated_points_group,
         "[Test] Surface has wrong first colocated points group." );
     OPENGEODE_EXCEPTION(
-        colocated_points_groups.issues()[1] == second_colocated_points_group
+        colocated_points_groups.issues()[1] == first_colocated_points_group
             || colocated_points_groups.issues()[1]
                    == second_colocated_points_group,
         "[Test] Surface has wrong second colocated points group." );
