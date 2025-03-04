@@ -27,6 +27,16 @@
 
 namespace geode
 {
+    index_t BRepMeshesInspectionResult::nb_issues() const
+    {
+        return unique_vertices_colocation.nb_issues()
+               + meshes_colocation.nb_issues() + meshes_adjacencies.nb_issues()
+               + meshes_degenerations.nb_issues()
+               + meshes_intersections.nb_issues()
+               + meshes_non_manifolds.nb_issues()
+               + meshes_negative_elements.nb_issues();
+    }
+
     std::string BRepMeshesInspectionResult::string() const
     {
         return absl::StrCat( unique_vertices_colocation.string(),

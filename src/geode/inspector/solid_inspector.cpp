@@ -29,6 +29,18 @@
 
 namespace geode
 {
+    index_t SolidInspectionResult::nb_issues() const
+    {
+        return polyhedron_facets_with_wrong_adjacency.nb_issues()
+               + colocated_points_groups.nb_issues()
+               + degenerated_edges.nb_issues()
+               + degenerated_polyhedra.nb_issues()
+               + non_manifold_vertices.nb_issues()
+               + non_manifold_edges.nb_issues()
+               + non_manifold_facets.nb_issues()
+               + negative_polyhedra.nb_issues();
+    }
+
     std::string SolidInspectionResult::string() const
     {
         return absl::StrCat( polyhedron_facets_with_wrong_adjacency.string(),

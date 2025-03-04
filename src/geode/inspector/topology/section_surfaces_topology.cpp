@@ -40,6 +40,16 @@
 
 namespace geode
 {
+    index_t SectionSurfacesTopologyInspectionResult::nb_issues() const
+    {
+        return surfaces_not_meshed.nb_issues()
+               + surfaces_not_linked_to_a_unique_vertex.nb_issues()
+               + unique_vertices_linked_to_a_surface_with_invalid_embbedings
+                     .nb_issues()
+               + unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
+                     .nb_issues();
+    }
+
     std::string SectionSurfacesTopologyInspectionResult::string() const
     {
         std::string message;

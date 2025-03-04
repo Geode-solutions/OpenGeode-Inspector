@@ -34,6 +34,17 @@
 
 namespace geode
 {
+    index_t BRepCornersTopologyInspectionResult::nb_issues() const
+    {
+        return corners_not_meshed.nb_issues()
+               + corners_not_linked_to_a_unique_vertex.nb_issues()
+               + unique_vertices_linked_to_multiple_corners.nb_issues()
+               + unique_vertices_linked_to_multiple_internals_corner.nb_issues()
+               + unique_vertices_linked_to_not_internal_nor_boundary_corner
+                     .nb_issues()
+               + unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+    }
+
     std::string BRepCornersTopologyInspectionResult::string() const
     {
         std::string message;

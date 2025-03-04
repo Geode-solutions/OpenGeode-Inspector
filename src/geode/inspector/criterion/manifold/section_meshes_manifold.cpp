@@ -32,6 +32,12 @@
 
 namespace geode
 {
+    index_t SectionMeshesManifoldInspectionResult::nb_issues() const
+    {
+        return meshes_non_manifold_vertices.nb_issues()
+               + meshes_non_manifold_edges.nb_issues();
+    }
+
     std::string SectionMeshesManifoldInspectionResult::string() const
     {
         std::string message;

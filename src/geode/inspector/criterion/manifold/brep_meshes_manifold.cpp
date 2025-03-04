@@ -45,6 +45,15 @@
 
 namespace geode
 {
+    index_t BRepMeshesManifoldInspectionResult::nb_issues() const
+    {
+        return meshes_non_manifold_vertices.nb_issues()
+               + meshes_non_manifold_edges.nb_issues()
+               + meshes_non_manifold_facets.nb_issues()
+               + brep_non_manifold_edges.nb_issues()
+               + brep_non_manifold_facets.nb_issues();
+    }
+
     std::string BRepMeshesManifoldInspectionResult::string() const
     {
         std::string message;

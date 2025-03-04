@@ -75,6 +75,12 @@ namespace
 
 namespace geode
 {
+    index_t SectionTopologyInspectionResult::nb_issues() const
+    {
+        return corners.nb_issues() + lines.nb_issues() + surfaces.nb_issues()
+               + unique_vertices_not_linked_to_any_component.nb_issues();
+    }
+
     std::string SectionTopologyInspectionResult::string() const
     {
         return absl::StrCat( corners.string(), lines.string(),

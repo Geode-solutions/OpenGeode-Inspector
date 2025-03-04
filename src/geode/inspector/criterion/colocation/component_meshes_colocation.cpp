@@ -227,6 +227,11 @@ namespace
 
 namespace geode
 {
+    index_t MeshesColocationInspectionResult::nb_issues() const
+    {
+        return colocated_points_groups.nb_issues();
+    }
+
     std::string MeshesColocationInspectionResult::string() const
     {
         if( colocated_points_groups.nb_issues() != 0 )

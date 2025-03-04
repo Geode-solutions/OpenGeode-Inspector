@@ -33,6 +33,11 @@
 
 namespace geode
 {
+    index_t BRepMeshesNegativeElementsInspectionResult::nb_issues() const
+    {
+        return negative_polyhedra.nb_issues();
+    }
+
     std::string BRepMeshesNegativeElementsInspectionResult::string() const
     {
         if( negative_polyhedra.nb_issues() != 0 )

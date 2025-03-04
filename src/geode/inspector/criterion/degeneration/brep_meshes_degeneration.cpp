@@ -34,6 +34,12 @@
 
 namespace geode
 {
+    index_t BRepMeshesDegenerationInspectionResult::nb_issues() const
+    {
+        return degenerated_edges.nb_issues() + degenerated_polygons.nb_issues()
+               + degenerated_polyhedra.nb_issues();
+    }
+
     std::string BRepMeshesDegenerationInspectionResult::string() const
     {
         std::string message;

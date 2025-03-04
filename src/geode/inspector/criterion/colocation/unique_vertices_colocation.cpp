@@ -147,6 +147,12 @@ namespace
 
 namespace geode
 {
+    index_t UniqueVerticesInspectionResult::nb_issues() const
+    {
+        return colocated_unique_vertices_groups.nb_issues()
+               + unique_vertices_linked_to_different_points.nb_issues();
+    }
+
     std::string UniqueVerticesInspectionResult::string() const
     {
         std::string message;
