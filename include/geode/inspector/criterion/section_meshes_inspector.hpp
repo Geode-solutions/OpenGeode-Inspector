@@ -45,6 +45,8 @@ namespace geode
         SectionMeshesManifoldInspectionResult meshes_non_manifolds;
         SectionMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
+        [[nodiscard]] index_t nb_issues() const;
+
         [[nodiscard]] std::string string() const;
 
         [[nodiscard]] std::string inspection_type() const;

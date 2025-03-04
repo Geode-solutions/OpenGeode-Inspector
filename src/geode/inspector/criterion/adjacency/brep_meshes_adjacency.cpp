@@ -39,6 +39,12 @@
 
 namespace geode
 {
+    index_t BRepMeshesAdjacencyInspectionResult::nb_issues() const
+    {
+        return surfaces_edges_with_wrong_adjacencies.nb_issues()
+               + blocks_facets_with_wrong_adjacencies.nb_issues();
+    }
+
     std::string BRepMeshesAdjacencyInspectionResult::string() const
     {
         std::string message;

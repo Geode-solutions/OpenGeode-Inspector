@@ -29,6 +29,11 @@
 
 namespace geode
 {
+    index_t BRepInspectionResult::nb_issues() const
+    {
+        return meshes.nb_issues() + topology.nb_issues();
+    }
+
     std::string BRepInspectionResult::string() const
     {
         return absl::StrCat( meshes.string(), "\n", topology.string(), "\n" );

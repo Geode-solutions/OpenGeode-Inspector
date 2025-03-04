@@ -42,6 +42,11 @@ namespace geode
         }
     };
 
+    index_t SectionMeshesAdjacencyInspectionResult::nb_issues() const
+    {
+        return surfaces_edges_with_wrong_adjacencies.nb_issues();
+    }
+
     std::string SectionMeshesAdjacencyInspectionResult::string() const
     {
         if( surfaces_edges_with_wrong_adjacencies.nb_issues() != 0 )

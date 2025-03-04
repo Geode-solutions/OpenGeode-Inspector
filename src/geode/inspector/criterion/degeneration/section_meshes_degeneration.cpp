@@ -32,6 +32,11 @@
 
 namespace geode
 {
+    index_t SectionMeshesDegenerationInspectionResult::nb_issues() const
+    {
+        return degenerated_edges.nb_issues() + degenerated_polygons.nb_issues();
+    }
+
     std::string SectionMeshesDegenerationInspectionResult::string() const
     {
         std::string message;

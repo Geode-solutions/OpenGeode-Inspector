@@ -113,6 +113,16 @@ namespace
 
 namespace geode
 {
+    index_t BRepBlocksTopologyInspectionResult::nb_issues() const
+    {
+        return wrong_block_boundary_surface.nb_issues()
+               + blocks_not_meshed.nb_issues()
+               + blocks_not_linked_to_a_unique_vertex.nb_issues()
+               + unique_vertices_part_of_two_blocks_and_no_boundary_surface
+                     .nb_issues()
+               + unique_vertices_with_incorrect_block_cmvs_count.nb_issues();
+    }
+
     std::string BRepBlocksTopologyInspectionResult::string() const
     {
         std::string message;

@@ -29,6 +29,12 @@
 
 namespace geode
 {
+    index_t EdgedCurveInspectionResult::nb_issues() const
+    {
+        return colocated_points_groups.nb_issues()
+               + degenerated_edges.nb_issues();
+    }
+
     std::string EdgedCurveInspectionResult::string() const
     {
         return absl::StrCat( colocated_points_groups.string(), "\n",

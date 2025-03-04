@@ -29,6 +29,10 @@
 
 namespace geode
 {
+    index_t SectionInspectionResult::nb_issues() const
+    {
+        return meshes.nb_issues() + topology.nb_issues();
+    }
 
     std::string SectionInspectionResult::string() const
     {

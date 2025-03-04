@@ -35,6 +35,11 @@
 
 namespace geode
 {
+    index_t SectionMeshesNegativeElementsInspectionResult::nb_issues() const
+    {
+        return negative_polygons.nb_issues();
+    }
+
     std::string SectionMeshesNegativeElementsInspectionResult::string() const
     {
         if( negative_polygons.nb_issues() != 0 )

@@ -75,6 +75,12 @@ namespace
 
 namespace geode
 {
+    index_t SectionTopologyInspectionResult::nb_issues() const
+    {
+        return corners.nb_issues() + lines.nb_issues() + surfaces.nb_issues()
+               + unique_vertices_not_linked_to_any_component.nb_issues();
+    }
+
     std::string SectionTopologyInspectionResult::string() const
     {
         return absl::StrCat( corners.string(), lines.string(),
@@ -171,12 +177,12 @@ namespace geode
                 Range{ section_.nb_unique_vertices() } )
             {
                 if( !section_topology_inspector
-                         .section_corner_topology_is_valid( unique_vertex_id )
+                        .section_corner_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_lines_topology_is_valid( unique_vertex_id )
+                        .section_lines_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_vertex_surfaces_topology_is_valid(
-                                unique_vertex_id ) )
+                        .section_vertex_surfaces_topology_is_valid(
+                            unique_vertex_id ) )
                 {
                     return false;
                 }

@@ -65,6 +65,8 @@ namespace geode
                 "without boundary status."
             };
 
+        [[nodiscard]] index_t nb_issues() const;
+
         [[nodiscard]] std::string string() const;
 
         [[nodiscard]] std::string inspection_type() const;

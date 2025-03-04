@@ -448,6 +448,11 @@ namespace
 
 namespace geode
 {
+    index_t ElementsIntersectionsInspectionResult::nb_issues() const
+    {
+        return elements_intersections.nb_issues();
+    }
+
     std::string ElementsIntersectionsInspectionResult::string() const
     {
         return absl::StrCat( elements_intersections.string(), "\n" );

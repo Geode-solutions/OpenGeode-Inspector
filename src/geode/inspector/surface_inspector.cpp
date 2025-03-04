@@ -29,6 +29,17 @@
 
 namespace geode
 {
+    index_t SurfaceInspectionResult::nb_issues() const
+    {
+        return polygon_edges_with_wrong_adjacency.nb_issues()
+               + colocated_points_groups.nb_issues()
+               + degenerated_edges.nb_issues()
+               + degenerated_polygons.nb_issues()
+               + non_manifold_edges.nb_issues()
+               + non_manifold_vertices.nb_issues()
+               + intersecting_elements.nb_issues();
+    }
+
     std::string SurfaceInspectionResult::string() const
     {
         return absl::StrCat( polygon_edges_with_wrong_adjacency.string(), "\n",

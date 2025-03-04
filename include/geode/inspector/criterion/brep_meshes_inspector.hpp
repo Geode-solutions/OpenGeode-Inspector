@@ -44,6 +44,8 @@ namespace geode
         BRepMeshesManifoldInspectionResult meshes_non_manifolds;
         BRepMeshesNegativeElementsInspectionResult meshes_negative_elements;
 
+        [[nodiscard]] index_t nb_issues() const;
+
         [[nodiscard]] std::string string() const;
 
         [[nodiscard]] std::string inspection_type() const;

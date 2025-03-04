@@ -86,6 +86,13 @@ namespace
 
 namespace geode
 {
+    index_t BRepTopologyInspectionResult::nb_issues() const
+    {
+        return corners.nb_issues() + lines.nb_issues() + surfaces.nb_issues()
+               + blocks.nb_issues()
+               + unique_vertices_not_linked_to_any_component.nb_issues();
+    }
+
     std::string BRepTopologyInspectionResult::string() const
     {
         return absl::StrCat( corners.string(), lines.string(),
