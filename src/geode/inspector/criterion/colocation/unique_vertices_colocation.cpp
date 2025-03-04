@@ -56,15 +56,15 @@ namespace
             == geode::Line< Model::dim >::component_type_static() )
         {
             return point.inexact_equal( model.line( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         else if( cmv.component_id.type()
                  == geode::Surface< Model::dim >::component_type_static() )
         {
             return point.inexact_equal( model.surface( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         return point.inexact_equal(
             model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex ) );
@@ -85,8 +85,8 @@ namespace
         if( cmv.component_id.type() == geode::Block3D::component_type_static() )
         {
             return point.inexact_equal( model.block( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         return model_cmv_is_colocated_on_point_base< geode::BRep >(
             model, cmv, point );
