@@ -82,11 +82,12 @@ namespace geode
         {
             for( const auto& edge : edge_to_polygons_around( mesh_ ) )
             {
-                if( edge.second.second && edge.second.first != 1 )
+                const auto [nb_incident_polygons, on_border] = edge.second;
+                if( on_border && nb_incident_polygons != 1 )
                 {
                     return false;
                 }
-                if( !edge.second.second && edge.second.first != 2 )
+                if( !on_border && nb_incident_polygons != 2 )
                 {
                     return false;
                 }
@@ -101,19 +102,22 @@ namespace geode
             };
             for( const auto& edge : edge_to_polygons_around( mesh_ ) )
             {
-                if( edge.second.second && edge.second.first != 1 )
+                const auto [nb_incident_polygons, on_border] = edge.second;
+                if( on_border && nb_incident_polygons != 1 )
                 {
                     non_manifold_edges.add_issue( edge.first.vertices(),
                         absl::StrCat( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
-                            edge.first.vertices()[1], " is not manifold." ) );
+                            edge.first.vertices()[1],
+                            " is not manifold (detected as on border)." ) );
                 }
-                if( !edge.second.second && edge.second.first != 2 )
+                if( !on_border && nb_incident_polygons != 2 )
                 {
                     non_manifold_edges.add_issue( edge.first.vertices(),
                         absl::StrCat( "Edge between vertices with index ",
                             edge.first.vertices()[0], " and index ",
-                            edge.first.vertices()[1], " is not manifold." ) );
+                            edge.first.vertices()[1],
+                            " is not manifold (detected as not on border)." ) );
                 }
             }
             return non_manifold_edges;
