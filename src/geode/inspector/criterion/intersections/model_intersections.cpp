@@ -650,7 +650,7 @@ namespace geode
 
     template < typename Model >
     ElementsIntersectionsInspectionResult
-        ModelMeshesIntersections< Model >::inspect_surfaces_auto_intersections()
+        ModelMeshesIntersections< Model >::inspect_surfaces_self_intersections()
             const
     {
         ElementsIntersectionsInspectionResult results;

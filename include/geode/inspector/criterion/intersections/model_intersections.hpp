@@ -71,7 +71,7 @@ namespace geode
             inspect_intersections() const;
 
         [[nodiscard]] ElementsIntersectionsInspectionResult
-            inspect_surfaces_auto_intersections() const;
+            inspect_surfaces_self_intersections() const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );
