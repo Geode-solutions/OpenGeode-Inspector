@@ -70,6 +70,9 @@ namespace geode
         [[nodiscard]] ElementsIntersectionsInspectionResult
             inspect_intersections() const;
 
+        [[nodiscard]] ElementsIntersectionsInspectionResult
+            inspect_surfaces_auto_intersections() const;
+
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };

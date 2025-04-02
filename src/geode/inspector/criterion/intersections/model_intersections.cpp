@@ -276,6 +276,41 @@ namespace
         DEBUG_CONST bool same_surface_;
     };
 
+    template < typename Model >
+    class AllModelSurfacesAutoIntersection
+        : public ModelSurfacesIntersectionBase< Model >
+    {
+    public:
+        AllModelSurfacesAutoIntersection( const Model& model,
+            const geode::uuid& surface_id1,
+            const geode::uuid& surface_id2 )
+            : ModelSurfacesIntersectionBase< Model >(
+                  model, surface_id1, surface_id2 ),
+              same_surface_{ surface_id1 == surface_id2 }
+        {
+        }
+
+        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
+        {
+            if( !same_surface_ )
+            {
+                return false;
+            }
+            if( same_surface_ && p1_id == p2_id )
+            {
+                return false;
+            }
+            if( this->polygons_intersect( p1_id, p2_id ) )
+            {
+                this->emplace( p1_id, p2_id );
+            }
+            return false;
+        }
+
+    private:
+        DEBUG_CONST bool same_surface_;
+    };
+
     geode::index_t third_point_index( const geode::PolygonVertices& vertices,
         absl::Span< const std::array< geode::index_t, 2 > > common_vertices,
         geode::local_index_t vertex_position )
@@ -498,6 +533,22 @@ namespace geode
             }
         }
 
+        void add_surface_auto_intersecting_elements(
+            InspectionIssues< std::pair< ComponentMeshElement,
+                ComponentMeshElement > >& intersection_issues ) const
+        {
+            const auto intersections = intersecting_polygons<
+                AllModelSurfacesAutoIntersection< Model > >();
+            for( const auto& polygon_pair : intersections )
+            {
+                intersection_issues.add_issue( polygon_pair,
+                    absl::StrCat( "Polygons ", polygon_pair.first.element_id,
+                        "and ", polygon_pair.second.element_id, " of surface ",
+                        polygon_pair.first.component_id.id().string(),
+                        " intersect each other." ) );
+            }
+        }
+
     private:
         template < typename Action >
         std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
@@ -593,6 +644,17 @@ namespace geode
     {
         ElementsIntersectionsInspectionResult results;
         impl_->add_intersecting_surfaces_elements(
+            results.elements_intersections );
+        return results;
+    }
+
+    template < typename Model >
+    ElementsIntersectionsInspectionResult
+        ModelMeshesIntersections< Model >::inspect_surfaces_auto_intersections()
+            const
+    {
+        ElementsIntersectionsInspectionResult results;
+        impl_->add_surface_auto_intersecting_elements(
             results.elements_intersections );
         return results;
     }
