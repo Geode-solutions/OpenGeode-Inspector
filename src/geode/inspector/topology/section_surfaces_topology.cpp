@@ -175,8 +175,8 @@ namespace geode
                     continue;
                 }
                 if( !section_.surface( surface_cmv.component_id.id() )
-                         .mesh()
-                         .is_vertex_on_border( surface_cmv.vertex ) )
+                        .mesh()
+                        .is_vertex_on_border( surface_cmv.vertex ) )
                 {
                     return absl::StrCat( "Unique vertex with index ",
                         unique_vertex_index,
