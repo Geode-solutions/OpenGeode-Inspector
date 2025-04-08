@@ -86,8 +86,8 @@ namespace
                 absl::StrCat( "Vertices with indices", point_group_string,
                     " are colocated at position [",
                     mesh_colocation_info
-                        .unique_points[mesh_colocation_info.colocated_mapping
-                                           [colocated_points_group[0]]]
+                        .unique_points[mesh_colocation_info
+                                .colocated_mapping[colocated_points_group[0]]]
                         .string(),
                     "]." ) );
         }

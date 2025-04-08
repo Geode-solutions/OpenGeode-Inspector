@@ -177,12 +177,12 @@ namespace geode
                 Range{ section_.nb_unique_vertices() } )
             {
                 if( !section_topology_inspector
-                         .section_corner_topology_is_valid( unique_vertex_id )
+                        .section_corner_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_lines_topology_is_valid( unique_vertex_id )
+                        .section_lines_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_vertex_surfaces_topology_is_valid(
-                                unique_vertex_id ) )
+                        .section_vertex_surfaces_topology_is_valid(
+                            unique_vertex_id ) )
                 {
                     return false;
                 }
