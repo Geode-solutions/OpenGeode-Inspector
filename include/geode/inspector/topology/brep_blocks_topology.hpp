@@ -43,11 +43,20 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
-        InspectionIssues< uuid > blocks_not_meshed{
+        InspectionIssues< uuid > some_blocks_not_meshed{
             "uuids of Blocks without mesh."
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
             "uuids of surfaces boundary to a block when they should not."
+        };
+        InspectionIssues< uuid > block_is_not_closed{
+            "uuid of Blocks with incorrect boundaries."
+        };
+        InspectionIssues< uuid > wrong_model_boundaries{
+            "uuids of surfaces tagged as model boundaries when they should not"
+        };
+        InspectionIssues< uuid > not_closed_model_boundaries{
+            "uuid of model boundaries that are not closed"
         };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
             "Blocks with mesh vertices not linked to a unique vertex"
@@ -61,6 +70,26 @@ namespace geode
             unique_vertices_with_incorrect_block_cmvs_count{
                 "Indices of unique vertices part of a Block but with incorrect "
                 "ComponentMeshVertices count"
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_single_and_invalid_line{
+                "Indices of unique vertices linked to only one Line and this "
+                "single Line is invalid."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_not_internal_nor_boundary_line{
+                "Indices of unique vertices linked to a Line without boundary "
+                "nor internal status."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_not_internal_nor_boundary_surface{
+                "Indices of unique vertices linked to Surface without boundary "
+                "nor internal status."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_single_and_invalid_surface{
+                "Indices of unique vertices linked to only one Surface and "
+                "this single surface is invalid."
             };
 
         [[nodiscard]] index_t nb_issues() const;
@@ -88,6 +117,22 @@ namespace geode
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_block_cmvs_count_is_incorrect(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_line(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_not_internal_nor_boundary_line(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_not_internal_nor_boundary_surface(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_surface(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] BRepBlocksTopologyInspectionResult inspect_blocks() const;

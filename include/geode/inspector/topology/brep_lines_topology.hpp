@@ -47,19 +47,9 @@ namespace geode
             "Lines with mesh vertices not linked to a unique vertex"
         };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_not_internal_nor_boundary_line{
-                "Indices of unique vertices linked to a Line without boundary "
-                "nor internal status."
-            };
-        InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
                 "Indices of unique vertices linked to a Line with invalid "
                 "internal topology."
-            };
-        InspectionIssues< index_t >
-            unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indices of unique vertices linked to only one Line and this "
-                "single Line is invalid."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
@@ -96,15 +86,7 @@ namespace geode
             index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_not_internal_nor_boundary_line(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_embedded_line(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_invalid_single_line(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >

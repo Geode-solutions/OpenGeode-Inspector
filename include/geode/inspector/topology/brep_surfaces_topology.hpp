@@ -46,19 +46,9 @@ namespace geode
             "Surfaces with mesh vertices not linked to a unique vertex"
         };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_not_internal_nor_boundary_surface{
-                "Indices of unique vertices linked to Surface without boundary "
-                "nor internal status."
-            };
-        InspectionIssues< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
                 "Indices of unique vertices linked to a Surface with invalid "
                 "internal topology."
-            };
-        InspectionIssues< index_t >
-            unique_vertices_linked_to_a_single_and_invalid_surface{
-                "Indices of unique vertices linked to only one Surface and "
-                "this single surface is invalid."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_and_invalid_surfaces{
@@ -106,15 +96,7 @@ namespace geode
             index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_not_internal_nor_boundary_surface(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_embedded_surface(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_invalid_single_surface(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
