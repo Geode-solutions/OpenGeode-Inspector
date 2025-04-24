@@ -248,9 +248,9 @@ namespace geode
                     " is part of only one line, with uuid '", line_id.string(),
                     "', and only one surface, with uuid '",
                     surface_uuids[0].string(),
-                    "', but the line is neither embedded in the "
-                    "surface, nor boundary of the surface while the "
-                    "surface is embedded in a block." );
+                    "', but the line is neither embedded in the surface, nor "
+                    "boundary of the surface while the surface is embedded in "
+                    "a block." );
             }
         }
         else if( surface_uuids.empty() )
