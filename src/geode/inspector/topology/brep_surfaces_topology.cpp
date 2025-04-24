@@ -183,6 +183,21 @@ namespace geode
         return true;
     }
 
+    bool BRepSurfacesTopology::surface_is_meshed(
+        const Surface3D& surface ) const
+    {
+        return surface.mesh().nb_vertices() != 0;
+    }
+
+    bool BRepSurfacesTopology::
+        surface_vertices_are_associated_to_unique_vertices(
+            const Surface3D& surface ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                brep_, surface.component_id(), surface.mesh() );
+    }
+
     std::optional< std::string > BRepSurfacesTopology::
         vertex_is_part_of_not_internal_nor_boundary_surface(
             index_t unique_vertex_index ) const
@@ -433,7 +448,7 @@ namespace geode
         BRepSurfacesTopologyInspectionResult result;
         for( const auto& surface : brep_.surfaces() )
         {
-            if( brep_.surface( surface.id() ).mesh().nb_vertices() == 0 )
+            if( !surface_is_meshed( brep_.surface( surface.id() ) ) )
             {
                 result.surfaces_not_meshed.add_issue(
                     surface.id(), absl::StrCat( surface.id().string(),
@@ -441,7 +456,7 @@ namespace geode
             }
 
             auto surface_result = internal::
-                brep_component_vertices_not_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     brep_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )
             {

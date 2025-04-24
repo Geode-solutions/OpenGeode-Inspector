@@ -33,6 +33,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Corner );
+    ALIAS_3D( Corner );
     class BRep;
 } // namespace geode
 
@@ -87,6 +89,11 @@ namespace geode
          */
         [[nodiscard]] bool brep_corner_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool corner_is_meshed( const Corner3D& corner ) const;
+
+        [[nodiscard]] bool corner_vertices_are_associated_to_unique_vertices(
+            const Corner3D& corner ) const;
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_has_multiple_corners(

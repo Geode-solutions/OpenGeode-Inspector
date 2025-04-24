@@ -140,6 +140,19 @@ namespace geode
         return true;
     }
 
+    bool SectionLinesTopology::line_is_meshed( const Line2D& line ) const
+    {
+        return line.mesh().nb_vertices() != 0;
+    }
+
+    bool SectionLinesTopology::line_vertices_are_associated_to_unique_vertices(
+        const Line2D& line ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, line.component_id(), line.mesh() );
+    }
+
     std::optional< std::string >
         SectionLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             const index_t unique_vertex_index ) const
@@ -306,14 +319,14 @@ namespace geode
         SectionLinesTopologyInspectionResult result;
         for( const auto& line : section_.lines() )
         {
-            if( section_.line( line.id() ).mesh().nb_vertices() == 0 )
+            if( !line_is_meshed( section_.line( line.id() ) ) )
             {
                 result.lines_not_meshed.add_issue(
                     line.id(), absl::StrCat( line.id().string(),
                                    " is a line without mesh." ) );
             }
             auto line_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {

@@ -152,6 +152,21 @@ namespace geode
         return true;
     }
 
+    bool SectionCornersTopology::corner_is_meshed(
+        const Corner2D& corner ) const
+    {
+        return corner.mesh().nb_vertices() != 0;
+    }
+
+    bool SectionCornersTopology::
+        corner_vertices_are_associated_to_unique_vertices(
+            const Corner2D& corner ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, corner.component_id(), corner.mesh() );
+    }
+
     std::optional< std::string >
         SectionCornersTopology::unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const
@@ -253,14 +268,14 @@ namespace geode
         SectionCornersTopologyInspectionResult result;
         for( const auto& corner : section_.corners() )
         {
-            if( section_.corner( corner.id() ).mesh().nb_vertices() == 0 )
+            if( !corner_is_meshed( section_.corner( corner.id() ) ) )
             {
                 result.corners_not_meshed.add_issue( corner.id(),
                     "Corner " + corner.id().string() + " is not meshed." );
                 continue;
             }
             auto corner_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )
             {

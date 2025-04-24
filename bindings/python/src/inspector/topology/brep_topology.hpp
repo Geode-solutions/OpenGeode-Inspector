@@ -155,12 +155,10 @@ namespace geode
             .def( pybind11::init< const BRep& >() )
             .def( "brep_topology_is_valid",
                 &BRepTopologyInspector::brep_topology_is_valid )
-            .def( "brep_meshed_components_are_linked_to_unique_vertices",
+            .def( "brep_unique_vertices_are_bijectively_linked_to_an_existing_"
+                  "component_vertex",
                 &BRepTopologyInspector::
-                    brep_meshed_components_are_linked_to_unique_vertices )
-            .def( "brep_unique_vertices_are_linked_to_a_component_vertex",
-                &BRepTopologyInspector::
-                    brep_unique_vertices_are_linked_to_a_component_vertex )
+                    brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex )
             .def( "inspect_brep_topology",
                 &BRepTopologyInspector::inspect_brep_topology );
     }

@@ -35,6 +35,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Block );
+    ALIAS_3D( Block );
     struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
@@ -81,6 +83,11 @@ namespace geode
 
         [[nodiscard]] bool brep_blocks_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool block_is_meshed( const Block3D& block ) const;
+
+        [[nodiscard]] bool block_vertices_are_associated_to_unique_vertices(
+            const Block3D& block ) const;
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(

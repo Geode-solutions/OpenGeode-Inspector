@@ -180,6 +180,19 @@ namespace geode
                       unique_vertex_index ) );
     }
 
+    bool BRepBlocksTopology::block_is_meshed( const Block3D& block ) const
+    {
+        return block.mesh().nb_vertices() != 0;
+    }
+
+    bool BRepBlocksTopology::block_vertices_are_associated_to_unique_vertices(
+        const Block3D& block ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                brep_, block.component_id(), block.mesh() );
+    }
+
     std::optional< std::string > BRepBlocksTopology::
         unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
             index_t unique_vertex_index ) const
@@ -400,7 +413,7 @@ namespace geode
         BRepBlocksTopologyInspectionResult result;
         for( const auto& block : brep_.blocks() )
         {
-            if( brep_.block( block.id() ).mesh().nb_vertices() == 0 )
+            if( !block_is_meshed( brep_.block( block.id() ) ) )
             {
                 result.blocks_not_meshed.add_issue(
                     block.id(), absl::StrCat( "Block ", block.id().string(),
@@ -408,7 +421,7 @@ namespace geode
                 continue;
             }
             auto block_result = internal::
-                brep_component_vertices_not_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     brep_, block.component_id(), block.mesh() );
             if( block_result.nb_issues() != 0 )
             {

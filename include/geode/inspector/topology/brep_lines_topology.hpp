@@ -32,6 +32,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Line );
+    ALIAS_3D( Line );
     struct ComponentMeshVertex;
     class BRep;
 } // namespace geode
@@ -94,6 +96,11 @@ namespace geode
          */
         [[nodiscard]] bool brep_lines_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool line_is_meshed( const Line3D& line ) const;
+
+        [[nodiscard]] bool line_vertices_are_associated_to_unique_vertices(
+            const Line3D& line ) const;
 
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_line(

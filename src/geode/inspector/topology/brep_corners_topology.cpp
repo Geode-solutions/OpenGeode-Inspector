@@ -140,6 +140,19 @@ namespace geode
         return true;
     }
 
+    bool BRepCornersTopology::corner_is_meshed( const Corner3D& corner ) const
+    {
+        return corner.mesh().nb_vertices() != 0;
+    }
+
+    bool BRepCornersTopology::corner_vertices_are_associated_to_unique_vertices(
+        const Corner3D& corner ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                brep_, corner.component_id(), corner.mesh() );
+    }
+
     std::optional< std::string >
         BRepCornersTopology::unique_vertex_has_multiple_corners(
             index_t unique_vertex_index ) const
@@ -268,7 +281,7 @@ namespace geode
         BRepCornersTopologyInspectionResult result;
         for( const auto& corner : brep_.corners() )
         {
-            if( brep_.corner( corner.id() ).mesh().nb_vertices() == 0 )
+            if( !corner_is_meshed( brep_.corner( corner.id() ) ) )
             {
                 result.corners_not_meshed.add_issue(
                     corner.id(), absl::StrCat( "Corner ", corner.id().string(),
@@ -276,7 +289,7 @@ namespace geode
                 continue;
             }
             auto corner_result = internal::
-                brep_component_vertices_not_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     brep_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )
             {

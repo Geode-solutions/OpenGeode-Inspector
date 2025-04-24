@@ -139,6 +139,19 @@ namespace geode
         return true;
     }
 
+    bool BRepLinesTopology::line_is_meshed( const Line3D& line ) const
+    {
+        return line.mesh().nb_vertices() != 0;
+    }
+
+    bool BRepLinesTopology::line_vertices_are_associated_to_unique_vertices(
+        const Line3D& line ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                brep_, line.component_id(), line.mesh() );
+    }
+
     std::optional< std::string >
         BRepLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
             index_t unique_vertex_index ) const
@@ -319,7 +332,7 @@ namespace geode
         BRepLinesTopologyInspectionResult result;
         for( const auto& line : brep_.lines() )
         {
-            if( brep_.line( line.id() ).mesh().nb_vertices() == 0 )
+            if( !line_is_meshed( brep_.line( line.id() ) ) )
             {
                 result.lines_not_meshed.add_issue(
                     line.id(), absl::StrCat( line.id().string(),
@@ -327,7 +340,7 @@ namespace geode
             }
 
             auto line_result = internal::
-                brep_component_vertices_not_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {

@@ -30,7 +30,6 @@
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/corner.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/relationships.hpp>
 #include <geode/model/mixin/core/surface.hpp>
@@ -118,6 +117,21 @@ namespace geode
         return true;
     }
 
+    bool SectionSurfacesTopology::surface_is_meshed(
+        const Surface2D& surface ) const
+    {
+        return surface.mesh().nb_vertices() != 0;
+    }
+
+    bool SectionSurfacesTopology::
+        surface_vertices_are_associated_to_unique_vertices(
+            const Surface2D& surface ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, surface.component_id(), surface.mesh() );
+    }
+
     std::optional< std::string >
         SectionSurfacesTopology::vertex_is_part_of_invalid_embedded_surface(
             index_t unique_vertex_index ) const
@@ -196,7 +210,7 @@ namespace geode
         SectionSurfacesTopologyInspectionResult result;
         for( const auto& surface : section_.surfaces() )
         {
-            if( section_.surface( surface.id() ).mesh().nb_vertices() == 0 )
+            if( !surface_is_meshed( section_.surface( surface.id() ) ) )
             {
                 result.surfaces_not_meshed.add_issue(
                     surface.id(), absl::StrCat( surface.id().string(),
@@ -204,7 +218,7 @@ namespace geode
             }
 
             auto surface_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )
             {

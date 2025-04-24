@@ -31,6 +31,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Surface );
+    ALIAS_3D( Surface );
     class BRep;
 } // namespace geode
 
@@ -104,6 +106,11 @@ namespace geode
          */
         [[nodiscard]] bool brep_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool surface_is_meshed( const Surface3D& surface ) const;
+
+        [[nodiscard]] bool surface_vertices_are_associated_to_unique_vertices(
+            const Surface3D& surface ) const;
 
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_not_internal_nor_boundary_surface(

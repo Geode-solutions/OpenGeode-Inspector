@@ -39,65 +39,24 @@
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
-namespace
-{
-    bool brep_corner_is_meshed(
-        const geode::BRep& brep, const geode::uuid& corner_id )
-    {
-        return brep.corner( corner_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool brep_line_is_meshed(
-        const geode::BRep& brep, const geode::uuid& line_id )
-    {
-        return brep.line( line_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool brep_surface_is_meshed(
-        const geode::BRep& brep, const geode::uuid& surface_id )
-    {
-        return brep.surface( surface_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool brep_block_is_meshed(
-        const geode::BRep& brep, const geode::uuid& block_id )
-    {
-        return brep.block( block_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool brep_component_vertices_are_associated_to_unique_vertices(
-        const geode::BRep& brep,
-        const geode::ComponentID& component_id,
-        const geode::VertexSet& component_mesh )
-    {
-        for( const auto component_vertex :
-            geode::Range{ component_mesh.nb_vertices() } )
-        {
-            if( brep.unique_vertex( { component_id, component_vertex } )
-                == geode::NO_ID )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-} // namespace
-
 namespace geode
 {
     index_t BRepTopologyInspectionResult::nb_issues() const
     {
         return corners.nb_issues() + lines.nb_issues() + surfaces.nb_issues()
                + blocks.nb_issues()
-               + unique_vertices_not_linked_to_any_component.nb_issues();
+               + unique_vertices_not_linked_to_any_component.nb_issues()
+               + unique_vertices_linked_to_inexistant_cmv.nb_issues()
+               + unique_vertices_nonbijectively_linked_to_cmv.nb_issues();
     }
 
     std::string BRepTopologyInspectionResult::string() const
     {
         return absl::StrCat( corners.string(), lines.string(),
             surfaces.string(), blocks.string(),
-            unique_vertices_not_linked_to_any_component.string() );
+            unique_vertices_not_linked_to_any_component.string(),
+            unique_vertices_linked_to_inexistant_cmv.string(),
+            unique_vertices_nonbijectively_linked_to_cmv.string() );
     }
 
     std::string BRepTopologyInspectionResult::inspection_type() const
@@ -110,71 +69,73 @@ namespace geode
     public:
         Impl( const BRep& brep ) : brep_( brep ) {}
 
-        bool brep_meshed_components_are_linked_to_unique_vertices() const
-        {
-            for( const auto& corner : brep_.corners() )
-            {
-                if( brep_corner_is_meshed( brep_, corner.id() )
-                    && !brep_component_vertices_are_associated_to_unique_vertices(
-                        brep_, corner.component_id(), corner.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            for( const auto& line : brep_.lines() )
-            {
-                if( brep_line_is_meshed( brep_, line.id() )
-                    && !brep_component_vertices_are_associated_to_unique_vertices(
-                        brep_, line.component_id(), line.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            for( const auto& surface : brep_.surfaces() )
-            {
-                if( brep_surface_is_meshed( brep_, surface.id() )
-                    && !brep_component_vertices_are_associated_to_unique_vertices(
-                        brep_, surface.component_id(), surface.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            for( const auto& block : brep_.blocks() )
-            {
-                if( brep_block_is_meshed( brep_, block.id() )
-                    && !brep_component_vertices_are_associated_to_unique_vertices(
-                        brep_, block.component_id(), block.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        bool brep_unique_vertices_are_linked_to_a_component_vertex() const
+        bool
+            brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
+                const
         {
             for( const auto uv_id : Range{ brep_.nb_unique_vertices() } )
             {
-                if( brep_.component_mesh_vertices( uv_id ).empty() )
+                const auto& unique_vertex_cmvs =
+                    brep_.component_mesh_vertices( uv_id );
+                if( unique_vertex_cmvs.empty() )
                 {
+                    return false;
+                }
+                for( const auto& cmv : unique_vertex_cmvs )
+                {
+                    if( cmv_exists_in_brep( cmv ) )
+                    {
+                        if( brep_.unique_vertex( cmv ) != uv_id )
+                        {
+                            return false;
+                        }
+                        continue;
+                    }
                     return false;
                 }
             }
             return true;
         }
 
-        void add_unique_vertices_not_linked_to_a_component_vertex(
+        void add_unique_vertices_with_wrong_cmv_link(
             BRepTopologyInspectionResult& brep_issues ) const
         {
-            auto& inspect_result =
+            auto& not_linked_result =
                 brep_issues.unique_vertices_not_linked_to_any_component;
+            auto& linked_to_inexistant_result =
+                brep_issues.unique_vertices_linked_to_inexistant_cmv;
+            auto& linked_to_nonbijective_result =
+                brep_issues.unique_vertices_nonbijectively_linked_to_cmv;
             for( const auto uv_id : Range{ brep_.nb_unique_vertices() } )
             {
-                if( brep_.component_mesh_vertices( uv_id ).empty() )
+                const auto& unique_vertex_cmvs =
+                    brep_.component_mesh_vertices( uv_id );
+                if( unique_vertex_cmvs.empty() )
                 {
-                    inspect_result.add_issue( uv_id,
+                    not_linked_result.add_issue( uv_id,
                         absl::StrCat( "Unique vertex with id ", uv_id,
                             " is not linked to any component mesh vertex." ) );
+                    continue;
+                }
+                for( const auto& cmv : unique_vertex_cmvs )
+                {
+                    if( cmv_exists_in_brep( cmv ) )
+                    {
+                        if( brep_.unique_vertex( cmv ) != uv_id )
+                        {
+                            linked_to_nonbijective_result.add_issue( uv_id,
+                                absl::StrCat( "Unique vertex with id ", uv_id,
+                                    " is linked to inexistant component "
+                                    "mesh vertex [",
+                                    cmv.string(), "]." ) );
+                        }
+                        continue;
+                    }
+                    linked_to_inexistant_result.add_issue(
+                        uv_id, absl::StrCat( "Unique vertex with id ", uv_id,
+                                   " is linked to inexistant component "
+                                   "mesh vertex [",
+                                   cmv.string(), "]." ) );
                 }
             }
         }
@@ -186,11 +147,12 @@ namespace geode
             {
                 return false;
             }
-            if( !brep_meshed_components_are_linked_to_unique_vertices() )
+            if( !brep_meshed_components_are_linked_to_unique_vertices(
+                    brep_topology_inspector ) )
             {
                 return false;
             }
-            if( !brep_unique_vertices_are_linked_to_a_component_vertex() )
+            if( !brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex() )
             {
                 return false;
             }
@@ -232,8 +194,100 @@ namespace geode
                 [&result, &brep_topology_inspector] {
                     result.blocks = brep_topology_inspector.inspect_blocks();
                 } );
-            add_unique_vertices_not_linked_to_a_component_vertex( result );
+            add_unique_vertices_with_wrong_cmv_link( result );
             return result;
+        }
+
+    private:
+        bool cmv_exists_in_brep( const ComponentMeshVertex& cmv ) const
+        {
+            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            {
+                if( brep_.has_corner( cmv.component_id.id() )
+                    && cmv.vertex < brep_.corner( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            if( cmv.component_id.type() == Line3D::component_type_static() )
+            {
+                if( brep_.has_line( cmv.component_id.id() )
+                    && cmv.vertex < brep_.line( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            if( cmv.component_id.type() == Surface3D::component_type_static() )
+            {
+                if( brep_.has_surface( cmv.component_id.id() )
+                    && cmv.vertex < brep_.surface( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            if( cmv.component_id.type() == Block3D::component_type_static() )
+            {
+                if( brep_.has_block( cmv.component_id.id() )
+                    && cmv.vertex < brep_.block( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool brep_meshed_components_are_linked_to_unique_vertices(
+            const BRepTopologyInspector& topology_inspector ) const
+        {
+            for( const auto& corner : brep_.corners() )
+            {
+                if( topology_inspector.corner_is_meshed( corner )
+                    && !topology_inspector
+                        .corner_vertices_are_associated_to_unique_vertices(
+                            corner ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& line : brep_.lines() )
+            {
+                if( topology_inspector.line_is_meshed( line )
+                    && !topology_inspector
+                        .line_vertices_are_associated_to_unique_vertices(
+                            line ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& surface : brep_.surfaces() )
+            {
+                if( topology_inspector.surface_is_meshed( surface )
+                    && !topology_inspector
+                        .surface_vertices_are_associated_to_unique_vertices(
+                            surface ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& block : brep_.blocks() )
+            {
+                if( topology_inspector.block_is_meshed( block )
+                    && !topology_inspector
+                        .block_vertices_are_associated_to_unique_vertices(
+                            block ) )
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     private:
@@ -257,15 +311,11 @@ namespace geode
     }
 
     bool BRepTopologyInspector::
-        brep_meshed_components_are_linked_to_unique_vertices() const
+        brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
+            const
     {
-        return impl_->brep_meshed_components_are_linked_to_unique_vertices();
-    }
-
-    bool BRepTopologyInspector::
-        brep_unique_vertices_are_linked_to_a_component_vertex() const
-    {
-        return impl_->brep_unique_vertices_are_linked_to_a_component_vertex();
+        return impl_
+            ->brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex();
     }
 
     BRepTopologyInspectionResult
