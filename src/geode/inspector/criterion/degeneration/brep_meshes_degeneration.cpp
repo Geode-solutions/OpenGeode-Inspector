@@ -45,15 +45,15 @@ namespace geode
         std::string message;
         if( degenerated_edges.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, degenerated_edges.string(), "\n" );
+            absl::StrAppend( &message, degenerated_edges.string() );
         }
         if( degenerated_polygons.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, degenerated_polygons.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polygons.string() );
         }
         if( degenerated_polyhedra.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, degenerated_polyhedra.string(), "\n" );
+            absl::StrAppend( &message, degenerated_polyhedra.string() );
         }
         if( message.empty() )
         {

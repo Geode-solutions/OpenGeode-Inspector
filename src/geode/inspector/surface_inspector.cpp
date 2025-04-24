@@ -42,11 +42,10 @@ namespace geode
 
     std::string SurfaceInspectionResult::string() const
     {
-        return absl::StrCat( polygon_edges_with_wrong_adjacency.string(), "\n",
-            colocated_points_groups.string(), "\n", degenerated_edges.string(),
-            "\n", degenerated_polygons.string(), "\n",
-            non_manifold_edges.string(), "\n", non_manifold_vertices.string(),
-            "\n", intersecting_elements.string(), "\n" );
+        return absl::StrCat( polygon_edges_with_wrong_adjacency.string(),
+            colocated_points_groups.string(), degenerated_edges.string(),
+            degenerated_polygons.string(), non_manifold_edges.string(),
+            non_manifold_vertices.string(), intersecting_elements.string() );
     }
 
     std::string SurfaceInspectionResult::inspection_type() const

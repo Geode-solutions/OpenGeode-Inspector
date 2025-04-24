@@ -34,7 +34,7 @@ namespace geode
 
     std::string PointSetInspectionResult::string() const
     {
-        return absl::StrCat( colocated_points_groups.string(), "\n" );
+        return colocated_points_groups.string();
     }
 
     std::string PointSetInspectionResult::inspection_type() const

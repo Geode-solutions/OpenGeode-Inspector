@@ -37,8 +37,8 @@ namespace geode
 
     std::string EdgedCurveInspectionResult::string() const
     {
-        return absl::StrCat( colocated_points_groups.string(), "\n",
-            degenerated_edges.string(), "\n" );
+        return absl::StrCat(
+            colocated_points_groups.string(), degenerated_edges.string() );
     }
 
     std::string EdgedCurveInspectionResult::inspection_type() const

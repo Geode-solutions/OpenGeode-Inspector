@@ -50,24 +50,23 @@ namespace geode
         std::string message;
         if( corners_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, corners_not_meshed.string() );
         }
         if( corners_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                corners_not_linked_to_a_unique_vertex.string(), "\n" );
+            absl::StrAppend(
+                &message, corners_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_linked_to_multiple_corners.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_corners.string(), "\n" );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_multiple_corners.string() );
         }
         if( unique_vertices_linked_to_multiple_internals_corner.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_internals_corner.string(),
-                "\n" );
+                unique_vertices_linked_to_multiple_internals_corner.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_corner
                 .nb_issues()
@@ -75,15 +74,13 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_not_boundary_line_corner.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_not_boundary_line_corner.string(),
-                "\n" );
+                unique_vertices_linked_to_not_boundary_line_corner.string() );
         }
         if( !message.empty() )
         {

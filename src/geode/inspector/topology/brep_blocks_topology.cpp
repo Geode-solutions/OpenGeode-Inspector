@@ -128,17 +128,16 @@ namespace geode
         std::string message;
         if( wrong_block_boundary_surface.nb_issues() != 0 )
         {
-            absl::StrAppend(
-                &message, wrong_block_boundary_surface.string(), "\n" );
+            absl::StrAppend( &message, wrong_block_boundary_surface.string() );
         }
         if( blocks_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, blocks_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, blocks_not_meshed.string() );
         }
         if( blocks_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
             absl::StrAppend(
-                &message, blocks_not_linked_to_a_unique_vertex.string(), "\n" );
+                &message, blocks_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_part_of_two_blocks_and_no_boundary_surface
                 .nb_issues()
@@ -146,14 +145,12 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_part_of_two_blocks_and_no_boundary_surface
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_with_incorrect_block_cmvs_count.nb_issues() != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_with_incorrect_block_cmvs_count.string(),
-                "\n" );
+                unique_vertices_with_incorrect_block_cmvs_count.string() );
         }
         if( !message.empty() )
         {

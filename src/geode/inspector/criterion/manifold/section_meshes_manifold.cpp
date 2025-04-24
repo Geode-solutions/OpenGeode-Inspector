@@ -43,13 +43,11 @@ namespace geode
         std::string message;
         if( meshes_non_manifold_vertices.nb_issues() != 0 )
         {
-            absl::StrAppend(
-                &message, meshes_non_manifold_vertices.string(), "\n" );
+            absl::StrAppend( &message, meshes_non_manifold_vertices.string() );
         }
         if( meshes_non_manifold_edges.nb_issues() != 0 )
         {
-            absl::StrAppend(
-                &message, meshes_non_manifold_edges.string(), "\n" );
+            absl::StrAppend( &message, meshes_non_manifold_edges.string() );
         }
         if( !message.empty() )
         {
