@@ -182,7 +182,8 @@ namespace geode
 
     bool BRepBlocksTopology::block_is_meshed( const Block3D& block ) const
     {
-        return block.mesh().nb_vertices() != 0;
+        const auto& block_mesh = block.mesh();
+        return block_mesh.nb_vertices() != 0 && block_mesh.nb_polyhedra() != 0;
     }
 
     bool BRepBlocksTopology::block_vertices_are_associated_to_unique_vertices(

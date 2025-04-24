@@ -186,7 +186,9 @@ namespace geode
     bool BRepSurfacesTopology::surface_is_meshed(
         const Surface3D& surface ) const
     {
-        return surface.mesh().nb_vertices() != 0;
+        const auto& surface_mesh = surface.mesh();
+        return surface_mesh.nb_vertices() != 0
+               && surface_mesh.nb_polygons() != 0;
     }
 
     bool BRepSurfacesTopology::

@@ -141,7 +141,8 @@ namespace geode
 
     bool BRepLinesTopology::line_is_meshed( const Line3D& line ) const
     {
-        return line.mesh().nb_vertices() != 0;
+        const auto& line_mesh = line.mesh();
+        return line_mesh.nb_vertices() != 0 && line_mesh.nb_edges() != 0;
     }
 
     bool BRepLinesTopology::line_vertices_are_associated_to_unique_vertices(
