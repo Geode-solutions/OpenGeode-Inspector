@@ -30,7 +30,6 @@
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/mixin/core/corner.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/relationships.hpp>
 #include <geode/model/mixin/core/surface.hpp>
@@ -55,12 +54,12 @@ namespace geode
         std::string message;
         if( surfaces_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, surfaces_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, surfaces_not_meshed.string() );
         }
         if( surfaces_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                surfaces_not_linked_to_a_unique_vertex.string(), "\n" );
+            absl::StrAppend(
+                &message, surfaces_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_linked_to_a_surface_with_invalid_embbedings
                 .nb_issues()
@@ -68,8 +67,7 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
                 .nb_issues()
@@ -77,8 +75,7 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( !message.empty() )
         {
@@ -116,6 +113,23 @@ namespace geode
             }
         }
         return true;
+    }
+
+    bool SectionSurfacesTopology::surface_is_meshed(
+        const Surface2D& surface ) const
+    {
+        const auto& surface_mesh = surface.mesh();
+        return surface_mesh.nb_vertices() != 0
+               && surface_mesh.nb_polygons() != 0;
+    }
+
+    bool SectionSurfacesTopology::
+        surface_vertices_are_associated_to_unique_vertices(
+            const Surface2D& surface ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, surface.component_id(), surface.mesh() );
     }
 
     std::optional< std::string >
@@ -196,7 +210,7 @@ namespace geode
         SectionSurfacesTopologyInspectionResult result;
         for( const auto& surface : section_.surfaces() )
         {
-            if( section_.surface( surface.id() ).mesh().nb_vertices() == 0 )
+            if( !surface_is_meshed( section_.surface( surface.id() ) ) )
             {
                 result.surfaces_not_meshed.add_issue(
                     surface.id(), absl::StrCat( surface.id().string(),
@@ -204,7 +218,7 @@ namespace geode
             }
 
             auto surface_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )
             {

@@ -32,6 +32,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Corner );
+    ALIAS_2D( Corner );
     class Section;
 } // namespace geode
 
@@ -87,6 +89,11 @@ namespace geode
          */
         [[nodiscard]] bool section_corner_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool corner_is_meshed( const Corner2D& corner ) const;
+
+        [[nodiscard]] bool corner_vertices_are_associated_to_unique_vertices(
+            const Corner2D& corner ) const;
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_has_multiple_corners(

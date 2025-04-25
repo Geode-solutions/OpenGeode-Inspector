@@ -56,35 +56,32 @@ namespace geode
         std::string message;
         if( lines_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, lines_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, lines_not_meshed.string() );
         }
         if( lines_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
             absl::StrAppend(
-                &message, lines_not_linked_to_a_unique_vertex.string(), "\n" );
+                &message, lines_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_not_internal_nor_boundary_line
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_line_with_invalid_embeddings
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_a_single_and_invalid_line.string(),
-                "\n" );
+                unique_vertices_linked_to_a_single_and_invalid_line.string() );
         }
         if( unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                 .nb_issues()
@@ -92,8 +89,7 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( !message.empty() )
         {
@@ -138,6 +134,20 @@ namespace geode
             return false;
         }
         return true;
+    }
+
+    bool SectionLinesTopology::line_is_meshed( const Line2D& line ) const
+    {
+        const auto& line_mesh = line.mesh();
+        return line_mesh.nb_vertices() != 0 && line_mesh.nb_edges() != 0;
+    }
+
+    bool SectionLinesTopology::line_vertices_are_associated_to_unique_vertices(
+        const Line2D& line ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, line.component_id(), line.mesh() );
     }
 
     std::optional< std::string >
@@ -306,14 +316,14 @@ namespace geode
         SectionLinesTopologyInspectionResult result;
         for( const auto& line : section_.lines() )
         {
-            if( section_.line( line.id() ).mesh().nb_vertices() == 0 )
+            if( !line_is_meshed( section_.line( line.id() ) ) )
             {
                 result.lines_not_meshed.add_issue(
                     line.id(), absl::StrCat( line.id().string(),
                                    " is a line without mesh." ) );
             }
             auto line_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {

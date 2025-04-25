@@ -44,7 +44,7 @@ namespace geode
     {
         if( negative_polygons.nb_issues() != 0 )
         {
-            return absl::StrCat( negative_polygons.string(), "\n" );
+            return negative_polygons.string();
         }
         return "No negative elements issues in model component meshes \n";
     }

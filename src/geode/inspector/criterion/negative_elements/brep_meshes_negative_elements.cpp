@@ -42,7 +42,7 @@ namespace geode
     {
         if( negative_polyhedra.nb_issues() != 0 )
         {
-            return absl::StrCat( negative_polyhedra.string(), "\n" );
+            return negative_polyhedra.string();
         }
         return "No negative elements issues in model component meshes \n";
     }

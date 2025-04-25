@@ -31,6 +31,8 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Surface );
+    ALIAS_2D( Surface );
     class Section;
 } // namespace geode
 
@@ -79,6 +81,11 @@ namespace geode
          */
         [[nodiscard]] bool section_vertex_surfaces_topology_is_valid(
             index_t unique_vertex_index ) const;
+
+        [[nodiscard]] bool surface_is_meshed( const Surface2D& surface ) const;
+
+        [[nodiscard]] bool surface_vertices_are_associated_to_unique_vertices(
+            const Surface2D& surface ) const;
 
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_embedded_surface(

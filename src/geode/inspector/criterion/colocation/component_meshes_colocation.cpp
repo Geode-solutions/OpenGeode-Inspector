@@ -236,7 +236,7 @@ namespace geode
     {
         if( colocated_points_groups.nb_issues() != 0 )
         {
-            return absl::StrCat( colocated_points_groups.string(), "\n" );
+            return colocated_points_groups.string();
         }
         return "No issues of colocation in model component meshes \n";
     }

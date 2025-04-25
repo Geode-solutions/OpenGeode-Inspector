@@ -36,7 +36,7 @@ namespace geode
 
     std::string BRepInspectionResult::string() const
     {
-        return absl::StrCat( meshes.string(), "\n", topology.string(), "\n" );
+        return absl::StrCat( meshes.string(), topology.string() );
     }
 
     std::string BRepInspectionResult::inspection_type() const

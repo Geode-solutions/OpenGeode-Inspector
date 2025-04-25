@@ -50,24 +50,23 @@ namespace geode
         std::string message;
         if( corners_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, corners_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, corners_not_meshed.string() );
         }
         if( corners_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                corners_not_linked_to_a_unique_vertex.string(), "\n" );
+            absl::StrAppend(
+                &message, corners_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_linked_to_multiple_corners.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_corners.string(), "\n" );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_multiple_corners.string() );
         }
         if( unique_vertices_linked_to_multiple_internals_corner.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_internals_corner.string(),
-                "\n" );
+                unique_vertices_linked_to_multiple_internals_corner.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_corner
                 .nb_issues()
@@ -75,15 +74,13 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_not_boundary_line_corner.nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_not_boundary_line_corner.string(),
-                "\n" );
+                unique_vertices_linked_to_not_boundary_line_corner.string() );
         }
         if( !message.empty() )
         {
@@ -150,6 +147,21 @@ namespace geode
             }
         }
         return true;
+    }
+
+    bool SectionCornersTopology::corner_is_meshed(
+        const Corner2D& corner ) const
+    {
+        return corner.mesh().nb_vertices() != 0;
+    }
+
+    bool SectionCornersTopology::
+        corner_vertices_are_associated_to_unique_vertices(
+            const Corner2D& corner ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                section_, corner.component_id(), corner.mesh() );
     }
 
     std::optional< std::string >
@@ -253,14 +265,14 @@ namespace geode
         SectionCornersTopologyInspectionResult result;
         for( const auto& corner : section_.corners() )
         {
-            if( section_.corner( corner.id() ).mesh().nb_vertices() == 0 )
+            if( !corner_is_meshed( section_.corner( corner.id() ) ) )
             {
                 result.corners_not_meshed.add_issue( corner.id(),
                     "Corner " + corner.id().string() + " is not meshed." );
                 continue;
             }
             auto corner_result = internal::
-                section_component_vertices_are_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     section_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )
             {

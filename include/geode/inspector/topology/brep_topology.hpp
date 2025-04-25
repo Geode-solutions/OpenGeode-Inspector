@@ -48,6 +48,14 @@ namespace geode
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
             "Unique vertices not linked to any component"
         };
+        InspectionIssues< index_t > unique_vertices_linked_to_inexistant_cmv{
+            "Unique vertices linked to inexistant ComponentMeshVertex"
+        };
+        InspectionIssues< index_t >
+            unique_vertices_nonbijectively_linked_to_cmv{
+                "Unique vertices with links to ComponentMeshVertex that are "
+                "not bijective"
+            };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -55,6 +63,7 @@ namespace geode
 
         [[nodiscard]] std::string inspection_type() const;
     };
+
     /*!
      * Class for inspecting the topology of a BRep model corners
      */
@@ -78,10 +87,8 @@ namespace geode
         [[nodiscard]] bool brep_topology_is_valid() const;
 
         [[nodiscard]] bool
-            brep_meshed_components_are_linked_to_unique_vertices() const;
-
-        [[nodiscard]] bool
-            brep_unique_vertices_are_linked_to_a_component_vertex() const;
+            brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
+                const;
 
         [[nodiscard]] BRepTopologyInspectionResult
             inspect_brep_topology() const;

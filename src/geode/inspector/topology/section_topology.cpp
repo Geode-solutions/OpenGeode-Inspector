@@ -35,57 +35,23 @@
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/section.hpp>
 
-namespace
-{
-    bool section_corner_is_meshed(
-        const geode::Section& section, const geode::uuid& corner_id )
-    {
-        return section.corner( corner_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool section_line_is_meshed(
-        const geode::Section& section, const geode::uuid& line_id )
-    {
-        return section.line( line_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool section_surface_is_meshed(
-        const geode::Section& section, const geode::uuid& surface_id )
-    {
-        return section.surface( surface_id ).mesh().nb_vertices() != 0;
-    }
-
-    bool section_component_vertices_are_associated_to_unique_vertices(
-        const geode::Section& section,
-        const geode::ComponentID& component_id,
-        const geode::VertexSet& component_mesh )
-    {
-        for( const auto component_vertex :
-            geode::Range{ component_mesh.nb_vertices() } )
-        {
-            if( section.unique_vertex( { component_id, component_vertex } )
-                == geode::NO_ID )
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-} // namespace
-
 namespace geode
 {
     index_t SectionTopologyInspectionResult::nb_issues() const
     {
         return corners.nb_issues() + lines.nb_issues() + surfaces.nb_issues()
-               + unique_vertices_not_linked_to_any_component.nb_issues();
+               + unique_vertices_not_linked_to_any_component.nb_issues()
+               + unique_vertices_linked_to_inexistant_cmv.nb_issues()
+               + unique_vertices_nonbijectively_linked_to_cmv.nb_issues();
     }
 
     std::string SectionTopologyInspectionResult::string() const
     {
         return absl::StrCat( corners.string(), lines.string(),
             surfaces.string(),
-            unique_vertices_not_linked_to_any_component.string() );
+            unique_vertices_not_linked_to_any_component.string(),
+            unique_vertices_linked_to_inexistant_cmv.string(),
+            unique_vertices_nonbijectively_linked_to_cmv.string() );
     }
 
     std::string SectionTopologyInspectionResult::inspection_type() const
@@ -98,62 +64,73 @@ namespace geode
     public:
         Impl( const Section& section ) : section_( section ) {}
 
-        bool section_meshed_components_are_linked_to_unique_vertices() const
-        {
-            for( const auto& corner : section_.corners() )
-            {
-                if( section_corner_is_meshed( section_, corner.id() )
-                    && !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, corner.component_id(), corner.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            for( const auto& line : section_.lines() )
-            {
-                if( section_line_is_meshed( section_, line.id() )
-                    && !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, line.component_id(), line.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            for( const auto& surface : section_.surfaces() )
-            {
-                if( section_surface_is_meshed( section_, surface.id() )
-                    && !section_component_vertices_are_associated_to_unique_vertices(
-                        section_, surface.component_id(), surface.mesh() ) )
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        bool section_unique_vertices_are_linked_to_a_component_vertex() const
+        bool
+            section_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
+                const
         {
             for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
             {
-                if( section_.component_mesh_vertices( uv_id ).empty() )
+                const auto& unique_vertex_cmvs =
+                    section_.component_mesh_vertices( uv_id );
+                if( unique_vertex_cmvs.empty() )
                 {
+                    return false;
+                }
+                for( const auto& cmv : unique_vertex_cmvs )
+                {
+                    if( cmv_exists_in_section( cmv ) )
+                    {
+                        if( section_.unique_vertex( cmv ) != uv_id )
+                        {
+                            return false;
+                        }
+                        continue;
+                    }
                     return false;
                 }
             }
             return true;
         }
 
-        void add_unique_vertices_not_linked_to_a_component_vertex(
+        void add_unique_vertices_with_wrong_cmv_link(
             SectionTopologyInspectionResult& section_issues ) const
         {
-            auto& inspect_result =
+            auto& not_linked_result =
                 section_issues.unique_vertices_not_linked_to_any_component;
+            auto& linked_to_inexistant_result =
+                section_issues.unique_vertices_linked_to_inexistant_cmv;
+            auto& linked_to_nonbijective_result =
+                section_issues.unique_vertices_nonbijectively_linked_to_cmv;
             for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
             {
-                if( section_.component_mesh_vertices( uv_id ).empty() )
+                const auto& unique_vertex_cmvs =
+                    section_.component_mesh_vertices( uv_id );
+                if( unique_vertex_cmvs.empty() )
                 {
-                    inspect_result.add_issue( uv_id,
+                    not_linked_result.add_issue( uv_id,
                         absl::StrCat( "Unique vertex with id ", uv_id,
                             " is not linked to any component mesh vertex." ) );
+                    continue;
+                }
+                for( const auto& cmv : unique_vertex_cmvs )
+                {
+                    if( cmv_exists_in_section( cmv ) )
+                    {
+                        if( section_.unique_vertex( cmv ) != uv_id )
+                        {
+                            linked_to_nonbijective_result.add_issue( uv_id,
+                                absl::StrCat( "Unique vertex with id ", uv_id,
+                                    " is linked to inexistant component "
+                                    "mesh vertex [",
+                                    cmv.string(), "]." ) );
+                        }
+                        continue;
+                    }
+                    linked_to_inexistant_result.add_issue(
+                        uv_id, absl::StrCat( "Unique vertex with id ", uv_id,
+                                   " is linked to inexistant component "
+                                   "mesh vertex [",
+                                   cmv.string(), "]." ) );
                 }
             }
         }
@@ -165,11 +142,12 @@ namespace geode
             {
                 return false;
             }
-            if( !section_meshed_components_are_linked_to_unique_vertices() )
+            if( !section_meshed_components_are_linked_to_unique_vertices(
+                    section_topology_inspector ) )
             {
                 return false;
             }
-            if( !section_unique_vertices_are_linked_to_a_component_vertex() )
+            if( !section_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex() )
             {
                 return false;
             }
@@ -198,8 +176,80 @@ namespace geode
                 section_topology_inspector.inspect_corners_topology();
             result.lines = section_topology_inspector.inspect_lines_topology();
             result.surfaces = section_topology_inspector.inspect_surfaces();
-            add_unique_vertices_not_linked_to_a_component_vertex( result );
+            add_unique_vertices_with_wrong_cmv_link( result );
             return result;
+        }
+
+    private:
+        bool cmv_exists_in_section( const ComponentMeshVertex& cmv ) const
+        {
+            if( cmv.component_id.type() == Corner2D::component_type_static() )
+            {
+                if( section_.has_corner( cmv.component_id.id() )
+                    && cmv.vertex < section_.corner( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            if( cmv.component_id.type() == Line2D::component_type_static() )
+            {
+                if( section_.has_line( cmv.component_id.id() )
+                    && cmv.vertex < section_.line( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            if( cmv.component_id.type() == Surface2D::component_type_static() )
+            {
+                if( section_.has_surface( cmv.component_id.id() )
+                    && cmv.vertex < section_.surface( cmv.component_id.id() )
+                               .mesh()
+                               .nb_vertices() )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool section_meshed_components_are_linked_to_unique_vertices(
+            const SectionTopologyInspector& topology_inspector ) const
+        {
+            for( const auto& corner : section_.corners() )
+            {
+                if( topology_inspector.corner_is_meshed( corner )
+                    && !topology_inspector
+                        .corner_vertices_are_associated_to_unique_vertices(
+                            corner ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& line : section_.lines() )
+            {
+                if( topology_inspector.line_is_meshed( line )
+                    && !topology_inspector
+                        .line_vertices_are_associated_to_unique_vertices(
+                            line ) )
+                {
+                    return false;
+                }
+            }
+            for( const auto& surface : section_.surfaces() )
+            {
+                if( topology_inspector.surface_is_meshed( surface )
+                    && !topology_inspector
+                        .surface_vertices_are_associated_to_unique_vertices(
+                            surface ) )
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     private:
@@ -222,16 +272,11 @@ namespace geode
     }
 
     bool SectionTopologyInspector::
-        section_meshed_components_are_linked_to_unique_vertices() const
-    {
-        return impl_->section_meshed_components_are_linked_to_unique_vertices();
-    }
-
-    bool SectionTopologyInspector::
-        section_unique_vertices_are_linked_to_a_component_vertex() const
+        section_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
+            const
     {
         return impl_
-            ->section_unique_vertices_are_linked_to_a_component_vertex();
+            ->section_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex();
     }
 
     SectionTopologyInspectionResult
