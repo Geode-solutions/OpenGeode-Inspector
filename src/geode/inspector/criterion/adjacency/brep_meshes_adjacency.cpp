@@ -71,10 +71,13 @@ namespace geode
     }
 
     class BRepComponentMeshesAdjacency::Impl
-        : public ComponentMeshesAdjacency< BRep >
+        : public internal::ComponentMeshesAdjacency< BRep >
     {
     public:
-        Impl( const BRep& brep ) : ComponentMeshesAdjacency< BRep >( brep ) {}
+        Impl( const BRep& brep )
+            : internal::ComponentMeshesAdjacency< BRep >( brep )
+        {
+        }
 
         void add_blocks_facets_with_wrong_adjacencies(
             InspectionIssuesMap< PolyhedronFacet >&

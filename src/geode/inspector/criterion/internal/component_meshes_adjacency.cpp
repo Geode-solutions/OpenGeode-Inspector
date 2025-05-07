@@ -54,40 +54,54 @@ namespace
 
 namespace geode
 {
-    template < typename Model >
-    ComponentMeshesAdjacency< Model >::ComponentMeshesAdjacency(
-        const Model& model )
-        : model_( model )
+    namespace internal
     {
-    }
-
-    template < typename Model >
-    void ComponentMeshesAdjacency< Model >::
-        add_surfaces_edges_with_wrong_adjacencies(
-            InspectionIssuesMap< PolygonEdge >& components_wrong_adjacencies )
-            const
-    {
-        for( const auto& surface : model_.surfaces() )
+        template < typename Model >
+        ComponentMeshesAdjacency< Model >::ComponentMeshesAdjacency(
+            const Model& model )
+            : model_( model )
         {
-            const SurfaceMeshAdjacency< Model::dim > inspector{
-                surface.mesh()
-            };
-            auto issues = inspector.polygon_edges_with_wrong_adjacency();
-            issues.set_description( absl::StrCat( "Surface ",
-                surface.id().string(), " polygon edges adjacency issues." ) );
-            const auto& mesh = surface.mesh();
-            for( const auto polygon_id : Range{ mesh.nb_polygons() } )
+        }
+
+        template < typename Model >
+        void ComponentMeshesAdjacency< Model >::
+            add_surfaces_edges_with_wrong_adjacencies(
+                InspectionIssuesMap< PolygonEdge >&
+                    components_wrong_adjacencies ) const
+        {
+            for( const auto& surface : model_.surfaces() )
             {
-                for( const auto edge_id :
-                    LRange{ mesh.nb_polygon_edges( polygon_id ) } )
+                const SurfaceMeshAdjacency< Model::dim > inspector{
+                    surface.mesh()
+                };
+                auto issues = inspector.polygon_edges_with_wrong_adjacency();
+                issues.set_description(
+                    absl::StrCat( "Surface ", surface.id().string(),
+                        " polygon edges adjacency issues." ) );
+                const auto& mesh = surface.mesh();
+                for( const auto polygon_id : Range{ mesh.nb_polygons() } )
                 {
-                    const PolygonEdge polygon_edge{ polygon_id, edge_id };
-                    try
+                    for( const auto edge_id :
+                        LRange{ mesh.nb_polygon_edges( polygon_id ) } )
                     {
-                        if( mesh.is_edge_on_border( polygon_edge )
-                            && !polygon_edge_is_on_a_line(
-                                model_, surface, polygon_edge ) )
+                        const PolygonEdge polygon_edge{ polygon_id, edge_id };
+                        try
                         {
+                            if( mesh.is_edge_on_border( polygon_edge )
+                                && !polygon_edge_is_on_a_line(
+                                    model_, surface, polygon_edge ) )
+                            {
+                                issues.add_issue( polygon_edge,
+                                    absl::StrCat( "Local edge ", edge_id,
+                                        " of polygon ", polygon_id,
+                                        " has no adjacencies but is not part "
+                                        "of a "
+                                        "model Line." ) );
+                            }
+                        }
+                        catch( const OpenGeodeException& e )
+                        {
+                            Logger::warn( e.what() );
                             issues.add_issue( polygon_edge,
                                 absl::StrCat( "Local edge ", edge_id,
                                     " of polygon ", polygon_id,
@@ -95,30 +109,21 @@ namespace geode
                                     "model Line." ) );
                         }
                     }
-                    catch( const OpenGeodeException& e )
-                    {
-                        Logger::warn( e.what() );
-                        issues.add_issue( polygon_edge,
-                            absl::StrCat( "Local edge ", edge_id,
-                                " of polygon ", polygon_id,
-                                " has no adjacencies but is not part of a "
-                                "model Line." ) );
-                    }
                 }
+                components_wrong_adjacencies.add_issues_to_map(
+                    surface.id(), std::move( issues ) );
             }
-            components_wrong_adjacencies.add_issues_to_map(
-                surface.id(), std::move( issues ) );
         }
-    }
 
-    template < typename Model >
-    const Model& ComponentMeshesAdjacency< Model >::model() const
-    {
-        return model_;
-    }
+        template < typename Model >
+        const Model& ComponentMeshesAdjacency< Model >::model() const
+        {
+            return model_;
+        }
 
-    template class opengeode_inspector_inspector_api
-        ComponentMeshesAdjacency< Section >;
-    template class opengeode_inspector_inspector_api
-        ComponentMeshesAdjacency< BRep >;
+        template class opengeode_inspector_inspector_api
+            ComponentMeshesAdjacency< Section >;
+        template class opengeode_inspector_inspector_api
+            ComponentMeshesAdjacency< BRep >;
+    } // namespace internal
 } // namespace geode

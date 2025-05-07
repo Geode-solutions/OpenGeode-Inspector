@@ -39,14 +39,22 @@ namespace geode
     {
         template < class MeshType >
         DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
-            : mesh_( mesh )
+            : mesh_( mesh ), enabled_edges_( false )
         {
-            mesh_.enable_edges();
+            if( !mesh_.are_edges_enabled() )
+            {
+                mesh_.enable_edges();
+                enabled_edges_ = true;
+            }
         }
 
         template < class MeshType >
         DegenerationImpl< MeshType >::~DegenerationImpl()
         {
+            if( enabled_edges_ )
+            {
+                mesh_.disable_edges();
+            }
         }
 
         template < class MeshType >

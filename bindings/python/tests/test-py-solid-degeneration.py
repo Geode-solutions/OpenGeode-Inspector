@@ -50,6 +50,7 @@ def check_non_degeneration():
     if not degeneration_inspector.degenerated_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] Solid has more degenerated edges than it should.")
+    del degeneration_inspector
 
 def check_degeneration_by_colocalisation():
     solid = geode.TetrahedralSolid3D.create()
@@ -73,6 +74,7 @@ def check_degeneration_by_colocalisation():
         raise ValueError("[Test] Solid has wrong number of degenerated edges.")
     if not degeneration_inspector.degenerated_edges().issues()[0] == solid.edges().edge_from_vertices([1, 4]):
         raise ValueError("[Test] Solid has wrong degenerated edges.")
+    del degeneration_inspector
 
 
 def check_degeneration_by_point_multiple_presence():
@@ -97,6 +99,7 @@ def check_degeneration_by_point_multiple_presence():
             "[Test] Solid has the wrong number of degenerated edges.")
     if not degeneration_inspector.degenerated_edges().issues()[0] == solid.edges().edge_from_vertices([1, 1]):
         raise ValueError("[Test] Solid shows the wrong degenerated edges.")
+    del degeneration_inspector
 
 
 if __name__ == '__main__':

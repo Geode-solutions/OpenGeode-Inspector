@@ -36,28 +36,31 @@ namespace geode
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the degeneration of elements in the Component Meshes
-     * of a Model (BRep or Section).
-     */
-    template < typename Model >
-    class ComponentMeshesDegeneration
+    namespace internal
     {
-        OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
+        /*!
+         * Class for inspecting the degeneration of elements in the Component
+         * Meshes of a Model (BRep or Section).
+         */
+        template < typename Model >
+        class ComponentMeshesDegeneration
+        {
+            OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
-    public:
-        void add_degenerated_edges(
-            InspectionIssuesMap< index_t >& issues_map ) const;
+        public:
+            void add_degenerated_edges(
+                InspectionIssuesMap< index_t >& issues_map ) const;
 
-        void add_degenerated_polygons(
-            InspectionIssuesMap< index_t >& issues_map ) const;
+            void add_degenerated_polygons(
+                InspectionIssuesMap< index_t >& issues_map ) const;
 
-    protected:
-        explicit ComponentMeshesDegeneration( const Model& model );
+        protected:
+            explicit ComponentMeshesDegeneration( const Model& model );
 
-        [[nodiscard]] const Model& model() const;
+            [[nodiscard]] const Model& model() const;
 
-    private:
-        const Model& model_;
-    };
+        private:
+            const Model& model_;
+        };
+    } // namespace internal
 } // namespace geode
