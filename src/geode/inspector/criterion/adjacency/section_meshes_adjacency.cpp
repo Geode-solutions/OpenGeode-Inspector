@@ -51,8 +51,7 @@ namespace geode
     {
         if( surfaces_edges_with_wrong_adjacencies.nb_issues() != 0 )
         {
-            return absl::StrCat(
-                surfaces_edges_with_wrong_adjacencies.string(), "\n" );
+            return surfaces_edges_with_wrong_adjacencies.string();
         }
         return "No adjacency issues in model component meshes \n";
     }

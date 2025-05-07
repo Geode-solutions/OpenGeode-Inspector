@@ -36,7 +36,7 @@ namespace geode
 
     std::string SectionInspectionResult::string() const
     {
-        return absl::StrCat( meshes.string(), "\n", topology.string(), "\n" );
+        return absl::StrCat( meshes.string(), topology.string() );
     }
 
     std::string SectionInspectionResult::inspection_type() const

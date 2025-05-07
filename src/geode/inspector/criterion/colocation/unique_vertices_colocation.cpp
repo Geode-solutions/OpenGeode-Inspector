@@ -155,12 +155,8 @@ namespace geode
 
     std::string UniqueVerticesInspectionResult::string() const
     {
-        std::string message;
-        absl::StrAppend(
-            &message, colocated_unique_vertices_groups.string(), "\n" );
-        absl::StrAppend( &message,
-            unique_vertices_linked_to_different_points.string(), "\n" );
-        return message;
+        return absl::StrCat( colocated_unique_vertices_groups.string(),
+            unique_vertices_linked_to_different_points.string() );
     }
 
     std::string UniqueVerticesInspectionResult::inspection_type() const

@@ -490,7 +490,7 @@ namespace geode
 
     std::string ElementsIntersectionsInspectionResult::string() const
     {
-        return absl::StrCat( elements_intersections.string(), "\n" );
+        return elements_intersections.string();
     }
 
     std::string ElementsIntersectionsInspectionResult::inspection_type() const

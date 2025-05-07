@@ -124,12 +124,10 @@ namespace geode
             .def( pybind11::init< const Section& >() )
             .def( "section_topology_is_valid",
                 &SectionTopologyInspector::section_topology_is_valid )
-            .def( "section_meshed_components_are_linked_to_unique_vertices",
+            .def( "section_unique_vertices_are_bijectively_linked_to_an_"
+                  "existing_component_vertex",
                 &SectionTopologyInspector::
-                    section_meshed_components_are_linked_to_unique_vertices )
-            .def( "section_unique_vertices_are_linked_to_a_component_vertex",
-                &SectionTopologyInspector::
-                    section_unique_vertices_are_linked_to_a_component_vertex )
+                    section_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex )
             .def( "inspect_section_topology",
                 &SectionTopologyInspector::inspect_section_topology );
     }

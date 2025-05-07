@@ -59,47 +59,5 @@ namespace geode
             }
             return true;
         }
-
-        InspectionIssues< index_t >
-            brep_component_vertices_not_associated_to_unique_vertices(
-                const BRep& brep,
-                const ComponentID& component_id,
-                const VertexSet& component_mesh )
-        {
-            InspectionIssues< index_t > result;
-            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
-            {
-                ComponentMeshVertex component_mesh_vertex{ component_id,
-                    vertex_id };
-                if( brep.unique_vertex( component_mesh_vertex ) == NO_ID )
-                {
-                    result.add_issue( vertex_id,
-                        absl::StrCat( "Vertex '", vertex_id,
-                            "' is not linked to a unique vertex." ) );
-                }
-            }
-            return result;
-        }
-
-        InspectionIssues< index_t >
-            section_component_vertices_are_associated_to_unique_vertices(
-                const Section& section,
-                const ComponentID& component_id,
-                const VertexSet& component_mesh )
-        {
-            InspectionIssues< index_t > result;
-            for( const auto vertex_id : Range{ component_mesh.nb_vertices() } )
-            {
-                ComponentMeshVertex component_mesh_vertex{ component_id,
-                    vertex_id };
-                if( section.unique_vertex( component_mesh_vertex ) == NO_ID )
-                {
-                    result.add_issue( vertex_id,
-                        absl::StrCat( "Vertex '", vertex_id,
-                            "' is not linked to a unique vertex." ) );
-                }
-            }
-            return result;
-        }
     } // namespace internal
 } // namespace geode

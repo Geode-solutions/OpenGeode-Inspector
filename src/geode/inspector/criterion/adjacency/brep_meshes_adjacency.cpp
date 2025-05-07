@@ -50,13 +50,13 @@ namespace geode
         std::string message;
         if( surfaces_edges_with_wrong_adjacencies.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                surfaces_edges_with_wrong_adjacencies.string(), "\n" );
+            absl::StrAppend(
+                &message, surfaces_edges_with_wrong_adjacencies.string() );
         }
         if( blocks_facets_with_wrong_adjacencies.nb_issues() != 0 )
         {
             absl::StrAppend(
-                &message, blocks_facets_with_wrong_adjacencies.string(), "\n" );
+                &message, blocks_facets_with_wrong_adjacencies.string() );
         }
         if( !message.empty() )
         {

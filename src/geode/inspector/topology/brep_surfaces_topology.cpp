@@ -87,12 +87,12 @@ namespace geode
         std::string message;
         if( surfaces_not_meshed.nb_issues() != 0 )
         {
-            absl::StrAppend( &message, surfaces_not_meshed.string(), "\n" );
+            absl::StrAppend( &message, surfaces_not_meshed.string() );
         }
         if( surfaces_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
-            absl::StrAppend( &message,
-                surfaces_not_linked_to_a_unique_vertex.string(), "\n" );
+            absl::StrAppend(
+                &message, surfaces_not_linked_to_a_unique_vertex.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_surface
                 .nb_issues()
@@ -100,8 +100,7 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_not_internal_nor_boundary_surface
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_a_surface_with_invalid_embbedings
                 .nb_issues()
@@ -109,22 +108,21 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
             != 0 )
         {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_a_single_and_invalid_surface.string(),
-                "\n" );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_a_single_and_invalid_surface
+                              .string() );
         }
         if( unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
             != 0 )
         {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_several_and_invalid_surfaces.string(),
-                "\n" );
+            absl::StrAppend(
+                &message, unique_vertices_linked_to_several_and_invalid_surfaces
+                              .string() );
         }
         if( unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
                 .nb_issues()
@@ -132,8 +130,7 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                    .string(),
-                "\n" );
+                    .string() );
         }
         if( !message.empty() )
         {
@@ -181,6 +178,23 @@ namespace geode
             return false;
         }
         return true;
+    }
+
+    bool BRepSurfacesTopology::surface_is_meshed(
+        const Surface3D& surface ) const
+    {
+        const auto& surface_mesh = surface.mesh();
+        return surface_mesh.nb_vertices() != 0
+               && surface_mesh.nb_polygons() != 0;
+    }
+
+    bool BRepSurfacesTopology::
+        surface_vertices_are_associated_to_unique_vertices(
+            const Surface3D& surface ) const
+    {
+        return internal::
+            model_component_vertices_are_associated_to_unique_vertices(
+                brep_, surface.component_id(), surface.mesh() );
     }
 
     std::optional< std::string > BRepSurfacesTopology::
@@ -433,7 +447,7 @@ namespace geode
         BRepSurfacesTopologyInspectionResult result;
         for( const auto& surface : brep_.surfaces() )
         {
-            if( brep_.surface( surface.id() ).mesh().nb_vertices() == 0 )
+            if( !surface_is_meshed( brep_.surface( surface.id() ) ) )
             {
                 result.surfaces_not_meshed.add_issue(
                     surface.id(), absl::StrCat( surface.id().string(),
@@ -441,7 +455,7 @@ namespace geode
             }
 
             auto surface_result = internal::
-                brep_component_vertices_not_associated_to_unique_vertices(
+                model_component_vertices_not_associated_to_unique_vertices(
                     brep_, surface.component_id(), surface.mesh() );
             if( surface_result.nb_issues() != 0 )
             {
