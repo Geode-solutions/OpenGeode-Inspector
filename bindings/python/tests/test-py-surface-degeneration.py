@@ -49,6 +49,7 @@ def check_non_degeneration2D():
     if not degeneration_inspector.degenerated_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] Surface has more degenerated edges than it should.")
+    del degeneration_inspector
 
 def check_degeneration_by_colocalisation2D():
     surface = geode.TriangulatedSurface2D.create()
@@ -72,6 +73,7 @@ def check_degeneration_by_colocalisation2D():
     surface.enable_edges()
     if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 3]):
         raise ValueError("[Test] Surface has wrong degenerated edges.")
+    del degeneration_inspector
 
 
 def check_degeneration_by_point_multiple_presence2D():
@@ -95,6 +97,7 @@ def check_degeneration_by_point_multiple_presence2D():
     surface.enable_edges()
     if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 1]):
         raise ValueError("[Test] Surface shows the wrong degenerated edges.")
+    del degeneration_inspector
 
 
 def check_non_degeneration3D():
@@ -116,6 +119,7 @@ def check_non_degeneration3D():
     if not degeneration_inspector.degenerated_edges().nb_issues() == 0:
         raise ValueError(
             "[Test] (3D) Surface has more degenerated edges than it should.")
+    del degeneration_inspector
 
 def check_degeneration_by_colocalisation3D():
     surface = geode.TriangulatedSurface3D.create()
@@ -140,6 +144,7 @@ def check_degeneration_by_colocalisation3D():
     surface.enable_edges()
     if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 3]):
         raise ValueError("[Test] (3D) Surface has wrong degenerated edges.")
+    del degeneration_inspector
 
 
 def check_degeneration_by_point_multiple_presence3D():
@@ -164,6 +169,7 @@ def check_degeneration_by_point_multiple_presence3D():
     if not degeneration_inspector.degenerated_edges().issues()[0] == surface.edges().edge_from_vertices([1, 1]):
         raise ValueError(
             "[Test] (3D) Surface shows the wrong degenerated edges.")
+    del degeneration_inspector
 
 
 if __name__ == '__main__':
