@@ -36,25 +36,28 @@ namespace geode
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the adjacency of edges in the Component Meshes of
-     * a Model (BRep or Section).
-     */
-    template < typename Model >
-    class ComponentMeshesAdjacency
+    namespace internal
     {
-        OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
+        /*!
+         * Class for inspecting the adjacency of edges in the Component Meshes
+         * of a Model (BRep or Section).
+         */
+        template < typename Model >
+        class ComponentMeshesAdjacency
+        {
+            OPENGEODE_DISABLE_COPY( ComponentMeshesAdjacency );
 
-    public:
-        void add_surfaces_edges_with_wrong_adjacencies(
-            InspectionIssuesMap< PolygonEdge >& issues_map ) const;
+        public:
+            void add_surfaces_edges_with_wrong_adjacencies(
+                InspectionIssuesMap< PolygonEdge >& issues_map ) const;
 
-    protected:
-        explicit ComponentMeshesAdjacency( const Model& model );
+        protected:
+            explicit ComponentMeshesAdjacency( const Model& model );
 
-        [[nodiscard]] const Model& model() const;
+            [[nodiscard]] const Model& model() const;
 
-    private:
-        const Model& model_;
-    };
+        private:
+            const Model& model_;
+        };
+    } // namespace internal
 } // namespace geode

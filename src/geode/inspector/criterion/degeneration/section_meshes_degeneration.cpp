@@ -62,11 +62,11 @@ namespace geode
     }
 
     class SectionComponentMeshesDegeneration::Impl
-        : public ComponentMeshesDegeneration< Section >
+        : public internal::ComponentMeshesDegeneration< Section >
     {
     public:
         Impl( const Section& section )
-            : ComponentMeshesDegeneration< Section >( section )
+            : internal::ComponentMeshesDegeneration< Section >( section )
         {
         }
     };

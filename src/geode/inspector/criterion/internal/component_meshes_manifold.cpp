@@ -36,60 +36,63 @@
 
 namespace geode
 {
-    template < typename Model >
-    ComponentMeshesManifold< Model >::ComponentMeshesManifold(
-        const Model& model )
-        : model_( model )
+    namespace internal
     {
-    }
-
-    template < typename Model >
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_vertices(
-            InspectionIssuesMap< index_t >& surfaces_non_manifold_vertices )
-            const
-    {
-        for( const auto& surface : model_.surfaces() )
+        template < typename Model >
+        ComponentMeshesManifold< Model >::ComponentMeshesManifold(
+            const Model& model )
+            : model_( model )
         {
-            const SurfaceMeshVertexManifold< Model::dim > inspector{
-                surface.mesh()
-            };
-            auto issues = inspector.non_manifold_vertices();
-            issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold vertices" ) );
-            surfaces_non_manifold_vertices.add_issues_to_map(
-                surface.id(), std::move( issues ) );
         }
-    }
 
-    template < typename Model >
-
-    void ComponentMeshesManifold< Model >::
-        add_surfaces_meshes_non_manifold_edges(
-            InspectionIssuesMap< std::array< index_t, 2 > >&
-                surfaces_non_manifold_edges ) const
-    {
-        for( const auto& surface : model_.surfaces() )
+        template < typename Model >
+        void ComponentMeshesManifold< Model >::
+            add_surfaces_meshes_non_manifold_vertices(
+                InspectionIssuesMap< index_t >& surfaces_non_manifold_vertices )
+                const
         {
-            const SurfaceMeshEdgeManifold< Model::dim > inspector{
-                surface.mesh()
-            };
-            auto issues = inspector.non_manifold_edges();
-            issues.set_description( absl::StrCat(
-                "Surface ", surface.id().string(), " non manifold edges" ) );
-            surfaces_non_manifold_edges.add_issues_to_map(
-                surface.id(), std::move( issues ) );
+            for( const auto& surface : model_.surfaces() )
+            {
+                const SurfaceMeshVertexManifold< Model::dim > inspector{
+                    surface.mesh()
+                };
+                auto issues = inspector.non_manifold_vertices();
+                issues.set_description( absl::StrCat( "Surface ",
+                    surface.id().string(), " non manifold vertices" ) );
+                surfaces_non_manifold_vertices.add_issues_to_map(
+                    surface.id(), std::move( issues ) );
+            }
         }
-    }
 
-    template < typename Model >
-    const Model& ComponentMeshesManifold< Model >::model() const
-    {
-        return model_;
-    }
+        template < typename Model >
 
-    template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< Section >;
-    template class opengeode_inspector_inspector_api
-        ComponentMeshesManifold< BRep >;
+        void ComponentMeshesManifold< Model >::
+            add_surfaces_meshes_non_manifold_edges(
+                InspectionIssuesMap< std::array< index_t, 2 > >&
+                    surfaces_non_manifold_edges ) const
+        {
+            for( const auto& surface : model_.surfaces() )
+            {
+                const SurfaceMeshEdgeManifold< Model::dim > inspector{
+                    surface.mesh()
+                };
+                auto issues = inspector.non_manifold_edges();
+                issues.set_description( absl::StrCat( "Surface ",
+                    surface.id().string(), " non manifold edges" ) );
+                surfaces_non_manifold_edges.add_issues_to_map(
+                    surface.id(), std::move( issues ) );
+            }
+        }
+
+        template < typename Model >
+        const Model& ComponentMeshesManifold< Model >::model() const
+        {
+            return model_;
+        }
+
+        template class opengeode_inspector_inspector_api
+            ComponentMeshesManifold< Section >;
+        template class opengeode_inspector_inspector_api
+            ComponentMeshesManifold< BRep >;
+    } // namespace internal
 } // namespace geode

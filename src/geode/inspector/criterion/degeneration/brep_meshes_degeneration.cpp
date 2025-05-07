@@ -68,10 +68,11 @@ namespace geode
     }
 
     class BRepComponentMeshesDegeneration::Impl
-        : public ComponentMeshesDegeneration< BRep >
+        : public internal::ComponentMeshesDegeneration< BRep >
     {
     public:
-        Impl( const BRep& brep ) : ComponentMeshesDegeneration< BRep >( brep )
+        Impl( const BRep& brep )
+            : internal::ComponentMeshesDegeneration< BRep >( brep )
         {
         }
 

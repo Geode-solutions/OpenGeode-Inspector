@@ -53,6 +53,7 @@ namespace geode
 
         private:
             const Mesh& mesh_;
+            bool enabled_edges_;
         };
     } // namespace internal
 } // namespace geode

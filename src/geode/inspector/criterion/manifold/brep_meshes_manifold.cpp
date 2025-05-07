@@ -86,10 +86,13 @@ namespace geode
     }
 
     class BRepComponentMeshesManifold::Impl
-        : public ComponentMeshesManifold< BRep >
+        : public internal::ComponentMeshesManifold< BRep >
     {
     public:
-        Impl( const BRep& brep ) : ComponentMeshesManifold< BRep >( brep ) {}
+        Impl( const BRep& brep )
+            : internal::ComponentMeshesManifold< BRep >( brep )
+        {
+        }
 
         void add_component_meshes_non_manifold_vertices(
             InspectionIssuesMap< index_t >& components_non_manifold_vertices )
