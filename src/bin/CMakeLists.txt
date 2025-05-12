@@ -63,6 +63,38 @@ add_geode_binary(
 )
 
 add_geode_binary(
+    SOURCE "geode-inspector-implicit-cross-section.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        OpenGeode-Geosciences::implicit
+        OpenGeode-GeosciencesIO::model
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
+    SOURCE "geode-inspector-implicit-structural-model.cpp"
+    DEPENDENCIES
+        Async++
+        absl::flags
+        absl::flags_parse
+        absl::flags_usage
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        OpenGeode-Geosciences::implicit
+        OpenGeode-GeosciencesIO::model
+        ${PROJECT_NAME}::inspector
+)
+
+add_geode_binary(
     SOURCE "geode-inspector-pointset.cpp"
     DEPENDENCIES
         Async++
