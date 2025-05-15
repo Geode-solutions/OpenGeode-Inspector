@@ -92,10 +92,10 @@ namespace geode
             .def_readwrite( "surfaces_not_linked_to_a_unique_vertex",
                 &BRepSurfacesTopologyInspectionResult::
                     surfaces_not_linked_to_a_unique_vertex )
-            .def_readwrite(
-                "unique_vertices_linked_to_not_internal_nor_boundary_surface",
+            .def_readwrite( "unique_vertices_linked_to_surface_with_wrong_"
+                            "relationship_with_blocks",
                 &BRepSurfacesTopologyInspectionResult::
-                    unique_vertices_linked_to_not_internal_nor_boundary_surface )
+                    unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks )
             .def_readwrite(
                 "unique_vertices_linked_to_a_surface_with_invalid_embbedings",
                 &BRepSurfacesTopologyInspectionResult::

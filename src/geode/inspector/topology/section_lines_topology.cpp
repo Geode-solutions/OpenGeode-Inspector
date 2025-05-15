@@ -125,7 +125,7 @@ namespace geode
         {
             return true;
         }
-        if( vertex_is_part_of_not_internal_nor_boundary_line(
+        if( vertex_is_part_of_line_with_wrong_relationships_to_surface(
                 unique_vertex_index )
             || vertex_is_part_of_invalid_embedded_line( unique_vertex_index )
             || vertex_is_part_of_invalid_single_line( unique_vertex_index )
@@ -150,8 +150,8 @@ namespace geode
                 section_, line.component_id(), line.mesh() );
     }
 
-    std::optional< std::string >
-        SectionLinesTopology::vertex_is_part_of_not_internal_nor_boundary_line(
+    std::optional< std::string > SectionLinesTopology::
+        vertex_is_part_of_line_with_wrong_relationships_to_surface(
             const index_t unique_vertex_index ) const
     {
         for( const auto& cmv :
@@ -337,7 +337,7 @@ namespace geode
             Range{ section_.nb_unique_vertices() } )
         {
             if( const auto boundary_nor_internal_line =
-                    vertex_is_part_of_not_internal_nor_boundary_line(
+                    vertex_is_part_of_line_with_wrong_relationships_to_surface(
                         unique_vertex_id ) )
             {
                 result.unique_vertices_linked_to_not_internal_nor_boundary_line
