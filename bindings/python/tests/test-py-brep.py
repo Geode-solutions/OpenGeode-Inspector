@@ -81,7 +81,7 @@ def surfaces_topological_validity(result, verbose):
         result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
     )
     nb_issues += (
-        result.unique_vertices_linked_to_not_internal_nor_boundary_surface.nb_issues()
+        result.unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks.nb_issues()
     )
     nb_issues += (
         result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()

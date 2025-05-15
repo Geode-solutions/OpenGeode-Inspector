@@ -257,7 +257,7 @@ namespace
         std::vector< geode::uuid > not_boundaries;
         auto graph = geode::Graph::create();
         auto graph_builder = geode::GraphBuilder::create( *graph );
-        geode::BijectiveMapping< geode::uuid, geode::index_t >
+        geode::GenericMapping< geode::uuid, geode::index_t >
             line_uuids_to_graph_edges;
         geode::BijectiveMapping< geode::uuid, geode::index_t >
             corner_uuids_to_graph_vertices;
@@ -275,18 +275,29 @@ namespace
                 for( const auto& boundary_corner :
                     brep.boundaries( incident_line ) )
                 {
-                    if( boundary_corner.id() == corner.id() )
-                    {
-                        continue;
-                    }
+                    // if( boundary_corner.id() == corner.id() )
+                    // {
+                    //     continue;
+                    // }
                     SDEBUG( boundary_corner.id() );
                     const auto boundary_corner_vertex =
                         corner_uuids_to_graph_vertices.in2out(
                             boundary_corner.id() );
-                    if( line_uuids_to_graph_edges.has_mapping_input(
-                            incident_line.id() ) )
+                    // if( line_uuids_to_graph_edges.has_mapping_input(
+                    //         incident_line.id() ) )
+                    // {
+                    //     continue;
+                    // }
+                    if( const auto existing_edge = graph->edge_from_vertices(
+                            boundary_corner_vertex, corner_vertex ) )
                     {
-                        continue;
+                        if( line_uuids_to_graph_edges
+                                .out2in( existing_edge.value() )
+                                .at( 0 )
+                            == incident_line.id() )
+                        {
+                            continue;
+                        }
                     }
                     line_uuids_to_graph_edges.map( incident_line.id(),
                         graph_builder->create_edge(
@@ -298,35 +309,46 @@ namespace
         geode::save_graph( *graph, "graph.og_grp" );
         while( found_not_boundary_line )
         {
-            DEBUG( "found_not_boundary_lines" );
             std::vector< bool > to_delete( graph->nb_edges(), false );
             for( const auto graph_vertex :
                 geode::Range{ graph->nb_vertices() } )
             {
-                DEBUG( graph->edges_around_vertex( graph_vertex ).size() );
-                SDEBUG(
-                    brep.corner( corner_uuids_to_graph_vertices.out2in(
-                                     graph_vertex ) )
-                        .mesh()
-                        .point( 0 ) );
-                if( graph->edges_around_vertex( graph_vertex ).size() != 1 )
+                if( graph->edges_around_vertex( graph_vertex ).empty() )
                 {
                     continue;
                 }
-                const auto line_id = line_uuids_to_graph_edges.out2in(
-                    graph->edges_around_vertex( graph_vertex )
-                        .at( 0 )
-                        .edge_id );
-                DEBUG( to_delete.size() );
-                DEBUG( graph->edges_around_vertex( graph_vertex ).size() );
-                DEBUG( graph->edges_around_vertex( graph_vertex )
-                        .at( 0 )
-                        .edge_id );
+                const auto line_id =
+                    line_uuids_to_graph_edges
+                        .out2in( graph->edges_around_vertex( graph_vertex )
+                                .at( 0 )
+                                .edge_id )
+                        .at( 0 );
+                bool should_delete{ true };
+                for( const auto& edge_around :
+                    graph->edges_around_vertex( graph_vertex ) )
+                {
+                    if( line_uuids_to_graph_edges.out2in( edge_around.edge_id )
+                            .at( 0 )
+                        != line_id )
+                    {
+                        should_delete = false;
+                        break;
+                    }
+                }
+                if( !should_delete )
+                {
+                    continue;
+                }
+                if( absl::c_contains( not_boundaries, line_id ) )
+                {
+                    continue;
+                }
+                for( const auto& edge :
+                    line_uuids_to_graph_edges.in2out( line_id ) )
+                {
+                    to_delete[edge] = true;
+                }
                 not_boundaries.push_back( line_id );
-                SDEBUG( line_id );
-                to_delete[graph->edges_around_vertex( graph_vertex )
-                        .at( 0 )
-                        .edge_id] = true;
             }
             if( !absl::c_contains( to_delete, true ) )
             {
@@ -334,15 +356,18 @@ namespace
                 continue;
             }
             const auto old2new = graph_builder->delete_edges( to_delete );
-            geode::BijectiveMapping< geode::uuid, geode::index_t >
+            geode::GenericMapping< geode::uuid, geode::index_t >
                 new_line_uuids_to_graph_edges;
-            for( const auto& [line_id, graph_edge] :
+            for( const auto& [line_id, graph_edges] :
                 line_uuids_to_graph_edges.in2out_map() )
             {
-                if( old2new.at( graph_edge ) != geode::NO_ID )
+                for( const auto graph_edge : graph_edges )
                 {
-                    new_line_uuids_to_graph_edges.map(
-                        line_id, old2new.at( graph_edge ) );
+                    if( old2new.at( graph_edge ) != geode::NO_ID )
+                    {
+                        new_line_uuids_to_graph_edges.map(
+                            line_id, old2new.at( graph_edge ) );
+                    }
                 }
             }
             line_uuids_to_graph_edges = new_line_uuids_to_graph_edges;

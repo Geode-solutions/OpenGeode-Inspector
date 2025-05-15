@@ -103,7 +103,7 @@ namespace geode
             const Line2D& line ) const;
 
         [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_not_internal_nor_boundary_line(
+            vertex_is_part_of_line_with_wrong_relationships_to_surface(
                 const index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
