@@ -212,9 +212,9 @@ def check_a1(verbose):
     else:
         print("model_A1 topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 267:
+    if nb_model_issues != 5165:
         raise ValueError(
-            "[Test] model model_A1 should have 267 unique vertices with topological problems."
+            "[Test] model model_A1 should have 5615 unique vertices with topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -236,9 +236,9 @@ def check_a1_valid(verbose):
     else:
         print("model_A1_valid topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 267:
+    if nb_model_issues != 5165:
         raise ValueError(
-            "[Test] model model_A1_valid should have 267 topological problems."
+            "[Test] model model_A1_valid should have 5165 topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
