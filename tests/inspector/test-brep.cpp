@@ -46,8 +46,6 @@ geode::index_t corners_topological_validity(
         result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues();
     nb_issues +=
-        result.unique_vertices_linked_to_multiple_internals_corner.nb_issues();
-    nb_issues +=
         result.unique_vertices_linked_to_not_internal_nor_boundary_corner
             .nb_issues();
 
@@ -314,7 +312,7 @@ void check_model_a1( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 267, "[Test] model_A1 has ",
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5184, "[Test] model_A1 has ",
         nb_topological_issues, " topological problems instead of 267." );
 
     const auto nb_component_meshes_issues =
@@ -336,7 +334,7 @@ void check_model_a1_valid( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 267,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5184,
         "[Test] model_A1_valid has ", nb_topological_issues,
         " topological problems instead of 267." );
 
@@ -359,7 +357,7 @@ void check_model_mss( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 17, "[Test] mss has ",
+    OPENGEODE_EXCEPTION( nb_topological_issues == 34, "[Test] mss has ",
         nb_topological_issues, " topological problems instead of 34." );
 
     const auto nb_component_meshes_issues =
@@ -379,9 +377,8 @@ void check_model_D( bool string )
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5, "[Test] model_D has ",
-        nb_topological_issues,
-        " topological problems instead of 5 (blocks not meshed)." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 0, "[Test] model_D has ",
+        nb_topological_issues, " topological problems instead of 0." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );

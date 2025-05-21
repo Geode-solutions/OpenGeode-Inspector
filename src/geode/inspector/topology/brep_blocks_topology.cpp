@@ -45,10 +45,8 @@
 #include <geode/mesh/core/surface_edges.hpp>
 #include <geode/mesh/core/triangulated_surface.hpp>
 #include <geode/mesh/helpers/aabb_surface_helpers.hpp>
-#include <geode/mesh/io/edged_curve_output.hpp>
-#include <geode/mesh/io/graph_output.hpp>
-#include <geode/mesh/io/triangulated_surface_output.hpp>
 
+#include <geode/model/helpers/component_mesh_edges.hpp>
 #include <geode/model/helpers/ray_tracing.hpp>
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
@@ -63,6 +61,31 @@
 
 namespace
 {
+
+    bool line_is_boundary_of_at_least_two_surfaces_or_one_embedding_surface(
+        const geode::BRep& brep,
+        const geode::uuid& line_uuid,
+        const std::vector< geode::uuid >& surface_uuids )
+    {
+        geode::local_index_t counter{ 0 };
+        for( const auto& surface_id : surface_uuids )
+        {
+            if( brep.Relationships::is_boundary( line_uuid, surface_id ) )
+            {
+                if( brep.nb_embeddings( surface_id ) > 0 )
+                {
+                    return true;
+                }
+                counter++;
+                if( counter > 1 )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     std::vector< geode::uuid > block_boundary_surfaces(
         const geode::BRep& brep, const geode::Block3D& block )
     {
@@ -132,8 +155,7 @@ namespace
     std::vector< geode::uuid > find_not_boundary_surfaces(
         const geode::BRep& brep )
     {
-        DEBUG( "find_not_boundary_surfaces" );
-        std::vector< geode::uuid > not_boundaries;
+        std::vector< geode::uuid > not_boundaries_surfaces;
         auto graph = geode::Graph::create();
         auto graph_builder = geode::GraphBuilder::create( *graph );
         geode::GenericMapping< geode::uuid, geode::index_t >
@@ -154,11 +176,6 @@ namespace
                 for( const auto& boundary_line :
                     brep.boundaries( incident_surface ) )
                 {
-                    // if( boundary_line.id() == line.id() )
-                    // {
-                    //     continue;
-                    // }
-                    SDEBUG( boundary_line.id() );
                     const auto boundary_line_vertex =
                         line_uuids_to_graph_vertices.in2out(
                             boundary_line.id() );
@@ -213,7 +230,7 @@ namespace
                 {
                     continue;
                 }
-                if( absl::c_contains( not_boundaries, surface_id ) )
+                if( absl::c_contains( not_boundaries_surfaces, surface_id ) )
                 {
                     continue;
                 }
@@ -222,7 +239,7 @@ namespace
                 {
                     to_delete[edge] = true;
                 }
-                not_boundaries.push_back( surface_id );
+                not_boundaries_surfaces.push_back( surface_id );
             }
             if( !absl::c_contains( to_delete, true ) )
             {
@@ -247,134 +264,7 @@ namespace
             surface_uuids_to_graph_edges = new_surface_uuids_to_graph_edges;
             graph_builder->delete_isolated_vertices();
         }
-        return not_boundaries;
-    }
-
-    std::vector< geode::uuid > find_not_boundary_lines(
-        const geode::BRep& brep )
-    {
-        DEBUG( "find_not_boundary_lines" );
-        std::vector< geode::uuid > not_boundaries;
-        auto graph = geode::Graph::create();
-        auto graph_builder = geode::GraphBuilder::create( *graph );
-        geode::GenericMapping< geode::uuid, geode::index_t >
-            line_uuids_to_graph_edges;
-        geode::BijectiveMapping< geode::uuid, geode::index_t >
-            corner_uuids_to_graph_vertices;
-        for( const auto& corner : brep.corners() )
-        {
-            corner_uuids_to_graph_vertices.map(
-                corner.id(), graph_builder->create_vertex() );
-        }
-        for( const auto& corner : brep.corners() )
-        {
-            const auto corner_vertex =
-                corner_uuids_to_graph_vertices.in2out( corner.id() );
-            for( const auto& incident_line : brep.incidences( corner ) )
-            {
-                for( const auto& boundary_corner :
-                    brep.boundaries( incident_line ) )
-                {
-                    // if( boundary_corner.id() == corner.id() )
-                    // {
-                    //     continue;
-                    // }
-                    SDEBUG( boundary_corner.id() );
-                    const auto boundary_corner_vertex =
-                        corner_uuids_to_graph_vertices.in2out(
-                            boundary_corner.id() );
-                    // if( line_uuids_to_graph_edges.has_mapping_input(
-                    //         incident_line.id() ) )
-                    // {
-                    //     continue;
-                    // }
-                    if( const auto existing_edge = graph->edge_from_vertices(
-                            boundary_corner_vertex, corner_vertex ) )
-                    {
-                        if( line_uuids_to_graph_edges
-                                .out2in( existing_edge.value() )
-                                .at( 0 )
-                            == incident_line.id() )
-                        {
-                            continue;
-                        }
-                    }
-                    line_uuids_to_graph_edges.map( incident_line.id(),
-                        graph_builder->create_edge(
-                            boundary_corner_vertex, corner_vertex ) );
-                }
-            }
-        }
-        bool found_not_boundary_line{ true };
-        geode::save_graph( *graph, "graph.og_grp" );
-        while( found_not_boundary_line )
-        {
-            std::vector< bool > to_delete( graph->nb_edges(), false );
-            for( const auto graph_vertex :
-                geode::Range{ graph->nb_vertices() } )
-            {
-                if( graph->edges_around_vertex( graph_vertex ).empty() )
-                {
-                    continue;
-                }
-                const auto line_id =
-                    line_uuids_to_graph_edges
-                        .out2in( graph->edges_around_vertex( graph_vertex )
-                                .at( 0 )
-                                .edge_id )
-                        .at( 0 );
-                bool should_delete{ true };
-                for( const auto& edge_around :
-                    graph->edges_around_vertex( graph_vertex ) )
-                {
-                    if( line_uuids_to_graph_edges.out2in( edge_around.edge_id )
-                            .at( 0 )
-                        != line_id )
-                    {
-                        should_delete = false;
-                        break;
-                    }
-                }
-                if( !should_delete )
-                {
-                    continue;
-                }
-                if( absl::c_contains( not_boundaries, line_id ) )
-                {
-                    continue;
-                }
-                for( const auto& edge :
-                    line_uuids_to_graph_edges.in2out( line_id ) )
-                {
-                    to_delete[edge] = true;
-                }
-                not_boundaries.push_back( line_id );
-            }
-            if( !absl::c_contains( to_delete, true ) )
-            {
-                found_not_boundary_line = false;
-                continue;
-            }
-            const auto old2new = graph_builder->delete_edges( to_delete );
-            geode::GenericMapping< geode::uuid, geode::index_t >
-                new_line_uuids_to_graph_edges;
-            for( const auto& [line_id, graph_edges] :
-                line_uuids_to_graph_edges.in2out_map() )
-            {
-                for( const auto graph_edge : graph_edges )
-                {
-                    if( old2new.at( graph_edge ) != geode::NO_ID )
-                    {
-                        new_line_uuids_to_graph_edges.map(
-                            line_id, old2new.at( graph_edge ) );
-                    }
-                }
-            }
-            line_uuids_to_graph_edges = new_line_uuids_to_graph_edges;
-            graph_builder->delete_isolated_vertices();
-        }
-        DEBUG( "retujrn not_boundaries" );
-        return not_boundaries;
+        return not_boundaries_surfaces;
     }
 
     bool verify_blocks_boundaries(
@@ -422,10 +312,10 @@ namespace
         return polygonal_surface->nb_vertices()
                    - polygonal_surface->edges().nb_edges()
                    + polygonal_surface->nb_polygons()
-               != 2;
+               == 2;
     }
 
-    bool verify_brep_boundaries( const geode::BRep& brep )
+    bool are_brep_boundaries_closed( const geode::BRep& brep )
     {
         auto polygonal_surface = geode::PolygonalSurface3D::create();
         auto polygonal_surface_builder =
@@ -469,8 +359,8 @@ namespace
                         polygon_vertices );
                 }
             }
-            polygonal_surface_builder->compute_polygon_adjacencies();
         }
+        polygonal_surface_builder->compute_polygon_adjacencies();
         return polygonal_surface->nb_vertices()
                    - polygonal_surface->edges().nb_edges()
                    + polygonal_surface->nb_polygons()
@@ -483,6 +373,7 @@ namespace geode
     index_t BRepBlocksTopologyInspectionResult::nb_issues() const
     {
         return wrong_block_boundary_surface.nb_issues()
+               + model_boundaries_dont_form_a_closed_surface.nb_issues()
                + some_blocks_not_meshed.nb_issues()
                + blocks_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_part_of_two_blocks_and_no_boundary_surface
@@ -494,7 +385,8 @@ namespace geode
                + unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
                      .nb_issues()
                + unique_vertices_linked_to_a_single_and_invalid_surface
-                     .nb_issues();
+                     .nb_issues()
+               + unique_vertex_linked_to_multiple_invalid_surfaces.nb_issues();
     }
 
     std::string BRepBlocksTopologyInspectionResult::string() const
@@ -503,6 +395,11 @@ namespace geode
         if( wrong_block_boundary_surface.nb_issues() != 0 )
         {
             absl::StrAppend( &message, wrong_block_boundary_surface.string() );
+        }
+        if( model_boundaries_dont_form_a_closed_surface.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                model_boundaries_dont_form_a_closed_surface.string() );
         }
         if( some_blocks_not_meshed.nb_issues() != 0 )
         {
@@ -558,6 +455,12 @@ namespace geode
         {
             absl::StrAppend( &message,
                 unique_vertices_linked_to_a_single_and_invalid_surface.string(),
+                "\n" );
+        }
+        if( unique_vertex_linked_to_multiple_invalid_surfaces.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertex_linked_to_multiple_invalid_surfaces.string(),
                 "\n" );
         }
         if( !message.empty() )
@@ -817,8 +720,7 @@ namespace geode
 
     std::optional< std::string >
         BRepBlocksTopology::vertex_is_part_of_invalid_single_line(
-            index_t unique_vertex_index,
-            absl::Span< const uuid > not_boundary_lines ) const
+            index_t unique_vertex_index ) const
     {
         const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
@@ -831,7 +733,8 @@ namespace geode
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
-        if( absl::c_contains( not_boundary_lines, line_id ) )
+        if( brep_.nb_embedding_surfaces( brep_.line( line_id ) ) < 1
+            && brep_.nb_incidences( line_id ) < 1 )
         {
             return std::nullopt;
         }
@@ -899,8 +802,7 @@ namespace geode
 
     std::optional< std::string > BRepBlocksTopology::
         vertex_is_part_of_line_with_wrong_relationships_to_surface(
-            index_t unique_vertex_index,
-            absl::Span< const uuid > not_boundary_lines ) const
+            index_t unique_vertex_index ) const
     {
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -909,67 +811,80 @@ namespace geode
             {
                 continue;
             }
-            if( brep_.nb_incidences( cmv.component_id.id() ) >= 1
-                && absl::c_contains(
-                    not_boundary_lines, cmv.component_id.id() ) )
+            const auto cme = geode::component_mesh_edges(
+                brep_, brep_.line( cmv.component_id.id() ), 0 );
+            if( brep_.nb_incidences( cmv.component_id.id() ) >= 1 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of line with uuid '",
-                    cmv.component_id.id().string(),
-                    "', which should not be boundary of any surface." );
+                for( const auto& incident_surface :
+                    brep_.incidences( brep_.line( cmv.component_id.id() ) ) )
+                {
+                    if( !cme.surface_edges.contains( incident_surface.id() ) )
+                    {
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of line with uuid '",
+                            cmv.component_id.id().string(),
+                            "', which should be boundary of "
+                            "surface with uuid '",
+                            incident_surface.id().string() );
+                    }
+                    const auto& surface_edges =
+                        cme.surface_edges.at( incident_surface.id() );
+                    if( surface_edges.size() != 1 )
+                    {
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of line with uuid '",
+                            cmv.component_id.id().string(),
+                            "', which should not be boundary of "
+                            "surface with uuid '",
+                            incident_surface.id().string() );
+                    }
+                }
             }
             if( brep_.nb_embedding_surfaces(
                     brep_.line( cmv.component_id.id() ) )
-                    >= 1
-                && brep_.nb_incidences( cmv.component_id.id() ) < 1
-                && !absl::c_contains(
-                    not_boundary_lines, cmv.component_id.id() ) )
+                >= 1 )
             {
-                SDEBUG( cmv.component_id.id() );
-                DEBUG( brep_.nb_embedding_surfaces(
-                    brep_.line( cmv.component_id.id() ) ) );
-                DEBUG( brep_.nb_incidences( cmv.component_id.id() ) );
-                save_edged_curve( brep_.line( cmv.component_id.id() ).mesh(),
-                    absl::StrCat(
-                        "line", cmv.component_id.id().string(), ".og_edc3d" ) );
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of line with uuid '",
-                    cmv.component_id.id().string(),
-                    "', which should not be embedded in any surface." );
-            }
-            if( brep_.nb_incidences( cmv.component_id.id() ) < 1
-                && brep_.nb_embeddings( cmv.component_id.id() ) < 1 )
-            {
-                const auto& line_mesh =
-                    brep_.line( cmv.component_id.id() ).mesh();
-                const auto edge_barycenter = line_mesh.edge_barycenter( 0 );
-                bool is_dangling{ true };
-                for( const auto& surface : brep_.surfaces() )
+                for( const auto& embedding_surface : brep_.embedding_surfaces(
+                         brep_.line( cmv.component_id.id() ) ) )
                 {
-                    // if( geode::is_point_inside_closed_surface(
-                    //         surface.mesh(), edge_barycenter ) )
-                    // {
-                    //     is_dangling = false;
-                    //     DEBUG( surface.name() );
-                    //     break;
-                    // }
-                    const auto aabb = geode::create_aabb_tree( surface.mesh() );
-                    if( aabb.containing_boxes( edge_barycenter ).size() > 0 )
+                    if( !cme.surface_edges.contains( embedding_surface.id() ) )
                     {
-                        is_dangling = false;
-                        DEBUG( surface.name() );
-                        break;
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of line with uuid '",
+                            cmv.component_id.id().string(),
+                            "', which should not be embedded in "
+                            "surface with uuid '",
+                            embedding_surface.id().string() );
+                    }
+                    const auto& surface_edges =
+                        cme.surface_edges.at( embedding_surface.id() );
+                    if( surface_edges.size() <= 1 )
+                    {
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of line with uuid '",
+                            cmv.component_id.id().string(),
+                            "', which should not be embedded in "
+                            "surface with uuid '",
+                            embedding_surface.id().string() );
                     }
                 }
-                if( !is_dangling )
+            }
+            if( brep_.nb_incidences( cmv.component_id.id() ) < 1
+                && brep_.nb_embedding_surfaces(
+                       brep_.line( cmv.component_id.id() ) )
+                       < 1 )
+            {
+                for( const auto& surface : brep_.surfaces() )
                 {
-                    save_edged_curve( line_mesh, "line_dangling.og_edc3d" );
-                    SDEBUG( edge_barycenter );
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        cmv.component_id.id().string(),
-                        "', which is not internal to "
-                        "a surface while it should be." );
+                    if( cme.surface_edges.contains( surface.id() ) )
+                    {
+                        return absl::StrCat( "Unique vertex with index ",
+                            unique_vertex_index, " is part of line with uuid '",
+                            cmv.component_id.id().string(),
+                            "', which should be internal or boundary to "
+                            "surface with uuid '",
+                            surface.id().string() );
+                    }
                 }
             }
         }
@@ -1006,6 +921,16 @@ namespace geode
                     unique_vertex_index, " is part of surface with uuid '",
                     cmv.component_id.id().string(),
                     "', which should not be embedded in any block." );
+            }
+            if( brep_.nb_embeddings( cmv.component_id.id() ) < 1
+                && brep_.nb_incidences( cmv.component_id.id() ) < 1
+                && !absl::c_contains(
+                    not_boundary_surfaces, cmv.component_id.id() ) )
+            {
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index, " is part of surface with uuid '",
+                    cmv.component_id.id().string(),
+                    "', which should be boundary of a block." );
             }
             if( brep_.nb_incidences( cmv.component_id.id() ) < 1
                 && brep_.nb_embeddings( cmv.component_id.id() ) < 1 )
@@ -1103,34 +1028,75 @@ namespace geode
         return std::nullopt;
     }
 
+    std::optional< std::string >
+        BRepBlocksTopology::vertex_is_part_of_invalid_multiple_surfaces(
+            index_t unique_vertex_index ) const
+    {
+        const auto line_uuids = internal::components_uuids(
+            brep_, unique_vertex_index, Line3D::component_type_static() );
+        if( line_uuids.size() < 2 )
+        {
+            return std::nullopt;
+        }
+        const auto surface_uuids = internal::components_uuids(
+            brep_, unique_vertex_index, Surface3D::component_type_static() );
+        if( surface_uuids.size() < 2 )
+        {
+            return std::nullopt;
+        }
+        std::vector< uuid > not_dangling_surfaces;
+        for( const auto& surface_uuid : surface_uuids )
+        {
+            if( brep_.nb_incidences( surface_uuid ) < 1
+                && brep_.nb_embeddings( surface_uuid ) < 1 )
+            {
+                continue;
+            }
+            not_dangling_surfaces.push_back( surface_uuid );
+        }
+        if( not_dangling_surfaces.size() < 2 )
+        {
+            return std::nullopt;
+        }
+        for( const auto& line_id : line_uuids )
+        {
+            bool line_has_relations_with_all_surfaces{ true };
+            for( const auto& surface_id : not_dangling_surfaces )
+            {
+                if( !brep_.Relationships::is_internal( line_id, surface_id )
+                    && !brep_.Relationships::is_boundary(
+                        line_id, surface_id ) )
+                {
+                    line_has_relations_with_all_surfaces = false;
+                    break;
+                }
+            }
+            if( brep_.nb_embeddings( line_id ) < 1
+                && !line_is_boundary_of_at_least_two_surfaces_or_one_embedding_surface(
+                    brep_, line_id, not_dangling_surfaces )
+                && line_has_relations_with_all_surfaces )
+            {
+                const auto cmv =
+                    brep_.component_mesh_vertices( unique_vertex_index )[0];
+                return absl::StrCat( "Unique vertex with index ",
+                    unique_vertex_index,
+                    " is part of multiple surfaces and multiple "
+                    "lines, but line with uuid'",
+                    line_id.string(),
+                    "' is neither internal, nor a boundary of at "
+                    "least two surfaces or one embedding "
+                    "surface." );
+            }
+        }
+        return std::nullopt;
+    }
+
     BRepBlocksTopologyInspectionResult
         BRepBlocksTopology::inspect_blocks() const
     {
         BRepBlocksTopologyInspectionResult result;
         std::vector< geode::uuid > meshed_blocks;
-        const auto not_boundary_lines = find_not_boundary_lines( brep_ );
-        geode::index_t counter{ 0 };
-        DEBUG( not_boundary_lines.size() );
-        for( const auto& not_boundary : not_boundary_lines )
-        {
-            SDEBUG( not_boundary );
-            save_edged_curve( brep_.line( not_boundary ).mesh(),
-                absl::StrCat( "not_boundary", counter++, ".og_edc3d" ) );
-        }
-        DEBUG( brep_.nb_lines() );
         const auto not_boundary_surfaces = find_not_boundary_surfaces( brep_ );
-        DEBUG( not_boundary_surfaces.size() );
-        DEBUG( brep_.nb_surfaces() );
-        geode::index_t counter2{ 0 };
-        for( const auto& block : brep_.blocks() )
-        {
-            for( const auto& surface_boundary : brep_.boundaries( block ) )
-            {
-                save_triangulated_surface(
-                    surface_boundary.mesh< TriangulatedSurface3D >(),
-                    absl::StrCat( "boundary", counter2++, ".og_tsf3d" ) );
-            }
-        }
         std::vector< geode::uuid > boundary_uuids;
         for( const auto& block : brep_.blocks() )
         {
@@ -1155,16 +1121,6 @@ namespace geode
                 continue;
             }
             boundary_uuids.push_back( boundary.id() );
-        }
-        DEBUG( boundary_uuids.size() );
-        DEBUG( not_boundary_surfaces.size() );
-        DEBUG( not_boundary_lines.size() );
-        for( const auto& not_boundary : not_boundary_surfaces )
-        {
-            SDEBUG( not_boundary );
-            save_triangulated_surface(
-                brep_.surface( not_boundary ).mesh< TriangulatedSurface3D >(),
-                absl::StrCat( "not_boundary", counter2++, ".og_tsf3d" ) );
         }
         for( const auto& block : brep_.blocks() )
         {
@@ -1203,11 +1159,14 @@ namespace geode
                                     " boundaries are valid." ) );
             }
         }
-        if( verify_brep_boundaries( brep_ ) )
+        if( brep_.nb_model_boundaries() != 0 )
         {
-            result.model_boundaries_dont_form_a_closed_surface.add_issue(
-                0, absl::StrCat(
-                       "Brep boundaries are not topologically valid." ) );
+            if( !are_brep_boundaries_closed( brep_ ) )
+            {
+                result.model_boundaries_dont_form_a_closed_surface.add_issue(
+                    0, absl::StrCat(
+                           "Brep boundaries are not topologically valid." ) );
+            }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
@@ -1234,17 +1193,16 @@ namespace geode
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
-                    vertex_is_part_of_invalid_single_line(
-                        unique_vertex_id, not_boundary_lines ) )
+                    vertex_is_part_of_line_with_wrong_relationships_to_surface(
+                        unique_vertex_id ) )
             {
-                result.unique_vertices_linked_to_a_single_and_invalid_line
+                result.unique_vertices_linked_to_not_internal_nor_boundary_line
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
-                    vertex_is_part_of_line_with_wrong_relationships_to_surface(
-                        unique_vertex_id, not_boundary_lines ) )
+                    vertex_is_part_of_invalid_single_line( unique_vertex_id ) )
             {
-                result.unique_vertices_linked_to_not_internal_nor_boundary_line
+                result.unique_vertices_linked_to_a_single_and_invalid_line
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
@@ -1253,6 +1211,13 @@ namespace geode
             {
                 result
                     .unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+                    .add_issue( unique_vertex_id, problem_message.value() );
+            }
+            if( const auto problem_message =
+                    vertex_is_part_of_invalid_multiple_surfaces(
+                        unique_vertex_id ) )
+            {
+                result.unique_vertex_linked_to_multiple_invalid_surfaces
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
         }
