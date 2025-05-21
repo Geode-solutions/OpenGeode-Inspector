@@ -84,9 +84,10 @@ namespace geode
                 "unique_vertices_linked_to_a_surface_with_invalid_embbedings",
                 &BRepSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_surface_with_invalid_embbedings )
-            .def_readwrite( "unique_vertex_linked_to_multiple_invalid_surfaces",
+            .def_readwrite(
+                "unique_vertices_linked_to_several_and_invalid_surfaces",
                 &BRepSurfacesTopologyInspectionResult::
-                    unique_vertex_linked_to_multiple_invalid_surfaces )
+                    unique_vertices_linked_to_several_and_invalid_surfaces )
             .def_readwrite( "unique_vertices_linked_to_a_line_but_is_not_on_a_"
                             "surface_border",
                 &BRepSurfacesTopologyInspectionResult::
