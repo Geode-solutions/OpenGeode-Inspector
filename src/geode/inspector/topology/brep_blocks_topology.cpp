@@ -156,91 +156,19 @@ namespace
         const geode::BRep& brep )
     {
         std::vector< geode::uuid > not_boundaries_surfaces;
-        auto graph = geode::Graph::create();
-        auto graph_builder = geode::GraphBuilder::create( *graph );
         geode::GenericMapping< geode::uuid, geode::index_t >
             surface_uuids_to_graph_edges;
         geode::BijectiveMapping< geode::uuid, geode::index_t >
             line_uuids_to_graph_vertices;
-        for( const auto& line : brep.lines() )
-        {
-            line_uuids_to_graph_vertices.map(
-                line.id(), graph_builder->create_vertex() );
-        }
-        for( const auto& line : brep.lines() )
-        {
-            const auto line_vertex =
-                line_uuids_to_graph_vertices.in2out( line.id() );
-            for( const auto& incident_surface : brep.incidences( line ) )
-            {
-                for( const auto& boundary_line :
-                    brep.boundaries( incident_surface ) )
-                {
-                    const auto boundary_line_vertex =
-                        line_uuids_to_graph_vertices.in2out(
-                            boundary_line.id() );
-                    if( const auto existing_edge = graph->edge_from_vertices(
-                            boundary_line_vertex, line_vertex ) )
-                    {
-                        if( surface_uuids_to_graph_edges
-                                .out2in( existing_edge.value() )
-                                .at( 0 )
-                            == incident_surface.id() )
-                        {
-                            continue;
-                        }
-                    }
-                    surface_uuids_to_graph_edges.map( incident_surface.id(),
-                        graph_builder->create_edge(
-                            boundary_line_vertex, line_vertex ) );
-                }
-            }
-        }
+        auto graph = geode::Graph::create();
+        auto graph_builder = geode::GraphBuilder::create( *graph );
+        build_surface_line_graph( brep, *graph, *graph_builder,
+            surface_uuids_to_graph_edges, line_uuids_to_graph_vertices );
         bool found_not_boundary_surface{ true };
         while( found_not_boundary_surface )
         {
-            std::vector< bool > to_delete( graph->nb_edges(), false );
-            for( const auto graph_vertex :
-                geode::Range{ graph->nb_vertices() } )
-            {
-                if( graph->edges_around_vertex( graph_vertex ).empty() )
-                {
-                    continue;
-                }
-                const auto surface_id =
-                    surface_uuids_to_graph_edges
-                        .out2in( graph->edges_around_vertex( graph_vertex )
-                                .at( 0 )
-                                .edge_id )
-                        .at( 0 );
-                bool should_delete{ true };
-                for( const auto& edge_around :
-                    graph->edges_around_vertex( graph_vertex ) )
-                {
-                    if( surface_uuids_to_graph_edges
-                            .out2in( edge_around.edge_id )
-                            .at( 0 )
-                        != surface_id )
-                    {
-                        should_delete = false;
-                        break;
-                    }
-                }
-                if( !should_delete )
-                {
-                    continue;
-                }
-                if( absl::c_contains( not_boundaries_surfaces, surface_id ) )
-                {
-                    continue;
-                }
-                for( const auto& edge :
-                    surface_uuids_to_graph_edges.in2out( surface_id ) )
-                {
-                    to_delete[edge] = true;
-                }
-                not_boundaries_surfaces.push_back( surface_id );
-            }
+            const auto to_delete = find_graph_surfaces_to_delete(
+                *graph, surface_uuids_to_graph_edges, not_boundaries_surfaces );
             if( !absl::c_contains( to_delete, true ) )
             {
                 found_not_boundary_surface = false;
@@ -265,6 +193,99 @@ namespace
             graph_builder->delete_isolated_vertices();
         }
         return not_boundaries_surfaces;
+    }
+
+    void build_surface_line_graph( const geode::BRep& brep,
+        geode::Graph& graph,
+        geode::GraphBuilder& graph_builder,
+        geode::GenericMapping< geode::uuid, geode::index_t >&
+            surface_uuids_to_graph_edges,
+        geode::BijectiveMapping< geode::uuid, geode::index_t >&
+            line_uuids_to_graph_vertices )
+    {
+        for( const auto& line : brep.lines() )
+        {
+            line_uuids_to_graph_vertices.map(
+                line.id(), graph_builder.create_vertex() );
+        }
+        for( const auto& line : brep.lines() )
+        {
+            const auto line_vertex =
+                line_uuids_to_graph_vertices.in2out( line.id() );
+            for( const auto& incident_surface : brep.incidences( line ) )
+            {
+                for( const auto& boundary_line :
+                    brep.boundaries( incident_surface ) )
+                {
+                    const auto boundary_line_vertex =
+                        line_uuids_to_graph_vertices.in2out(
+                            boundary_line.id() );
+                    if( const auto existing_edge = graph.edge_from_vertices(
+                            boundary_line_vertex, line_vertex ) )
+                    {
+                        if( surface_uuids_to_graph_edges
+                                .out2in( existing_edge.value() )
+                                .at( 0 )
+                            == incident_surface.id() )
+                        {
+                            continue;
+                        }
+                    }
+                    surface_uuids_to_graph_edges.map( incident_surface.id(),
+                        graph_builder.create_edge(
+                            boundary_line_vertex, line_vertex ) );
+                }
+            }
+        }
+    }
+
+    std::vector< bool > find_graph_surfaces_to_delete(
+        const geode::Graph& graph,
+        const geode::GenericMapping< geode::uuid, geode::index_t >&
+            surface_uuids_to_graph_edges,
+        std::vector< geode::uuid > not_boundaries_surfaces )
+    {
+        std::vector< bool > to_delete( graph.nb_edges(), false );
+        for( const auto graph_vertex : geode::Range{ graph.nb_vertices() } )
+        {
+            if( graph.edges_around_vertex( graph_vertex ).empty() )
+            {
+                continue;
+            }
+            const auto surface_id =
+                surface_uuids_to_graph_edges
+                    .out2in( graph.edges_around_vertex( graph_vertex )
+                            .at( 0 )
+                            .edge_id )
+                    .at( 0 );
+            bool should_delete{ true };
+            for( const auto& edge_around :
+                graph.edges_around_vertex( graph_vertex ) )
+            {
+                if( surface_uuids_to_graph_edges.out2in( edge_around.edge_id )
+                        .at( 0 )
+                    != surface_id )
+                {
+                    should_delete = false;
+                    break;
+                }
+            }
+            if( !should_delete )
+            {
+                continue;
+            }
+            if( absl::c_contains( not_boundaries_surfaces, surface_id ) )
+            {
+                continue;
+            }
+            for( const auto& edge :
+                surface_uuids_to_graph_edges.in2out( surface_id ) )
+            {
+                to_delete[edge] = true;
+            }
+            not_boundaries_surfaces.push_back( surface_id );
+        }
+        return to_delete;
     }
 
     bool verify_blocks_boundaries(

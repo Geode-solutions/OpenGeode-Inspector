@@ -233,15 +233,6 @@ namespace geode
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            // if( const auto boundary_nor_internal_line =
-            //         vertex_is_part_of_line_with_wrong_relationships_to_surface(
-            //             unique_vertex_id ) )
-            // {
-            //     result.unique_vertices_linked_to_not_internal_nor_boundary_line
-            //         .add_issue(
-            //             unique_vertex_id, boundary_nor_internal_line.value()
-            //             );
-            // }
             if( const auto invalid_internal_topology =
                     vertex_is_part_of_invalid_embedded_line(
                         unique_vertex_id ) )
@@ -250,14 +241,6 @@ namespace geode
                     .add_issue(
                         unique_vertex_id, invalid_internal_topology.value() );
             }
-            // if( const auto invalid_unique_line =
-            //         vertex_is_part_of_invalid_single_line( unique_vertex_id )
-            //         )
-            // {
-            //     result.unique_vertices_linked_to_a_single_and_invalid_line
-            //         .add_issue( unique_vertex_id, invalid_unique_line.value()
-            //         );
-            // }
             if( const auto lines_but_is_not_corner =
                     vertex_has_lines_but_is_not_a_corner( unique_vertex_id ) )
             {

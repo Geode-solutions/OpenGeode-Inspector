@@ -31,9 +31,6 @@
 
 #include <geode/geometry/point.hpp>
 
-#include <geode/mesh/core/edged_curve.hpp>
-#include <geode/mesh/core/point_set.hpp>
-#include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/mixin/core/block.hpp>
