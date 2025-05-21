@@ -130,7 +130,7 @@ geode::index_t blocks_topological_validity(
                      .nb_issues();
     nb_issues +=
         result
-            .unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+            .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
             .nb_issues();
     geode::Logger::info(
         "BRep Blocks Topology check: ", nb_issues, " issues." );

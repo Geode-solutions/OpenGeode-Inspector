@@ -75,7 +75,7 @@ namespace geode
                 "nor internal status."
             };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks{
+            unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks{
                 "Indices of unique vertices linked to Surface without boundary "
                 "nor internal status."
             };

@@ -382,7 +382,7 @@ namespace geode
                + unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
                + unique_vertices_linked_to_not_internal_nor_boundary_line
                      .nb_issues()
-               + unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+               + unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
                      .nb_issues()
                + unique_vertices_linked_to_a_single_and_invalid_surface
                      .nb_issues()
@@ -441,12 +441,12 @@ namespace geode
                     .string(),
                 "\n" );
         }
-        if( unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+        if( unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
                 .nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+                unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
                     .string(),
                 "\n" );
         }
@@ -1210,7 +1210,7 @@ namespace geode
                         unique_vertex_id, not_boundary_surfaces ) )
             {
                 result
-                    .unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks
+                    .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =

@@ -38,7 +38,6 @@ def corners_topological_validity(result, verbose):
     nb_issues += result.corners_not_meshed.nb_issues()
     nb_issues += result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues()
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_multiple_internals_corner.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_not_internal_nor_boundary_corner.nb_issues()
     )
@@ -55,10 +54,6 @@ def lines_topological_validity(result, verbose):
     nb_issues += result.lines_not_meshed.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
-    )
-    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
-    nb_issues += (
-        result.unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
     )
     nb_issues += (
         result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
@@ -78,15 +73,8 @@ def surfaces_topological_validity(result, verbose):
         result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border.nb_issues()
     )
     nb_issues += (
-        result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
-    )
-    nb_issues += (
-        result.unique_vertices_linked_to_surface_with_wrong_relationship_with_blocks.nb_issues()
-    )
-    nb_issues += (
         result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
     )
-
     print("BRep Surfaces Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
@@ -97,11 +85,26 @@ def blocks_topological_validity(result, verbose):
     nb_issues = 0
     for issue in result.blocks_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
-    nb_issues += result.blocks_not_meshed.nb_issues()
+    nb_issues += result.some_blocks_not_meshed.nb_issues()
     nb_issues += (
         result.unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues()
     )
     nb_issues += result.unique_vertices_with_incorrect_block_cmvs_count.nb_issues()
+    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
+    nb_issues += (
+        result.unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks.nb_issues()
+    )
+    nb_issues += (
+        result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
+    )
+    nb_issues += result.model_boundaries_dont_form_a_closed_surface.nb_issues()
+    nb_issues += result.blocks_with_not_closed_boundary_surfaces.nb_issues()
     print("BRep Blocks Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
