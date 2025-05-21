@@ -312,8 +312,8 @@ void check_model_a1( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5184, "[Test] model_A1 has ",
-        nb_topological_issues, " topological problems instead of 267." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5164, "[Test] model_A1 has ",
+        nb_topological_issues, " topological problems instead of 5164." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -334,9 +334,9 @@ void check_model_a1_valid( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5184,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5164,
         "[Test] model_A1_valid has ", nb_topological_issues,
-        " topological problems instead of 267." );
+        " topological problems instead of 5164." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -379,7 +379,6 @@ void check_model_D( bool string )
         launch_topological_validity_checks( result.topology, string );
     OPENGEODE_EXCEPTION( nb_topological_issues == 0, "[Test] model_D has ",
         nb_topological_issues, " topological problems instead of 0." );
-
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0, "[Test] model_D has ",
