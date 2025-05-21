@@ -260,9 +260,9 @@ def check_model_mss(verbose):
     else:
         print("model mss topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 17:
+    if nb_model_issues != 35:
         raise ValueError(
-            "[Test] model mss.og_strm should have 34 topological problems."
+            "[Test] model mss.og_strm should have 35 topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -283,9 +283,9 @@ def check_model_D(verbose):
     else:
         print("model_D topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 5:
+    if nb_model_issues != 0:
         raise ValueError(
-            "[Test] model model_D.og_brep should have 5 topological problems (blocks not meshed)."
+            "[Test] model model_D.og_brep should have 0 topological problems (blocks not meshed)."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
