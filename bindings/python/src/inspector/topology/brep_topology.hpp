@@ -120,7 +120,7 @@ namespace geode
                 &BRepBlocksTopologyInspectionResult::
                     unique_vertices_linked_to_a_single_and_invalid_line )
             .def_readwrite( "unique_vertices_linked_to_surface_with_wrong_"
-                            "relationship_with_blocks",
+                            "relationship_to_blocks",
                 &BRepBlocksTopologyInspectionResult::
                     unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks )
             .def_readwrite(
