@@ -139,7 +139,8 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_surface_with_wrong_relationships_to_block(
                 index_t unique_vertex_index,
-                absl::Span< const uuid > not_boundaries_surfaces ) const;
+                absl::Span< const uuid > not_boundaries_surfaces,
+                absl::Span< const uuid > dangling_surface ) const;
 
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_single_surface(

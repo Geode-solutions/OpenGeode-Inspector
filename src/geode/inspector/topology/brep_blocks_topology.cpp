@@ -261,6 +261,33 @@ namespace
         return not_boundaries_surfaces;
     }
 
+    std::vector< geode::uuid > find_dangling_surfaces( const geode::BRep& brep,
+        absl::Span< const geode::uuid > not_boundary_surfaces )
+    {
+        std::vector< geode::uuid > dangling_surfaces;
+        for( const auto& surface_id : not_boundary_surfaces )
+        {
+            const auto& surface_mesh = brep.surface( surface_id ).mesh();
+            const auto polygon_barycenter =
+                surface_mesh.polygon_barycenter( 0 );
+            bool is_dangling{ true };
+            for( const auto& block : brep.blocks() )
+            {
+                if( geode::is_point_inside_block(
+                        brep, block, polygon_barycenter ) )
+                {
+                    is_dangling = false;
+                    break;
+                }
+            }
+            if( is_dangling )
+            {
+                dangling_surfaces.push_back( surface_id );
+            }
+        }
+        return dangling_surfaces;
+    }
+
     bool verify_blocks_boundaries(
         const geode::BRep& brep, const geode::Block3D& block )
     {
@@ -888,7 +915,8 @@ namespace geode
     std::optional< std::string > BRepBlocksTopology::
         vertex_is_part_of_surface_with_wrong_relationships_to_block(
             index_t unique_vertex_index,
-            absl::Span< const uuid > not_boundary_surfaces ) const
+            absl::Span< const uuid > not_boundary_surfaces,
+            absl::Span< const uuid > dangling_surface ) const
     {
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -909,48 +937,24 @@ namespace geode
             if( brep_.nb_embeddings( cmv.component_id.id() ) >= 1
                 && brep_.nb_incidences( cmv.component_id.id() ) < 1
                 && !absl::c_contains(
-                    not_boundary_surfaces, cmv.component_id.id() ) )
+                    not_boundary_surfaces, cmv.component_id.id() )
+                && absl::c_contains( dangling_surface, cmv.component_id.id() ) )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of surface with uuid '",
                     cmv.component_id.id().string(),
                     "', which should not be embedded in any block." );
             }
-            if( brep_.nb_embeddings( cmv.component_id.id() ) < 1
-                && brep_.nb_incidences( cmv.component_id.id() ) < 1
+            if( brep_.nb_incidences( cmv.component_id.id() ) < 1
+                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
                 && !absl::c_contains(
-                    not_boundary_surfaces, cmv.component_id.id() ) )
+                    dangling_surface, cmv.component_id.id() ) )
             {
                 return absl::StrCat( "Unique vertex with index ",
                     unique_vertex_index, " is part of surface with uuid '",
                     cmv.component_id.id().string(),
-                    "', which should be boundary of a block." );
-            }
-            if( brep_.nb_incidences( cmv.component_id.id() ) < 1
-                && brep_.nb_embeddings( cmv.component_id.id() ) < 1 )
-            {
-                const auto& surface_mesh =
-                    brep_.surface( cmv.component_id.id() ).mesh();
-                const auto polygon_barycenter =
-                    surface_mesh.polygon_barycenter( 0 );
-                bool is_dangling{ true };
-                for( const auto& block : brep_.blocks() )
-                {
-                    if( geode::is_point_inside_block(
-                            brep_, block, polygon_barycenter ) )
-                    {
-                        is_dangling = false;
-                        break;
-                    }
-                }
-                if( !is_dangling )
-                {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of surface with uuid '",
-                        cmv.component_id.id().string(),
-                        "', which is not internal to "
-                        "a block while it should be." );
-                }
+                    "', which is not internal to "
+                    "a block while it should be." );
             }
         }
         return std::nullopt;
@@ -1091,6 +1095,8 @@ namespace geode
         BRepBlocksTopologyInspectionResult result;
         std::vector< geode::uuid > meshed_blocks;
         const auto not_boundary_surfaces = find_not_boundary_surfaces( brep_ );
+        const auto dangling_surfaces =
+            find_dangling_surfaces( brep_, not_boundary_surfaces );
         std::vector< geode::uuid > boundary_uuids;
         for( const auto& block : brep_.blocks() )
         {
@@ -1201,7 +1207,8 @@ namespace geode
             }
             if( const auto problem_message =
                     vertex_is_part_of_surface_with_wrong_relationships_to_block(
-                        unique_vertex_id, not_boundary_surfaces ) )
+                        unique_vertex_id, not_boundary_surfaces,
+                        dangling_surfaces ) )
             {
                 result
                     .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
