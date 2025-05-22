@@ -62,11 +62,11 @@ namespace geode
     }
 
     class SectionComponentMeshesManifold::Impl
-        : public ComponentMeshesManifold< Section >
+        : public internal::ComponentMeshesManifold< Section >
     {
     public:
         Impl( const Section& section )
-            : ComponentMeshesManifold< Section >( section )
+            : internal::ComponentMeshesManifold< Section >( section )
         {
         }
     };

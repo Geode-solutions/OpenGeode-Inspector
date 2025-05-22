@@ -33,11 +33,11 @@
 namespace geode
 {
     class SectionComponentMeshesAdjacency::Impl
-        : public ComponentMeshesAdjacency< Section >
+        : public internal::ComponentMeshesAdjacency< Section >
     {
     public:
         Impl( const Section& section )
-            : ComponentMeshesAdjacency< Section >( section )
+            : internal::ComponentMeshesAdjacency< Section >( section )
         {
         }
     };

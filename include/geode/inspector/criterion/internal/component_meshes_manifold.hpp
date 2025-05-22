@@ -32,28 +32,32 @@
 
 namespace geode
 {
-    /*!
-     * Class for inspecting the manifold property in the Component Meshes of
-     * a Model (BRep or Section).
-     */
-    template < typename Model >
-    class ComponentMeshesManifold
+    namespace internal
     {
-        OPENGEODE_DISABLE_COPY( ComponentMeshesManifold );
+        /*!
+         * Class for inspecting the manifold property in the Component Meshes of
+         * a Model (BRep or Section).
+         */
+        template < typename Model >
+        class ComponentMeshesManifold
+        {
+            OPENGEODE_DISABLE_COPY( ComponentMeshesManifold );
 
-    public:
-        void add_surfaces_meshes_non_manifold_vertices(
-            InspectionIssuesMap< index_t >& issues_map ) const;
+        public:
+            void add_surfaces_meshes_non_manifold_vertices(
+                InspectionIssuesMap< index_t >& issues_map ) const;
 
-        void add_surfaces_meshes_non_manifold_edges(
-            InspectionIssuesMap< std::array< index_t, 2 > >& issues_map ) const;
+            void add_surfaces_meshes_non_manifold_edges(
+                InspectionIssuesMap< std::array< index_t, 2 > >& issues_map )
+                const;
 
-    protected:
-        explicit ComponentMeshesManifold( const Model& model );
+        protected:
+            explicit ComponentMeshesManifold( const Model& model );
 
-        [[nodiscard]] const Model& model() const;
+            [[nodiscard]] const Model& model() const;
 
-    private:
-        const Model& model_;
-    };
+        private:
+            const Model& model_;
+        };
+    } // namespace internal
 } // namespace geode
