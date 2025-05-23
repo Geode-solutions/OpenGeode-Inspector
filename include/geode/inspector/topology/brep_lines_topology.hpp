@@ -45,6 +45,11 @@ namespace geode
         InspectionIssues< uuid > lines_not_meshed{
             "uuids of Lines without mesh."
         };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_line_with_wrong_relationship_to_surface{
+                "Indices of unique vertices linked to a Line with wrong "
+                "relationship with a surface"
+            };
         InspectionIssuesMap< index_t > lines_not_linked_to_a_unique_vertex{
             "Lines with mesh vertices not linked to a unique vertex"
         };
@@ -52,6 +57,11 @@ namespace geode
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
                 "Indices of unique vertices linked to a Line with invalid "
                 "internal topology."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_single_and_invalid_line{
+                "Indices of unique vertices linked to only one Line and this "
+                "single Line is invalid."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
@@ -93,7 +103,15 @@ namespace geode
             const Line3D& line ) const;
 
         [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_line_with_wrong_relationships_to_surface(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_invalid_embedded_line(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_line(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >

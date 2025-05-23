@@ -55,6 +55,10 @@ def lines_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
     )
+    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
+    nb_issues += (
+        result.unique_vertices_linked_to_line_with_wrong_relationship_to_surface.nb_issues()
+    )
     nb_issues += (
         result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
     )
@@ -90,10 +94,6 @@ def blocks_topological_validity(result, verbose):
         result.unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues()
     )
     nb_issues += result.unique_vertices_with_incorrect_block_cmvs_count.nb_issues()
-    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
-    nb_issues += (
-        result.unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
-    )
     nb_issues += (
         result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
     )

@@ -43,7 +43,7 @@ namespace geode
     {
         return lines_not_meshed.nb_issues()
                + lines_not_linked_to_a_unique_vertex.nb_issues()
-               + unique_vertices_linked_to_not_internal_nor_boundary_line
+               + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                      .nb_issues()
                + unique_vertices_linked_to_a_line_with_invalid_embeddings
                      .nb_issues()
@@ -63,11 +63,12 @@ namespace geode
             absl::StrAppend(
                 &message, lines_not_linked_to_a_unique_vertex.string() );
         }
-        if( unique_vertices_linked_to_not_internal_nor_boundary_line.nb_issues()
+        if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                .nb_issues()
             != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_linked_to_not_internal_nor_boundary_line
+                unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                     .string() );
         }
         if( unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
@@ -340,7 +341,8 @@ namespace geode
                     vertex_is_part_of_line_with_wrong_relationships_to_surface(
                         unique_vertex_id ) )
             {
-                result.unique_vertices_linked_to_not_internal_nor_boundary_line
+                result
+                    .unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                     .add_issue(
                         unique_vertex_id, boundary_nor_internal_line.value() );
             }

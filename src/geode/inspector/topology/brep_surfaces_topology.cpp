@@ -275,7 +275,7 @@ namespace geode
                 && !is_corner_internal_to_surfaces_with_no_relationship_to_the_line )
             {
                 return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " ",
+                    unique_vertex_index,
                     " is part of multiple surfaces and only one line, "
                     "but is a corner not internal to all surfaces without "
                     "relationship to the line." );

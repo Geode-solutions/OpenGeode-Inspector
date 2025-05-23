@@ -60,10 +60,18 @@ namespace geode
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )
+            .def_readwrite( "unique_vertices_linked_to_line_with_wrong_"
+                            "relationship_to_surface",
+                &BRepLinesTopologyInspectionResult::
+                    unique_vertices_linked_to_line_with_wrong_relationship_to_surface )
             .def_readwrite(
                 "unique_vertices_linked_to_a_line_with_invalid_embeddings",
                 &BRepLinesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_with_invalid_embeddings )
+            .def_readwrite(
+                "unique_vertices_linked_to_a_single_and_invalid_line",
+                &BRepLinesTopologyInspectionResult::
+                    unique_vertices_linked_to_a_single_and_invalid_line )
             .def_readwrite( "unique_vertices_linked_to_several_lines_but_not_"
                             "linked_to_a_corner",
                 &BRepLinesTopologyInspectionResult::
@@ -111,14 +119,6 @@ namespace geode
             .def_readwrite( "unique_vertices_with_incorrect_block_cmvs_count",
                 &BRepBlocksTopologyInspectionResult::
                     unique_vertices_with_incorrect_block_cmvs_count )
-            .def_readwrite(
-                "unique_vertices_linked_to_not_internal_nor_boundary_line",
-                &BRepBlocksTopologyInspectionResult::
-                    unique_vertices_linked_to_not_internal_nor_boundary_line )
-            .def_readwrite(
-                "unique_vertices_linked_to_a_single_and_invalid_line",
-                &BRepBlocksTopologyInspectionResult::
-                    unique_vertices_linked_to_a_single_and_invalid_line )
             .def_readwrite( "unique_vertices_linked_to_surface_with_wrong_"
                             "relationship_to_blocks",
                 &BRepBlocksTopologyInspectionResult::

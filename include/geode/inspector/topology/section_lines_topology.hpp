@@ -47,9 +47,9 @@ namespace geode
             "Lines with mesh vertices not linked to a unique vertex"
         };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_not_internal_nor_boundary_line{
-                "Indices of unique vertices linked to a Line without boundary "
-                "nor internal status."
+            unique_vertices_linked_to_line_with_wrong_relationship_to_surface{
+                "Indices of unique vertices linked to a Line with wrong "
+                "relationship with a surface"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{

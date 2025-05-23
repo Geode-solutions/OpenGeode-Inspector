@@ -65,16 +65,6 @@ namespace geode
                 "ComponentMeshVertices count"
             };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indices of unique vertices linked to only one Line and this "
-                "single Line is invalid."
-            };
-        InspectionIssues< index_t >
-            unique_vertices_linked_to_not_internal_nor_boundary_line{
-                "Indices of unique vertices linked to a Line without boundary "
-                "nor internal status."
-            };
-        InspectionIssues< index_t >
             unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks{
                 "Indices of unique vertices linked to Surface without boundary "
                 "nor internal status."
@@ -126,14 +116,6 @@ namespace geode
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_block_cmvs_count_is_incorrect(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_invalid_single_line(
-                index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
-            vertex_is_part_of_line_with_wrong_relationships_to_surface(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
