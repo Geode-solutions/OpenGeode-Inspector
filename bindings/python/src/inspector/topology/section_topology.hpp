@@ -64,10 +64,10 @@ namespace geode
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &SectionLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )
-            .def_readwrite(
-                "unique_vertices_linked_to_not_internal_nor_boundary_line",
+            .def_readwrite( "unique_vertices_linked_to_line_with_wrong_"
+                            "relationship_to_surface",
                 &SectionLinesTopologyInspectionResult::
-                    unique_vertices_linked_to_not_internal_nor_boundary_line )
+                    unique_vertices_linked_to_line_with_wrong_relationship_to_surface )
             .def_readwrite(
                 "unique_vertices_linked_to_a_line_with_invalid_embeddings",
                 &SectionLinesTopologyInspectionResult::

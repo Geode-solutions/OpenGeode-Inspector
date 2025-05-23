@@ -52,11 +52,6 @@ namespace geode
             "Indices of unique vertices that are part of several Corners."
         };
         InspectionIssues< index_t >
-            unique_vertices_linked_to_multiple_internals_corner{
-                "Indices of unique vertices linked to a Corner with several "
-                "embeddings"
-            };
-        InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
                 "Indices of unique vertices linked to a Corner without "
                 "boundary nor internal status."
@@ -98,9 +93,6 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             unique_vertex_has_multiple_corners(
                 index_t unique_vertex_index ) const;
-
-        [[nodiscard]] std::optional< std::string >
-            corner_has_multiple_embeddings( index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
             corner_is_not_internal_nor_boundary(

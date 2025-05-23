@@ -42,10 +42,6 @@ namespace geode
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_multiple_corners )
             .def_readwrite(
-                "unique_vertices_linked_to_multiple_internals_corner",
-                &BRepCornersTopologyInspectionResult::
-                    unique_vertices_linked_to_multiple_internals_corner )
-            .def_readwrite(
                 "unique_vertices_linked_to_not_internal_nor_boundary_corner",
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
@@ -64,10 +60,10 @@ namespace geode
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )
-            .def_readwrite(
-                "unique_vertices_linked_to_not_internal_nor_boundary_line",
+            .def_readwrite( "unique_vertices_linked_to_line_with_wrong_"
+                            "relationship_to_surface",
                 &BRepLinesTopologyInspectionResult::
-                    unique_vertices_linked_to_not_internal_nor_boundary_line )
+                    unique_vertices_linked_to_line_with_wrong_relationship_to_surface )
             .def_readwrite(
                 "unique_vertices_linked_to_a_line_with_invalid_embeddings",
                 &BRepLinesTopologyInspectionResult::
@@ -93,17 +89,9 @@ namespace geode
                 &BRepSurfacesTopologyInspectionResult::
                     surfaces_not_linked_to_a_unique_vertex )
             .def_readwrite(
-                "unique_vertices_linked_to_not_internal_nor_boundary_surface",
-                &BRepSurfacesTopologyInspectionResult::
-                    unique_vertices_linked_to_not_internal_nor_boundary_surface )
-            .def_readwrite(
                 "unique_vertices_linked_to_a_surface_with_invalid_embbedings",
                 &BRepSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_surface_with_invalid_embbedings )
-            .def_readwrite(
-                "unique_vertices_linked_to_a_single_and_invalid_surface",
-                &BRepSurfacesTopologyInspectionResult::
-                    unique_vertices_linked_to_a_single_and_invalid_surface )
             .def_readwrite(
                 "unique_vertices_linked_to_several_and_invalid_surfaces",
                 &BRepSurfacesTopologyInspectionResult::
@@ -119,8 +107,8 @@ namespace geode
         pybind11::class_< BRepBlocksTopologyInspectionResult >(
             module, "BRepBlocksTopologyInspectionResult" )
             .def( pybind11::init<>() )
-            .def_readwrite( "blocks_not_meshed",
-                &BRepBlocksTopologyInspectionResult::blocks_not_meshed )
+            .def_readwrite( "some_blocks_not_meshed",
+                &BRepBlocksTopologyInspectionResult::some_blocks_not_meshed )
             .def_readwrite( "blocks_not_linked_to_a_unique_vertex",
                 &BRepBlocksTopologyInspectionResult::
                     blocks_not_linked_to_a_unique_vertex )
@@ -131,6 +119,23 @@ namespace geode
             .def_readwrite( "unique_vertices_with_incorrect_block_cmvs_count",
                 &BRepBlocksTopologyInspectionResult::
                     unique_vertices_with_incorrect_block_cmvs_count )
+            .def_readwrite( "unique_vertices_linked_to_surface_with_wrong_"
+                            "relationship_to_blocks",
+                &BRepBlocksTopologyInspectionResult::
+                    unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks )
+            .def_readwrite(
+                "unique_vertices_linked_to_a_single_and_invalid_surface",
+                &BRepBlocksTopologyInspectionResult::
+                    unique_vertices_linked_to_a_single_and_invalid_surface )
+            .def_readwrite( "unique_vertex_linked_to_multiple_invalid_surfaces",
+                &BRepBlocksTopologyInspectionResult::
+                    unique_vertex_linked_to_multiple_invalid_surfaces )
+            .def_readwrite( "blocks_with_not_closed_boundary_surfaces",
+                &BRepBlocksTopologyInspectionResult::
+                    blocks_with_not_closed_boundary_surfaces )
+            .def_readwrite( "model_boundaries_dont_form_a_closed_surface",
+                &BRepBlocksTopologyInspectionResult::
+                    model_boundaries_dont_form_a_closed_surface )
             .def( "string", &BRepBlocksTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepBlocksTopologyInspectionResult::inspection_type );

@@ -45,7 +45,7 @@ namespace geode
 {
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
-        InspectionIssues< uuid > blocks_not_meshed{
+        InspectionIssues< uuid > some_blocks_not_meshed{
             "uuids of Blocks without mesh."
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
@@ -63,6 +63,27 @@ namespace geode
             unique_vertices_with_incorrect_block_cmvs_count{
                 "Indices of unique vertices part of a Block but with incorrect "
                 "ComponentMeshVertices count"
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks{
+                "Indices of unique vertices linked to Surface without boundary "
+                "nor internal status."
+            };
+        InspectionIssues< index_t >
+            unique_vertices_linked_to_a_single_and_invalid_surface{
+                "Indices of unique vertices linked to only one Surface and "
+                "this single surface is invalid."
+            };
+        InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
+            "uuids of blocks with not closed boundary surfaces."
+        };
+        InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
+            " Model boundaries don't form a closed surface."
+        };
+        InspectionIssues< index_t >
+            unique_vertex_linked_to_multiple_invalid_surfaces{
+                "Indices of unique vertices linked to several Surfaces in an "
+                "invalid way."
             };
 
         [[nodiscard]] index_t nb_issues() const;
@@ -95,6 +116,21 @@ namespace geode
 
         [[nodiscard]] std::optional< std::string >
             unique_vertex_block_cmvs_count_is_incorrect(
+                index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_surface_with_wrong_relationships_to_block(
+                index_t unique_vertex_index,
+                absl::Span< const uuid > not_boundaries_surfaces,
+                absl::Span< const uuid > dangling_surface ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_single_surface(
+                index_t unique_vertex_index,
+                absl::Span< const uuid > not_boundaries_surfaces ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            vertex_is_part_of_invalid_multiple_surfaces(
                 index_t unique_vertex_index ) const;
 
         [[nodiscard]] BRepBlocksTopologyInspectionResult inspect_blocks() const;

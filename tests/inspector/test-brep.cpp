@@ -46,8 +46,6 @@ geode::index_t corners_topological_validity(
         result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues();
     nb_issues +=
-        result.unique_vertices_linked_to_multiple_internals_corner.nb_issues();
-    nb_issues +=
         result.unique_vertices_linked_to_not_internal_nor_boundary_corner
             .nb_issues();
 
@@ -74,8 +72,9 @@ geode::index_t lines_topological_validity(
                      .nb_issues();
     nb_issues +=
         result.unique_vertices_linked_to_a_single_and_invalid_line.nb_issues();
-    nb_issues += result.unique_vertices_linked_to_not_internal_nor_boundary_line
-                     .nb_issues();
+    nb_issues +=
+        result.unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+            .nb_issues();
     nb_issues +=
         result
             .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
@@ -101,11 +100,6 @@ geode::index_t surfaces_topological_validity(
     nb_issues +=
         result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
             .nb_issues();
-    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_surface
-                     .nb_issues();
-    nb_issues +=
-        result.unique_vertices_linked_to_not_internal_nor_boundary_surface
-            .nb_issues();
     nb_issues += result.unique_vertices_linked_to_several_and_invalid_surfaces
                      .nb_issues();
     geode::Logger::info(
@@ -126,12 +120,18 @@ geode::index_t blocks_topological_validity(
     {
         nb_issues += issue.second.nb_issues();
     }
-    nb_issues += result.blocks_not_meshed.nb_issues();
+    nb_issues += result.some_blocks_not_meshed.nb_issues();
     nb_issues +=
         result.unique_vertices_part_of_two_blocks_and_no_boundary_surface
             .nb_issues();
     nb_issues +=
         result.unique_vertices_with_incorrect_block_cmvs_count.nb_issues();
+    nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_surface
+                     .nb_issues();
+    nb_issues +=
+        result
+            .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
+            .nb_issues();
     geode::Logger::info(
         "BRep Blocks Topology check: ", nb_issues, " issues." );
     if( string )
@@ -312,8 +312,8 @@ void check_model_a1( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 267, "[Test] model_A1 has ",
-        nb_topological_issues, " topological problems instead of 267." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5164, "[Test] model_A1 has ",
+        nb_topological_issues, " topological problems instead of 5164." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -334,9 +334,9 @@ void check_model_a1_valid( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 267,
+    OPENGEODE_EXCEPTION( nb_topological_issues == 5164,
         "[Test] model_A1_valid has ", nb_topological_issues,
-        " topological problems instead of 267." );
+        " topological problems instead of 5164." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -357,7 +357,7 @@ void check_model_mss( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 17, "[Test] mss has ",
+    OPENGEODE_EXCEPTION( nb_topological_issues == 34, "[Test] mss has ",
         nb_topological_issues, " topological problems instead of 34." );
 
     const auto nb_component_meshes_issues =
@@ -377,10 +377,8 @@ void check_model_D( bool string )
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5, "[Test] model_D has ",
-        nb_topological_issues,
-        " topological problems instead of 5 (blocks not meshed)." );
-
+    OPENGEODE_EXCEPTION( nb_topological_issues == 0, "[Test] model_D has ",
+        nb_topological_issues, " topological problems instead of 0." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0, "[Test] model_D has ",

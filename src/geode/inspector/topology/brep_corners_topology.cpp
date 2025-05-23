@@ -39,7 +39,6 @@ namespace geode
         return corners_not_meshed.nb_issues()
                + corners_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_multiple_corners.nb_issues()
-               + unique_vertices_linked_to_multiple_internals_corner.nb_issues()
                + unique_vertices_linked_to_not_internal_nor_boundary_corner
                      .nb_issues()
                + unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
@@ -61,12 +60,6 @@ namespace geode
         {
             absl::StrAppend(
                 &message, unique_vertices_linked_to_multiple_corners.string() );
-        }
-        if( unique_vertices_linked_to_multiple_internals_corner.nb_issues()
-            != 0 )
-        {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_multiple_internals_corner.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_corner
                 .nb_issues()
@@ -166,25 +159,6 @@ namespace geode
                         unique_vertex_index, " is part of several corners." );
                 }
                 corner_found = true;
-            }
-        }
-        return std::nullopt;
-    }
-
-    std::optional< std::string >
-        BRepCornersTopology::corner_has_multiple_embeddings(
-            index_t unique_vertex_index ) const
-    {
-        for( const auto& cmv :
-            brep_.component_mesh_vertices( unique_vertex_index ) )
-        {
-            if( cmv.component_id.type() == Corner3D::component_type_static()
-                && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
-            {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is associated to corner with uuid '",
-                    cmv.component_id.id().string(),
-                    "', which has several embeddings." );
             }
         }
         return std::nullopt;
@@ -303,12 +277,6 @@ namespace geode
             {
                 result.unique_vertices_linked_to_multiple_corners.add_issue(
                     unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_has_multiple_embeddings( unique_vertex_id ) )
-            {
-                result.unique_vertices_linked_to_multiple_internals_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_not_internal_nor_boundary( unique_vertex_id ) )
