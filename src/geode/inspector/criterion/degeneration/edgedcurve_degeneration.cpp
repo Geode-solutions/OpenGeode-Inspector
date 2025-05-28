@@ -51,14 +51,14 @@ namespace geode
             return false;
         }
 
-        InspectionIssues< index_t > degenerated_edges() const
+        InspectionIssues< index_t > degenerated_edges( double tolerance ) const
         {
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges of EdgeCurve " + mesh_.id().string() + "."
             };
             for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {
-                if( mesh_.is_edge_degenerated( edge_id ) )
+                if( mesh_.is_edge_degenerated( edge_id, tolerance ) )
                 {
                     degenerated_edges_index.add_issue(
                         edge_id, absl::StrCat( "Edge with index ", edge_id,
@@ -68,6 +68,11 @@ namespace geode
                 }
             }
             return degenerated_edges_index;
+        }
+
+        InspectionIssues< index_t > degenerated_edges() const
+        {
+            return degenerated_edges( GLOBAL_EPSILON );
         }
 
     private:
@@ -88,6 +93,14 @@ namespace geode
     bool EdgedCurveDegeneration< dimension >::is_mesh_degenerated() const
     {
         return impl_->is_mesh_degenerated();
+    }
+
+    template < index_t dimension >
+    InspectionIssues< index_t >
+        EdgedCurveDegeneration< dimension >::degenerated_edges(
+            double tolerance ) const
+    {
+        return impl_->degenerated_edges( tolerance );
     }
 
     template < index_t dimension >

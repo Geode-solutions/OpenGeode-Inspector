@@ -52,6 +52,9 @@ namespace geode
 
         [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
 
+        [[nodiscard]] InspectionIssues< index_t > degenerated_edges(
+            double tolerance ) const;
+
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };

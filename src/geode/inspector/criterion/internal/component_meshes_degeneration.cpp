@@ -48,14 +48,15 @@ namespace geode
 
         template < typename Model >
         void ComponentMeshesDegeneration< Model >::add_degenerated_edges(
-            InspectionIssuesMap< index_t >& components_degenerated_edges ) const
+            InspectionIssuesMap< index_t >& components_degenerated_edges,
+            double tolerance ) const
         {
             for( const auto& line : model_.lines() )
             {
                 const EdgedCurveDegeneration< Model::dim > inspector{
                     line.mesh()
                 };
-                auto issues = inspector.degenerated_edges();
+                auto issues = inspector.degenerated_edges( tolerance );
                 issues.set_description( absl::StrCat(
                     "Line ", line.id().string(), " degenerated edges" ) );
                 components_degenerated_edges.add_issues_to_map(
@@ -66,12 +67,20 @@ namespace geode
                 const geode::SurfaceMeshDegeneration< Model::dim > inspector{
                     surface.mesh()
                 };
-                auto issues = inspector.degenerated_edges();
+                auto issues = inspector.degenerated_edges( tolerance );
                 issues.set_description( absl::StrCat(
                     "Surface ", surface.id().string(), " degenerated edges" ) );
                 components_degenerated_edges.add_issues_to_map(
                     surface.id(), std::move( issues ) );
             }
+        }
+
+        template < typename Model >
+        void ComponentMeshesDegeneration< Model >::add_degenerated_edges(
+            InspectionIssuesMap< index_t >& components_degenerated_edges ) const
+        {
+            add_degenerated_edges(
+                components_degenerated_edges, GLOBAL_EPSILON );
         }
 
         template < typename Model >
@@ -85,6 +94,24 @@ namespace geode
                     surface.mesh()
                 };
                 auto issues = inspector.degenerated_polygons();
+                issues.set_description( absl::StrCat( "Surface ",
+                    surface.id().string(), " degenerated polygons" ) );
+                components_degenerated_polygons.add_issues_to_map(
+                    surface.id(), std::move( issues ) );
+            }
+        }
+
+        template < typename Model >
+        void ComponentMeshesDegeneration< Model >::add_degenerated_polygons(
+            InspectionIssuesMap< index_t >& components_degenerated_polygons,
+            double tolerance ) const
+        {
+            for( const auto& surface : model_.surfaces() )
+            {
+                const geode::SurfaceMeshDegeneration< Model::dim > inspector{
+                    surface.mesh()
+                };
+                auto issues = inspector.degenerated_polygons( tolerance );
                 issues.set_description( absl::StrCat( "Surface ",
                     surface.id().string(), " degenerated polygons" ) );
                 components_degenerated_polygons.add_issues_to_map(

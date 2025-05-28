@@ -74,6 +74,15 @@ namespace geode
         [[nodiscard]] BRepMeshesDegenerationInspectionResult
             inspect_elements_degeneration() const;
 
+        [[nodiscard]] BRepMeshesDegenerationInspectionResult
+            inspect_polygons_degeneration( double tolerance ) const;
+
+        [[nodiscard]] BRepMeshesDegenerationInspectionResult
+            inspect_edges_degeneration( double tolerance ) const;
+
+        [[nodiscard]] BRepMeshesDegenerationInspectionResult
+            inspect_polyhedra_degeneration() const;
+
     private:
         IMPLEMENTATION_MEMBER( impl_ );
     };

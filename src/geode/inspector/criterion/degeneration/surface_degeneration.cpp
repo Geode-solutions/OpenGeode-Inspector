@@ -63,14 +63,16 @@ namespace geode
             return false;
         }
 
-        InspectionIssues< index_t > degenerated_polygons() const
+        InspectionIssues< index_t > degenerated_polygons(
+            double tolerance ) const
         {
             InspectionIssues< index_t > wrong_polygons{
                 "Degenerated Polygons."
             };
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
-                if( this->mesh().is_polygon_degenerated( polygon_id ) )
+                if( this->mesh().is_polygon_degenerated(
+                        polygon_id, tolerance ) )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
@@ -78,6 +80,11 @@ namespace geode
                 }
             }
             return wrong_polygons;
+        }
+
+        InspectionIssues< index_t > degenerated_polygons() const
+        {
+            return degenerated_polygons( GLOBAL_EPSILON );
         }
     };
 
@@ -99,6 +106,14 @@ namespace geode
 
     template < index_t dimension >
     InspectionIssues< index_t >
+        SurfaceMeshDegeneration< dimension >::degenerated_edges(
+            double tolerance ) const
+    {
+        return impl_->degenerated_edges( tolerance );
+    }
+
+    template < index_t dimension >
+    InspectionIssues< index_t >
         SurfaceMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
@@ -109,6 +124,14 @@ namespace geode
         SurfaceMeshDegeneration< dimension >::degenerated_polygons() const
     {
         return impl_->degenerated_polygons();
+    }
+
+    template < index_t dimension >
+    InspectionIssues< index_t >
+        SurfaceMeshDegeneration< dimension >::degenerated_polygons(
+            double tolerance ) const
+    {
+        return impl_->degenerated_polygons( tolerance );
     }
 
     template class opengeode_inspector_inspector_api

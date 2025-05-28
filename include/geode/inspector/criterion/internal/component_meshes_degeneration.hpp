@@ -51,8 +51,16 @@ namespace geode
             void add_degenerated_edges(
                 InspectionIssuesMap< index_t >& issues_map ) const;
 
+            void add_degenerated_edges(
+                InspectionIssuesMap< index_t >& issues_map,
+                double tolerance ) const;
+
             void add_degenerated_polygons(
                 InspectionIssuesMap< index_t >& issues_map ) const;
+
+            void add_degenerated_polygons(
+                InspectionIssuesMap< index_t >& issues_map,
+                double tolerance ) const;
 
         protected:
             explicit ComponentMeshesDegeneration( const Model& model );

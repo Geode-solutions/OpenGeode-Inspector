@@ -72,14 +72,15 @@ namespace geode
 
         template < class MeshType >
         InspectionIssues< index_t >
-            DegenerationImpl< MeshType >::degenerated_edges() const
+            DegenerationImpl< MeshType >::degenerated_edges(
+                double tolerance ) const
         {
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges."
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
-                if( edge_is_degenerated( edge_index ) )
+                if( edge_is_degenerated( edge_index, tolerance ) )
                 {
                     const auto edge_vertices =
                         mesh_.edges().edge_vertices( edge_index );
@@ -95,14 +96,28 @@ namespace geode
         }
 
         template < class MeshType >
+        InspectionIssues< index_t >
+            DegenerationImpl< MeshType >::degenerated_edges() const
+        {
+            return degenerated_edges( GLOBAL_EPSILON );
+        }
+
+        template < class MeshType >
         bool DegenerationImpl< MeshType >::edge_is_degenerated(
-            index_t edge_index ) const
+            index_t edge_index, double tolerance ) const
         {
             const auto edge_vertices =
                 mesh_.edges().edge_vertices( edge_index );
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
-            return point_point_distance( p1, p2 ) < GLOBAL_EPSILON;
+            return point_point_distance( p1, p2 ) < tolerance;
+        }
+
+        template < class MeshType >
+        bool DegenerationImpl< MeshType >::edge_is_degenerated(
+            index_t edge_index ) const
+        {
+            return edge_is_degenerated( edge_index, GLOBAL_EPSILON );
         }
 
         template < class MeshType >
