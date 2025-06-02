@@ -29,6 +29,7 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_edges.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
+#include <geode/mesh/helpers/mesh_quality.hpp>
 
 #include <geode/geometry/distance.hpp>
 #include <geode/geometry/point.hpp>
@@ -71,9 +72,8 @@ namespace geode
         }
 
         template < class MeshType >
-        InspectionIssues< index_t >
-            DegenerationImpl< MeshType >::degenerated_edges(
-                double tolerance ) const
+        InspectionIssues< index_t > DegenerationImpl< MeshType >::small_edges(
+            double threshold ) const
         {
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges."
@@ -103,7 +103,7 @@ namespace geode
         }
 
         template < class MeshType >
-        bool DegenerationImpl< MeshType >::edge_is_degenerated(
+        bool DegenerationImpl< MeshType >::edge_is_smaller_than_threshold(
             index_t edge_index, double tolerance ) const
         {
             const auto edge_vertices =
@@ -117,7 +117,7 @@ namespace geode
         bool DegenerationImpl< MeshType >::edge_is_degenerated(
             index_t edge_index ) const
         {
-            return edge_is_degenerated( edge_index, GLOBAL_EPSILON );
+            return edge_is_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
         }
 
         template < class MeshType >

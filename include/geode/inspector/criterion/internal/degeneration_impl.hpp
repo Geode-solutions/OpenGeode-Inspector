@@ -41,13 +41,13 @@ namespace geode
 
             [[nodiscard]] virtual bool is_mesh_degenerated() const;
 
-            [[nodiscard]] InspectionIssues< index_t > degenerated_edges(
-                double tolerance ) const;
+            [[nodiscard]] InspectionIssues< index_t > small_edges(
+                double threshold ) const;
 
             [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
 
         private:
-            [[nodiscard]] bool edge_is_degenerated(
+            [[nodiscard]] bool edge_is_smaller_than_threshold(
                 index_t edge_index, double tolerance ) const;
 
             [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;

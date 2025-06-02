@@ -40,21 +40,9 @@ namespace geode
             .def( "is_mesh_degenerated",
                 &SurfaceMeshDegeneration::is_mesh_degenerated )
             .def( "degenerated_edges",
-                []( SurfaceMeshDegeneration& self ) {
-                    return self.degenerated_edges();
-                } )
-            .def( "degenerated_edges",
-                []( SurfaceMeshDegeneration& self, double tolerance ) {
-                    return self.degenerated_edges( tolerance );
-                } )
+                &SurfaceMeshDegeneration::degenerated_edges )
             .def( "degenerated_polygons",
-                []( SurfaceMeshDegeneration& self ) {
-                    return self.degenerated_polygons();
-                } )
-            .def( "degenerated_polygons",
-                []( SurfaceMeshDegeneration& self, double tolerance ) {
-                    return self.degenerated_polygons( tolerance );
-                } );
+                &SurfaceMeshDegeneration::degenerated_polygons );
     }
     void define_surface_degeneration( pybind11::module& module )
     {

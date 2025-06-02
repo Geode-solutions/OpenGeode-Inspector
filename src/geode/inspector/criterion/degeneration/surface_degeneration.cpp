@@ -31,6 +31,7 @@
 #include <geode/geometry/mensuration.hpp>
 
 #include <geode/mesh/core/surface_mesh.hpp>
+#include <geode/mesh/helpers/mesh_quality.hpp>
 
 #include <geode/inspector/criterion/internal/degeneration_impl.hpp>
 
@@ -63,7 +64,7 @@ namespace geode
             return false;
         }
 
-        InspectionIssues< index_t > degenerated_polygons(
+        InspectionIssues< index_t > small_height_polygons(
             double tolerance ) const
         {
             InspectionIssues< index_t > wrong_polygons{
@@ -71,8 +72,8 @@ namespace geode
             };
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
-                if( this->mesh().is_polygon_degenerated(
-                        polygon_id, tolerance ) )
+                if( is_polygon_minimum_height_too_small(
+                        this->mesh(), polygon_id, tolerance ) )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",
@@ -84,7 +85,20 @@ namespace geode
 
         InspectionIssues< index_t > degenerated_polygons() const
         {
-            return degenerated_polygons( GLOBAL_EPSILON );
+            InspectionIssues< index_t > wrong_polygons{
+                "Degenerated Polygons."
+            };
+            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            {
+                if( this->mesh().is_polygon_degenerated(
+                        polygon_id, GLOBAL_EPSILON ) )
+                {
+                    wrong_polygons.add_issue( polygon_id,
+                        absl::StrCat( "Polygon ", polygon_id, " of Surface ",
+                            this->mesh().id().string(), " is degenerated." ) );
+                }
+            }
+            return wrong_polygons;
         }
     };
 
@@ -106,10 +120,10 @@ namespace geode
 
     template < index_t dimension >
     InspectionIssues< index_t >
-        SurfaceMeshDegeneration< dimension >::degenerated_edges(
-            double tolerance ) const
+        SurfaceMeshDegeneration< dimension >::small_edges(
+            double threshold ) const
     {
-        return impl_->degenerated_edges( tolerance );
+        return impl_->small_edges( threshold );
     }
 
     template < index_t dimension >
@@ -128,10 +142,10 @@ namespace geode
 
     template < index_t dimension >
     InspectionIssues< index_t >
-        SurfaceMeshDegeneration< dimension >::degenerated_polygons(
-            double tolerance ) const
+        SurfaceMeshDegeneration< dimension >::small_height_polygons(
+            double threshold ) const
     {
-        return impl_->degenerated_polygons( tolerance );
+        return impl_->small_height_polygons( threshold );
     }
 
     template class opengeode_inspector_inspector_api

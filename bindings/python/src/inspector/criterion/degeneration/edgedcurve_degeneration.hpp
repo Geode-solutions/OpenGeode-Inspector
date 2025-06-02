@@ -40,13 +40,7 @@ namespace geode
             .def( "is_mesh_degenerated",
                 &EdgedCurveDegeneration::is_mesh_degenerated )
             .def( "degenerated_edges",
-                []( EdgedCurveDegeneration& self ) {
-                    return self.degenerated_edges();
-                } )
-            .def( "degenerated_edges",
-                []( EdgedCurveDegeneration& self, double tolerance ) {
-                    return self.degenerated_edges( tolerance );
-                } );
+                &EdgedCurveDegeneration::degenerated_edges );
     }
     void define_edged_curve_degeneration( pybind11::module& module )
     {
