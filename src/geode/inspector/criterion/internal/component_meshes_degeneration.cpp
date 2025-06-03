@@ -48,7 +48,7 @@ namespace geode
 
         template < typename Model >
         void ComponentMeshesDegeneration< Model >::add_small_edges(
-            InspectionIssuesMap< index_t >& components_degenerated_edges,
+            InspectionIssuesMap< index_t >& components_small_edges,
             double threshold ) const
         {
             for( const auto& line : model_.lines() )
@@ -58,8 +58,8 @@ namespace geode
                 };
                 auto issues = inspector.small_edges( threshold );
                 issues.set_description( absl::StrCat(
-                    "Line ", line.id().string(), " degenerated edges" ) );
-                components_degenerated_edges.add_issues_to_map(
+                    "Line ", line.id().string(), " small edges" ) );
+                components_small_edges.add_issues_to_map(
                     line.id(), std::move( issues ) );
             }
             for( const auto& surface : model_.surfaces() )
@@ -69,8 +69,8 @@ namespace geode
                 };
                 auto issues = inspector.small_edges( threshold );
                 issues.set_description( absl::StrCat(
-                    "Surface ", surface.id().string(), " degenerated edges" ) );
-                components_degenerated_edges.add_issues_to_map(
+                    "Surface ", surface.id().string(), " small edges" ) );
+                components_small_edges.add_issues_to_map(
                     surface.id(), std::move( issues ) );
             }
         }
@@ -84,7 +84,7 @@ namespace geode
 
         template < typename Model >
         void ComponentMeshesDegeneration< Model >::add_small_height_polygons(
-            InspectionIssuesMap< index_t >& components_degenerated_polygons,
+            InspectionIssuesMap< index_t >& components_small_polygons,
             double threshold ) const
         {
             for( const auto& surface : model_.surfaces() )
@@ -93,9 +93,9 @@ namespace geode
                     surface.mesh()
                 };
                 auto issues = inspector.small_height_polygons( threshold );
-                issues.set_description( absl::StrCat( "Surface ",
-                    surface.id().string(), " degenerated polygons" ) );
-                components_degenerated_polygons.add_issues_to_map(
+                issues.set_description( absl::StrCat(
+                    "Surface ", surface.id().string(), " small polygons" ) );
+                components_small_polygons.add_issues_to_map(
                     surface.id(), std::move( issues ) );
             }
         }

@@ -79,7 +79,7 @@ namespace geode
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
-                if( is_edge_smaller_than_threshold( edge_index, threshold ) )
+                if( edge_is_smaller_than_threshold( edge_index, threshold ) )
                 {
                     const auto edge_vertices =
                         mesh_.edges().edge_vertices( edge_index );
@@ -102,7 +102,7 @@ namespace geode
         }
 
         template < class MeshType >
-        bool DegenerationImpl< MeshType >::is_edge_smaller_than_threshold(
+        bool DegenerationImpl< MeshType >::edge_is_smaller_than_threshold(
             index_t edge_index, double threshold ) const
         {
             const auto edge_vertices =
@@ -116,7 +116,7 @@ namespace geode
         bool DegenerationImpl< MeshType >::edge_is_degenerated(
             index_t edge_index ) const
         {
-            return is_edge_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
+            return edge_is_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
         }
 
         template < class MeshType >

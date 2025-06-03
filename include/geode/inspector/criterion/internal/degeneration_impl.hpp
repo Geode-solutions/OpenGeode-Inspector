@@ -47,7 +47,7 @@ namespace geode
             [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
 
         private:
-            [[nodiscard]] bool is_edge_smaller_than_threshold(
+            [[nodiscard]] bool edge_is_smaller_than_threshold(
                 index_t edge_index, double threshold ) const;
 
             [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;
