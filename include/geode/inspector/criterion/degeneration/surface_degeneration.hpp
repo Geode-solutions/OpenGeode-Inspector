@@ -51,7 +51,13 @@ namespace geode
 
         [[nodiscard]] bool is_mesh_degenerated() const;
 
+        [[nodiscard]] InspectionIssues< index_t > small_edges(
+            double threshold ) const;
+
         [[nodiscard]] InspectionIssues< index_t > degenerated_edges() const;
+
+        [[nodiscard]] InspectionIssues< index_t > small_height_polygons(
+            double threshold ) const;
 
         [[nodiscard]] InspectionIssues< index_t > degenerated_polygons() const;
 

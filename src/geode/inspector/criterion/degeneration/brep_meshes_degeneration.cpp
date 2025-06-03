@@ -76,24 +76,34 @@ namespace geode
         {
         }
 
-        void add_solid_degenerations(
-            InspectionIssuesMap< index_t >& degenerated_edges_map,
-            InspectionIssuesMap< index_t >& degenerated_polyhedra_map ) const
+        void add_solid_small_elements(
+            InspectionIssuesMap< index_t >& small_edges_map,
+            InspectionIssuesMap< index_t >& small_polyhedra_map,
+            double threshold ) const
         {
             for( const auto& block : model().blocks() )
             {
                 const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
-                auto degenerated_edges = inspector.degenerated_edges();
-                degenerated_edges.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " degenerated edges" ) );
-                degenerated_edges_map.add_issues_to_map(
-                    block.id(), std::move( degenerated_edges ) );
-                auto degenerated_polyhedra = inspector.degenerated_polyhedra();
-                degenerated_polyhedra.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " degenerated polyhedra" ) );
-                degenerated_polyhedra_map.add_issues_to_map(
-                    block.id(), std::move( degenerated_polyhedra ) );
+                auto small_edges = inspector.small_edges( threshold );
+                small_edges.set_description( absl::StrCat(
+                    "Block ", block.id().string(), " small edges" ) );
+                small_edges_map.add_issues_to_map(
+                    block.id(), std::move( small_edges ) );
+                auto small_polyhedra =
+                    inspector.small_height_polyhedra( threshold );
+                small_polyhedra.set_description( absl::StrCat( "Block ",
+                    block.id().string(), " small height polyhedra" ) );
+                small_polyhedra_map.add_issues_to_map(
+                    block.id(), std::move( small_polyhedra ) );
             }
+        }
+
+        void add_solid_degenerations(
+            InspectionIssuesMap< index_t >& degenerated_edges_map,
+            InspectionIssuesMap< index_t >& degenerated_polyhedra_map ) const
+        {
+            add_solid_small_elements( degenerated_edges_map,
+                degenerated_polyhedra_map, GLOBAL_EPSILON );
         }
     };
 
@@ -116,4 +126,34 @@ namespace geode
             result.degenerated_edges, result.degenerated_polyhedra );
         return result;
     }
+
+    BRepMeshesDegenerationInspectionResult
+        BRepComponentMeshesDegeneration::inspect_edges_degeneration(
+            double threshold ) const
+    {
+        BRepMeshesDegenerationInspectionResult result;
+        impl_->add_small_edges( result.degenerated_edges, threshold );
+        return result;
+    }
+
+    BRepMeshesDegenerationInspectionResult
+        BRepComponentMeshesDegeneration::inspect_polygons_degeneration(
+            double threshold ) const
+    {
+        BRepMeshesDegenerationInspectionResult result;
+        impl_->add_small_height_polygons(
+            result.degenerated_polygons, threshold );
+        return result;
+    }
+
+    BRepMeshesDegenerationInspectionResult
+        BRepComponentMeshesDegeneration::inspect_polyhedra_degeneration(
+            double threshold ) const
+    {
+        BRepMeshesDegenerationInspectionResult result;
+        impl_->add_solid_small_elements(
+            result.degenerated_edges, result.degenerated_polyhedra, threshold );
+        return result;
+    }
+
 } // namespace geode
