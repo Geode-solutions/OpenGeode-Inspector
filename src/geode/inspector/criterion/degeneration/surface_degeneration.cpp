@@ -64,7 +64,7 @@ namespace geode
         }
 
         InspectionIssues< index_t > small_height_polygons(
-            double tolerance ) const
+            double threshold ) const
         {
             InspectionIssues< index_t > wrong_polygons{
                 "Degenerated Polygons."
@@ -72,7 +72,7 @@ namespace geode
             for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
             {
                 if( this->mesh().polygon_minimum_height( polygon_id )
-                    <= tolerance )
+                    <= threshold )
                 {
                     wrong_polygons.add_issue( polygon_id,
                         absl::StrCat( "Polygon ", polygon_id, " of Surface ",

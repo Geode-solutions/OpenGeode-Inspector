@@ -48,7 +48,7 @@ namespace geode
 
         private:
             [[nodiscard]] bool is_edge_smaller_than_threshold(
-                index_t edge_index, double tolerance ) const;
+                index_t edge_index, double threshold ) const;
 
             [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;
 
