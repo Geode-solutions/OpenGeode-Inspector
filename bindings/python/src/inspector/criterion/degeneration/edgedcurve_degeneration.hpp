@@ -41,8 +41,7 @@ namespace geode
                 &EdgedCurveDegeneration::is_mesh_degenerated )
             .def( "degenerated_edges",
                 &EdgedCurveDegeneration::degenerated_edges )
-            .def( "small_edges",
-                &EdgedCurveDegeneration::small_edges );
+            .def( "small_edges", &EdgedCurveDegeneration::small_edges );
     }
     void define_edged_curve_degeneration( pybind11::module& module )
     {
