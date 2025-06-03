@@ -75,13 +75,13 @@ namespace geode
             inspect_elements_degeneration() const;
 
         [[nodiscard]] BRepMeshesDegenerationInspectionResult
-            inspect_polygons_degeneration( double tolerance ) const;
+            inspect_polygons_degeneration( double threshold ) const;
 
         [[nodiscard]] BRepMeshesDegenerationInspectionResult
-            inspect_edges_degeneration( double tolerance ) const;
+            inspect_edges_degeneration( double threshold ) const;
 
         [[nodiscard]] BRepMeshesDegenerationInspectionResult
-            inspect_polyhedra_degeneration() const;
+            inspect_polyhedra_degeneration( double threshold ) const;
 
     private:
         IMPLEMENTATION_MEMBER( impl_ );

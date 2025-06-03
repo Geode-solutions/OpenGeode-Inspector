@@ -48,18 +48,18 @@ namespace geode
             OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
         public:
-            void add_degenerated_edges(
-                InspectionIssuesMap< index_t >& issues_map ) const;
-
             void add_small_edges( InspectionIssuesMap< index_t >& issues_map,
-                double tolerance ) const;
-
-            void add_degenerated_polygons(
-                InspectionIssuesMap< index_t >& issues_map ) const;
+                double threshold ) const;
 
             void add_small_height_polygons(
                 InspectionIssuesMap< index_t >& issues_map,
                 double tolerance ) const;
+
+            void add_degenerated_edges(
+                InspectionIssuesMap< index_t >& issues_map ) const;
+
+            void add_degenerated_polygons(
+                InspectionIssuesMap< index_t >& issues_map ) const;
 
         protected:
             explicit ComponentMeshesDegeneration( const Model& model );

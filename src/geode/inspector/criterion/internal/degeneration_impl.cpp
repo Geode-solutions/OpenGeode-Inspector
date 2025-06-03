@@ -29,7 +29,6 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_edges.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
-#include <geode/mesh/helpers/mesh_quality.hpp>
 
 #include <geode/geometry/distance.hpp>
 #include <geode/geometry/point.hpp>
@@ -80,7 +79,7 @@ namespace geode
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
-                if( edge_is_degenerated( edge_index, tolerance ) )
+                if( is_edge_smaller_than_threshold( edge_index, threshold ) )
                 {
                     const auto edge_vertices =
                         mesh_.edges().edge_vertices( edge_index );
@@ -99,25 +98,25 @@ namespace geode
         InspectionIssues< index_t >
             DegenerationImpl< MeshType >::degenerated_edges() const
         {
-            return degenerated_edges( GLOBAL_EPSILON );
+            return small_edges( GLOBAL_EPSILON );
         }
 
         template < class MeshType >
-        bool DegenerationImpl< MeshType >::edge_is_smaller_than_threshold(
-            index_t edge_index, double tolerance ) const
+        bool DegenerationImpl< MeshType >::is_edge_smaller_than_threshold(
+            index_t edge_index, double threshold ) const
         {
             const auto edge_vertices =
                 mesh_.edges().edge_vertices( edge_index );
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
-            return point_point_distance( p1, p2 ) < tolerance;
+            return point_point_distance( p1, p2 ) < threshold;
         }
 
         template < class MeshType >
         bool DegenerationImpl< MeshType >::edge_is_degenerated(
             index_t edge_index ) const
         {
-            return edge_is_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
+            return is_edge_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
         }
 
         template < class MeshType >

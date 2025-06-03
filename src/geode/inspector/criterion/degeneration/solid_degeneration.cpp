@@ -64,7 +64,8 @@ namespace geode
             return false;
         }
 
-        InspectionIssues< index_t > degenerated_polyhedra() const
+        InspectionIssues< index_t > small_height_polyhedra(
+            double threshold ) const
         {
             InspectionIssues< index_t > wrong_polyhedra{
                 "Degenerated Polyhedra."
@@ -72,7 +73,8 @@ namespace geode
             for( const auto polyhedron_id :
                 Range{ this->mesh().nb_polyhedra() } )
             {
-                if( this->mesh().is_polyhedron_degenerated( polyhedron_id ) )
+                if( this->mesh().polyhedron_minimum_height( polyhedron_id )
+                    <= threshold )
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
                         absl::StrCat( "Polyhedron ", polyhedron_id,
@@ -81,6 +83,11 @@ namespace geode
                 }
             }
             return wrong_polyhedra;
+        }
+
+        InspectionIssues< index_t > degenerated_polyhedra() const
+        {
+            return small_height_polyhedra( GLOBAL_EPSILON );
         }
     };
 
@@ -101,10 +108,25 @@ namespace geode
     }
 
     template < index_t dimension >
+    InspectionIssues< index_t > SolidMeshDegeneration< dimension >::small_edges(
+        double threshold ) const
+    {
+        return impl_->small_edges( threshold );
+    }
+
+    template < index_t dimension >
     InspectionIssues< index_t >
         SolidMeshDegeneration< dimension >::degenerated_edges() const
     {
         return impl_->degenerated_edges();
+    }
+
+    template < index_t dimension >
+    InspectionIssues< index_t >
+        SolidMeshDegeneration< dimension >::small_height_polyhedra(
+            double threshold ) const
+    {
+        return impl_->small_height_polyhedra( threshold );
     }
 
     template < index_t dimension >
