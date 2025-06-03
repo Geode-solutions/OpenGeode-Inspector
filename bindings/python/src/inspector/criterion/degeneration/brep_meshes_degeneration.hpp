@@ -52,8 +52,7 @@ namespace geode
                 &BRepComponentMeshesDegeneration::
                     inspect_polygons_degeneration )
             .def( "inspect_edges_degeneration",
-                &BRepComponentMeshesDegeneration::
-                    inspect_edges_degeneration )
+                &BRepComponentMeshesDegeneration::inspect_edges_degeneration )
             .def( "inspect_polyhedra_degeneration",
                 &BRepComponentMeshesDegeneration::
                     inspect_polyhedra_degeneration );

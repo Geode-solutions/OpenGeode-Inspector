@@ -41,8 +41,7 @@ namespace geode
                 &SolidMeshDegeneration::is_mesh_degenerated )
             .def(
                 "degenerated_edges", &SolidMeshDegeneration::degenerated_edges )
-            .def(
-                "small_edges", &SolidMeshDegeneration::small_edges )
+            .def( "small_edges", &SolidMeshDegeneration::small_edges )
             .def( "degenerated_polyhedra",
                 &SolidMeshDegeneration::degenerated_polyhedra )
             .def( "small_height_polyhedra",
