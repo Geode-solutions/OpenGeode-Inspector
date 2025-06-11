@@ -112,23 +112,16 @@ namespace
                 return triangles_intersection_detection(
                     p1_vertices, p2_vertices );
             }
-            for( const auto v : geode::LRange{ p1_vertices.size() - 2 } )
+            const auto p1_triangles = polygon_fan_triangles( p1_vertices, 0 );
+            const auto p2_triangles = polygon_fan_triangles( p2_vertices, 0 );
+            for( const auto& p1_triangle : p1_triangles )
             {
-                for( const auto& triangle :
-                    polygon_fan_triangles( p1_vertices, v ) )
+                for( const auto& p2_triangle : p2_triangles )
                 {
-                    for( const auto other_v :
-                        geode::LRange{ p2_vertices.size() - 2 } )
+                    if( triangles_intersection_detection(
+                            p1_triangle, p2_triangle ) )
                     {
-                        for( const auto& other_triangle :
-                            polygon_fan_triangles( p2_vertices, other_v ) )
-                        {
-                            if( triangles_intersection_detection(
-                                    triangle, other_triangle ) )
-                            {
-                                return true;
-                            }
-                        }
+                        return true;
                     }
                 }
             }
