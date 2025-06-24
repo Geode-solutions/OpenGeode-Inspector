@@ -292,7 +292,7 @@ namespace geode
             {
                 continue;
             }
-            if( brep_.line( cmv.component_id.id() ).mesh().nb_edges() < 1 )
+            if( brep_.line( cmv.component_id.id() ).mesh().nb_edges() == 0 )
             {
                 continue;
             }
