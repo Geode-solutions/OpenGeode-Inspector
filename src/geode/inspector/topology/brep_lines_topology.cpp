@@ -292,6 +292,10 @@ namespace geode
             {
                 continue;
             }
+            if( brep_.line( cmv.component_id.id() ).mesh().nb_edges() < 1 )
+            {
+                continue;
+            }
             const auto cme = geode::component_mesh_edges(
                 brep_, brep_.line( cmv.component_id.id() ), 0 );
             if( brep_.nb_incidences( cmv.component_id.id() ) >= 1 )
