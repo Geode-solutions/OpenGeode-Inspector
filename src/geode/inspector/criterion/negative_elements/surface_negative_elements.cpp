@@ -27,6 +27,7 @@
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
 
+#include <geode/geometry/basic_objects/polygon.hpp>
 #include <geode/geometry/basic_objects/triangle.hpp>
 #include <geode/geometry/information.hpp>
 #include <geode/geometry/sign.hpp>
