@@ -71,16 +71,8 @@ namespace geode
     private:
         bool polygon_has_negative_area( index_t polygon_id ) const
         {
-            if( mesh_.nb_polygon_vertices( polygon_id ) == 4 )
-            {
-                Triangle< dimension > triangle{
-                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 0 } ) ),
-                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 1 } ) ),
-                    mesh_.point( mesh_.polygon_vertex( { polygon_id, 2 } ) )
-                };
-                return triangle_area_sign( triangle ) == Sign::negative;
-            }
-            return mesh_.polygon_area( polygon_id ) < 0;
+            return polygon_area_sign( mesh_.polygon( polygon_id ) )
+                   == Sign::negative;
         }
 
     private:
