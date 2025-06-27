@@ -62,6 +62,10 @@ namespace geode
                 "Indices of unique vertices linked to a Line but not linked to "
                 "a Surface border."
             };
+        InspectionIssuesMap< index_t >
+            surface_polygons_with_wrong_component_facets_around{
+                "Indices of surface polygons with wrong component facets around"
+            };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -113,6 +117,10 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             vertex_is_part_of_line_and_not_on_surface_border(
                 index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            surface_facet_has_wrong_component_facets_around(
+                const Surface3D& line, const index_t facet_index ) const;
 
         [[nodiscard]] BRepSurfacesTopologyInspectionResult
             inspect_surfaces_topology() const;

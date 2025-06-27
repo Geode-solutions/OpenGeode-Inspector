@@ -40,7 +40,6 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_edges.hpp>
 
-#include <geode/model/helpers/component_mesh_edges.hpp>
 #include <geode/model/helpers/ray_tracing.hpp>
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
@@ -944,7 +943,7 @@ namespace geode
         }
         for( const auto& block : brep_.blocks() )
         {
-            if( brep_.block( block.id() ).mesh().nb_vertices() != 0 )
+            if( block_is_meshed( brep_.block( block.id() ) ) )
             {
                 meshed_blocks.push_back( block.id() );
             }
