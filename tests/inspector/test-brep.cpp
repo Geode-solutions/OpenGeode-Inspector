@@ -413,16 +413,32 @@ void check_wrong_bsurfaces_model()
     }
 }
 
+void check_segmented_cube()
+{
+    const auto model_brep = geode::load_brep(
+        absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) );
+    const geode::BRepInspector brep_inspector{ model_brep };
+    const auto result = brep_inspector.inspect_brep();
+
+    geode::Logger::info( "cube_segmented topology is ",
+        brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
+
+    const auto nb_component_meshes_issues =
+        launch_component_meshes_validity_checks( result.meshes, false );
+}
+
 int main()
 {
     try
     {
         geode::InspectorInspectorLibrary::initialize();
+        geode::Logger::set_level( geode::Logger::LEVEL::debug );
         check_model_a1( false );
         check_model_a1_valid( false );
         check_model_mss( false );
         check_model_D( false );
         check_wrong_bsurfaces_model();
+        check_segmented_cube();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
