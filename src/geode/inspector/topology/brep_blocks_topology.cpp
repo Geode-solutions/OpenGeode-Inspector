@@ -149,7 +149,7 @@ namespace
             surface_uuids_to_graph_edges,
         geode::BijectiveMapping< geode::uuid, geode::index_t >&
             line_uuids_to_graph_vertices,
-        geode::Graph& graph,
+        const geode::Graph& graph,
         geode::GraphBuilder& graph_builder )
     {
         for( const auto& line : brep.lines() )
