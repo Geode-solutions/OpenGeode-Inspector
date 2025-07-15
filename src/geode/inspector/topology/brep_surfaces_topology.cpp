@@ -33,6 +33,7 @@
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/model/helpers/component_mesh_polygons.hpp>
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
 #include <geode/model/mixin/core/line.hpp>
@@ -325,10 +326,50 @@ namespace geode
         return std::nullopt;
     }
 
+    std::optional< std::string >
+        BRepSurfacesTopology::surface_facet_has_wrong_component_facets_around(
+            const Surface3D& surface, const index_t facet_index ) const
+    {
+        const auto cmp = component_mesh_polygons( brep_, surface, facet_index );
+        for( const auto& [block_id, block_facets] : cmp.block_polygons )
+        {
+            if( brep_.is_boundary( surface, brep_.block( block_id ) ) )
+            {
+                if( block_facets.size() != 1 )
+                {
+                    return absl::StrCat( "Surface with uuid '",
+                        surface.id().string(),
+                        "' is boundary of block with uuid '", block_id.string(),
+                        "', but has ", block_facets.size(),
+                        " facets of this block around it, it should be 1." );
+                }
+                continue;
+            }
+            if( brep_.is_internal( surface, brep_.block( block_id ) ) )
+            {
+                if( block_facets.size() != 2 )
+                {
+                    return absl::StrCat( "Surface with uuid '",
+                        surface.id().string(),
+                        "' is internal to block with uuid '", block_id.string(),
+                        "', but has ", block_facets.size(),
+                        " facets of this block around it, it should be 2." );
+                }
+                continue;
+            }
+            return absl::StrCat( "Surface with uuid '", surface.id().string(),
+                "' has facet with id ", facet_index,
+                " in common with block with uuid '", block_id.string(),
+                "', but is neither boundary of nor internal to it." );
+        }
+        return std::nullopt;
+    }
+
     BRepSurfacesTopologyInspectionResult
         BRepSurfacesTopology::inspect_surfaces_topology() const
     {
         BRepSurfacesTopologyInspectionResult result;
+        const auto meshed_blocks = internal::brep_blocks_are_meshed( brep_ );
         for( const auto& surface : brep_.surfaces() )
         {
             if( !surface_is_meshed( brep_.surface( surface.id() ) ) )
@@ -347,6 +388,29 @@ namespace geode
                     absl::StrCat( "Surface ", surface.id().string() ) );
                 result.surfaces_not_linked_to_a_unique_vertex.add_issues_to_map(
                     surface.id(), std::move( surface_result ) );
+            }
+            if( !meshed_blocks )
+            {
+                continue;
+            }
+            InspectionIssues< index_t > surface_facets_with_wrong_cme{
+                absl::StrCat( "Surface ", surface.id().string() )
+            };
+            for( const auto facet_id : Range{ surface.mesh().nb_polygons() } )
+            {
+                if( const auto problem_message =
+                        surface_facet_has_wrong_component_facets_around(
+                            surface, facet_id ) )
+                {
+                    surface_facets_with_wrong_cme.add_issue(
+                        facet_id, problem_message.value() );
+                }
+            }
+            if( surface_facets_with_wrong_cme.nb_issues() != 0 )
+            {
+                result.surface_polygons_with_wrong_component_facets_around
+                    .add_issues_to_map( surface.id(),
+                        std::move( surface_facets_with_wrong_cme ) );
             }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )

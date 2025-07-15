@@ -68,6 +68,10 @@ namespace geode
                 "Indices of unique vertices linked to several Lines but not "
                 "linked to a Corner."
             };
+        InspectionIssuesMap< index_t >
+            line_edges_with_wrong_component_edges_around{
+                "Indices of line edges with wrong component edges around"
+            };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -117,6 +121,10 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             vertex_has_lines_but_is_not_a_corner(
                 index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string >
+            line_edge_has_wrong_component_edges_around(
+                const Line3D& line, const index_t edge_index ) const;
 
         [[nodiscard]] BRepLinesTopologyInspectionResult
             inspect_lines_topology() const;
