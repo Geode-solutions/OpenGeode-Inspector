@@ -278,6 +278,10 @@ namespace
         for( const auto& surface_id : not_boundary_surfaces )
         {
             const auto& surface_mesh = brep.surface( surface_id ).mesh();
+            if( surface_mesh.nb_polygons() == 0 )
+            {
+                continue;
+            }
             const auto polygon_barycenter =
                 surface_mesh.polygon_barycenter( 0 );
             bool is_dangling{ true };

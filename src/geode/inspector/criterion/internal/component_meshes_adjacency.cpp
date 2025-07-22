@@ -46,6 +46,10 @@ namespace
         OPENGEODE_EXCEPTION( edge_unique_vertices[0] != geode::NO_ID
                                  && edge_unique_vertices[1] != geode::NO_ID,
             "[ComponentMeshesAdjacency] Missing unique_vertices" );
+        OPENGEODE_EXCEPTION(
+            edge_unique_vertices[0] < model.nb_unique_vertices()
+                && edge_unique_vertices[1] < model.nb_unique_vertices(),
+            "[ComponentMeshesAdjacency] Wrong unique_vertices" );
         return !geode::detail::line_component_mesh_edges(
             model, edge_unique_vertices )
                     .empty();
