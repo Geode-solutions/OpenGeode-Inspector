@@ -604,26 +604,26 @@ namespace geode
         }
         for( const auto& block_uuid : block_uuids )
         {
-            const auto nb_block_cmvs = count_cmvs(
-                block_cmvs, [&block_uuid]( const ComponentMeshVertex& cmv ) {
+            const auto nb_block_cmvs =
+                count_cmvs( block_cmvs, [&block_uuid]( const auto& cmv ) {
                     return cmv.component_id.id() == block_uuid;
                 } );
 
-            const auto nb_internal_surface_cmvs = count_cmvs( surface_cmvs,
-                [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+            const auto nb_internal_surface_cmvs = count_cmvs(
+                surface_cmvs, [&block_uuid, this]( const auto& cmv ) {
                     return this->brep_.is_internal(
                         brep_.surface( cmv.component_id.id() ),
                         brep_.block( block_uuid ) );
                 } );
 
-            const auto nb_boundary_surface_cmvs = count_cmvs( surface_cmvs,
-                [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+            const auto nb_boundary_surface_cmvs = count_cmvs(
+                surface_cmvs, [&block_uuid, this]( const auto& cmv ) {
                     return this->brep_.is_boundary(
                         brep_.surface( cmv.component_id.id() ),
                         brep_.block( block_uuid ) );
                 } );
-            const auto nb_boundary_line_cmvs = count_cmvs( line_cmvs,
-                [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+            const auto nb_boundary_line_cmvs =
+                count_cmvs( line_cmvs, [&block_uuid, this]( const auto& cmv ) {
                     for( const auto& block_boundary :
                         this->brep_.boundaries( brep_.block( block_uuid ) ) )
                     {
@@ -646,8 +646,8 @@ namespace geode
                     }
                     return false;
                 } );
-            const auto nb_free_line_cmvs = count_cmvs( line_cmvs,
-                [&block_uuid, this]( const ComponentMeshVertex& cmv ) {
+            const auto nb_free_line_cmvs =
+                count_cmvs( line_cmvs, [this]( const auto& cmv ) {
                     return this->brep_.nb_incidences( cmv.component_id.id() )
                                == 1
                            && this->brep_.nb_embedding_surfaces(
