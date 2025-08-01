@@ -43,6 +43,8 @@
 
 #include <geode/io/mesh/common.hpp>
 
+#include <geode/geosciences_io/mesh/common.hpp>
+
 #include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
 
 ABSL_FLAG( std::string,
@@ -73,6 +75,7 @@ int main( int argc, char* argv[] )
         absl::ParseCommandLine( argc, argv );
 
         geode::IOMeshLibrary::initialize();
+        geode::GeosciencesIOMeshLibrary::initialize();
         const auto filename_surf = absl::GetFlag( FLAGS_surface );
         const auto filename_curv = absl::GetFlag( FLAGS_curve );
         const auto ext_surf =

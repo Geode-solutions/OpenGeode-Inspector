@@ -37,6 +37,8 @@
 
 #include <geode/io/mesh/common.hpp>
 
+#include <geode/geosciences_io/mesh/common.hpp>
+
 #include <geode/inspector/edgedcurve_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
@@ -62,6 +64,7 @@ int main( int argc, char* argv[] )
         absl::ParseCommandLine( argc, argv );
 
         geode::IOMeshLibrary::initialize();
+        geode::GeosciencesIOMeshLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
         const auto ext =
             geode::to_string( geode::extension_from_filename( filename ) );
