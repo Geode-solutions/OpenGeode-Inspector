@@ -59,6 +59,7 @@ add_geode_binary(
         OpenGeode::basic
         OpenGeode::mesh
         OpenGeode-IO::mesh
+        OpenGeode-GeosciencesIO::mesh
         ${PROJECT_NAME}::inspector
 )
 
@@ -104,6 +105,7 @@ add_geode_binary(
         OpenGeode::basic
         OpenGeode::mesh
         OpenGeode-IO::mesh
+        OpenGeode-GeosciencesIO::mesh
         ${PROJECT_NAME}::inspector
 )
 
@@ -132,6 +134,7 @@ add_geode_binary(
         OpenGeode::basic
         OpenGeode::mesh
         OpenGeode-IO::mesh
+        OpenGeode-GeosciencesIO::mesh
         ${PROJECT_NAME}::inspector
 )
 
@@ -161,6 +164,7 @@ add_geode_binary(
         OpenGeode::basic
         OpenGeode::mesh
         OpenGeode-IO::mesh
+        OpenGeode-GeosciencesIO::mesh
         ${PROJECT_NAME}::inspector
 )
 
@@ -174,5 +178,6 @@ add_geode_binary(
         OpenGeode::basic
         OpenGeode::mesh
         OpenGeode-IO::mesh
+        OpenGeode-GeosciencesIO::mesh
         ${PROJECT_NAME}::inspector
 )
