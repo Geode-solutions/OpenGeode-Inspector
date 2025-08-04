@@ -26,6 +26,8 @@
 #include <absl/container/flat_hash_map.h>
 
 #include <geode/inspector/common.hpp>
+#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.hpp>
+#include <geode/inspector/criterion/degeneration/surface_degeneration.hpp>
 #include <geode/inspector/information.hpp>
 
 namespace geode
@@ -68,6 +70,12 @@ namespace geode
 
         private:
             const Model& model_;
+            mutable absl::flat_hash_map< uuid,
+                std::unique_ptr< EdgedCurveDegeneration< Model::dim > > >
+                edged_curve_inspectors_;
+            mutable absl::flat_hash_map< uuid,
+                std::unique_ptr< SurfaceMeshDegeneration< Model::dim > > >
+                surface_mesh_inspectors_;
         };
     } // namespace internal
 } // namespace geode

@@ -41,12 +41,8 @@ namespace geode
         DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
             : mesh_( mesh ), enabled_edges_( false )
         {
-            DEBUG( "DegenerationImpl" );
-            Logger::debug(
-                mesh_.id().string(), " -> ", mesh_.are_edges_enabled() );
             if( !mesh_.are_edges_enabled() )
             {
-                Logger::debug( mesh_.id().string(), " -> enabling edges" );
                 mesh_.enable_edges();
                 enabled_edges_ = true;
             }
@@ -55,10 +51,8 @@ namespace geode
         template < class MeshType >
         DegenerationImpl< MeshType >::~DegenerationImpl()
         {
-            DEBUG( "~DegenerationImpl" );
             if( enabled_edges_ )
             {
-                Logger::debug( mesh_.id().string(), " -> disabling edges" );
                 mesh_.disable_edges();
             }
         }
@@ -80,7 +74,6 @@ namespace geode
         InspectionIssues< index_t > DegenerationImpl< MeshType >::small_edges(
             double threshold ) const
         {
-            DEBUG( "the there" );
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges."
             };

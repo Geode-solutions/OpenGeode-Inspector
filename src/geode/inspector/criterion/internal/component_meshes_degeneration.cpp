@@ -32,9 +32,6 @@
 #include <geode/model/representation/core/brep.hpp>
 #include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/criterion/degeneration/edgedcurve_degeneration.hpp>
-#include <geode/inspector/criterion/degeneration/surface_degeneration.hpp>
-
 namespace geode
 {
     namespace internal
@@ -53,9 +50,15 @@ namespace geode
         {
             for( const auto& line : model_.lines() )
             {
-                const EdgedCurveDegeneration< Model::dim > inspector{
-                    line.mesh()
-                };
+                if( !edged_curve_inspectors_.contains( line.id() ) )
+                {
+                    edged_curve_inspectors_.try_emplace(
+                        line.id(), std::make_unique<
+                                       EdgedCurveDegeneration< Model::dim > >(
+                                       line.mesh() ) );
+                }
+                const auto& inspector =
+                    *edged_curve_inspectors_.at( line.id() );
                 auto issues = inspector.small_edges( threshold );
                 issues.set_description( absl::StrCat(
                     "Line ", line.id().string(), " small edges" ) );
@@ -64,10 +67,15 @@ namespace geode
             }
             for( const auto& surface : model_.surfaces() )
             {
-                DEBUG( "Check small edges" );
-                const geode::SurfaceMeshDegeneration< Model::dim > inspector{
-                    surface.mesh()
-                };
+                if( !surface_mesh_inspectors_.contains( surface.id() ) )
+                {
+                    surface_mesh_inspectors_.try_emplace( surface.id(),
+                        std::make_unique<
+                            SurfaceMeshDegeneration< Model::dim > >(
+                            surface.mesh() ) );
+                }
+                const auto& inspector =
+                    *surface_mesh_inspectors_.at( surface.id() );
                 auto issues = inspector.small_edges( threshold );
                 issues.set_description( absl::StrCat(
                     "Surface ", surface.id().string(), " small edges" ) );
@@ -90,9 +98,15 @@ namespace geode
         {
             for( const auto& surface : model_.surfaces() )
             {
-                const geode::SurfaceMeshDegeneration< Model::dim > inspector{
-                    surface.mesh()
-                };
+                if( !surface_mesh_inspectors_.contains( surface.id() ) )
+                {
+                    surface_mesh_inspectors_.try_emplace( surface.id(),
+                        std::make_unique<
+                            SurfaceMeshDegeneration< Model::dim > >(
+                            surface.mesh() ) );
+                }
+                const auto& inspector =
+                    *surface_mesh_inspectors_.at( surface.id() );
                 auto issues = inspector.small_height_polygons( threshold );
                 issues.set_description( absl::StrCat(
                     "Surface ", surface.id().string(), " small polygons" ) );
