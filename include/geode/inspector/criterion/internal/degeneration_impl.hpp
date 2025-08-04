@@ -52,6 +52,8 @@ namespace geode
 
             [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;
 
+            void enable_edges_on_mesh() const;
+
         protected:
             explicit DegenerationImpl( const Mesh& mesh );
 
@@ -59,7 +61,7 @@ namespace geode
 
         private:
             const Mesh& mesh_;
-            bool enabled_edges_;
+            mutable bool enabled_edges_;
         };
     } // namespace internal
 } // namespace geode

@@ -23,13 +23,17 @@
 
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
+#include <absl/container/flat_hash_set.h>
 
 #include <geode/inspector/common.hpp>
 #include <geode/inspector/information.hpp>
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Line );
+    FORWARD_DECLARATION_DIMENSION_CLASS( Surface );
+    ALIAS_2D_AND_3D( Line );
+    ALIAS_2D_AND_3D( Surface );
     struct uuid;
     struct PolygonEdge;
 } // namespace geode
@@ -48,6 +52,8 @@ namespace geode
             OPENGEODE_DISABLE_COPY( ComponentMeshesDegeneration );
 
         public:
+            virtual ~ComponentMeshesDegeneration();
+
             void add_small_edges( InspectionIssuesMap< index_t >& issues_map,
                 double threshold ) const;
 
@@ -67,7 +73,12 @@ namespace geode
             [[nodiscard]] const Model& model() const;
 
         private:
+            void enable_edges_on_surface(
+                const Surface< Model::dim >& surface ) const;
+
+        private:
             const Model& model_;
+            mutable absl::flat_hash_set< uuid > enabled_edges_surfaces_;
         };
     } // namespace internal
 } // namespace geode

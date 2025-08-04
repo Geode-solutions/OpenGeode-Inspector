@@ -23,6 +23,8 @@
 
 #include <geode/inspector/criterion/internal/component_meshes_degeneration.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 
 #include <geode/mesh/core/surface_mesh.hpp>
@@ -45,33 +47,65 @@ namespace geode
             : model_( model )
         {
         }
+        template < typename Model >
+        ComponentMeshesDegeneration< Model >::~ComponentMeshesDegeneration()
+        {
+            for( const auto& surface_id : enabled_edges_surfaces_ )
+            {
+                model_.surface( surface_id ).mesh().disable_edges();
+            }
+        }
 
         template < typename Model >
         void ComponentMeshesDegeneration< Model >::add_small_edges(
             InspectionIssuesMap< index_t >& components_small_edges,
             double threshold ) const
         {
+            std::vector<
+                async::task< std::pair< uuid, InspectionIssues< index_t > > > >
+                tasks;
+            tasks.reserve( model_.nb_lines() );
             for( const auto& line : model_.lines() )
             {
-                const EdgedCurveDegeneration< Model::dim > inspector{
-                    line.mesh()
-                };
-                auto issues = inspector.small_edges( threshold );
-                issues.set_description( absl::StrCat(
-                    "Line ", line.id().string(), " small edges" ) );
-                components_small_edges.add_issues_to_map(
-                    line.id(), std::move( issues ) );
+                tasks.emplace_back( async::spawn( [&threshold, &line] {
+                    const EdgedCurveDegeneration< Model::dim > inspector{
+                        line.mesh()
+                    };
+                    auto issues = inspector.small_edges( threshold );
+                    issues.set_description( absl::StrCat(
+                        "Line ", line.id().string(), " small edges" ) );
+                    return std::make_pair( line.id(), std::move( issues ) );
+                } ) );
             }
+            for( auto& task :
+                async::when_all( tasks.begin(), tasks.end() ).get() )
+            {
+                auto [line_id, issues] = task.get();
+                components_small_edges.add_issues_to_map(
+                    line_id, std::move( issues ) );
+            }
+            std::vector<
+                async::task< std::pair< uuid, InspectionIssues< index_t > > > >
+                tasks;
+            tasks.reserve( model_.nb_surfaces() );
             for( const auto& surface : model_.surfaces() )
             {
-                const geode::SurfaceMeshDegeneration< Model::dim > inspector{
-                    surface.mesh()
-                };
-                auto issues = inspector.small_edges( threshold );
-                issues.set_description( absl::StrCat(
-                    "Surface ", surface.id().string(), " small edges" ) );
+                tasks.emplace_back( async::spawn( [&threshold, &surface] {
+                    enable_edges_on_surface( surface );
+                    const geode::SurfaceMeshDegeneration< Model::dim >
+                        inspector{ surface.mesh() };
+                    auto issues = inspector.small_edges( threshold );
+                    issues.set_description( absl::StrCat(
+                        "Surface ", surface.id().string(), " small edges" ) );
+                    return std::make_pair( surface.id(), std::move( issues ) );
+                } ) );
+            }
+            for( auto& task :
+                async::when_all( tasks.begin(), tasks.end() ).get() )
+            {
+                auto [surface_id, issues] = task.get();
                 components_small_edges.add_issues_to_map(
-                    surface.id(), std::move( issues ) );
+                    surface_id, std::move( issues ) );
             }
         }
 
@@ -87,16 +121,27 @@ namespace geode
             InspectionIssuesMap< index_t >& components_small_polygons,
             double threshold ) const
         {
+            std::vector<
+                async::task< std::pair< uuid, InspectionIssues< index_t > > > >
+                tasks;
+            tasks.reserve( model_.nb_surfaces() );
             for( const auto& surface : model_.surfaces() )
             {
-                const geode::SurfaceMeshDegeneration< Model::dim > inspector{
-                    surface.mesh()
-                };
-                auto issues = inspector.small_height_polygons( threshold );
-                issues.set_description( absl::StrCat(
-                    "Surface ", surface.id().string(), " small polygons" ) );
+                tasks.emplace_back( async::spawn( [&threshold, &surface] {
+                    const geode::SurfaceMeshDegeneration< Model::dim >
+                        inspector{ surface.mesh() };
+                    auto issues = inspector.small_height_polygons( threshold );
+                    issues.set_description( absl::StrCat( "Surface ",
+                        surface.id().string(), " small polygons" ) );
+                    return std::make_pair( surface.id(), std::move( issues ) );
+                } ) );
+            }
+            for( auto& task :
+                async::when_all( tasks.begin(), tasks.end() ).get() )
+            {
+                auto [surface_id, issues] = task.get();
                 components_small_polygons.add_issues_to_map(
-                    surface.id(), std::move( issues ) );
+                    surface_id, std::move( issues ) );
             }
         }
 
@@ -113,6 +158,18 @@ namespace geode
         const Model& ComponentMeshesDegeneration< Model >::model() const
         {
             return model_;
+        }
+
+        template < typename Model >
+        void ComponentMeshesDegeneration< Model >::enable_edges_on_surface(
+            const Surface< Model::dim >& surface ) const
+        {
+            const auto& mesh = surface.mesh();
+            if( !mesh.are_edges_enabled() )
+            {
+                mesh.enable_edges();
+                enabled_edges_surfaces_.emplace( surface.id() );
+            }
         }
 
         template class opengeode_inspector_inspector_api

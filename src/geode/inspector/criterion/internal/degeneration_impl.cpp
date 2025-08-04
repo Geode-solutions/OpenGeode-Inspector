@@ -41,11 +41,6 @@ namespace geode
         DegenerationImpl< MeshType >::DegenerationImpl( const MeshType& mesh )
             : mesh_( mesh ), enabled_edges_( false )
         {
-            if( !mesh_.are_edges_enabled() )
-            {
-                mesh_.enable_edges();
-                enabled_edges_ = true;
-            }
         }
 
         template < class MeshType >
@@ -60,6 +55,7 @@ namespace geode
         template < class MeshType >
         bool DegenerationImpl< MeshType >::is_mesh_degenerated() const
         {
+            enable_edges_on_mesh();
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
                 if( edge_is_degenerated( edge_index ) )
@@ -74,6 +70,7 @@ namespace geode
         InspectionIssues< index_t > DegenerationImpl< MeshType >::small_edges(
             double threshold ) const
         {
+            enable_edges_on_mesh();
             InspectionIssues< index_t > degenerated_edges_index{
                 "Degenerated Edges."
             };
@@ -110,6 +107,16 @@ namespace geode
             const auto p1 = mesh_.point( edge_vertices[0] );
             const auto p2 = mesh_.point( edge_vertices[1] );
             return point_point_distance( p1, p2 ) < threshold;
+        }
+
+        template < class MeshType >
+        void DegenerationImpl< MeshType >::enable_edges_on_mesh() const
+        {
+            if( !mesh_.are_edges_enabled() )
+            {
+                mesh_.enable_edges();
+                enabled_edges_ = true;
+            }
         }
 
         template < class MeshType >
