@@ -448,13 +448,13 @@ int main()
     {
         geode::InspectorInspectorLibrary::initialize();
         geode::Logger::set_level( geode::Logger::LEVEL::debug );
-        // check_model_a1( false );
-        // check_model_a1_valid( false );
-        // check_model_mss( false );
-        // check_model_D( false );
-        // check_wrong_bsurfaces_model();
+        check_model_a1( false );
+        check_model_a1_valid( false );
+        check_model_mss( false );
+        check_model_D( false );
+        check_wrong_bsurfaces_model();
         check_meshed_cube();
-        // check_segmented_cube();
+        check_segmented_cube();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
