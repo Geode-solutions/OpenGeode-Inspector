@@ -64,6 +64,7 @@ namespace geode
             }
             for( const auto& surface : model_.surfaces() )
             {
+                DEBUG( "Check small edges" );
                 const geode::SurfaceMeshDegeneration< Model::dim > inspector{
                     surface.mesh()
                 };

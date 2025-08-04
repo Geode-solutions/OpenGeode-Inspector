@@ -109,6 +109,7 @@ namespace geode
         SurfaceMeshDegeneration< dimension >::small_edges(
             double threshold ) const
     {
+        DEBUG( "here" );
         return impl_->small_edges( threshold );
     }
 
