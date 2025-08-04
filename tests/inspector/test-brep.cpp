@@ -423,6 +423,7 @@ void check_meshed_cube()
     geode::Logger::info( "meshed_cube topology is ",
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
 
+    OPENGEODE_EXCEPTION( result.nb_issues() == 0, "[Test] Should be valid." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, false );
 }
