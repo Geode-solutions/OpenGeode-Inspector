@@ -455,7 +455,6 @@ int main()
         // check_wrong_bsurfaces_model();
         check_meshed_cube();
         // check_segmented_cube();
-        exit( 1 );
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
