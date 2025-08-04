@@ -63,11 +63,11 @@ namespace geode
         {
             std::vector<
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
-                tasks;
-            tasks.reserve( model_.nb_lines() );
+                line_tasks;
+            line_tasks.reserve( model_.nb_lines() );
             for( const auto& line : model_.lines() )
             {
-                tasks.emplace_back( async::spawn( [&threshold, &line] {
+                line_tasks.emplace_back( async::spawn( [&threshold, &line] {
                     const EdgedCurveDegeneration< Model::dim > inspector{
                         line.mesh()
                     };
@@ -78,7 +78,7 @@ namespace geode
                 } ) );
             }
             for( auto& task :
-                async::when_all( tasks.begin(), tasks.end() ).get() )
+                async::when_all( line_tasks.begin(), line_tasks.end() ).get() )
             {
                 auto [line_id, issues] = task.get();
                 components_small_edges.add_issues_to_map(
@@ -86,12 +86,13 @@ namespace geode
             }
             std::vector<
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
-                tasks;
-            tasks.reserve( model_.nb_surfaces() );
+                surface_tasks;
+            surface_tasks.reserve( model_.nb_surfaces() );
             for( const auto& surface : model_.surfaces() )
             {
-                tasks.emplace_back( async::spawn( [&threshold, &surface] {
-                    enable_edges_on_surface( surface );
+                surface_tasks.emplace_back( async::spawn( [this, &threshold,
+                                                              &surface] {
+                    this->enable_edges_on_surface( surface );
                     const geode::SurfaceMeshDegeneration< Model::dim >
                         inspector{ surface.mesh() };
                     auto issues = inspector.small_edges( threshold );
@@ -101,7 +102,8 @@ namespace geode
                 } ) );
             }
             for( auto& task :
-                async::when_all( tasks.begin(), tasks.end() ).get() )
+                async::when_all( surface_tasks.begin(), surface_tasks.end() )
+                    .get() )
             {
                 auto [surface_id, issues] = task.get();
                 components_small_edges.add_issues_to_map(
