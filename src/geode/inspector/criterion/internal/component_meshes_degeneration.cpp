@@ -91,20 +91,22 @@ namespace geode
             const auto surfaces_to_enable = surfaces_on_which_enable_edges();
             for( const auto& surface : model_.surfaces() )
             {
-                surface_tasks.emplace_back( async::spawn( [&surfaces_to_enable,
-                                                              &threshold,
-                                                              &surface] {
-                    if( absl::c_contains( surfaces_to_enable, surface.id() ) )
-                    {
-                        surface.mesh().enable_edges();
-                    }
-                    const geode::SurfaceMeshDegeneration< Model::dim >
-                        inspector{ surface.mesh() };
-                    auto issues = inspector.small_edges( threshold );
-                    issues.set_description( absl::StrCat(
-                        "Surface ", surface.id().string(), " small edges" ) );
-                    return std::make_pair( surface.id(), std::move( issues ) );
-                } ) );
+                const auto enable_edges =
+                    absl::c_contains( surfaces_to_enable, surface.id() );
+                surface_tasks.emplace_back(
+                    async::spawn( [&enable_edges, &threshold, &surface] {
+                        if( enable_edges )
+                        {
+                            surface.mesh().enable_edges();
+                        }
+                        const geode::SurfaceMeshDegeneration< Model::dim >
+                            inspector{ surface.mesh() };
+                        auto issues = inspector.small_edges( threshold );
+                        issues.set_description( absl::StrCat( "Surface ",
+                            surface.id().string(), " small edges" ) );
+                        return std::make_pair(
+                            surface.id(), std::move( issues ) );
+                    } ) );
             }
             for( auto& task :
                 async::when_all( surface_tasks.begin(), surface_tasks.end() )
