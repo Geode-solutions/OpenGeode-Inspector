@@ -73,8 +73,7 @@ namespace geode
             [[nodiscard]] const Model& model() const;
 
         private:
-            void enable_edges_on_surface(
-                const Surface< Model::dim >& surface ) const;
+            std::vector< uuid > surfaces_on_which_enable_edges() const;
 
         private:
             const Model& model_;

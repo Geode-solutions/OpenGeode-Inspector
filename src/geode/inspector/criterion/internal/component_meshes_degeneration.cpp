@@ -88,11 +88,16 @@ namespace geode
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
                 surface_tasks;
             surface_tasks.reserve( model_.nb_surfaces() );
+            const auto surfaces_to_enable = surfaces_on_which_enable_edges();
             for( const auto& surface : model_.surfaces() )
             {
-                surface_tasks.emplace_back( async::spawn( [this, &threshold,
+                surface_tasks.emplace_back( async::spawn( [&surfaces_to_enable,
+                                                              &threshold,
                                                               &surface] {
-                    this->enable_edges_on_surface( surface );
+                    if( absl::c_contains( surfaces_to_enable, surface.id() ) )
+                    {
+                        surface.mesh().enable_edges();
+                    }
                     const geode::SurfaceMeshDegeneration< Model::dim >
                         inspector{ surface.mesh() };
                     auto issues = inspector.small_edges( threshold );
@@ -163,15 +168,20 @@ namespace geode
         }
 
         template < typename Model >
-        void ComponentMeshesDegeneration< Model >::enable_edges_on_surface(
-            const Surface< Model::dim >& surface ) const
+        std::vector< uuid > ComponentMeshesDegeneration<
+            Model >::surfaces_on_which_enable_edges() const
         {
-            const auto& mesh = surface.mesh();
-            if( !mesh.are_edges_enabled() )
+            std::vector< uuid > result;
+            for( const auto& surface : model_.surfaces() )
             {
-                mesh.enable_edges();
-                enabled_edges_surfaces_.emplace( surface.id() );
+                const auto& mesh = surface.mesh();
+                if( !mesh.are_edges_enabled() )
+                {
+                    result.emplace_back( surface.id() );
+                    enabled_edges_surfaces_.emplace( surface.id() );
+                }
             }
+            return result;
         }
 
         template class opengeode_inspector_inspector_api
