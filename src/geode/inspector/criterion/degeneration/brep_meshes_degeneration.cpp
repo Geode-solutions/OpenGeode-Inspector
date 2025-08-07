@@ -26,6 +26,8 @@
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
+#include <geode/mesh/core/solid_mesh.hpp>
+
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
@@ -76,6 +78,14 @@ namespace geode
         {
         }
 
+        ~Impl()
+        {
+            for( const auto& block_id : enabled_edges_blocks_ )
+            {
+                model().block( block_id ).mesh().disable_edges();
+            }
+        }
+
         void add_solid_small_elements(
             InspectionIssuesMap< index_t >& small_edges_map,
             InspectionIssuesMap< index_t >& small_polyhedra_map,
@@ -83,7 +93,13 @@ namespace geode
         {
             for( const auto& block : model().blocks() )
             {
-                const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
+                const auto& mesh = block.mesh();
+                if( !mesh.are_edges_enabled() )
+                {
+                    mesh.enable_edges();
+                    enabled_edges_blocks_.emplace( block.id() );
+                }
+                const geode::SolidMeshDegeneration3D inspector{ mesh };
                 auto small_edges = inspector.small_edges( threshold );
                 small_edges.set_description( absl::StrCat(
                     "Block ", block.id().string(), " small edges" ) );
@@ -105,6 +121,9 @@ namespace geode
             add_solid_small_elements( degenerated_edges_map,
                 degenerated_polyhedra_map, GLOBAL_EPSILON );
         }
+
+    private:
+        mutable absl::flat_hash_set< uuid > enabled_edges_blocks_;
     };
 
     BRepComponentMeshesDegeneration::BRepComponentMeshesDegeneration(
