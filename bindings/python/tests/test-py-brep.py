@@ -224,11 +224,7 @@ def check_a1(verbose):
             "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
-
-def check_a1_valid(verbose):
-    test_dir = os.path.dirname(__file__)
-    data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_brep = opengeode.load_brep(data_dir + "/model_A1_valid.og_brep")
+def inspect_model_A1(model_brep,verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
     if brep_inspector.brep_topology_is_valid():
@@ -248,11 +244,13 @@ def check_a1_valid(verbose):
             "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
-
-def check_model_mss(verbose):
+def check_a1_valid(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_brep = opengeode.load_brep(data_dir + "/mss.og_brep")
+    model_brep = opengeode.load_brep(data_dir + "/model_A1_valid.og_brep")
+    inspect_model_A1(model_brep,verbose)
+
+def inspect_model_mss(model_brep,verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
     if brep_inspector.brep_topology_is_valid():
@@ -270,11 +268,13 @@ def check_model_mss(verbose):
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model mss should have no component meshes issues.")
 
-
-def check_model_D(verbose):
+def check_model_mss(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_brep = opengeode.load_brep(data_dir + "/model_D.og_brep")
+    model_brep = opengeode.load_brep(data_dir + "/mss.og_brep")
+    inspect_model_mss(model_brep,verbose)
+
+def inspect_model_D(model_brep,verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
 
@@ -292,7 +292,13 @@ def check_model_D(verbose):
     )
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model_D should have no component meshes issues.")
+    
 
+def check_model_D(verbose):
+    test_dir = os.path.dirname(__file__)
+    data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
+    model_brep = opengeode.load_brep(data_dir + "/model_D.og_brep")
+    inspect_model_D(model_brep,verbose)
 
 if __name__ == "__main__":
     inspector.InspectorInspectorLibrary.initialize()

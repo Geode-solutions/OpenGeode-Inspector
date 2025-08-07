@@ -177,7 +177,8 @@ namespace geode
             for( const auto& surface : model_.surfaces() )
             {
                 const auto& mesh = surface.mesh();
-                if( !mesh.are_edges_enabled() )
+                if( !mesh.are_edges_enabled()
+                    && !enabled_edges_surfaces_.contains( surface.id() ) )
                 {
                     result.emplace_back( surface.id() );
                     enabled_edges_surfaces_.emplace( surface.id() );
