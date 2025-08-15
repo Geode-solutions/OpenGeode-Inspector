@@ -308,7 +308,7 @@ namespace geode
                         cmv.component_id.id().string(),
                         "', which should be boundary of "
                         "surface with uuid '",
-                        incident_surface.id().string() );
+                        incident_surface.id().string(), "'" );
                 }
                 const auto& surface_edges =
                     cme.surface_edges.at( incident_surface.id() );
@@ -319,7 +319,7 @@ namespace geode
                         cmv.component_id.id().string(),
                         "', which should not be boundary of "
                         "surface with uuid '",
-                        incident_surface.id().string() );
+                        incident_surface.id().string(), "'" );
                 }
             }
             for( const auto& embedding_surface : brep_.embedding_surfaces(
@@ -330,9 +330,9 @@ namespace geode
                     return absl::StrCat( "Unique vertex with index ",
                         unique_vertex_index, " is part of line with uuid '",
                         cmv.component_id.id().string(),
-                        "', which should not be embedded in "
+                        "', which should be embedded in "
                         "surface with uuid '",
-                        embedding_surface.id().string() );
+                        embedding_surface.id().string(), "'" );
                 }
                 const auto& surface_edges =
                     cme.surface_edges.at( embedding_surface.id() );
@@ -343,7 +343,7 @@ namespace geode
                         cmv.component_id.id().string(),
                         "', which should not be embedded in "
                         "surface with uuid '",
-                        embedding_surface.id().string() );
+                        embedding_surface.id().string(), "'" );
                 }
             }
             if( brep_.nb_incidences( cmv.component_id.id() ) < 1
