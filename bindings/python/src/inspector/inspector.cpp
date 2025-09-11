@@ -79,6 +79,11 @@ namespace pybind11
         {
         };
 
+        template < typename Type, size_t dimension >
+        struct type_caster< absl::InlinedVector< Type, dimension > >
+            : list_caster< absl::InlinedVector< Type, dimension >, Type >
+        {
+        };
     } // namespace detail
 } // namespace pybind11
 
