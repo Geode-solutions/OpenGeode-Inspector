@@ -20,9 +20,25 @@
  * SOFTWARE.
  *
  */
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
 #include <string>
 
 #include <geode/inspector/information.hpp>
+
+namespace pybind11
+{
+    namespace detail
+    {
+        template < typename Type, size_t dimension >
+        struct type_caster< absl::InlinedVector< Type, dimension > >
+            : list_caster< absl::InlinedVector< Type, dimension >, Type >
+        {
+        };
+    } // namespace detail
+} // namespace pybind11
 
 namespace geode
 {
@@ -62,8 +78,6 @@ namespace geode
         do_define_information< std::pair< index_t, index_t > >(
             module, "PairIndex" );
         do_define_information< uuid >( module, "UUID" );
-        do_define_information< BRepNonManifoldEdge >(
-            module, "BRepNonManifoldEdge" );
         do_define_information< std::pair< geode::ComponentMeshElement,
             geode::ComponentMeshElement > >(
             module, "PairComponentMeshElement" );

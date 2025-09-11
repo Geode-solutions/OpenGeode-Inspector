@@ -25,6 +25,8 @@
 
 #include <geode/inspector/criterion/manifold/brep_meshes_manifold.hpp>
 
+#include "../../information.hpp"
+
 namespace geode
 {
     void define_brep_meshes_manifold( pybind11::module& module )
@@ -34,6 +36,9 @@ namespace geode
             .def_readwrite( "edge", &BRepNonManifoldEdge::edge )
             .def_readwrite(
                 "component_ids", &BRepNonManifoldEdge::component_ids );
+
+        do_define_information< BRepNonManifoldEdge >(
+            module, "BRepNonManifoldEdge" );
 
         pybind11::class_< BRepMeshesManifoldInspectionResult >(
             module, "BRepMeshesManifoldInspectionResult" )
