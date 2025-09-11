@@ -20,6 +20,9 @@
  * SOFTWARE.
  *
  */
+
+#pragma once
+
 #include <string>
 
 #include <geode/inspector/information.hpp>
@@ -27,7 +30,7 @@
 namespace geode
 {
     template < typename ProblemType >
-    void do_define_information(
+    inline void do_define_information(
         pybind11::module& module, const std::string& typestr )
     {
         using InspectionIssues = geode::InspectionIssues< ProblemType >;
@@ -48,7 +51,8 @@ namespace geode
             .def( "issues_map", &InspectionIssuesMap::issues_map )
             .def( "string", &InspectionIssuesMap::string );
     }
-    void define_information( pybind11::module& module )
+
+    inline void define_information( pybind11::module& module )
     {
         do_define_information< index_t >( module, "Index" );
         do_define_information< std::vector< index_t > >(
@@ -62,8 +66,6 @@ namespace geode
         do_define_information< std::pair< index_t, index_t > >(
             module, "PairIndex" );
         do_define_information< uuid >( module, "UUID" );
-        do_define_information< BRepNonManifoldEdge >(
-            module, "BRepNonManifoldEdge" );
         do_define_information< std::pair< geode::ComponentMeshElement,
             geode::ComponentMeshElement > >(
             module, "PairComponentMeshElement" );
