@@ -73,6 +73,10 @@ namespace geode
         {
             absl::StrAppend( &message, brep_non_manifold_edges.string() );
         }
+        if( brep_non_manifold_facets.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, brep_non_manifold_facets.string() );
+        }
         if( !message.empty() )
         {
             return message;
