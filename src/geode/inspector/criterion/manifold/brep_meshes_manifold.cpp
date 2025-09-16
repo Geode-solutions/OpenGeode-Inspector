@@ -73,6 +73,10 @@ namespace geode
         {
             absl::StrAppend( &message, brep_non_manifold_edges.string() );
         }
+        if( brep_non_manifold_facets.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, brep_non_manifold_facets.string() );
+        }
         if( !message.empty() )
         {
             return message;
@@ -254,8 +258,8 @@ namespace geode
                     absl::StrAppend( &message, polygon_vertex, " " );
                 }
                 absl::StrAppend( &message,
-                    " is not manifold: it belongs to an internal "
-                    "surface with only one facet" );
+                    " is not manifold: it belongs to internal surface ",
+                    surface.id().string(), " with only one facet" );
                 issues.add_issue(
                     BRepNonManifoldFacet{ facet_vertices, { surface.id() } },
                     message );
@@ -266,18 +270,13 @@ namespace geode
         bool several_cmvs_on_one_vertex(
             absl::Span< const index_t > unique_vertices ) const
         {
+            std::vector< uuid > surfaces;
             for( const auto unique_vertex : unique_vertices )
             {
-                std::vector< uuid > components;
-                for( const auto& cmv :
-                    model().component_mesh_vertices( unique_vertex ) )
+                if( model().component_mesh_vertices( unique_vertex ).size()
+                    > 1 )
                 {
-                    if( absl::c_find( components, cmv.component_id.id() )
-                        != components.end() )
-                    {
-                        return true;
-                    }
-                    components.push_back( cmv.component_id.id() );
+                    return true;
                 }
             }
             return false;
