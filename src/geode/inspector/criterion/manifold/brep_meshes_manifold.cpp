@@ -187,7 +187,6 @@ namespace geode
             }
             for( auto& edge : edges )
             {
-                sort_unique( edge.second );
                 if( edge.second.size() <= 1 )
                 {
                     continue;
