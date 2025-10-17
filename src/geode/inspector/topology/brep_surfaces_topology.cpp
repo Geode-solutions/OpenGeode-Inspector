@@ -388,6 +388,9 @@ namespace geode
                     absl::StrCat( "Surface ", surface.id().string() ) );
                 result.surfaces_not_linked_to_a_unique_vertex.add_issues_to_map(
                     surface.id(), std::move( surface_result ) );
+                /// Next test may result in SegFaults if component vertices are
+                /// not associated to unique vertices
+                continue;
             }
             if( !meshed_blocks )
             {
