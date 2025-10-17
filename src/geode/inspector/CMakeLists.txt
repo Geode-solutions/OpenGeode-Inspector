@@ -68,6 +68,7 @@ add_geode_library(
         "topology/section_corners_topology.cpp"
         "topology/section_lines_topology.cpp"
         "topology/section_surfaces_topology.cpp"
+        "topology/internal/expected_nb_cmvs.cpp"
         "topology/internal/topology_helpers.cpp"
         "section_inspector.cpp"
         "brep_inspector.cpp"
@@ -131,6 +132,7 @@ add_geode_library(
         "topology/section_corners_topology.hpp"
         "topology/section_lines_topology.hpp"
         "topology/section_surfaces_topology.hpp"
+        "topology/internal/expected_nb_cmvs.hpp"
         "topology/internal/topology_helpers.hpp"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
