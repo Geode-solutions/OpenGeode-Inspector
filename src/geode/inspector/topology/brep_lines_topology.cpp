@@ -461,7 +461,6 @@ namespace geode
                     line.id(), absl::StrCat( line.id().string(),
                                    " is a line without mesh." ) );
             }
-
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
@@ -471,6 +470,9 @@ namespace geode
                     absl::StrCat( "Line ", line.id().string() ) );
                 result.lines_not_linked_to_a_unique_vertex.add_issues_to_map(
                     line.id(), std::move( line_result ) );
+                /// Next test may result in SegFaults if component vertices are
+                /// not associated to unique vertices
+                continue;
             }
             InspectionIssues< index_t > line_edges_with_wrong_cme{ absl::StrCat(
                 "Line ", line.id().string() ) };
