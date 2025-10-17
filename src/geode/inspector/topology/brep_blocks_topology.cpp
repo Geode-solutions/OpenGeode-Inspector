@@ -50,6 +50,7 @@
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
+#include <geode/inspector/topology/internal/expected_nb_cmvs.hpp>
 #include <geode/inspector/topology/internal/topology_helpers.hpp>
 
 namespace
@@ -126,22 +127,6 @@ namespace
             return true;
         }
         return false;
-    }
-
-    template < typename Condition >
-    geode::index_t count_cmvs(
-        absl::Span< const geode::ComponentMeshVertex > cmvs,
-        const Condition& condition )
-    {
-        geode::index_t counter{ 0 };
-        for( const auto& cmv : cmvs )
-        {
-            if( condition( cmv ) )
-            {
-                counter++;
-            }
-        }
-        return counter;
     }
 
     void create_graph( const geode::BRep& brep,
@@ -566,8 +551,7 @@ namespace geode
         }
         return absl::StrCat( "Unique vertex with index ", unique_vertex_index,
             " is part of two blocks, but not of a surface boundary to the "
-            "two "
-            "blocks, nor of a line boundary to one of the blocks incident "
+            "two blocks, nor of a line boundary to one of the blocks incident "
             "surfaces." );
     }
 
@@ -577,159 +561,14 @@ namespace geode
     {
         const auto block_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Block3D::component_type_static() );
-
-        std::vector< ComponentMeshVertex > block_cmvs;
-        std::vector< ComponentMeshVertex > surface_cmvs;
-        std::vector< ComponentMeshVertex > line_cmvs;
-        std::vector< ComponentMeshVertex > corner_cmvs;
-        for( const auto& cmv :
-            brep_.component_mesh_vertices( unique_vertex_index ) )
-        {
-            if( cmv.component_id.type() == Block3D::component_type_static() )
-            {
-                block_cmvs.push_back( cmv );
-            }
-            if( cmv.component_id.type() == Surface3D::component_type_static() )
-            {
-                surface_cmvs.push_back( cmv );
-            }
-            if( cmv.component_id.type() == Line3D::component_type_static() )
-            {
-                line_cmvs.push_back( cmv );
-            }
-            if( cmv.component_id.type() == Corner3D::component_type_static() )
-            {
-                corner_cmvs.push_back( cmv );
-            }
-        }
+        const auto component_cmvs =
+            internal::vertex_cmvs_by_component( brep_, unique_vertex_index );
         for( const auto& block_uuid : block_uuids )
         {
-            const auto nb_block_cmvs =
-                count_cmvs( block_cmvs, [&block_uuid]( const auto& cmv ) {
-                    return cmv.component_id.id() == block_uuid;
-                } );
-
-            const auto nb_internal_surface_cmvs = count_cmvs(
-                surface_cmvs, [&block_uuid, this]( const auto& cmv ) {
-                    return this->brep_.is_internal(
-                        brep_.surface( cmv.component_id.id() ),
-                        brep_.block( block_uuid ) );
-                } );
-
-            const auto nb_boundary_surface_cmvs = count_cmvs(
-                surface_cmvs, [&block_uuid, this]( const auto& cmv ) {
-                    return this->brep_.is_boundary(
-                        brep_.surface( cmv.component_id.id() ),
-                        brep_.block( block_uuid ) );
-                } );
-            const auto nb_boundary_line_cmvs =
-                count_cmvs( line_cmvs, [&block_uuid, this]( const auto& cmv ) {
-                    for( const auto& block_boundary :
-                        this->brep_.boundaries( brep_.block( block_uuid ) ) )
-                    {
-                        for( const auto& surface_boundary :
-                            this->brep_.boundaries( block_boundary ) )
-                        {
-                            if( surface_boundary.id() == cmv.component_id.id() )
-                            {
-                                return true;
-                            }
-                        }
-                        for( const auto& surface_internal :
-                            this->brep_.internal_lines( block_boundary ) )
-                        {
-                            if( surface_internal.id() == cmv.component_id.id() )
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                } );
-            const auto nb_free_line_cmvs =
-                count_cmvs( line_cmvs, [this]( const auto& cmv ) {
-                    return this->brep_.nb_incidences( cmv.component_id.id() )
-                               == 1
-                           && this->brep_.nb_embedding_surfaces(
-                                  brep_.line( cmv.component_id.id() ) )
-                                  == 0;
-                } );
-            if( corner_cmvs.size() == 1 && nb_internal_surface_cmvs == 0 )
+            if( auto error_message = internal::wrong_nb_expected_block_cmvs(
+                    brep_, unique_vertex_index, block_uuid, component_cmvs ) )
             {
-                if( nb_boundary_line_cmvs == 1 )
-                {
-                    if( nb_block_cmvs != 1 )
-                    {
-                        return absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_index, " is part of block ",
-                            block_uuid.string(),
-                            " and exactly one corner and one line but "
-                            "has ",
-                            nb_block_cmvs,
-                            " block component mesh vertices (should be "
-                            "1)." );
-                    }
-                    continue;
-                }
-
-                const auto predicted_nb_block_cmvs = nb_boundary_surface_cmvs
-                                                     + corner_cmvs.size()
-                                                     - nb_boundary_line_cmvs;
-                if( nb_block_cmvs != predicted_nb_block_cmvs )
-                {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of the block ",
-                        block_uuid.string(),
-                        ", and of a corner, and of no internal line, ",
-                        "and of ", nb_boundary_surface_cmvs,
-                        " boundary surface(s), and of ", nb_boundary_line_cmvs,
-                        " line(s) on block boundaries, with ", nb_block_cmvs,
-                        " block component mesh vertices (should be ",
-                        predicted_nb_block_cmvs, ")." );
-                }
-                continue;
-            }
-
-            if( nb_internal_surface_cmvs == 0 )
-            {
-                const auto predicted_nb_block_cmvs =
-                    nb_boundary_line_cmvs == 0 ? 1
-                                               : nb_boundary_surface_cmvs / 2;
-                if( nb_block_cmvs != predicted_nb_block_cmvs )
-                {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of the block ",
-                        block_uuid.string(),
-                        " and none of its internal surfaces but has ",
-                        nb_block_cmvs,
-                        " block component mesh vertices (should be ",
-                        predicted_nb_block_cmvs, ")." );
-                }
-                continue;
-            }
-            auto predicted_nb_block_cmvs =
-                nb_internal_surface_cmvs < nb_free_line_cmvs + 1
-                    ? static_cast< index_t >( 1 )
-                    : nb_internal_surface_cmvs - nb_free_line_cmvs;
-            if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
-            {
-                predicted_nb_block_cmvs++;
-            }
-            if( nb_boundary_surface_cmvs > 1 && corner_cmvs.empty() )
-            {
-                predicted_nb_block_cmvs += ( nb_boundary_surface_cmvs - 2 ) / 2;
-            }
-            if( nb_block_cmvs != predicted_nb_block_cmvs )
-            {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of the block ",
-                    block_uuid.string(), ", has ", nb_internal_surface_cmvs,
-                    " internal surface(s) component mesh vertices (CMVs), "
-                    "has ",
-                    nb_boundary_surface_cmvs,
-                    " boundary surface(s) CMVs, and has ", nb_free_line_cmvs,
-                    " free line(s) CMVs, with ", nb_block_cmvs,
-                    " block CMVs (should be ", predicted_nb_block_cmvs, ")." );
+                return error_message;
             }
         }
         return std::nullopt;
