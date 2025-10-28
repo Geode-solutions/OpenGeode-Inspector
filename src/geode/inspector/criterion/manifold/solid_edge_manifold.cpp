@@ -68,8 +68,8 @@ namespace
             {
                 const Edge polyhedron_edge{ polyhedron_edge_vertices };
                 if( !polyhedra_around_edges
-                         .try_emplace( polyhedron_edge, 1, polyhedron_id )
-                         .second )
+                        .try_emplace( polyhedron_edge, 1, polyhedron_id )
+                        .second )
                 {
                     polyhedra_around_edges[polyhedron_edge].push_back(
                         polyhedron_id );
