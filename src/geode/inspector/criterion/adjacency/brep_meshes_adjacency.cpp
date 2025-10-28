@@ -89,7 +89,7 @@ namespace geode
                 auto wrong_adjacencies =
                     inspector.polyhedron_facets_with_wrong_adjacency();
                 wrong_adjacencies.set_description(
-                    absl::StrCat( "Block ", block.name(),
+                    absl::StrCat( "block ", block.name(),
                         " polyhedron facets adjacencies issues - uuid ",
                         block.id().string() ) );
                 const auto& mesh = block.mesh();
@@ -112,10 +112,10 @@ namespace geode
                             && !is_on_surface.value() )
                         {
                             wrong_adjacencies.add_issue( polyhedron_facet,
-                                absl::StrCat( "Local facet ", facet_id,
+                                absl::StrCat( "facet ", facet_id,
                                     " of polyhedron ", polyhedron_id,
                                     " has no adjacencies but is not part of a "
-                                    "model Surface." ) );
+                                    "model surface." ) );
                         }
                     }
                 }

@@ -101,7 +101,7 @@ namespace geode
             const auto polyhedra_around_vertices_list =
                 polyhedra_around_vertices( mesh_ );
             InspectionIssues< geode::index_t > non_manifold_vertices{
-                "Non manifold vertices."
+                "Non manifold vertices"
             };
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
@@ -109,11 +109,10 @@ namespace geode
                         polyhedra_around_vertices_list[vertex_id],
                         mesh_.polyhedra_around_vertex( vertex_id ) ) )
                 {
-                    non_manifold_vertices.add_issue(
-                        vertex_id, absl::StrCat( "Vertex with index ",
-                                       vertex_id, ", at position [",
-                                       mesh_.point( vertex_id ).string(),
-                                       "], is not manifold." ) );
+                    non_manifold_vertices.add_issue( vertex_id,
+                        absl::StrCat( "Vertex with index ", vertex_id,
+                            ", at position [",
+                            mesh_.point( vertex_id ).string(), "]" ) );
                 }
             }
             return non_manifold_vertices;

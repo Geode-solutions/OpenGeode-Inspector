@@ -44,7 +44,7 @@ namespace geode
         {
             return negative_polyhedra.string();
         }
-        return "No negative polyhedra issues in model \n";
+        return "No negative polyhedra issues in model\n";
     }
 
     std::string

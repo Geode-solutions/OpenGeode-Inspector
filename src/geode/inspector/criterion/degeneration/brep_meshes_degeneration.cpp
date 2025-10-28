@@ -59,7 +59,7 @@ namespace geode
         }
         if( message.empty() )
         {
-            return "No degeneration issues in model \n";
+            return "No degeneration issues in model\n";
         }
         return message;
     }
@@ -101,9 +101,9 @@ namespace geode
                 }
                 const geode::SolidMeshDegeneration3D inspector{ mesh };
                 auto small_edges = inspector.small_edges( threshold );
-                small_edges.set_description(
-                    absl::StrCat( "Block ", block.name(),
-                        " small edges - uuid ", block.id().string() ) );
+                small_edges.set_description( absl::StrCat( "Block ",
+                    block.name(), " small edges polyhedra - uuid ",
+                    block.id().string() ) );
                 small_edges_map.add_issues_to_map(
                     block.id(), std::move( small_edges ) );
                 auto small_polyhedra =

@@ -96,19 +96,18 @@ namespace geode
                                     model_, surface, polygon_edge ) )
                             {
                                 issues.add_issue( polygon_edge,
-                                    absl::StrCat( "Local edge ", edge_id,
+                                    absl::StrCat( "edge ", edge_id,
                                         " of polygon ", polygon_id,
                                         " has no adjacencies but is not part "
-                                        "of a "
-                                        "model Line." ) );
+                                        "of a model Line." ) );
                             }
                         }
                         catch( const OpenGeodeException& e )
                         {
                             Logger::warn( e.what() );
                             issues.add_issue( polygon_edge,
-                                absl::StrCat( "Local edge ", edge_id,
-                                    " of polygon ", polygon_id,
+                                absl::StrCat( "edge ", edge_id, " of polygon ",
+                                    polygon_id,
                                     " has no adjacencies but is not part of a "
                                     "model Line." ) );
                         }

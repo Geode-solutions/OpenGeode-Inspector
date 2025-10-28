@@ -46,7 +46,7 @@ namespace geode
         {
             return negative_polygons.string();
         }
-        return "No negative polygons issues in model \n";
+        return "No negative polygons issues in model\n";
     }
 
     std::string

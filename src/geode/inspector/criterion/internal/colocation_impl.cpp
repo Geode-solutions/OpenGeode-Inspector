@@ -74,7 +74,7 @@ namespace
             colocated_points_groups_end, colocated_points_indices.end() );
 
         geode::InspectionIssues< std::vector< geode::index_t > >
-            groups_of_colocated_points{ "Groups of colocated points." };
+            groups_of_colocated_points{ "Groups of colocated points" };
         for( const auto& colocated_points_group : colocated_points_indices )
         {
             std::string point_group_string;
@@ -83,13 +83,13 @@ namespace
                 absl::StrAppend( &point_group_string, " ", point_index );
             }
             groups_of_colocated_points.add_issue( colocated_points_group,
-                absl::StrCat( "Vertices with indices", point_group_string,
-                    " are colocated at position [",
+                absl::StrCat( "Vertices ", point_group_string,
+                    " are colocated at the position [",
                     mesh_colocation_info
-                        .unique_points[mesh_colocation_info
-                                .colocated_mapping[colocated_points_group[0]]]
+                        .unique_points[mesh_colocation_info.colocated_mapping
+                                           [colocated_points_group[0]]]
                         .string(),
-                    "]." ) );
+                    "]" ) );
         }
         return groups_of_colocated_points;
     }

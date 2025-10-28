@@ -56,15 +56,15 @@ namespace
             == geode::Line< Model::dim >::component_type_static() )
         {
             return point.inexact_equal( model.line( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         else if( cmv.component_id.type()
                  == geode::Surface< Model::dim >::component_type_static() )
         {
             return point.inexact_equal( model.surface( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         return point.inexact_equal(
             model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex ) );
@@ -85,8 +85,8 @@ namespace
         if( cmv.component_id.type() == geode::Block3D::component_type_static() )
         {
             return point.inexact_equal( model.block( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+                                            .mesh()
+                                            .point( cmv.vertex ) );
         }
         return model_cmv_is_colocated_on_point_base< geode::BRep >(
             model, cmv, point );
@@ -161,7 +161,7 @@ namespace geode
 
     std::string UniqueVerticesInspectionResult::inspection_type() const
     {
-        return "Unique vertices colocation inspection";
+        return "Unique vertices colocalization inspection";
     }
 
     template < typename Model >
@@ -225,10 +225,8 @@ namespace geode
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
                     vertices_issues.add_issue( unique_vertex_id,
-                        absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_id,
-                            " has component mesh vertices which are not "
-                            "on the same position." ) );
+                        absl::StrCat( "Unique vertex ", unique_vertex_id,
+                            " is linked to several location." ) );
                 }
             }
         }
@@ -260,11 +258,11 @@ namespace geode
                 if( !fixed_point_group.empty() )
                 {
                     vertices_issues.add_issue( fixed_point_group,
-                        absl::StrCat( "Unique vertices with indices",
-                            point_group_string, " are colocated at position [",
+                        absl::StrCat( "Unique vertices ", point_group_string,
+                            " are colocated at the position [",
                             unique_vertices_->point( fixed_point_group[0] )
                                 .string(),
-                            "]." ) );
+                            "]" ) );
                 }
             }
         }

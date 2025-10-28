@@ -60,11 +60,9 @@ namespace geode
             {
                 if( mesh_.edge_length( edge_id ) <= threshold )
                 {
-                    degenerated_edges_index.add_issue(
-                        edge_id, absl::StrCat( "Edge with index ", edge_id,
-                                     ", at position [",
-                                     mesh_.edge_barycenter( edge_id ).string(),
-                                     "], is degenerated." ) );
+                    degenerated_edges_index.add_issue( edge_id,
+                        absl::StrCat( "Edge ", edge_id, ", at position [",
+                            mesh_.edge_barycenter( edge_id ).string(), "]" ) );
                 }
             }
             return degenerated_edges_index;

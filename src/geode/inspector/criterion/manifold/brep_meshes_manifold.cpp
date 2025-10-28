@@ -109,8 +109,9 @@ namespace geode
             {
                 const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
-                non_manifold_vertices.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " non manifold vertices" ) );
+                non_manifold_vertices.set_description( absl::StrCat( "Block ",
+                    block.name(), " non manifold vertices - uuid ",
+                    block.id().string() ) );
                 components_non_manifold_vertices.add_issues_to_map(
                     block.id(), std::move( non_manifold_vertices ) );
             }
@@ -127,8 +128,9 @@ namespace geode
             {
                 const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
-                non_manifold_edges.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " non manifold edges" ) );
+                non_manifold_edges.set_description(
+                    absl::StrCat( "Block ", block.name(),
+                        " non manifold edges - uuid ", block.id().string() ) );
                 components_non_manifold_edges.add_issues_to_map(
                     block.id(), non_manifold_edges );
             }
@@ -142,8 +144,9 @@ namespace geode
             {
                 const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
-                non_manifold_facets.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " non manifold facets" ) );
+                non_manifold_facets.set_description(
+                    absl::StrCat( "Block ", block.name(),
+                        " non manifold facets - uuid ", block.id().string() ) );
                 components_non_manifold_facets.add_issues_to_map(
                     block.id(), non_manifold_facets );
             }
@@ -198,7 +201,8 @@ namespace geode
                     "but is on surfaces " );
                 for( const auto surface_uuid : edge.second )
                 {
-                    absl::StrAppend( &message, surface_uuid.string(), ", " );
+                    absl::StrAppend( &message, surface.name(), " (",
+                        surface_uuid.string(), "), " );
                 }
                 issues.add_issue(
                     BRepNonManifoldEdge{ edge.first.vertices(), edge.second },
@@ -227,7 +231,8 @@ namespace geode
                     "Model edge between unique vertices ",
                     edge_unique_vertices[0], " and ", edge_unique_vertices[1],
                     " is not manifold: it belongs to internal line ",
-                    line.id().string(), " with only one edge" );
+                    line.name(), " (", line.id().string(),
+                    ") with only one edge" );
                 issues.add_issue(
                     BRepNonManifoldEdge{ edge_unique_vertices, { line.id() } },
                     message );
@@ -258,7 +263,8 @@ namespace geode
                 }
                 absl::StrAppend( &message,
                     " is not manifold: it belongs to internal surface ",
-                    surface.id().string(), " with only one facet" );
+                    surface.name(), " (", surface.id().string(),
+                    ") with only one facet" );
                 issues.add_issue(
                     BRepNonManifoldFacet{ facet_vertices, { surface.id() } },
                     message );

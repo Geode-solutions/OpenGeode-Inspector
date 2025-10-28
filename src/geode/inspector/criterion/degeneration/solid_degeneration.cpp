@@ -77,8 +77,7 @@ namespace geode
                     <= threshold )
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
-                        absl::StrCat( "Polyhedron ", polyhedron_id,
-                            " is degenerated." ) );
+                        absl::StrCat( "Polyhedron ", polyhedron_id ) );
                 }
             }
             return wrong_polyhedra;

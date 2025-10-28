@@ -51,7 +51,7 @@ namespace
                 const Facet facet{ mesh.polyhedron_facet_vertices(
                     { polyhedron_id, facet_id } ) };
                 if( !nb_polyhedra_adjacent_to_facets.try_emplace( facet, 1 )
-                        .second )
+                         .second )
                 {
                     nb_polyhedra_adjacent_to_facets[facet] += 1;
                 }
@@ -89,7 +89,7 @@ namespace geode
             const auto nb_polyhedra_adjacent_to_facets =
                 facets_to_nb_adjacent_polyhedra( mesh_ );
             InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
-                "Non manifold facets."
+                "Non manifold facets"
             };
             for( const auto& nb_adjacent_polyhedra :
                 nb_polyhedra_adjacent_to_facets )

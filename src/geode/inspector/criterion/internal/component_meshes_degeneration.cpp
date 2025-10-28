@@ -72,7 +72,7 @@ namespace geode
                         line.mesh()
                     };
                     auto issues = inspector.small_edges( threshold );
-                    issues.set_description( absl::StrCat( "Line ", line.name(),
+                    issues.set_description( absl::StrCat( "line ", line.name(),
                         " small edges - uuid ", line.id().string() ) );
                     return std::make_pair( line.id(), std::move( issues ) );
                 } ) );
@@ -103,7 +103,7 @@ namespace geode
                             inspector{ surface.mesh() };
                         auto issues = inspector.small_edges( threshold );
                         issues.set_description( absl::StrCat( "Surface ",
-                            surface.name(), " small edges - uuid ",
+                            surface.name(), " small facet edges - uuid ",
                             surface.id().string() ) );
                         return std::make_pair(
                             surface.id(), std::move( issues ) );
@@ -142,7 +142,7 @@ namespace geode
                         inspector{ surface.mesh() };
                     auto issues = inspector.small_height_polygons( threshold );
                     issues.set_description( absl::StrCat( "Surface ",
-                        surface.name(), " small polygons - uuid ",
+                        surface.name(), " small height polygons - uuid ",
                         surface.id().string() ) );
                     return std::make_pair( surface.id(), std::move( issues ) );
                 } ) );

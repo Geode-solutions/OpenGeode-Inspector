@@ -56,14 +56,15 @@ namespace geode
 
         InspectionIssues< index_t > negative_polygons() const
         {
-            InspectionIssues< index_t > wrong_polygons{ "Negative Polygons." };
+            InspectionIssues< index_t > wrong_polygons{
+                "Negative Area Polygons"
+            };
             for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
             {
                 if( polygon_has_negative_area( polygon_id ) )
                 {
                     wrong_polygons.add_issue(
-                        polygon_id, absl::StrCat( "Polygon ", polygon_id,
-                                        " has a negative area." ) );
+                        polygon_id, absl::StrCat( "Polygon ", polygon_id ) );
                 }
             }
             return wrong_polygons;

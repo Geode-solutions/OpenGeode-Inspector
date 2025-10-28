@@ -112,7 +112,7 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    line_issues{ absl::StrCat( "Line ", line.name(),
+                    line_issues{ absl::StrCat( "line ", line.name(),
                         " colocated vertices - uuid ", line.id().string() ) };
                 const auto& line_mesh = line.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
@@ -124,12 +124,11 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     line_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Line ", line.name(),
-                            " has vertices with indices", point_group_string,
-                            " which are colocated at position [",
+                        absl::StrCat( point_group_string,
+                            " are colocated at position [",
                             line_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "] - uuid ", line.id().string() ) );
+                            "]" ) );
                 }
                 components_colocated_points.add_issues_to_map(
                     line.id(), std::move( line_issues ) );
@@ -160,12 +159,11 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     surface_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Surface ", surface.name(),
-                            " has vertices with indices", point_group_string,
-                            " which are colocated at position [",
+                        absl::StrCat( point_group_string,
+                            " are colocated at position [",
                             surface_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "] - uuid ", surface.id().string() ) );
+                            "]" ) );
                 }
                 components_colocated_points.add_issues_to_map(
                     surface.id(), std::move( surface_issues ) );
@@ -210,12 +208,11 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     block_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Block ", block.name(),
-                            " has vertices with indices", point_group_string,
-                            " which are colocated at position [",
+                        absl::StrCat( point_group_string,
+                            " are colocated at position [",
                             block_mesh.point( colocated_points_group[0] )
                                 .string(),
-                            "] - uuid ", block.id().string() ) );
+                            "]" ) );
                 }
                 components_colocated_points.add_issues_to_map(
                     block.id(), std::move( block_issues ) );

@@ -72,7 +72,7 @@ namespace geode
         {
             enable_edges_on_mesh();
             InspectionIssues< index_t > degenerated_edges_index{
-                "Degenerated Edges."
+                "Degenerated Edges"
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {
@@ -81,11 +81,10 @@ namespace geode
                     const auto edge_vertices =
                         mesh_.edges().edge_vertices( edge_index );
                     degenerated_edges_index.add_issue( edge_index,
-                        absl::StrCat( "Edge between vertices with index ",
-                            edge_vertices[0], " and index ", edge_vertices[1],
+                        absl::StrCat( "Edge between vertices ",
+                            edge_vertices[0], " and ", edge_vertices[1],
                             ", at position [",
-                            mesh_.point( edge_vertices[0] ).string(),
-                            "], is degenerated." ) );
+                            mesh_.point( edge_vertices[0] ).string(), "]" ) );
                 }
             }
             return degenerated_edges_index;
