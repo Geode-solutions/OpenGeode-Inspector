@@ -44,7 +44,7 @@ namespace geode
         {
             return negative_polyhedra.string();
         }
-        return "No negative elements issues in model component meshes \n";
+        return "No negative polyhedra issues in model \n";
     }
 
     std::string
@@ -68,8 +68,9 @@ namespace geode
                     block.mesh()
                 };
                 auto negative_elements = inspector.negative_polyhedra();
-                negative_elements.set_description( absl::StrCat(
-                    "Block ", block.id().string(), " negative polyhedra" ) );
+                negative_elements.set_description(
+                    absl::StrCat( "Block ", block.name(),
+                        " negative polyhedra - uuid ", block.id().string() ) );
                 result.negative_polyhedra.add_issues_to_map(
                     block.id(), std::move( negative_elements ) );
             }

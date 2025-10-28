@@ -46,7 +46,7 @@ namespace geode
         {
             return negative_polygons.string();
         }
-        return "No negative elements issues in model component meshes \n";
+        return "No negative polygons issues in model \n";
     }
 
     std::string
@@ -70,8 +70,9 @@ namespace geode
                     surface.mesh()
                 };
                 auto negative_elements = inspector.negative_polygons();
-                negative_elements.set_description( absl::StrCat(
-                    "Surface ", surface.id().string(), " negative polygons" ) );
+                negative_elements.set_description(
+                    absl::StrCat( "Surface ", surface.name(),
+                        " negative polygons - uuid ", surface.id().string() ) );
                 result.negative_polygons.add_issues_to_map(
                     surface.id(), std::move( negative_elements ) );
             }

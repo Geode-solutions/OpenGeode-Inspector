@@ -64,7 +64,6 @@ namespace geode
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
                         absl::StrCat( "Polyhedron ", polyhedron_id,
-                            " of Solid ", mesh_.id().string(),
                             " has a negative volume." ) );
                 }
             }

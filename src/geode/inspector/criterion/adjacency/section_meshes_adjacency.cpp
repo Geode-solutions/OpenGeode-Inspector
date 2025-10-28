@@ -53,7 +53,7 @@ namespace geode
         {
             return surfaces_edges_with_wrong_adjacencies.string();
         }
-        return "No adjacency issues in model component meshes \n";
+        return "No adjacency issues in model \n";
     }
 
     std::string SectionMeshesAdjacencyInspectionResult::inspection_type() const

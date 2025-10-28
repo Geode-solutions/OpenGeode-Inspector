@@ -54,7 +54,7 @@ namespace geode
         InspectionIssues< index_t > small_edges( double threshold ) const
         {
             InspectionIssues< index_t > degenerated_edges_index{
-                "Degenerated Edges of EdgeCurve " + mesh_.id().string() + "."
+                "Degenerated Edges."
             };
             for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {

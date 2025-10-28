@@ -74,9 +74,9 @@ namespace geode
                 if( this->mesh().polygon_minimum_height( polygon_id )
                     <= threshold )
                 {
-                    wrong_polygons.add_issue( polygon_id,
-                        absl::StrCat( "Polygon ", polygon_id, " of Surface ",
-                            this->mesh().id().string(), " is degenerated." ) );
+                    wrong_polygons.add_issue(
+                        polygon_id, absl::StrCat( "Polygon ", polygon_id,
+                                        " is degenerated." ) );
                 }
             }
             return wrong_polygons;

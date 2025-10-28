@@ -52,7 +52,7 @@ namespace geode
         {
             return message;
         }
-        return "No degeneration issues in model component meshes \n";
+        return "No degeneration issues in model \n";
     }
 
     std::string

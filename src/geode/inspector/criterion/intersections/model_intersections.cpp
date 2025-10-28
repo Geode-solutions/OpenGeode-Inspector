@@ -516,13 +516,17 @@ namespace geode
                 AllModelSurfacesIntersection< Model > >();
             for( const auto& polygon_pair : intersections )
             {
+                const auto& surface1 =
+                    model_.surface( polygon_pair.first.component_id.id() );
+                const auto& surface2 =
+                    model_.surface( polygon_pair.second.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Polygons ", polygon_pair.first.element_id,
-                        " of surface ",
+                    absl::StrCat( surface1.name(), " and ", surface2.name(),
+                        " intersect each other on polygons ",
+                        polygon_pair.first.element_id, " and ",
+                        polygon_pair.second.element_id, " - uuids ",
                         polygon_pair.first.component_id.id().string(), " and ",
-                        polygon_pair.second.element_id, " of surface ",
-                        polygon_pair.second.component_id.id().string(),
-                        " intersect each other." ) );
+                        polygon_pair.second.component_id.id().string() ) );
             }
         }
 
@@ -534,11 +538,14 @@ namespace geode
                 AllModelSurfacesAutoIntersection< Model > >();
             for( const auto& polygon_pair : intersections )
             {
+                const auto& surface =
+                    model_.surface( polygon_pair.first.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Polygons ", polygon_pair.first.element_id,
-                        "and ", polygon_pair.second.element_id, " of surface ",
-                        polygon_pair.first.component_id.id().string(),
-                        " intersect each other." ) );
+                    absl::StrCat( "Surface ", surface.name(),
+                        "have self intersection on polygons ",
+                        polygon_pair.first.element_id, "and ",
+                        polygon_pair.second.element_id, " - uuid ",
+                        polygon_pair.first.component_id.id().string() ) );
             }
         }
 

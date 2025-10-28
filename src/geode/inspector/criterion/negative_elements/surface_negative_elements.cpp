@@ -61,9 +61,9 @@ namespace geode
             {
                 if( polygon_has_negative_area( polygon_id ) )
                 {
-                    wrong_polygons.add_issue( polygon_id,
-                        absl::StrCat( "Polygon ", polygon_id, " of Surface ",
-                            mesh_.id().string(), " has a negative area." ) );
+                    wrong_polygons.add_issue(
+                        polygon_id, absl::StrCat( "Polygon ", polygon_id,
+                                        " has a negative area." ) );
                 }
             }
             return wrong_polygons;
