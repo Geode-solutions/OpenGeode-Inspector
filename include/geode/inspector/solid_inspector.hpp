@@ -42,7 +42,7 @@ namespace geode
                 "Adjacencies of facets not tested"
             };
         InspectionIssues< std::vector< index_t > > colocated_points_groups{
-            "Colocation of vertices not tested"
+            "Colocalization of vertices not tested"
         };
         InspectionIssues< index_t > degenerated_edges{
             "Degeneration of edges not tested"

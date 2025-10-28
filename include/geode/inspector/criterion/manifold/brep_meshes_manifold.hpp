@@ -58,22 +58,18 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepMeshesManifoldInspectionResult
     {
         InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "BRep component meshes with non manifold vertices"
+            "meshes with non manifold vertices"
         };
         InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{
-                "BRep component meshes with non manifold edges"
-            };
+            meshes_non_manifold_edges{ "meshes with non manifold edges" };
         InspectionIssuesMap< PolyhedronFacetVertices >
-            meshes_non_manifold_facets{
-                "BRep component meshes with non manifold facets"
-            };
+            meshes_non_manifold_facets{ "meshes with non manifold facets" };
         InspectionIssues< BRepNonManifoldEdge > brep_non_manifold_edges{
-            "BRep non manifold edges"
+            "non manifold edges"
         };
 
         InspectionIssues< BRepNonManifoldFacet > brep_non_manifold_facets{
-            "BRep non manifold facets"
+            "non manifold facets"
         };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -43,23 +43,23 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
-            "corners without mesh (UUIDs listed)."
+            "corners without mesh (UUIDs listed)"
         };
         InspectionIssuesMap< index_t > corners_not_linked_to_a_unique_vertex{
-            "corners containing mesh vertices not linked to unique vertices."
+            "corners containing mesh vertices not linked to unique vertices"
         };
         InspectionIssues< index_t > unique_vertices_linked_to_multiple_corners{
-            "unique vertices shared by several corners."
+            "unique vertices shared by several corners"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
                 "unique vertices linked to a corner with neither "
-                "boundary nor internal status."
+                "boundary nor internal status"
             };
         InspectionIssues< index_t >
             unique_vertices_liked_to_not_boundary_line_corner{
                 "unique vertices linked to a line corner without boundary "
-                "status."
+                "status"
             };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -78,7 +78,7 @@ namespace geode
                 absl::StrCat( issues_.size(), " issues with ", description_ );
             for( const auto& issue : messages_ )
             {
-                absl::StrAppend( &message, ":\n\t", issue );
+                absl::StrAppend( &message, "\n\t", issue );
             }
             absl::StrAppend( &message, "\n" );
             return message;
@@ -144,7 +144,7 @@ namespace geode
                 issues_map_.size(), " issues with ", description_ );
             for( const auto& issues : issues_map_ )
             {
-                absl::StrAppend( &message, ":\n\t", issues.second.string() );
+                absl::StrAppend( &message, "\n\t", issues.second.string() );
             }
             absl::StrAppend( &message, "\n" );
             return message;
