@@ -33,10 +33,10 @@ namespace geode
     struct opengeode_inspector_inspector_api EdgedCurveInspectionResult
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups{
-            "Colocation of vertices not tested"
+            "Vertices colocalization not tested"
         };
         InspectionIssues< index_t > degenerated_edges{
-            "Degeneration of edges not tested"
+            "Edges degeneration not tested"
         };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -41,30 +41,28 @@ namespace geode
         opengeode_inspector_inspector_api SectionLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
-            "uuids of Lines without mesh."
+            "lines without mesh (UUIDs listed)."
         };
         InspectionIssuesMap< index_t > lines_not_linked_to_a_unique_vertex{
-            "Lines with mesh vertices not linked to a unique vertex"
+            "lines with mesh vertices not linked to a unique vertex"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_line_with_wrong_relationship_to_surface{
-                "Indices of unique vertices linked to a Line with wrong "
-                "relationship with a surface"
+                "unique vertices linked to a line incorrectly linked to a "
+                "surface"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
-                "Indices of unique vertices linked to a Line with invalid "
+                "unique vertices linked to a line with invalid "
                 "internal topology."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indices of unique vertices linked to only one Line and this "
-                "single Line is invalid."
+                "unique vertices linked to a single invalid line."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
-                "Indices of unique vertices linked to several Lines but not "
-                "linked to a corner."
+                "unique vertices linked to multiple lines but not to a corner."
             };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -43,28 +43,28 @@ namespace geode
         opengeode_inspector_inspector_api SectionCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
-            "uuids of Corners without mesh."
+            "corners without mesh (UUIDs listed)."
         };
         InspectionIssuesMap< index_t > corners_not_linked_to_a_unique_vertex{
-            "Corners with mesh vertices not linked to a unique vertex"
+            "corners containing mesh vertices not linked to unique vertices."
         };
         InspectionIssues< index_t > unique_vertices_linked_to_multiple_corners{
-            "Indices of unique vertices that are part of several Corners."
+            "unique vertices shared by several corners."
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_multiple_internals_corner{
-                "Indices of unique vertices linked to a Corner with several "
+                "unique vertices linked to a corner with several "
                 "embeddings"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
-                "Indices of unique vertices linked to a Corner without "
+                "unique vertices linked to a corner with neither "
                 "boundary nor internal status."
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_not_boundary_line_corner{
-                "Indices of unique vertices linked to a Corner on a line but "
-                "without boundary status.)"
+                "unique vertices linked to a line corner without boundary "
+                "status."
             };
 
         [[nodiscard]] index_t nb_issues() const;
