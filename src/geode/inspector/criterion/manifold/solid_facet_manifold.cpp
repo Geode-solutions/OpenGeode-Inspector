@@ -51,7 +51,7 @@ namespace
                 const Facet facet{ mesh.polyhedron_facet_vertices(
                     { polyhedron_id, facet_id } ) };
                 if( !nb_polyhedra_adjacent_to_facets.try_emplace( facet, 1 )
-                         .second )
+                        .second )
                 {
                     nb_polyhedra_adjacent_to_facets[facet] += 1;
                 }
