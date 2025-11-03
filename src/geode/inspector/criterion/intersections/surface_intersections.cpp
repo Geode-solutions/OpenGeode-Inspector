@@ -124,9 +124,9 @@ namespace geode
 
             for( const auto& polygon_pair : intersections )
             {
-                issues.add_issue(
-                    polygon_pair, absl::StrCat( "Polygons ", polygon_pair.first,
-                                      " and ", polygon_pair.second ) );
+                issues.add_issue( polygon_pair,
+                    absl::StrCat( "Polygons ", polygon_pair.first, " and ",
+                        polygon_pair.second, " intersect" ) );
             }
             return issues;
         }

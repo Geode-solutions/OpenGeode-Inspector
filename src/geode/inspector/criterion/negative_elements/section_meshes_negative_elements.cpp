@@ -46,13 +46,13 @@ namespace geode
         {
             return negative_polygons.string();
         }
-        return "No negative polygons issues in model\n";
+        return "no negative polygons in model meshes\n";
     }
 
     std::string
         SectionMeshesNegativeElementsInspectionResult::inspection_type() const
     {
-        return "Negative elements inspection";
+        return "negative elements inspection";
     }
 
     class SectionComponentMeshesNegativeElements::Impl
@@ -71,8 +71,8 @@ namespace geode
                 };
                 auto negative_elements = inspector.negative_polygons();
                 negative_elements.set_description(
-                    absl::StrCat( "Surface ", surface.name(),
-                        " negative polygons - uuid ", surface.id().string() ) );
+                    absl::StrCat( "Surface ", surface.name(), " (",
+                        surface.id().string(), ") negative polygons" ) );
                 result.negative_polygons.add_issues_to_map(
                     surface.id(), std::move( negative_elements ) );
             }

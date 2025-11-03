@@ -61,7 +61,8 @@ namespace geode
                 if( mesh_.edge_length( edge_id ) <= threshold )
                 {
                     degenerated_edges_index.add_issue( edge_id,
-                        absl::StrCat( "edge ", edge_id, ", at position [",
+                        absl::StrCat( "degenerated edge ", edge_id,
+                            ", at position [",
                             mesh_.edge_barycenter( edge_id ).string(), "]" ) );
                 }
             }

@@ -52,7 +52,7 @@ namespace geode
 
     std::string SolidInspectionResult::inspection_type() const
     {
-        return "Solid Inspection";
+        return "solid inspection";
     }
 
     template < index_t dimension >

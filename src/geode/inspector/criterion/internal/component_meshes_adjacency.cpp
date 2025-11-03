@@ -80,8 +80,8 @@ namespace geode
                 };
                 auto issues = inspector.polygon_edges_with_wrong_adjacency();
                 issues.set_description( absl::StrCat( "Surface ",
-                    surface.name(), " polygon edges adjacency issues - uuid ",
-                    surface.id().string() ) );
+                    surface.name(), " (", surface.id().string(),
+                    ") polygon edges adjacency issues" ) );
                 const auto& mesh = surface.mesh();
                 for( const auto polygon_id : Range{ mesh.nb_polygons() } )
                 {

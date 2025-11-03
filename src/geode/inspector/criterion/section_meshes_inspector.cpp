@@ -47,7 +47,7 @@ namespace geode
 
     std::string SectionMeshesInspectionResult::inspection_type() const
     {
-        return "Meshes Inspection";
+        return "model meshes inspection";
     }
 
     SectionMeshesInspector::SectionMeshesInspector( const Section& section )

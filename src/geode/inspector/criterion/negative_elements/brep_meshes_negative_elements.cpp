@@ -44,13 +44,13 @@ namespace geode
         {
             return negative_polyhedra.string();
         }
-        return "No negative polyhedra issues in model\n";
+        return "no negative polyhedra in model meshes\n";
     }
 
     std::string
         BRepMeshesNegativeElementsInspectionResult::inspection_type() const
     {
-        return "Negative elements inspection";
+        return "negative elements inspection";
     }
 
     class BRepComponentMeshesNegativeElements::Impl
@@ -69,8 +69,8 @@ namespace geode
                 };
                 auto negative_elements = inspector.negative_polyhedra();
                 negative_elements.set_description(
-                    absl::StrCat( "block ", block.name(),
-                        " negative polyhedra - uuid ", block.id().string() ) );
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") negative polyhedra" ) );
                 result.negative_polyhedra.add_issues_to_map(
                     block.id(), std::move( negative_elements ) );
             }

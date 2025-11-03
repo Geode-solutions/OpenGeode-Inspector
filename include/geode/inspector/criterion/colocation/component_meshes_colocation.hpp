@@ -41,7 +41,7 @@ namespace geode
     struct opengeode_inspector_inspector_api MeshesColocationInspectionResult
     {
         InspectionIssuesMap< std::vector< index_t > > colocated_points_groups{
-            "meshes with colocated points"
+            "colocated point"
         };
 
         [[nodiscard]] index_t nb_issues() const;

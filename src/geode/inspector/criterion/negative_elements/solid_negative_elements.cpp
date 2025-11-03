@@ -63,7 +63,7 @@ namespace geode
                 if( polyhedron_has_negative_volume( polyhedron_id ) )
                 {
                     wrong_polyhedra.add_issue( polyhedron_id,
-                        absl::StrCat( "Polyhedron ", polyhedron_id ) );
+                        absl::StrCat( "negative polyhedron ", polyhedron_id ) );
                 }
             }
             return wrong_polyhedra;

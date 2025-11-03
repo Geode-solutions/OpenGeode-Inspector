@@ -62,12 +62,12 @@ namespace geode
         {
             return message;
         }
-        return "No adjacency issues in model \n";
+        return "no adjacency issues in model meshes \n";
     }
 
     std::string BRepMeshesAdjacencyInspectionResult::inspection_type() const
     {
-        return "Adjacencies inspection";
+        return "adjacencies inspection";
     }
 
     class BRepComponentMeshesAdjacency::Impl
@@ -88,10 +88,9 @@ namespace geode
                 const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
                 auto wrong_adjacencies =
                     inspector.polyhedron_facets_with_wrong_adjacency();
-                wrong_adjacencies.set_description(
-                    absl::StrCat( "block ", block.name(),
-                        " polyhedron facets adjacencies issues - uuid ",
-                        block.id().string() ) );
+                wrong_adjacencies.set_description( absl::StrCat( "Block ",
+                    block.name(), " (", block.id().string(),
+                    ") polyhedron facets adjacencies issues" ) );
                 const auto& mesh = block.mesh();
                 for( const auto polyhedron_id : Range{ mesh.nb_polyhedra() } )
                 {
@@ -115,7 +114,7 @@ namespace geode
                                 absl::StrCat( "facet ", facet_id,
                                     " of polyhedron ", polyhedron_id,
                                     " has no adjacencies but is not part of a "
-                                    "model surface." ) );
+                                    "model Surface." ) );
                         }
                     }
                 }

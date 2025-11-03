@@ -59,14 +59,14 @@ namespace geode
         }
         if( message.empty() )
         {
-            return "No degeneration issues in model\n";
+            return "no degeneration issues in model meshes\n";
         }
         return message;
     }
 
     std::string BRepMeshesDegenerationInspectionResult::inspection_type() const
     {
-        return "Degeneration inspection";
+        return "degeneration inspection";
     }
 
     class BRepComponentMeshesDegeneration::Impl
@@ -101,16 +101,16 @@ namespace geode
                 }
                 const geode::SolidMeshDegeneration3D inspector{ mesh };
                 auto small_edges = inspector.small_edges( threshold );
-                small_edges.set_description( absl::StrCat( "Block ",
-                    block.name(), " small edges polyhedra - uuid ",
-                    block.id().string() ) );
+                small_edges.set_description(
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") small edges polyhedra" ) );
                 small_edges_map.add_issues_to_map(
                     block.id(), std::move( small_edges ) );
                 auto small_polyhedra =
                     inspector.small_height_polyhedra( threshold );
-                small_polyhedra.set_description( absl::StrCat( "Block ",
-                    block.name(), " small height polyhedra - uuid ",
-                    block.id().string() ) );
+                small_polyhedra.set_description(
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") small height polyhedra" ) );
                 small_polyhedra_map.add_issues_to_map(
                     block.id(), std::move( small_polyhedra ) );
             }

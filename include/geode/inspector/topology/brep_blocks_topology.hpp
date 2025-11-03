@@ -46,42 +46,42 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
         InspectionIssues< uuid > some_blocks_not_meshed{
-            "blocks without mesh (uuid listed)"
+            "Blocks without mesh (uuid listed)"
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
-            "surfaces incorrectly bounding blocks (uuids listed)"
+            "Surfaces incorrectly bounding Blocks (uuids listed)"
         };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
-            "blocks containing mesh vertices not linked to unique vertices"
+            "Blocks containing mesh vertices not linked to unique vertices"
         };
         InspectionIssues< index_t >
             unique_vertices_part_of_two_blocks_and_no_boundary_surface{
-                "unique vertices shared by two blocks without a boundary "
-                "surface or incident block line"
+                "unique vertices shared by two Blocks without a boundary "
+                "Surface or incident Block Line"
             };
         InspectionIssues< index_t >
             unique_vertices_with_incorrect_block_cmvs_count{
-                "unique vertices in a block with incorrect "
-                "ComponentMeshVertices count"
+                "unique vertices in a Block with incorrect Component mesh "
+                "vertices count"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks{
-                "unique vertices linked to surfaces with neither boundary nor "
+                "unique vertices linked to Surfaces with neither boundary nor "
                 "internal status"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_single_and_invalid_surface{
-                "unique vertices linked to a single surface that is invalid"
+                "unique vertices linked to a single Surface that is invalid"
             };
         InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
-            "blocks with non-closed boundary surfaces"
+            "Blocks with non-closed boundary Surfaces"
         };
         InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
-            "model boundaries don't form a closed surface (uuids listed)"
+            "model boundaries don't form a closed Surface (uuids listed)"
         };
         InspectionIssues< index_t >
             unique_vertex_linked_to_multiple_invalid_surfaces{
-                "unique vertices linked to multiple surfaces in an invalid way"
+                "unique vertices linked to multiple Surfaces in an invalid way"
             };
 
         [[nodiscard]] index_t nb_issues() const;

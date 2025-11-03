@@ -47,7 +47,7 @@ namespace geode
 
     std::string BRepMeshesInspectionResult::inspection_type() const
     {
-        return "Meshes Inspection";
+        return "model meshes inspection";
     }
 
     BRepMeshesInspector::BRepMeshesInspector( const BRep& brep )

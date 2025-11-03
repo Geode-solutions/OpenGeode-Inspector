@@ -42,23 +42,23 @@ namespace geode
         opengeode_inspector_inspector_api BRepSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
-            "surface without mesh (uuids listed)"
+            "Surface without mesh (uuids listed)"
         };
         InspectionIssuesMap< index_t > surfaces_not_linked_to_a_unique_vertex{
-            "surfaces containing mesh vertices not linked to unique vertices"
+            "Surfaces containing mesh vertices not linked to unique vertices"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
-                "unique vertices linked to a surface with invalid "
+                "unique vertices linked to a Surface with invalid "
                 "internal topology"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_and_invalid_surfaces{
-                "unique vertices improperly linked to several surfaces"
+                "unique vertices improperly linked to several Surfaces"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
-                "unique vertices linked to a line but not to a surface border"
+                "unique vertices linked to a Line but not to a Surface border"
             };
         InspectionIssuesMap< index_t >
             surface_polygons_with_wrong_component_facets_around{

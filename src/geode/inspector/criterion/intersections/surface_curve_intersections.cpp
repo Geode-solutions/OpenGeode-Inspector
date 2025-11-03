@@ -244,8 +244,9 @@ namespace geode
             };
             for( const auto& pair : intersections )
             {
-                issues.add_issue( pair, absl::StrCat( "Triangle ", pair.first,
-                                            " and edge", pair.second ) );
+                issues.add_issue(
+                    pair, absl::StrCat( "Triangle ", pair.first, " and edge",
+                              pair.second, " intersect" ) );
             }
             return issues;
         }

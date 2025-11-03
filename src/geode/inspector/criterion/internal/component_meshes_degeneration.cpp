@@ -72,8 +72,8 @@ namespace geode
                         line.mesh()
                     };
                     auto issues = inspector.small_edges( threshold );
-                    issues.set_description( absl::StrCat( "line ", line.name(),
-                        " small edges - uuid ", line.id().string() ) );
+                    issues.set_description( absl::StrCat( "Line ", line.name(),
+                        " (", line.id().string(), ") small edges" ) );
                     return std::make_pair( line.id(), std::move( issues ) );
                 } ) );
             }
@@ -102,9 +102,9 @@ namespace geode
                         const geode::SurfaceMeshDegeneration< Model::dim >
                             inspector{ surface.mesh() };
                         auto issues = inspector.small_edges( threshold );
-                        issues.set_description( absl::StrCat( "surface ",
-                            surface.name(), " small facet edges - uuid ",
-                            surface.id().string() ) );
+                        issues.set_description( absl::StrCat( "Surface ",
+                            surface.name(), " (", surface.id().string(),
+                            ") small facet edges" ) );
                         return std::make_pair(
                             surface.id(), std::move( issues ) );
                     } ) );
@@ -141,9 +141,9 @@ namespace geode
                     const geode::SurfaceMeshDegeneration< Model::dim >
                         inspector{ surface.mesh() };
                     auto issues = inspector.small_height_polygons( threshold );
-                    issues.set_description( absl::StrCat( "surface ",
-                        surface.name(), " small height polygons - uuid ",
-                        surface.id().string() ) );
+                    issues.set_description( absl::StrCat( "Surface ",
+                        surface.name(), " (", surface.id().string(),
+                        ") small height polygons" ) );
                     return std::make_pair( surface.id(), std::move( issues ) );
                 } ) );
             }

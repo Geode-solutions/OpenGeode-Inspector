@@ -52,13 +52,13 @@ namespace geode
         {
             return message;
         }
-        return "No degeneration issues in model \n";
+        return "no degeneration issues in model meshes \n";
     }
 
     std::string
         SectionMeshesDegenerationInspectionResult::inspection_type() const
     {
-        return "Degeneration inspection";
+        return "degeneration inspection";
     }
 
     class SectionComponentMeshesDegeneration::Impl

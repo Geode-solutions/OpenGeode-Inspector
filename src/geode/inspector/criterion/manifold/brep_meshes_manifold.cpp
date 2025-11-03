@@ -81,12 +81,12 @@ namespace geode
         {
             return message;
         }
-        return "No manifold issues in model component meshes \n";
+        return "no manifold issues in model meshes \n";
     }
 
     std::string BRepMeshesManifoldInspectionResult::inspection_type() const
     {
-        return "Manifold inspection";
+        return "manifold inspection";
     }
 
     class BRepComponentMeshesManifold::Impl
@@ -109,9 +109,9 @@ namespace geode
             {
                 const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
-                non_manifold_vertices.set_description( absl::StrCat( "Block ",
-                    block.name(), " non manifold vertices - uuid ",
-                    block.id().string() ) );
+                non_manifold_vertices.set_description(
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") non manifold vertices" ) );
                 components_non_manifold_vertices.add_issues_to_map(
                     block.id(), std::move( non_manifold_vertices ) );
             }
@@ -129,8 +129,8 @@ namespace geode
                 const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
                 non_manifold_edges.set_description(
-                    absl::StrCat( "Block ", block.name(),
-                        " non manifold edges - uuid ", block.id().string() ) );
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") non manifold edges" ) );
                 components_non_manifold_edges.add_issues_to_map(
                     block.id(), non_manifold_edges );
             }
@@ -145,8 +145,8 @@ namespace geode
                 const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
                 non_manifold_facets.set_description(
-                    absl::StrCat( "Block ", block.name(),
-                        " non manifold facets - uuid ", block.id().string() ) );
+                    absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") non manifold facets" ) );
                 components_non_manifold_facets.add_issues_to_map(
                     block.id(), non_manifold_facets );
             }
@@ -197,8 +197,8 @@ namespace geode
                 std::string message = absl::StrCat(
                     "Model edge between unique vertices ",
                     edge.first.vertices()[0], " and ", edge.first.vertices()[1],
-                    " is not manifold: it does not belong to a line "
-                    "but is on surfaces " );
+                    " is not manifold: it does not belong to a Line "
+                    "but is on Surfaces " );
                 for( const auto surface_uuid : edge.second )
                 {
                     absl::StrAppend( &message, surface.name(), " (",
@@ -230,7 +230,7 @@ namespace geode
                 std::string message = absl::StrCat(
                     "Model edge between unique vertices ",
                     edge_unique_vertices[0], " and ", edge_unique_vertices[1],
-                    " is not manifold: it belongs to internal line ",
+                    " is not manifold: it belongs to internal Line ",
                     line.name(), " (", line.id().string(),
                     ") with only one edge" );
                 issues.add_issue(
@@ -262,7 +262,7 @@ namespace geode
                     absl::StrAppend( &message, polygon_vertex, " " );
                 }
                 absl::StrAppend( &message,
-                    " is not manifold: it belongs to internal surface ",
+                    " is not manifold: it belongs to internal Surface ",
                     surface.name(), " (", surface.id().string(),
                     ") with only one facet" );
                 issues.add_issue(

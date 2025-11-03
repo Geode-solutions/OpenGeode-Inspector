@@ -57,9 +57,9 @@ namespace geode
                     surface.mesh()
                 };
                 auto issues = inspector.non_manifold_vertices();
-                issues.set_description( absl::StrCat( "Surface ",
-                    surface.name(), " non manifold vertices - uuid ",
-                    surface.id().string() ) );
+                issues.set_description(
+                    absl::StrCat( "Surface ", surface.name(), " (",
+                        surface.id().string(), ") non manifold vertices" ) );
                 surfaces_non_manifold_vertices.add_issues_to_map(
                     surface.id(), std::move( issues ) );
             }
@@ -78,9 +78,9 @@ namespace geode
                     surface.mesh()
                 };
                 auto issues = inspector.non_manifold_edges();
-                issues.set_description( absl::StrCat( "Surface ",
-                    surface.name(), " non manifold edges - uuid ",
-                    surface.id().string() ) );
+                issues.set_description(
+                    absl::StrCat( "Surface ", surface.name(), " (",
+                        surface.id().string(), ") non manifold edges" ) );
                 surfaces_non_manifold_edges.add_issues_to_map(
                     surface.id(), std::move( issues ) );
             }

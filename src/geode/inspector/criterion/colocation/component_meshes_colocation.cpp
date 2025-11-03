@@ -112,8 +112,8 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    line_issues{ absl::StrCat( "line ", line.name(),
-                        " colocated vertices - uuid ", line.id().string() ) };
+                    line_issues{ absl::StrCat( "Line ", line.name(), " (",
+                        line.id().string(), ") colocated vertices" ) };
                 const auto& line_mesh = line.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
                 {
@@ -124,8 +124,9 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     line_issues.add_issue( colocated_points_group,
-                        absl::StrCat( point_group_string,
-                            " are colocated at position [",
+                        absl::StrCat( "Line ", line.name(), " (",
+                            line.id().string(), ") has vertices ",
+                            point_group_string, " colocated at position [",
                             line_mesh.point( colocated_points_group[0] )
                                 .string(),
                             "]" ) );
@@ -147,8 +148,7 @@ namespace
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
                     surface_issues{ absl::StrCat( "surface ", surface.name(),
-                        " colocated vertices - uuid ",
-                        surface.id().string() ) };
+                        " (", surface.id().string(), ") colocated vertices" ) };
                 const auto& surface_mesh = surface.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
                 {
@@ -159,8 +159,9 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     surface_issues.add_issue( colocated_points_group,
-                        absl::StrCat( point_group_string,
-                            " are colocated at position [",
+                        absl::StrCat( "Surface ", surface.name(), " (",
+                            surface.id().string(), ") has vertices ",
+                            point_group_string, " colocated at position [",
                             surface_mesh.point( colocated_points_group[0] )
                                 .string(),
                             "]" ) );
@@ -196,8 +197,8 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    block_issues{ absl::StrCat( "block ", block.name(),
-                        " colocated vertices - uuid ", block.id().string() ) };
+                    block_issues{ absl::StrCat( "Block ", block.name(), " (",
+                        block.id().string(), ") colocated vertices" ) };
                 const auto& block_mesh = block.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
                 {
@@ -208,8 +209,9 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     block_issues.add_issue( colocated_points_group,
-                        absl::StrCat( point_group_string,
-                            " are colocated at position [",
+                        absl::StrCat( "Block ", block.name(), " (",
+                            block.id().string(), ") has vertices ",
+                            point_group_string, " colocated at position [",
                             block_mesh.point( colocated_points_group[0] )
                                 .string(),
                             "]" ) );
@@ -235,7 +237,7 @@ namespace geode
         {
             return colocated_points_groups.string();
         }
-        return "No issues of colocation in model \n";
+        return "No issues of colocation in meshes \n";
     }
 
     std::string MeshesColocationInspectionResult::inspection_type() const

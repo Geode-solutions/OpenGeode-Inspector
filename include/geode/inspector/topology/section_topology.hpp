@@ -44,15 +44,15 @@ namespace geode
         SectionLinesTopologyInspectionResult lines;
         SectionSurfacesTopologyInspectionResult surfaces;
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
-            "unique vertices with no component links"
+            "unique vertices not linked to Component"
         };
         InspectionIssues< index_t > unique_vertices_linked_to_inexistant_cmv{
-            "unique vertices linked to inexistant ComponentMeshVertex"
+            "unique vertices linked to inexistant Component mesh vertex"
         };
         InspectionIssues< index_t >
             unique_vertices_nonbijectively_linked_to_cmv{
                 "unique vertices with non-bijective links to "
-                "ComponentMeshVertex"
+                "Component mesh vertex"
             };
 
         [[nodiscard]] index_t nb_issues() const;

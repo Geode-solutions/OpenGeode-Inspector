@@ -41,11 +41,9 @@ namespace geode
     struct
         opengeode_inspector_inspector_api SectionMeshesDegenerationInspectionResult
     {
-        InspectionIssuesMap< index_t > degenerated_edges{
-            "meshes with degenerated edges"
-        };
+        InspectionIssuesMap< index_t > degenerated_edges{ "degenerated edge" };
         InspectionIssuesMap< index_t > degenerated_polygons{
-            "meshes with degenerated polygons"
+            "degenerated polygon"
         };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -50,7 +50,7 @@ namespace geode
 
     std::string SurfaceInspectionResult::inspection_type() const
     {
-        return "SurfaceInspection";
+        return "surface inspection";
     }
 
     template < index_t dimension >
