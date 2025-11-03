@@ -522,7 +522,7 @@ namespace geode
                     model_.surface( polygon_pair.second.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
                     absl::StrCat( surface1.name(), " and ", surface2.name(),
-                        " intersect each other on polygons ",
+                        " intersect on polygons ",
                         polygon_pair.first.element_id, " and ",
                         polygon_pair.second.element_id, " - uuids ",
                         polygon_pair.first.component_id.id().string(), " and ",

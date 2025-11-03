@@ -102,7 +102,7 @@ namespace geode
                         const geode::SurfaceMeshDegeneration< Model::dim >
                             inspector{ surface.mesh() };
                         auto issues = inspector.small_edges( threshold );
-                        issues.set_description( absl::StrCat( "Surface ",
+                        issues.set_description( absl::StrCat( "surface ",
                             surface.name(), " small facet edges - uuid ",
                             surface.id().string() ) );
                         return std::make_pair(
@@ -141,7 +141,7 @@ namespace geode
                     const geode::SurfaceMeshDegeneration< Model::dim >
                         inspector{ surface.mesh() };
                     auto issues = inspector.small_height_polygons( threshold );
-                    issues.set_description( absl::StrCat( "Surface ",
+                    issues.set_description( absl::StrCat( "surface ",
                         surface.name(), " small height polygons - uuid ",
                         surface.id().string() ) );
                     return std::make_pair( surface.id(), std::move( issues ) );

@@ -43,7 +43,7 @@ namespace geode
         opengeode_inspector_inspector_api SectionCornersTopologyInspectionResult
     {
         InspectionIssues< uuid > corners_not_meshed{
-            "corners without mesh (UUIDs listed)"
+            "corners without mesh (uuids listed)"
         };
         InspectionIssuesMap< index_t > corners_not_linked_to_a_unique_vertex{
             "corners containing mesh vertices not linked to unique vertices"

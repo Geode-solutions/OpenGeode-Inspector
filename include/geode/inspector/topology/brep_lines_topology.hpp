@@ -43,7 +43,7 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
-            "lines without mesh (UUIDs listed)"
+            "lines without mesh (uuids listed)"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_line_with_wrong_relationship_to_surface{

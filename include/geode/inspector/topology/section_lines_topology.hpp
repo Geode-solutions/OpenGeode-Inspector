@@ -41,7 +41,7 @@ namespace geode
         opengeode_inspector_inspector_api SectionLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
-            "lines without mesh (UUIDs listed)"
+            "lines without mesh (uuids listed)"
         };
         InspectionIssuesMap< index_t > lines_not_linked_to_a_unique_vertex{
             "lines with mesh vertices not linked to a unique vertex"

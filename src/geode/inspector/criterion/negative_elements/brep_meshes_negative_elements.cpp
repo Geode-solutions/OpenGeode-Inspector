@@ -69,7 +69,7 @@ namespace geode
                 };
                 auto negative_elements = inspector.negative_polyhedra();
                 negative_elements.set_description(
-                    absl::StrCat( "Block ", block.name(),
+                    absl::StrCat( "block ", block.name(),
                         " negative polyhedra - uuid ", block.id().string() ) );
                 result.negative_polyhedra.add_issues_to_map(
                     block.id(), std::move( negative_elements ) );

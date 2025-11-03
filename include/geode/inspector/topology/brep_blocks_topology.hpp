@@ -46,10 +46,10 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepBlocksTopologyInspectionResult
     {
         InspectionIssues< uuid > some_blocks_not_meshed{
-            "blocks without mesh (UUIDs listed)"
+            "blocks without mesh (uuid listed)"
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
-            "surfaces incorrectly bounding blocks (UUIDs listed)"
+            "surfaces incorrectly bounding blocks (uuids listed)"
         };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
             "blocks containing mesh vertices not linked to unique vertices"
@@ -77,7 +77,7 @@ namespace geode
             "blocks with non-closed boundary surfaces"
         };
         InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
-            "model boundaries don't form a closed surface (UUIDs listed)"
+            "model boundaries don't form a closed surface (uuids listed)"
         };
         InspectionIssues< index_t >
             unique_vertex_linked_to_multiple_invalid_surfaces{

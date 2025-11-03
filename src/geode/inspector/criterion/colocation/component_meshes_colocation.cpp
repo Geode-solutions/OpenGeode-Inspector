@@ -146,7 +146,7 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    surface_issues{ absl::StrCat( "Surface ", surface.name(),
+                    surface_issues{ absl::StrCat( "surface ", surface.name(),
                         " colocated vertices - uuid ",
                         surface.id().string() ) };
                 const auto& surface_mesh = surface.mesh();
@@ -196,7 +196,7 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    block_issues{ absl::StrCat( "Block ", block.name(),
+                    block_issues{ absl::StrCat( "block ", block.name(),
                         " colocated vertices - uuid ", block.id().string() ) };
                 const auto& block_mesh = block.mesh();
                 for( const auto& colocated_points_group : colocated_pts )

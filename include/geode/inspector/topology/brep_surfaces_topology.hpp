@@ -42,7 +42,7 @@ namespace geode
         opengeode_inspector_inspector_api BRepSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
-            "surface without mesh (UUIDs listed)"
+            "surface without mesh (uuids listed)"
         };
         InspectionIssuesMap< index_t > surfaces_not_linked_to_a_unique_vertex{
             "surfaces containing mesh vertices not linked to unique vertices"

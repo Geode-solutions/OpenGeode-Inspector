@@ -56,7 +56,7 @@ namespace geode
         InspectionIssues< index_t > negative_polyhedra() const
         {
             InspectionIssues< index_t > wrong_polyhedra{
-                "Negative Volume Polyhedra"
+                "negative volume polyhedra"
             };
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
