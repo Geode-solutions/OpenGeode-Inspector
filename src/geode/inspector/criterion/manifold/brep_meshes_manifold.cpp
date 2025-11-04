@@ -201,7 +201,8 @@ namespace geode
                     "but is on Surfaces " );
                 for( const auto surface_uuid : edge.second )
                 {
-                    absl::StrAppend( &message, surface.name(), " (",
+                    absl::StrAppend( &message,
+                        model().surface( surface_uuid ).name(), " (",
                         surface_uuid.string(), "), " );
                 }
                 issues.add_issue(
