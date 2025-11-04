@@ -58,7 +58,7 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepMeshesManifoldInspectionResult
     {
         InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "non manifold mesh vertex"
+            "non manifold mesh vertices"
         };
 
         InspectionIssuesMap< std::array< index_t, 2 > >

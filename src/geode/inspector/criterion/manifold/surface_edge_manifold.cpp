@@ -51,9 +51,9 @@ namespace
                         { polygon_id, polygon_edge_id } )
                 };
                 if( !polygons_around_edges
-                        .try_emplace( polygon_edge_vertex_cycle,
-                            std::make_pair( 1, false ) )
-                        .second )
+                         .try_emplace( polygon_edge_vertex_cycle,
+                             std::make_pair( 1, false ) )
+                         .second )
                 {
                     polygons_around_edges[polygon_edge_vertex_cycle].first += 1;
                 }
@@ -106,8 +106,8 @@ namespace geode
                 if( on_border && nb_incident_polygons != 1 )
                 {
                     non_manifold_edges.add_issue( edge.first.vertices(),
-                        absl::StrCat( "edge between vertices with index ",
-                            edge.first.vertices()[0], " and index ",
+                        absl::StrCat( "edge between vertices ",
+                            edge.first.vertices()[0], " and ",
                             edge.first.vertices()[1],
                             " is not manifold (detected as on border)." ) );
                 }

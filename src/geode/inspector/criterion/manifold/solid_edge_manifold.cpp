@@ -68,8 +68,8 @@ namespace
             {
                 const Edge polyhedron_edge{ polyhedron_edge_vertices };
                 if( !polyhedra_around_edges
-                        .try_emplace( polyhedron_edge, 1, polyhedron_id )
-                        .second )
+                         .try_emplace( polyhedron_edge, 1, polyhedron_id )
+                         .second )
                 {
                     polyhedra_around_edges[polyhedron_edge].push_back(
                         polyhedron_id );
@@ -145,9 +145,9 @@ namespace geode
                         {
                             non_manifold_edges.add_issue(
                                 polyhedron_edge_vertices,
-                                absl::StrCat( "Non manifold edge between "
-                                              "vertices with index ",
-                                    polyhedron_edge_vertices[0], " and index ",
+                                absl::StrCat(
+                                    "Non manifold edge between vertices ",
+                                    polyhedron_edge_vertices[0], " and ",
                                     polyhedron_edge_vertices[1] ) );
                         }
                     }

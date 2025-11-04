@@ -72,7 +72,7 @@ namespace geode
         {
             enable_edges_on_mesh();
             InspectionIssues< index_t > degenerated_edges_index{
-                "Degenerated edges"
+                "degenerated edges"
             };
             for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
             {

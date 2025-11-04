@@ -110,8 +110,7 @@ namespace geode
                         mesh_.polyhedra_around_vertex( vertex_id ) ) )
                 {
                     non_manifold_vertices.add_issue( vertex_id,
-                        absl::StrCat( "vertex with index ", vertex_id,
-                            ", at position [",
+                        absl::StrCat( "vertex ", vertex_id, ", at position [",
                             mesh_.point( vertex_id ).string(), "]" ) );
                 }
             }

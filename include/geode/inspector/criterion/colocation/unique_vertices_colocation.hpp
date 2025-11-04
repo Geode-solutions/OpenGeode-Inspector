@@ -39,9 +39,9 @@ namespace geode
     struct opengeode_inspector_inspector_api UniqueVerticesInspectionResult
     {
         InspectionIssues< std::vector< index_t > >
-            colocated_unique_vertices_groups{ "colocated unique vertex" };
+            colocated_unique_vertices_groups{ "colocated unique vertices" };
         InspectionIssues< index_t > unique_vertices_linked_to_different_points{
-            "unique vertex refering multiple position"
+            "unique vertex refering multiple positions"
         };
 
         [[nodiscard]] index_t nb_issues() const;
