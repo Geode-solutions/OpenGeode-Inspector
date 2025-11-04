@@ -153,12 +153,12 @@ namespace geode
                 Range{ section_.nb_unique_vertices() } )
             {
                 if( !section_topology_inspector
-                         .section_corner_topology_is_valid( unique_vertex_id )
+                        .section_corner_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_lines_topology_is_valid( unique_vertex_id )
+                        .section_lines_topology_is_valid( unique_vertex_id )
                     || !section_topology_inspector
-                            .section_vertex_surfaces_topology_is_valid(
-                                unique_vertex_id ) )
+                        .section_vertex_surfaces_topology_is_valid(
+                            unique_vertex_id ) )
                 {
                     return false;
                 }
@@ -185,8 +185,8 @@ namespace geode
             {
                 if( section_.has_corner( cmv.component_id.id() )
                     && cmv.vertex < section_.corner( cmv.component_id.id() )
-                                        .mesh()
-                                        .nb_vertices() )
+                               .mesh()
+                               .nb_vertices() )
                 {
                     return true;
                 }
@@ -195,8 +195,8 @@ namespace geode
             {
                 if( section_.has_line( cmv.component_id.id() )
                     && cmv.vertex < section_.line( cmv.component_id.id() )
-                                        .mesh()
-                                        .nb_vertices() )
+                               .mesh()
+                               .nb_vertices() )
                 {
                     return true;
                 }
@@ -205,8 +205,8 @@ namespace geode
             {
                 if( section_.has_surface( cmv.component_id.id() )
                     && cmv.vertex < section_.surface( cmv.component_id.id() )
-                                        .mesh()
-                                        .nb_vertices() )
+                               .mesh()
+                               .nb_vertices() )
                 {
                     return true;
                 }
@@ -221,8 +221,8 @@ namespace geode
             {
                 if( topology_inspector.corner_is_meshed( corner )
                     && !topology_inspector
-                            .corner_vertices_are_associated_to_unique_vertices(
-                                corner ) )
+                        .corner_vertices_are_associated_to_unique_vertices(
+                            corner ) )
                 {
                     return false;
                 }
@@ -231,8 +231,8 @@ namespace geode
             {
                 if( topology_inspector.line_is_meshed( line )
                     && !topology_inspector
-                            .line_vertices_are_associated_to_unique_vertices(
-                                line ) )
+                        .line_vertices_are_associated_to_unique_vertices(
+                            line ) )
                 {
                     return false;
                 }
@@ -241,8 +241,8 @@ namespace geode
             {
                 if( topology_inspector.surface_is_meshed( surface )
                     && !topology_inspector
-                            .surface_vertices_are_associated_to_unique_vertices(
-                                surface ) )
+                        .surface_vertices_are_associated_to_unique_vertices(
+                            surface ) )
                 {
                     return false;
                 }

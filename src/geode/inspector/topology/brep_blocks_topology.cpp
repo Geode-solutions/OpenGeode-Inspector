@@ -199,8 +199,8 @@ namespace
                 const auto surface_id =
                     surface_uuids_to_graph_edges
                         .out2in( graph->edges_around_vertex( graph_vertex )
-                                     .at( 0 )
-                                     .edge_id )
+                                .at( 0 )
+                                .edge_id )
                         .at( 0 );
                 bool should_delete{ true };
                 for( const auto& edge_around :
@@ -309,7 +309,7 @@ namespace
                     const auto unique_vertex = brep.unique_vertex(
                         { boundary.component_id(), polygon_vertex } );
                     if( !unique_vertices_to_polygonal_surface_vertices
-                             .has_mapping_input( unique_vertex ) )
+                            .has_mapping_input( unique_vertex ) )
                     {
                         const auto new_vertex =
                             polygonal_surface_builder->create_point(
@@ -359,7 +359,7 @@ namespace
                         const auto unique_vertex = brep.unique_vertex(
                             { boundary.component_id(), polygon_vertex } );
                         if( !unique_vertices_to_polygonal_surface_vertices
-                                 .has_mapping_input( unique_vertex ) )
+                                .has_mapping_input( unique_vertex ) )
                         {
                             const auto new_vertex =
                                 polygonal_surface_builder->create_point(
