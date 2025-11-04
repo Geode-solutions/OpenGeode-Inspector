@@ -39,7 +39,7 @@ namespace geode
 
     std::string PointSetInspectionResult::inspection_type() const
     {
-        return "PointSet Inspection";
+        return "point set inspection";
     }
 
     template < index_t dimension >

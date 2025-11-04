@@ -107,9 +107,9 @@ namespace geode
                     section_.component_mesh_vertices( uv_id );
                 if( unique_vertex_cmvs.empty() )
                 {
-                    not_linked_result.add_issue( uv_id,
-                        absl::StrCat( "Unique vertex with id ", uv_id,
-                            " is not linked to any component mesh vertex." ) );
+                    not_linked_result.add_issue(
+                        uv_id, absl::StrCat( "unique vertex ", uv_id,
+                                   " is not linked to any mesh vertex." ) );
                     continue;
                 }
                 for( const auto& cmv : unique_vertex_cmvs )
@@ -119,17 +119,15 @@ namespace geode
                         if( section_.unique_vertex( cmv ) != uv_id )
                         {
                             linked_to_nonbijective_result.add_issue( uv_id,
-                                absl::StrCat( "Unique vertex with id ", uv_id,
-                                    " is linked to inexistant component "
-                                    "mesh vertex [",
+                                absl::StrCat( "unique vertex ", uv_id,
+                                    " is linked to inexistant mesh vertex [",
                                     cmv.string(), "]." ) );
                         }
                         continue;
                     }
                     linked_to_inexistant_result.add_issue(
-                        uv_id, absl::StrCat( "Unique vertex with id ", uv_id,
-                                   " is linked to inexistant component "
-                                   "mesh vertex [",
+                        uv_id, absl::StrCat( "unique vertex ", uv_id,
+                                   " is linked to inexistant mesh vertex [",
                                    cmv.string(), "]." ) );
                 }
             }

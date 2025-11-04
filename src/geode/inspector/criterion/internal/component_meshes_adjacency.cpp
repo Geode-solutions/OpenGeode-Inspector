@@ -79,9 +79,9 @@ namespace geode
                     surface.mesh()
                 };
                 auto issues = inspector.polygon_edges_with_wrong_adjacency();
-                issues.set_description(
-                    absl::StrCat( "Surface ", surface.id().string(),
-                        " polygon edges adjacency issues." ) );
+                issues.set_description( absl::StrCat( "Surface ",
+                    surface.name(), " (", surface.id().string(),
+                    ") polygon edges adjacency issues" ) );
                 const auto& mesh = surface.mesh();
                 for( const auto polygon_id : Range{ mesh.nb_polygons() } )
                 {
@@ -96,19 +96,18 @@ namespace geode
                                     model_, surface, polygon_edge ) )
                             {
                                 issues.add_issue( polygon_edge,
-                                    absl::StrCat( "Local edge ", edge_id,
+                                    absl::StrCat( "edge ", edge_id,
                                         " of polygon ", polygon_id,
                                         " has no adjacencies but is not part "
-                                        "of a "
-                                        "model Line." ) );
+                                        "of a model Line." ) );
                             }
                         }
                         catch( const OpenGeodeException& e )
                         {
                             Logger::warn( e.what() );
                             issues.add_issue( polygon_edge,
-                                absl::StrCat( "Local edge ", edge_id,
-                                    " of polygon ", polygon_id,
+                                absl::StrCat( "edge ", edge_id, " of polygon ",
+                                    polygon_id,
                                     " has no adjacencies but is not part of a "
                                     "model Line." ) );
                         }

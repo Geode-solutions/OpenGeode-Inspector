@@ -61,7 +61,8 @@ namespace geode
             polyhedron_facets_with_wrong_adjacency() const
         {
             InspectionIssues< PolyhedronFacet > wrong_adjacency_facets{
-                absl::StrCat( "Polyhedron facets with wrong adjacencies." )
+                absl::StrCat( "Solid ", mesh_.name(),
+                    " polyhedron facets adjacencies issues" )
             };
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
@@ -75,9 +76,8 @@ namespace geode
                             polyhedron_facet ) )
                     {
                         wrong_adjacency_facets.add_issue( polyhedron_facet,
-                            absl::StrCat( "Local facet ", facet_id,
-                                " of polyhedron ", polyhedron_id,
-                                " has wrong adjacencies." ) );
+                            absl::StrCat( "facet ", facet_id, " of polyhedron ",
+                                polyhedron_id, " has wrong adjacencies" ) );
                     }
                 }
             }

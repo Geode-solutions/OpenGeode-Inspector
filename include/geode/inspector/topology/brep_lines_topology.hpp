@@ -43,34 +43,32 @@ namespace geode
     struct opengeode_inspector_inspector_api BRepLinesTopologyInspectionResult
     {
         InspectionIssues< uuid > lines_not_meshed{
-            "uuids of Lines without mesh."
+            "Lines without mesh (uuids listed)"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_line_with_wrong_relationship_to_surface{
-                "Indices of unique vertices linked to a Line with wrong "
-                "relationship with a surface"
+                "unique vertices linked to a Line with an incorrect "
+                "relationship to a Surface"
             };
         InspectionIssuesMap< index_t > lines_not_linked_to_a_unique_vertex{
             "Lines with mesh vertices not linked to a unique vertex"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_with_invalid_embeddings{
-                "Indices of unique vertices linked to a Line with invalid "
-                "internal topology."
+                "unique vertices linked to a Line with invalid internal "
+                "topology"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_single_and_invalid_line{
-                "Indices of unique vertices linked to only one Line and this "
-                "single Line is invalid."
+                "unique vertices linked to a single invalid Line"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner{
-                "Indices of unique vertices linked to several Lines but not "
-                "linked to a Corner."
+                "unique vertices linked to multiple Lines but not to a Corner"
             };
         InspectionIssuesMap< index_t >
             line_edges_with_wrong_component_edges_around{
-                "Indices of line edges with wrong component edges around"
+                "Line edges with incorrect surrounding component edges"
             };
 
         [[nodiscard]] index_t nb_issues() const;

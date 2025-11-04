@@ -78,7 +78,7 @@ namespace geode
         {
             return message;
         }
-        return "No issues with corners topology \n";
+        return "no issues with Corners topology \n";
     }
 
     std::string BRepCornersTopologyInspectionResult::inspection_type() const
@@ -155,8 +155,8 @@ namespace geode
             {
                 if( corner_found )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of several corners." );
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of several Corners." );
                 }
                 corner_found = true;
             }
@@ -175,10 +175,11 @@ namespace geode
                 && brep_.nb_embeddings( cmv.component_id.id() ) < 1
                 && brep_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is associated to corner with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is associated to Corner ",
+                    brep_.corner( cmv.component_id.id() ).name(), " (",
                     cmv.component_id.id().string(),
-                    "', which is neither internal nor boundary." );
+                    "), which is neither internal nor boundary." );
             }
         }
         return std::nullopt;
@@ -223,24 +224,26 @@ namespace geode
                     }
                     if( line_vertex_count != 2 )
                     {
-                        return absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_index,
-                            " is associated with corner with uuid '",
+                        return absl::StrCat( "unique vertex with index ",
+                            unique_vertex_index, " is associated with Corner ",
+                            brep_.corner( corner_uuid ).name(), " (",
                             corner_uuid.string(),
-                            "', which is internal to line with uuid '",
-                            cmv_line.component_id.id().string(),
-                            "', so line should be closed and have two "
+                            "), which is internal to Line ",
+                            brep_.line( cmv_line.component_id.id() ).name(),
+                            " (", cmv_line.component_id.id().string(),
+                            "), so Line should be closed and have two "
                             "different vertices on unique vertex, but has ",
                             line_vertex_count, " vertices on it instead." );
                     }
                     continue;
                 }
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index,
-                    " is associated with corner with uuid '",
-                    corner_uuid.string() + "', part of line with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is associated with Corner ",
+                    brep_.corner( corner_uuid ).name(), " (",
+                    corner_uuid.string() + "), part of line ",
+                    brep_.line( cmv_line.component_id.id() ).name(), " (",
                     cmv_line.component_id.id().string(),
-                    "', but is neither boundary nor internal of it." );
+                    "), but is neither boundary nor internal of it." );
             }
         }
         return std::nullopt;
@@ -254,9 +257,9 @@ namespace geode
         {
             if( !corner_is_meshed( brep_.corner( corner.id() ) ) )
             {
-                result.corners_not_meshed.add_issue(
-                    corner.id(), absl::StrCat( "Corner ", corner.id().string(),
-                                     " is not meshed." ) );
+                result.corners_not_meshed.add_issue( corner.id(),
+                    absl::StrCat( "Corner ", corner.name(), " (",
+                        corner.id().string(), ") is not meshed." ) );
                 continue;
             }
             auto corner_result = internal::
@@ -264,8 +267,8 @@ namespace geode
                     brep_, corner.component_id(), corner.mesh() );
             if( corner_result.nb_issues() != 0 )
             {
-                corner_result.set_description(
-                    absl::StrCat( "Corner ", corner.id().string() ) );
+                corner_result.set_description( absl::StrCat( "Corner ",
+                    corner.name(), " (", corner.id().string(), ")" ) );
                 result.corners_not_linked_to_a_unique_vertex.add_issues_to_map(
                     corner.id(), std::move( corner_result ) );
             }

@@ -43,7 +43,7 @@ namespace geode
     {
         InspectionIssues<
             std::pair< ComponentMeshElement, ComponentMeshElement > >
-            elements_intersections{ "Surface intersections." };
+            elements_intersections{ "intersections" };
 
         [[nodiscard]] index_t nb_issues() const;
 

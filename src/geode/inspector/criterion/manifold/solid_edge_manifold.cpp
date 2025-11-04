@@ -122,7 +122,7 @@ namespace geode
         InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const
         {
             InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
-                "Non manifold edges."
+                "Non manifold edges"
             };
             absl::flat_hash_set< Edge > checked_edges;
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
@@ -146,10 +146,9 @@ namespace geode
                             non_manifold_edges.add_issue(
                                 polyhedron_edge_vertices,
                                 absl::StrCat(
-                                    "Edge between vertices with index ",
-                                    polyhedron_edge_vertices[0], " and index ",
-                                    polyhedron_edge_vertices[1],
-                                    " is not manifold." ) );
+                                    "Non manifold edge between vertices ",
+                                    polyhedron_edge_vertices[0], " and ",
+                                    polyhedron_edge_vertices[1] ) );
                         }
                     }
                     catch( const OpenGeodeException& )
@@ -159,8 +158,7 @@ namespace geode
                                           "between vertices with index ",
                                 polyhedron_edge_vertices[0], " and index ",
                                 polyhedron_edge_vertices[1],
-                                "; There are probably issues with solid "
-                                "adjacencies." ) );
+                                "; Check issues with solid adjacencies." ) );
                     }
                 }
             }

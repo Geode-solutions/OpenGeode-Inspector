@@ -76,10 +76,9 @@ namespace geode
                 if( this->mesh().polyhedron_minimum_height( polyhedron_id )
                     <= threshold )
                 {
-                    wrong_polyhedra.add_issue( polyhedron_id,
-                        absl::StrCat( "Polyhedron ", polyhedron_id,
-                            " of Solid ", this->mesh().id().string(),
-                            " is degenerated." ) );
+                    wrong_polyhedra.add_issue(
+                        polyhedron_id, absl::StrCat( "degenerated polyhedra ",
+                                           polyhedron_id ) );
                 }
             }
             return wrong_polyhedra;

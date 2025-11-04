@@ -53,12 +53,12 @@ namespace geode
         {
             return message;
         }
-        return "No manifold issues in model component meshes \n";
+        return "no manifold issues in model meshes \n";
     }
 
     std::string SectionMeshesManifoldInspectionResult::inspection_type() const
     {
-        return "Manifold inspection";
+        return "manifold inspection";
     }
 
     class SectionComponentMeshesManifold::Impl

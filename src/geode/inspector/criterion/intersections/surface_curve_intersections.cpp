@@ -240,13 +240,13 @@ namespace geode
             const auto intersections = intersecting_triangles_with_edges<
                 AllTriangleEdgeIntersection< dimension > >();
             InspectionIssues< std::pair< index_t, index_t > > issues{
-                "Triangle edge intersections between triangle."
+                "intersections between triangles and edges"
             };
             for( const auto& pair : intersections )
             {
                 issues.add_issue(
                     pair, absl::StrCat( "Triangle ", pair.first, " and edge",
-                              pair.second, " intersect each other." ) );
+                              pair.second, " intersect" ) );
             }
             return issues;
         }

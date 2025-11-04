@@ -43,7 +43,7 @@ namespace geode
 
     std::string EdgedCurveInspectionResult::inspection_type() const
     {
-        return "EdgedCurve Inspection";
+        return "edged curve inspection";
     }
 
     template < index_t dimension >

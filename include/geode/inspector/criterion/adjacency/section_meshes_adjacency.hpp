@@ -45,7 +45,7 @@ namespace geode
     {
         InspectionIssuesMap< PolygonEdge >
             surfaces_edges_with_wrong_adjacencies{
-                "Section Surface mesh polygon edges adjacencies issues"
+                "polygon edges adjacencies"
             };
 
         [[nodiscard]] index_t nb_issues() const;

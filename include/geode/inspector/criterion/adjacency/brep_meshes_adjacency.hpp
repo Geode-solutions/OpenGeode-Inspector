@@ -45,11 +45,11 @@ namespace geode
     {
         InspectionIssuesMap< PolygonEdge >
             surfaces_edges_with_wrong_adjacencies{
-                "BRep Surface mesh with polygon edges adjacencies issues"
+                "polygon edges adjacencies"
             };
         InspectionIssuesMap< PolyhedronFacet >
             blocks_facets_with_wrong_adjacencies{
-                "BRep Block mesh with polyhedron facets adjacencies issues"
+                "polyhedron facets adjacencies"
             };
 
         [[nodiscard]] index_t nb_issues() const;

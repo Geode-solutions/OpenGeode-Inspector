@@ -41,7 +41,7 @@ namespace geode
 
     std::string BRepInspectionResult::inspection_type() const
     {
-        return "BRep Inspection";
+        return "Boundary Representation inspection";
     }
 
     BRepInspector::BRepInspector( const BRep& brep )

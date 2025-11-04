@@ -46,15 +46,15 @@ namespace geode
         BRepSurfacesTopologyInspectionResult surfaces;
         BRepBlocksTopologyInspectionResult blocks;
         InspectionIssues< index_t > unique_vertices_not_linked_to_any_component{
-            "Unique vertices not linked to any component"
+            "unique vertices not linked to a Component"
         };
         InspectionIssues< index_t > unique_vertices_linked_to_inexistant_cmv{
-            "Unique vertices linked to inexistant ComponentMeshVertex"
+            "unique vertices linked to inexistant Component mesh vertex"
         };
         InspectionIssues< index_t >
             unique_vertices_nonbijectively_linked_to_cmv{
-                "Unique vertices with links to ComponentMeshVertex that are "
-                "not bijective"
+                "unique vertices with non-bijective links to "
+                "Component mesh vertex"
             };
 
         [[nodiscard]] index_t nb_issues() const;

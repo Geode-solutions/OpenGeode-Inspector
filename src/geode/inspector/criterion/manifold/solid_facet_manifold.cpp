@@ -89,14 +89,14 @@ namespace geode
             const auto nb_polyhedra_adjacent_to_facets =
                 facets_to_nb_adjacent_polyhedra( mesh_ );
             InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
-                "Non manifold facets."
+                "non manifold facets"
             };
             for( const auto& nb_adjacent_polyhedra :
                 nb_polyhedra_adjacent_to_facets )
             {
                 if( nb_adjacent_polyhedra.second > 2 )
                 {
-                    std::string message{ "Facet made of vertices with index " };
+                    std::string message{ "facet made of vertices with index " };
                     for( const auto vertex_id :
                         nb_adjacent_polyhedra.first.vertices() )
                     {

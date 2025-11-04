@@ -119,14 +119,14 @@ namespace geode
         {
             const auto intersections = intersecting_polygons( false );
             InspectionIssues< std::pair< index_t, index_t > > issues{
-                "Polygon - polygon intersections."
+                "intersections between polygons"
             };
 
             for( const auto& polygon_pair : intersections )
             {
                 issues.add_issue( polygon_pair,
                     absl::StrCat( "Polygons ", polygon_pair.first, " and ",
-                        polygon_pair.second, " intersect each other." ) );
+                        polygon_pair.second, " intersect" ) );
             }
             return issues;
         }

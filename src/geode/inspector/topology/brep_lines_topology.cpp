@@ -101,7 +101,7 @@ namespace geode
         {
             return message;
         }
-        return "No issues with lines topology \n";
+        return "no issues with Lines topology \n";
     }
 
     std::string BRepLinesTopologyInspectionResult::inspection_type() const
@@ -168,12 +168,13 @@ namespace geode
                 if( brep_.Relationships::is_boundary(
                         line_id, embedding.id() ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of line ", brep_.line( line_id ).name(), " (",
                         line_id.string(),
-                        "', which is both boundary and embedded in "
-                        "surface with uuid '",
-                        embedding.id().string() + "'." );
+                        "), which is both boundary and embedded in "
+                        "Surface ",
+                        brep_.surface( embedding.id() ).name(), " (",
+                        embedding.id().string() + ")." );
                 }
                 if( embedding.type() == Block3D::component_type_static()
                     && !internal::brep_blocks_are_meshed( brep_ ) )
@@ -186,13 +187,13 @@ namespace geode
                             return cmv.component_id == embedding;
                         } ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        line_id.string(),
-                        "', which is embedded in surface with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line ", brep_.line( line_id ).name(), " (",
+                        line_id.string(), "), which is embedded in Surface ",
+                        brep_.surface( embedding.id() ).name(), " (",
                         embedding.id().string(),
-                        "', but the unique vertex is not linked to the "
-                        "surface mesh vertices." );
+                        "), but the unique vertex is not linked to the "
+                        "Surface mesh vertices." );
                 }
             }
         }
@@ -226,14 +227,14 @@ namespace geode
                       || brep_.Relationships::is_boundary(
                           line_id, surface_uuids[0] ) ) )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index,
-                    " is part of only one line, with uuid '", line_id.string(),
-                    "', and only one surface, with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of only one Line ", brep_.line( line_id ).name(),
+                    " (", line_id.string(), "), and only one Surface ",
+                    brep_.surface( surface_uuids[0] ).name(), " (",
                     surface_uuids[0].string(),
-                    "', but the line is neither embedded in the "
-                    "surface, nor boundary of the surface while the "
-                    "surface is embedded in a block." );
+                    "), but the Line is neither embedded in the "
+                    "Surface, nor boundary of the Surface while the "
+                    "Surface is embedded in a Block." );
             }
         }
         else if( surface_uuids.empty() )
@@ -244,19 +245,18 @@ namespace geode
             }
             if( block_uuids.size() != 1 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index,
-                    " is part of only one line, with uuid '", line_id.string(),
-                    "', no surfaces, but is part of ", block_uuids.size(),
-                    " blocks, instead of one." );
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of only one Line ", brep_.line( line_id ).name(),
+                    " (", line_id.string(), "), no Surfaces, but is part of ",
+                    block_uuids.size(), " Blocks, instead of one." );
             }
             if( !brep_.Relationships::is_internal( line_id, block_uuids[0] ) )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index,
-                    " is part of only one line, with uuid '", line_id.string(),
-                    "', no surfaces, one block, but the line is not "
-                    "internal to the block." );
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of only one Line ", brep_.line( line_id ).name(),
+                    " (", line_id.string(),
+                    "), no Surfaces, one Block, but the Line is not "
+                    "internal to the Block." );
             }
         }
         else
@@ -267,14 +267,13 @@ namespace geode
                     && !brep_.Relationships::is_internal(
                         line_id, surface_id ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is part of only one line, with uuid '",
-                        line_id.string(),
-                        "', and multiple surfaces, but the line is "
-                        "neither internal nor boundary of surface with "
-                        "uuid '",
-                        surface_id.string(), "', in which the vertex is." );
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of only one Line ",
+                        brep_.line( line_id ).name(), " (", line_id.string(),
+                        "), and multiple Surfaces, but the Line is "
+                        "neither internal nor boundary of Surface ",
+                        brep_.surface( surface_id ).name(), " (",
+                        surface_id.string(), "), in which the vertex is." );
                 }
             }
         }
@@ -303,23 +302,25 @@ namespace geode
             {
                 if( !cme.surface_edges.contains( incident_surface.id() ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line ",
+                        brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        "', which should be boundary of "
-                        "surface with uuid '",
-                        incident_surface.id().string(), "'" );
+                        "), which should be boundary of Surface ",
+                        brep_.surface( incident_surface.id() ).name(), " (",
+                        incident_surface.id().string(), ")" );
                 }
                 const auto& surface_edges =
                     cme.surface_edges.at( incident_surface.id() );
                 if( surface_edges.size() != 1 )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line ",
+                        brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        "', which should not be boundary of "
-                        "surface with uuid '",
-                        incident_surface.id().string(), "'" );
+                        "), which should not be boundary of Surface ",
+                        brep_.surface( incident_surface.id() ).name(), " (",
+                        incident_surface.id().string(), ")" );
                 }
             }
             for( const auto& embedding_surface : brep_.embedding_surfaces(
@@ -327,23 +328,25 @@ namespace geode
             {
                 if( !cme.surface_edges.contains( embedding_surface.id() ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line ",
+                        brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        "', which should be embedded in "
-                        "surface with uuid '",
+                        "', which should be embedded in Surface ",
+                        brep_.surface( embedding_surface.id() ).name(), " (",
                         embedding_surface.id().string(), "'" );
                 }
                 const auto& surface_edges =
                     cme.surface_edges.at( embedding_surface.id() );
                 if( surface_edges.size() <= 1 )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line",
+                        brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        "', which should not be embedded in "
-                        "surface with uuid '",
-                        embedding_surface.id().string(), "'" );
+                        "), which should not be embedded in Surface ",
+                        brep_.surface( embedding_surface.id() ).name(), " (",
+                        embedding_surface.id().string(), ")" );
                 }
             }
             if( brep_.nb_incidences( cmv.component_id.id() ) < 1
@@ -355,12 +358,14 @@ namespace geode
                 {
                     if( cme.surface_edges.contains( surface.id() ) )
                     {
-                        return absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_index, " is part of line with uuid '",
+                        return absl::StrCat( "unique vertex ",
+                            unique_vertex_index, " is part of Line ",
+                            brep_.line( cmv.component_id.id() ).name(), " (",
                             cmv.component_id.id().string(),
-                            "', which should be internal or boundary to "
-                            "surface with uuid '",
-                            surface.id().string() );
+                            "), which should be internal or boundary to "
+                            "Surface ",
+                            brep_.surface( surface.id() ).name(), " (",
+                            surface.id().string(), ")" );
                     }
                 }
             }
@@ -389,9 +394,8 @@ namespace geode
         }
         if( nb_lines > 1 && !is_a_corner )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index,
-                " is part of multiple lines but is not a corner." );
+            return absl::StrCat( "nique vertex ", unique_vertex_index,
+                " is part of multiple Lines but is not a Corner." );
         }
         return std::nullopt;
     }
@@ -407,11 +411,12 @@ namespace geode
             {
                 if( surface_edges.size() != 1 )
                 {
-                    return absl::StrCat( "Line with uuid '", line.id().string(),
-                        "' is boundary of surface with uuid '",
-                        surface_id.string(), "', but has ",
+                    return absl::StrCat( "Line ", line.name(), " (",
+                        line.id().string(), ") is boundary of Surface ",
+                        brep_.surface( surface_id ).name(), " (",
+                        surface_id.string(), "), but has ",
                         surface_edges.size(),
-                        " edges of this surface around it, it should be 1." );
+                        " edges of this Surface around it, it should be 1." );
                 }
                 continue;
             }
@@ -438,10 +443,11 @@ namespace geode
             {
                 if( block_edges.size() != 1 )
                 {
-                    return absl::StrCat( "Line with uuid '", line.id().string(),
-                        "' is internal to block with uuid '", block_id.string(),
-                        "', but has ", block_edges.size(),
-                        " edges of this surface around it, it should be 1." );
+                    return absl::StrCat( "Line ", line.name(), " (",
+                        line.id().string(), ") is internal to Block ",
+                        brep_.block( block_id ).name(), " (", block_id.string(),
+                        "), but has ", block_edges.size(),
+                        " edges of this Surface around it, it should be 1." );
                 }
                 continue;
             }
@@ -458,16 +464,16 @@ namespace geode
             if( !line_is_meshed( brep_.line( line.id() ) ) )
             {
                 result.lines_not_meshed.add_issue(
-                    line.id(), absl::StrCat( line.id().string(),
-                                   " is a line without mesh." ) );
+                    line.id(), absl::StrCat( "Line ", line.name(), " (",
+                                   line.id().string(), ") is not meshed" ) );
             }
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(
                     brep_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {
-                line_result.set_description(
-                    absl::StrCat( "Line ", line.id().string() ) );
+                line_result.set_description( absl::StrCat(
+                    "Line ", line.name(), " (", line.id().string(), ")" ) );
                 result.lines_not_linked_to_a_unique_vertex.add_issues_to_map(
                     line.id(), std::move( line_result ) );
                 /// Next test may result in SegFaults if component vertices are
@@ -475,7 +481,7 @@ namespace geode
                 continue;
             }
             InspectionIssues< index_t > line_edges_with_wrong_cme{ absl::StrCat(
-                "Line ", line.id().string() ) };
+                "Line ", line.name(), " (", line.id().string(), ")" ) };
             for( const auto edge_id : Range{ line.mesh().nb_edges() } )
             {
                 if( const auto problem_message =

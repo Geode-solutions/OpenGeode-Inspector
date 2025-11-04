@@ -42,7 +42,7 @@ namespace geode
         opengeode_inspector_inspector_api BRepMeshesNegativeElementsInspectionResult
     {
         InspectionIssuesMap< index_t > negative_polyhedra{
-            "BRep block meshes with negative polyhedra"
+            "negative polyhedra"
         };
 
         [[nodiscard]] index_t nb_issues() const;

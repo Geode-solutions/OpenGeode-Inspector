@@ -225,10 +225,9 @@ namespace geode
                         unique_vertices_->point( unique_vertex_id ) ) )
                 {
                     vertices_issues.add_issue( unique_vertex_id,
-                        absl::StrCat( "Unique vertex with index ",
-                            unique_vertex_id,
-                            " has component mesh vertices which are not "
-                            "on the same position." ) );
+                        absl::StrCat( "unique vertex ", unique_vertex_id,
+                            " is linked to several mesh vertices on different "
+                            "positions" ) );
                 }
             }
         }
@@ -260,11 +259,11 @@ namespace geode
                 if( !fixed_point_group.empty() )
                 {
                     vertices_issues.add_issue( fixed_point_group,
-                        absl::StrCat( "Unique vertices with indices",
-                            point_group_string, " are colocated at position [",
+                        absl::StrCat( "unique vertices ", point_group_string,
+                            " are colocated at the position [",
                             unique_vertices_->point( fixed_point_group[0] )
                                 .string(),
-                            "]." ) );
+                            "]" ) );
                 }
             }
         }

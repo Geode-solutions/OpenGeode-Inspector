@@ -42,20 +42,19 @@ namespace geode
         opengeode_inspector_inspector_api SectionSurfacesTopologyInspectionResult
     {
         InspectionIssues< uuid > surfaces_not_meshed{
-            "uuids of Surfaces without mesh."
+            "Surfaces without mesh (uuids listed)"
         };
         InspectionIssuesMap< index_t > surfaces_not_linked_to_a_unique_vertex{
-            "Surfaces with mesh vertices not linked to a unique vertex"
+            "Surfaces containing mesh vertices not linked to unique vertices"
         };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_surface_with_invalid_embbedings{
-                "Indices of unique vertices linked to a Surface with invalid "
-                "internal topology."
+                "unique vertices linked to a Surface with invalid "
+                "internal topology"
             };
         InspectionIssues< index_t >
             unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border{
-                "Indices of unique vertices linked to a Line but not linked to "
-                "a Surface border."
+                "unique vertices linked to a Line but not to a Surface border"
             };
 
         [[nodiscard]] index_t nb_issues() const;

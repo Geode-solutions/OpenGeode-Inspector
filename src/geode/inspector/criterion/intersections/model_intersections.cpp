@@ -516,13 +516,18 @@ namespace geode
                 AllModelSurfacesIntersection< Model > >();
             for( const auto& polygon_pair : intersections )
             {
+                const auto& surface1 =
+                    model_.surface( polygon_pair.first.component_id.id() );
+                const auto& surface2 =
+                    model_.surface( polygon_pair.second.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Polygons ", polygon_pair.first.element_id,
-                        " of surface ",
-                        polygon_pair.first.component_id.id().string(), " and ",
-                        polygon_pair.second.element_id, " of surface ",
+                    absl::StrCat( "Surfaces ", surface1.name(), " (",
+                        polygon_pair.first.component_id.id().string(), ") and ",
+                        surface2.name(), " (",
                         polygon_pair.second.component_id.id().string(),
-                        " intersect each other." ) );
+                        ") intersect on polygons ",
+                        polygon_pair.first.element_id, " and ",
+                        polygon_pair.second.element_id ) );
             }
         }
 
@@ -534,11 +539,14 @@ namespace geode
                 AllModelSurfacesAutoIntersection< Model > >();
             for( const auto& polygon_pair : intersections )
             {
+                const auto& surface =
+                    model_.surface( polygon_pair.first.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Polygons ", polygon_pair.first.element_id,
-                        "and ", polygon_pair.second.element_id, " of surface ",
+                    absl::StrCat( "Surface ", surface.name(), " (",
                         polygon_pair.first.component_id.id().string(),
-                        " intersect each other." ) );
+                        ") has a self intersection on polygons ",
+                        polygon_pair.first.element_id, "and ",
+                        polygon_pair.second.element_id ) );
             }
         }
 

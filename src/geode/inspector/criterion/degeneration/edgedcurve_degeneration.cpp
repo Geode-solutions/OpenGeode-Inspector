@@ -54,17 +54,16 @@ namespace geode
         InspectionIssues< index_t > small_edges( double threshold ) const
         {
             InspectionIssues< index_t > degenerated_edges_index{
-                "Degenerated Edges of EdgeCurve " + mesh_.id().string() + "."
+                "degenerated edges."
             };
             for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {
                 if( mesh_.edge_length( edge_id ) <= threshold )
                 {
-                    degenerated_edges_index.add_issue(
-                        edge_id, absl::StrCat( "Edge with index ", edge_id,
-                                     ", at position [",
-                                     mesh_.edge_barycenter( edge_id ).string(),
-                                     "], is degenerated." ) );
+                    degenerated_edges_index.add_issue( edge_id,
+                        absl::StrCat( "degenerated edge ", edge_id,
+                            ", at position [",
+                            mesh_.edge_barycenter( edge_id ).string(), "]" ) );
                 }
             }
             return degenerated_edges_index;

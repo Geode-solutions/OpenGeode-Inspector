@@ -100,9 +100,9 @@ namespace geode
                     vertex_id };
                 if( model.unique_vertex( component_mesh_vertex ) == NO_ID )
                 {
-                    result.add_issue( vertex_id,
-                        absl::StrCat( "Vertex '", vertex_id,
-                            "' is not linked to a unique vertex." ) );
+                    result.add_issue(
+                        vertex_id, absl::StrCat( "vertex '", vertex_id,
+                                       " is not linked to a unique vertex." ) );
                 }
             }
             return result;
