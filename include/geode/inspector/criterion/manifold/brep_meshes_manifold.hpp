@@ -62,17 +62,17 @@ namespace geode
         };
 
         InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{ "non manifold mesh edge" };
+            meshes_non_manifold_edges{ "non manifold mesh edges" };
 
         InspectionIssuesMap< PolyhedronFacetVertices >
-            meshes_non_manifold_facets{ "non manifold mesh facet" };
+            meshes_non_manifold_facets{ "non manifold mesh facets" };
 
         InspectionIssues< BRepNonManifoldEdge > brep_non_manifold_edges{
-            "non manifold model edge"
+            "non manifold model edges"
         };
 
         InspectionIssues< BRepNonManifoldFacet > brep_non_manifold_facets{
-            "non manifold model facet"
+            "non manifold model facets"
         };
 
         [[nodiscard]] index_t nb_issues() const;

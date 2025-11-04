@@ -147,7 +147,7 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    surface_issues{ absl::StrCat( "surface ", surface.name(),
+                    surface_issues{ absl::StrCat( "Surface ", surface.name(),
                         " (", surface.id().string(), ") colocated vertices" ) };
                 const auto& surface_mesh = surface.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
@@ -237,12 +237,12 @@ namespace geode
         {
             return colocated_points_groups.string();
         }
-        return "No issues of colocation in meshes \n";
+        return "no issues of colocation in meshes \n";
     }
 
     std::string MeshesColocationInspectionResult::inspection_type() const
     {
-        return "Points colocation inspection";
+        return "points colocation inspection";
     }
 
     template < typename Model >

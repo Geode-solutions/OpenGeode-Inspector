@@ -72,7 +72,7 @@ namespace geode
         {
             if( issues_.empty() )
             {
-                return absl::StrCat( "No issues with ", description_, "\n" );
+                return absl::StrCat( "no issues with ", description_, "\n" );
             }
             auto message =
                 absl::StrCat( issues_.size(), " issues with ", description_ );
@@ -138,7 +138,7 @@ namespace geode
         {
             if( issues_map_.empty() )
             {
-                return absl::StrCat( "No issues with ", description_, "\n" );
+                return absl::StrCat( "no issues with ", description_, "\n" );
             }
             auto message = absl::StrCat(
                 issues_map_.size(), " issues with ", description_ );

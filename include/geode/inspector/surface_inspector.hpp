@@ -37,10 +37,10 @@ namespace geode
     struct opengeode_inspector_inspector_api SurfaceInspectionResult
     {
         InspectionIssues< PolygonEdge > polygon_edges_with_wrong_adjacency{
-            "Adjacencies between polygon and edges not tested"
+            "Adjacencies between polygon edges not tested"
         };
         InspectionIssues< std::vector< index_t > > colocated_points_groups{
-            "Colocalization of vertices not tested"
+            "Colocation of vertices not tested"
         };
         InspectionIssues< index_t > degenerated_edges{
             "Degeneration of edges not tested"

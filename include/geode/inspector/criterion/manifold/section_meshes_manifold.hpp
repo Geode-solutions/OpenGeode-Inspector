@@ -39,10 +39,10 @@ namespace geode
         opengeode_inspector_inspector_api SectionMeshesManifoldInspectionResult
     {
         InspectionIssuesMap< index_t > meshes_non_manifold_vertices{
-            "non manifold mesh vertex"
+            "non manifold mesh vertices"
         };
         InspectionIssuesMap< std::array< index_t, 2 > >
-            meshes_non_manifold_edges{ "non manifold mesh edge" };
+            meshes_non_manifold_edges{ "non manifold mesh edges" };
 
         [[nodiscard]] index_t nb_issues() const;
 

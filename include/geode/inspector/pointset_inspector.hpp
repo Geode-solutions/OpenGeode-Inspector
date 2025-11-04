@@ -32,7 +32,7 @@ namespace geode
     struct opengeode_inspector_inspector_api PointSetInspectionResult
     {
         InspectionIssues< std::vector< index_t > > colocated_points_groups{
-            "Colocalization of vertices not tested"
+            "Colocation of vertices not tested"
         };
 
         [[nodiscard]] index_t nb_issues() const;

@@ -41,7 +41,7 @@ namespace geode
     struct
         opengeode_inspector_inspector_api SectionMeshesNegativeElementsInspectionResult
     {
-        InspectionIssuesMap< index_t > negative_polygons{ "negative polygon" };
+        InspectionIssuesMap< index_t > negative_polygons{ "negative polygons" };
 
         [[nodiscard]] index_t nb_issues() const;
 

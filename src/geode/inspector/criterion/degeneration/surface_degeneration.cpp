@@ -75,7 +75,7 @@ namespace geode
                     <= threshold )
                 {
                     wrong_polygons.add_issue( polygon_id,
-                        absl::StrCat( "degenerated polygon ", polygon_id ) );
+                        absl::StrCat( "degenerated polygons ", polygon_id ) );
                 }
             }
             return wrong_polygons;
