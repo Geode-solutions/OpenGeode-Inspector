@@ -95,7 +95,7 @@ namespace geode
         {
             return message;
         }
-        return "no issues with surfaces topology \n";
+        return "no issues with Surfaces topology \n";
     }
 
     std::string BRepSurfacesTopologyInspectionResult::inspection_type() const
