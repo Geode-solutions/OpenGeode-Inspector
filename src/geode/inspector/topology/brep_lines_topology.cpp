@@ -344,7 +344,7 @@ namespace geode
                         " is part of Line",
                         brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        ", which should not be embedded in Surface ",
+                        "), which should not be embedded in Surface ",
                         brep_.surface( embedding_surface.id() ).name(), " (",
                         embedding_surface.id().string(), ")" );
                 }
