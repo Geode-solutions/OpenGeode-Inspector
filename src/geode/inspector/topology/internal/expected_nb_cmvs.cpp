@@ -106,12 +106,13 @@ namespace
                 return std::make_pair( 1,
                     nb_block_cmvs == 1
                         ? std::nullopt
-                        : std::make_optional( absl::StrCat(
-                              "Unique vertex with index ", unique_vertex_id,
-                              " is part of block ", block_uuid.string(),
-                              " and exactly one corner and one line but has ",
+                        : std::make_optional( absl::StrCat( "unique vertex ",
+                              unique_vertex_id, " is part of Block ",
+                              brep.block( block_uuid ).name(), " (",
+                              block_uuid.string(),
+                              ") and exactly one Corner and one Line but has ",
                               nb_block_cmvs,
-                              " block component mesh vertices (should be "
+                              " Block mesh vertices (should be "
                               "1)." ) ) );
             }
             const auto predicted_nb_block_cmvs =
@@ -120,15 +121,16 @@ namespace
             return std::make_pair( predicted_nb_block_cmvs,
                 nb_block_cmvs == predicted_nb_block_cmvs
                     ? std::nullopt
-                    : std::make_optional( absl::StrCat(
-                          "Unique vertex with index ", unique_vertex_id,
-                          " is part of the block ", block_uuid.string(),
-                          ", and of a corner, and of no internal line, ",
+                    : std::make_optional( absl::StrCat( "unique vertex ",
+                          unique_vertex_id, " is part of the Block ",
+                          brep.block( block_uuid ).name(), " (",
+                          block_uuid.string(),
+                          ") and of a Corner, and of no internal Line, ",
                           "and of ", nb_boundary_surface_cmvs,
-                          " boundary surface(s), and of ",
+                          " boundary Surface(s), and of ",
                           nb_boundary_line_cmvs,
-                          " line(s) on block boundaries, with ", nb_block_cmvs,
-                          " block component mesh vertices (should be ",
+                          " Line(s) on Block boundaries, with ", nb_block_cmvs,
+                          " Block component mesh vertices (should be ",
                           predicted_nb_block_cmvs, ")." ) ) );
         }
         if( nb_internal_surface_cmvs == 0 )
@@ -138,12 +140,12 @@ namespace
             return std::make_pair( predicted_nb_block_cmvs,
                 nb_block_cmvs == predicted_nb_block_cmvs
                     ? std::nullopt
-                    : std::make_optional( absl::StrCat(
-                          "Unique vertex with index ", unique_vertex_id,
-                          " is part of the block ", block_uuid.string(),
-                          " and none of its internal surfaces but has ",
-                          nb_block_cmvs,
-                          " block component mesh vertices (should be ",
+                    : std::make_optional( absl::StrCat( "unique vertex ",
+                          unique_vertex_id, " is part of the Block ",
+                          brep.block( block_uuid ).name(), " (",
+                          block_uuid.string(),
+                          ") and none of its internal Surfaces but has ",
+                          nb_block_cmvs, " Block mesh vertices (should be ",
                           predicted_nb_block_cmvs, ")." ) ) );
         }
         const auto nb_free_line_cmvs = count_cmvs(
@@ -169,15 +171,16 @@ namespace
         return std::make_pair( predicted_nb_block_cmvs,
             nb_block_cmvs == predicted_nb_block_cmvs
                 ? std::nullopt
-                : std::make_optional( absl::StrCat( "Unique vertex with index ",
-                      unique_vertex_id, " is part of the block ",
-                      block_uuid.string(), ", has ", nb_internal_surface_cmvs,
-                      " internal surface(s) component mesh vertices (CMVs), "
+                : std::make_optional( absl::StrCat( "unique vertex ",
+                      unique_vertex_id, " is part of the Block ",
+                      brep.block( block_uuid ).name(), " (",
+                      block_uuid.string(), "), has ", nb_internal_surface_cmvs,
+                      " internal Surface(s) mesh vertices (CMVs), "
                       "has ",
                       nb_boundary_surface_cmvs,
-                      " boundary surface(s) CMVs, and has ", nb_free_line_cmvs,
-                      " free line(s) CMVs, with ", nb_block_cmvs,
-                      " block CMVs (should be ", predicted_nb_block_cmvs,
+                      " boundary Surface(s) CMVs, and has ", nb_free_line_cmvs,
+                      " free Line(s) CMVs, with ", nb_block_cmvs,
+                      " Block CMVs (should be ", predicted_nb_block_cmvs,
                       ")." ) ) );
     }
 } // namespace

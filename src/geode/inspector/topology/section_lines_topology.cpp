@@ -96,7 +96,7 @@ namespace geode
         {
             return message;
         }
-        return "No issues with lines topology \n";
+        return "no issues with Lines topology \n";
     }
 
     std::string SectionLinesTopologyInspectionResult::inspection_type() const
@@ -165,10 +165,11 @@ namespace geode
             if( section_.nb_embeddings( cmv.component_id.id() ) < 1
                 && section_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of line with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of Line ",
+                    section_.line( cmv.component_id.id() ).name(), " (",
                     cmv.component_id.id().string(),
-                    "', which is neither embedded nor incident." );
+                    "), which is neither embedded nor incident." );
             }
         }
         return std::nullopt;
@@ -192,18 +193,19 @@ namespace geode
             }
             if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of line with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of line ",
+                    section_.line( line_cmv.component_id.id() ).name(), " (",
                     line_cmv.component_id.id().string(),
-                    "', which has multiple embeddings." );
+                    "), which has multiple embeddings." );
             }
             if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index, " is part of line with uuid '",
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of Line ",
+                    section_.line( line_cmv.component_id.id() ).name(), " (",
                     line_cmv.component_id.id().string(),
-                    "', which has both an embedding and "
-                    "incidence(s)." );
+                    "), which has both an embedding and incidence(s)." );
             }
             for( const auto& embedding :
                 section_.embeddings( line_cmv.component_id.id() ) )
@@ -215,13 +217,15 @@ namespace geode
                             return cmv.component_id.id() == embedding.id();
                         } ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index, " is part of line with uuid '",
-                        line_cmv.component_id.string(),
-                        "', which is embedded in surface with uuid '",
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of Line ",
+                        section_.line( line_cmv.component_id.id() ).name(),
+                        " (", line_cmv.component_id.string(),
+                        "), which is embedded in surface ",
+                        section_.surface( embedding.id() ).name(), " (",
                         embedding.id().string(),
-                        "', but the unique vertex is not linked to the "
-                        "surface mesh vertices." );
+                        "), but the unique vertex is not linked to the "
+                        "Surface mesh vertices." );
                 }
             }
         }
@@ -243,9 +247,10 @@ namespace geode
             section_, unique_vertex_index, Surface2D::component_type_static() );
         if( surface_uuids.size() > 2 )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index, " is part of only one line, with uuid '",
-                line_id.string(), "', but part of more than two surfaces." );
+            return absl::StrCat( "unique vertex ", unique_vertex_index,
+                " is part of only one Line ", section_.line( line_id ).name(),
+                " (", line_id.string(),
+                "), but part of more than two Surfaces" );
         }
         if( section_.nb_embeddings( line_id ) > 0 )
         {
@@ -254,12 +259,12 @@ namespace geode
                      || !section_.Relationships::is_internal(
                          line_id, surface_uuids[0] ) ) )
             {
-                return absl::StrCat( "Unique vertex with index ",
-                    unique_vertex_index,
-                    " is part of only one line, with uuid '", line_id.string(),
-                    "', which has embeddings, but there are more than "
-                    "one meshed surface associated to the vertex, or "
-                    "the line is not internal to the meshed surface "
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of only one Line ",
+                    section_.line( line_id ).name(), " (", line_id.string(),
+                    "), which has embeddings, but there are more than "
+                    "one meshed Surface associated to the vertex, or "
+                    "the Line is not internal to the meshed Surface "
                     "associated to the vertex." );
             }
         }
@@ -270,13 +275,13 @@ namespace geode
                 if( !section_.Relationships::is_boundary(
                         line_id, surface_id ) )
                 {
-                    return absl::StrCat( "Unique vertex with index ",
-                        unique_vertex_index,
-                        " is part of only one line, with uuid '",
-                        line_id.string(),
-                        "', and mutiple surfaces, but the line is not "
-                        "boundary of associated surface with uuid'",
-                        surface_id.string(), "'." );
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of only one Line ",
+                        section_.line( line_id ).name(), " (", line_id.string(),
+                        "), and mutiple Surfaces, but the Line is not "
+                        "boundary of associated Surface ",
+                        section_.surface( surface_id ).name(), " (",
+                        surface_id.string(), ")" );
                 }
             }
         }
@@ -304,9 +309,8 @@ namespace geode
         }
         if( nb_cmv_lines > 1 && !corner_found )
         {
-            return absl::StrCat( "Unique vertex with index ",
-                unique_vertex_index,
-                " is part of multiple lines but is not a corner." );
+            return absl::StrCat( "unique vertex ", unique_vertex_index,
+                " is part of multiple Lines but is not a Corner." );
         }
         return std::nullopt;
     }
@@ -320,16 +324,16 @@ namespace geode
             if( !line_is_meshed( section_.line( line.id() ) ) )
             {
                 result.lines_not_meshed.add_issue(
-                    line.id(), absl::StrCat( line.id().string(),
-                                   " is a line without mesh." ) );
+                    line.id(), absl::StrCat( "Line ", line.name(), " (",
+                                   line.id().string(), ") is not meshed" ) );
             }
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {
-                line_result.set_description(
-                    absl::StrCat( "Line ", line.id().string() ) );
+                line_result.set_description( absl::StrCat(
+                    "Line ", line.name(), " (", line.id().string(), ")" ) );
                 result.lines_not_linked_to_a_unique_vertex.add_issues_to_map(
                     line.id(), std::move( line_result ) );
             }
