@@ -755,6 +755,10 @@ namespace geode
         BRepBlocksTopology::inspect_blocks() const
     {
         BRepBlocksTopologyInspectionResult result;
+        if( brep_.nb_blocks() == 0 || brep_.nb_active_blocks() == 0 )
+        {
+            return result;
+        }
         std::vector< geode::uuid > meshed_blocks;
         const auto not_boundary_surfaces = find_not_boundary_surfaces( brep_ );
         const auto dangling_surfaces =
