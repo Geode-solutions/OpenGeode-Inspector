@@ -394,7 +394,7 @@ namespace geode
         }
         if( nb_lines > 1 && !is_a_corner )
         {
-            return absl::StrCat( "nique vertex ", unique_vertex_index,
+            return absl::StrCat( "unique vertex ", unique_vertex_index,
                 " is part of multiple Lines but is not a Corner." );
         }
         return std::nullopt;
