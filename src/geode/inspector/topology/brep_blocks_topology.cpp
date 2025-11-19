@@ -436,8 +436,7 @@ namespace geode
                     .string(),
                 "\n" );
         }
-        if( unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
-            != 0 )
+        if( unique_vertices_with_incorrect_block_cmvs_count.nb_issues() != 0 )
         {
             absl::StrAppend( &message,
                 unique_vertices_with_incorrect_block_cmvs_count.string(),
