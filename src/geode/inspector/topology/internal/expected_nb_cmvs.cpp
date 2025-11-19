@@ -23,9 +23,9 @@
 
 #include <geode/inspector/topology/internal/expected_nb_cmvs.hpp>
 
-// #include <geode/mesh/core/point_set.hpp>
-// #include <geode/mesh/core/solid_mesh.hpp>
-// #include <geode/mesh/core/surface_mesh.hpp>
+#include <geode/geometry/point.hpp>
+
+#include <geode/mesh/core/solid_mesh.hpp>
 
 #include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
@@ -107,7 +107,14 @@ namespace
                     nb_block_cmvs == 1
                         ? std::nullopt
                         : std::make_optional( absl::StrCat( "unique vertex ",
-                              unique_vertex_id, " is part of Block ",
+                              unique_vertex_id, " at position [",
+                              brep.block( unique_vertex_cmvs.block_cmvs[0]
+                                              .component_id.id() )
+                                  .mesh()
+                                  .point(
+                                      unique_vertex_cmvs.block_cmvs[0].vertex )
+                                  .string(),
+                              "]", " is part of Block ",
                               brep.block( block_uuid ).name(), " (",
                               block_uuid.string(),
                               ") and exactly one Corner and one Line but has ",
@@ -122,10 +129,16 @@ namespace
                 nb_block_cmvs == predicted_nb_block_cmvs
                     ? std::nullopt
                     : std::make_optional( absl::StrCat( "unique vertex ",
-                          unique_vertex_id, " is part of the Block ",
+                          unique_vertex_id, " at position [",
+                          brep.block( unique_vertex_cmvs.block_cmvs[0]
+                                          .component_id.id() )
+                              .mesh()
+                              .point( unique_vertex_cmvs.block_cmvs[0].vertex )
+                              .string(),
+                          "]", " is part of Block ",
                           brep.block( block_uuid ).name(), " (",
                           block_uuid.string(),
-                          ") and of a Corner, and of no internal Line, ",
+                          ") and of a Corner, and of no internal Surface, ",
                           "and of ", nb_boundary_surface_cmvs,
                           " boundary Surface(s), and of ",
                           nb_boundary_line_cmvs,
@@ -141,7 +154,13 @@ namespace
                 nb_block_cmvs == predicted_nb_block_cmvs
                     ? std::nullopt
                     : std::make_optional( absl::StrCat( "unique vertex ",
-                          unique_vertex_id, " is part of the Block ",
+                          unique_vertex_id, " at position [",
+                          brep.block( unique_vertex_cmvs.block_cmvs[0]
+                                          .component_id.id() )
+                              .mesh()
+                              .point( unique_vertex_cmvs.block_cmvs[0].vertex )
+                              .string(),
+                          "]", " is part of the Block ",
                           brep.block( block_uuid ).name(), " (",
                           block_uuid.string(),
                           ") and none of its internal Surfaces but has ",
@@ -172,7 +191,7 @@ namespace
             nb_block_cmvs == predicted_nb_block_cmvs
                 ? std::nullopt
                 : std::make_optional( absl::StrCat( "unique vertex ",
-                      unique_vertex_id, " is part of the Block ",
+                      unique_vertex_id, " is part of Block ",
                       brep.block( block_uuid ).name(), " (",
                       block_uuid.string(), "), has ", nb_internal_surface_cmvs,
                       " internal Surface(s) mesh vertices (CMVs), "
