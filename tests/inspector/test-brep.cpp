@@ -357,8 +357,8 @@ void check_model_mss( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 34, "[Test] mss has ",
-        nb_topological_issues, " topological problems instead of 34." );
+    OPENGEODE_EXCEPTION( nb_topological_issues == 36, "[Test] mss has ",
+        nb_topological_issues, " topological problems instead of 36." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -435,7 +435,7 @@ int main()
         geode::Logger::set_level( geode::Logger::LEVEL::debug );
         check_model_a1( false );
         check_model_a1_valid( false );
-        check_model_mss( false );
+        check_model_mss( true );
         check_model_D( false );
         check_wrong_bsurfaces_model();
         check_segmented_cube();

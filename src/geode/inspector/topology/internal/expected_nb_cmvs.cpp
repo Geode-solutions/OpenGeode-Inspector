@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/internal/expected_nb_cmvs.hpp>
 
+#include <absl/container/flat_hash_set.h>
+
 #include <geode/geometry/point.hpp>
 
 #include <geode/mesh/core/solid_mesh.hpp>
@@ -114,7 +116,7 @@ namespace
                                   .point(
                                       unique_vertex_cmvs.block_cmvs[0].vertex )
                                   .string(),
-                              "]", " is part of Block ",
+                              "] is part of Block ",
                               brep.block( block_uuid ).name(), " (",
                               block_uuid.string(),
                               ") and exactly one Corner and one Line but has ",
@@ -167,40 +169,110 @@ namespace
                           nb_block_cmvs, " Block mesh vertices (should be ",
                           predicted_nb_block_cmvs, ")." ) ) );
         }
-        const auto nb_free_line_cmvs = count_cmvs(
-            unique_vertex_cmvs.line_cmvs, [&brep]( const auto& cmv ) {
-                return brep.nb_incidences( cmv.component_id.id() ) == 1
-                       && brep.nb_embedding_surfaces(
-                              brep.line( cmv.component_id.id() ) )
-                              == 0;
+        // const auto nb_free_line_cmvs = count_cmvs(
+        //     unique_vertex_cmvs.line_cmvs, [&brep]( const auto& cmv ) {
+        //         return brep.nb_incidences( cmv.component_id.id() ) == 1
+        //                && brep.nb_embedding_surfaces(
+        //                       brep.line( cmv.component_id.id() ) )
+        //                       == 0;
+        //     } );
+        // auto predicted_nb_block_cmvs =
+        //     nb_internal_surface_cmvs < nb_free_line_cmvs + 1
+        //         ? static_cast< geode::index_t >( 1 )
+        //         : nb_internal_surface_cmvs - nb_free_line_cmvs;
+        // if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
+        // {
+        //     predicted_nb_block_cmvs++;
+        // }
+        // if( nb_boundary_surface_cmvs > 1
+        //     && unique_vertex_cmvs.corner_cmvs.empty() )
+        // {
+        //     predicted_nb_block_cmvs += ( nb_boundary_surface_cmvs - 2 ) / 2;
+        // }
+        /// predicted_nb_block_cmvs = 1 + nb_internal_surfaces - nb_free_lines -
+        /// nb_lines_boundary_to_strictly_2_internal_surfaces
+        absl::flat_hash_set< geode::uuid > uuids_used;
+        const auto nb_internal_surfaces = count_cmvs(
+            unique_vertex_cmvs.surface_cmvs,
+            [&block_uuid, &brep, &uuids_used]( const auto& cmv ) {
+                if( !uuids_used.emplace( cmv.component_id.id() ).second )
+                {
+                    return false;
+                }
+                return brep.is_internal( brep.surface( cmv.component_id.id() ),
+                    brep.block( block_uuid ) );
             } );
-        auto predicted_nb_block_cmvs =
-            nb_internal_surface_cmvs < nb_free_line_cmvs + 1
-                ? static_cast< geode::index_t >( 1 )
-                : nb_internal_surface_cmvs - nb_free_line_cmvs;
-        if( nb_internal_surface_cmvs - nb_free_line_cmvs == 1 )
-        {
-            predicted_nb_block_cmvs++;
-        }
-        if( nb_boundary_surface_cmvs > 1
-            && unique_vertex_cmvs.corner_cmvs.empty() )
-        {
-            predicted_nb_block_cmvs += ( nb_boundary_surface_cmvs - 2 ) / 2;
-        }
+        uuids_used.clear();
+        /// Lines that are free but incident to the same surface are counted
+        /// only once
+        const auto nb_free_lines = count_cmvs( unique_vertex_cmvs.line_cmvs,
+            [&brep, &uuids_used]( const auto& cmv ) {
+                if( !uuids_used.emplace( cmv.component_id.id() ).second )
+                {
+                    return false;
+                }
+                if( brep.nb_incidences( cmv.component_id.id() ) != 1 )
+                {
+                    return false;
+                }
+                for( const auto& incident_surface :
+                    brep.incidences( brep.line( cmv.component_id.id() ) ) )
+                {
+                    if( !uuids_used.emplace( incident_surface.id() ).second )
+                    {
+                        return false;
+                    }
+                }
+                return brep.nb_embedding_surfaces(
+                           brep.line( cmv.component_id.id() ) )
+                       == 0;
+            } );
+        uuids_used.clear();
+        const auto nb_lines_boundary_to_two_internal_lines =
+            count_cmvs( unique_vertex_cmvs.line_cmvs,
+                [&block_uuid, &brep, &uuids_used]( const auto& cmv ) {
+                    if( !uuids_used.emplace( cmv.component_id.id() ).second )
+                    {
+                        return false;
+                    }
+                    if( brep.nb_incidences( cmv.component_id.id() ) != 2 )
+                    {
+                        return false;
+                    }
+                    for( const auto& incident_surface :
+                        brep.incidences( brep.line( cmv.component_id.id() ) ) )
+                    {
+                        if( !brep.is_internal(
+                                incident_surface, brep.block( block_uuid ) ) )
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                } );
+        geode::index_t predicted_nb_block_cmvs{
+            1 + nb_internal_surfaces - nb_free_lines
+            - nb_lines_boundary_to_two_internal_lines
+        };
         return std::make_pair( predicted_nb_block_cmvs,
             nb_block_cmvs == predicted_nb_block_cmvs
                 ? std::nullopt
                 : std::make_optional( absl::StrCat( "unique vertex ",
-                      unique_vertex_id, " is part of Block ",
-                      brep.block( block_uuid ).name(), " (",
-                      block_uuid.string(), "), has ", nb_internal_surface_cmvs,
-                      " internal Surface(s) mesh vertices (CMVs), "
-                      "has ",
-                      nb_boundary_surface_cmvs,
-                      " boundary Surface(s) CMVs, and has ", nb_free_line_cmvs,
-                      " free Line(s) CMVs, with ", nb_block_cmvs,
-                      " Block CMVs (should be ", predicted_nb_block_cmvs,
-                      ")." ) ) );
+                      unique_vertex_id, " at position [",
+                      brep.block( unique_vertex_cmvs.block_cmvs[0]
+                                      .component_id.id() )
+                          .mesh()
+                          .point( unique_vertex_cmvs.block_cmvs[0].vertex )
+                          .string(),
+                      "] is part of Block ", brep.block( block_uuid ).name(),
+                      " (", block_uuid.string(), "), and part of ",
+                      nb_internal_surfaces,
+                      " surfaces internal to that block, ", nb_free_lines,
+                      " free lines on different surfaces, and ",
+                      nb_lines_boundary_to_two_internal_lines,
+                      " lines boundary to strictly two internal lines, with ",
+                      nb_block_cmvs, " Block CMVs (should be ",
+                      predicted_nb_block_cmvs, ")." ) ) );
     }
 } // namespace
 
