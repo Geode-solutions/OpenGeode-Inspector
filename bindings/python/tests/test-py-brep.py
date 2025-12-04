@@ -265,7 +265,7 @@ def inspect_model_mss(model_brep,verbose):
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
     if nb_model_issues != 37:
         raise ValueError(
-            "[Test] model mss.og_strm should have 37 topological problems."
+            "[Test] model mss.og_strm should have 37 topological problems, not " + str(nb_model_issues)
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
