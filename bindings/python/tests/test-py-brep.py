@@ -62,6 +62,7 @@ def lines_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
     )
+    nb_issues+=result.line_edges_with_wrong_component_edges_around.nb_issues()
     print("BRep Lines Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
@@ -79,6 +80,8 @@ def surfaces_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
     )
+    nb_issues+=result.unique_vertices_linked_to_a_surface_with_invalid_embbedings.nb_issues()
+    nb_issues +=result.surface_polygons_with_wrong_component_facets_around.nb_issues()
     print("BRep Surfaces Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
@@ -90,6 +93,7 @@ def blocks_topological_validity(result, verbose):
     for issue in result.blocks_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.some_blocks_not_meshed.nb_issues()
+    nb_issues += result.wrong_block_boundary_surface.nb_issues()
     nb_issues += (
         result.unique_vertices_part_of_two_blocks_and_no_boundary_surface.nb_issues()
     )
@@ -97,6 +101,7 @@ def blocks_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
     )
+    nb_issues += result.blocks_with_not_closed_boundary_surfaces.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks.nb_issues()
     )
@@ -212,9 +217,9 @@ def check_a1(verbose):
     else:
         print("model_A1 topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 5165:
+    if nb_model_issues != 5201:
         raise ValueError(
-            "[Test] model model_A1 should have 5615 unique vertices with topological problems."
+            "[Test] model model_A1 should have 5201 unique vertices with topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -232,9 +237,9 @@ def inspect_model_A1(model_brep,verbose):
     else:
         print("model_A1_valid topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 5165:
+    if nb_model_issues != 5201:
         raise ValueError(
-            "[Test] model model_A1_valid should have 5165 topological problems."
+            "[Test] model model_A1_valid should have 5201 topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -258,9 +263,9 @@ def inspect_model_mss(model_brep,verbose):
     else:
         print("model mss topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 36:
+    if nb_model_issues != 37:
         raise ValueError(
-            "[Test] model mss.og_strm should have 36 topological problems."
+            "[Test] model mss.og_strm should have 37 topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
