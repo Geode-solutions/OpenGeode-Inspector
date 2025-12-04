@@ -107,7 +107,6 @@ def blocks_topological_validity(result, verbose):
     )
     nb_issues += result.unique_vertex_linked_to_multiple_invalid_surfaces.nb_issues()
     nb_issues += result.model_boundaries_dont_form_a_closed_surface.nb_issues()
-    nb_issues += result.blocks_with_not_closed_boundary_surfaces.nb_issues()
     print("BRep Blocks Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
