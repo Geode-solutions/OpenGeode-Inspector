@@ -76,6 +76,9 @@ namespace geode
                             "linked_to_a_corner",
                 &BRepLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
+            .def_readwrite( "line_edges_with_wrong_component_edges_around",
+                &BRepLinesTopologyInspectionResult::
+                    line_edges_with_wrong_component_edges_around )
             .def( "string", &BRepLinesTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepLinesTopologyInspectionResult::inspection_type );
@@ -100,6 +103,10 @@ namespace geode
                             "surface_border",
                 &BRepSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
+            .def_readwrite(
+                "surface_polygons_with_wrong_component_facets_around",
+                &BRepSurfacesTopologyInspectionResult::
+                    surface_polygons_with_wrong_component_facets_around )
             .def( "string", &BRepSurfacesTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepSurfacesTopologyInspectionResult::inspection_type );
@@ -109,6 +116,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "some_blocks_not_meshed",
                 &BRepBlocksTopologyInspectionResult::some_blocks_not_meshed )
+            .def_readwrite( "wrong_block_boundary_surface",
+                &BRepBlocksTopologyInspectionResult::
+                    wrong_block_boundary_surface )
             .def_readwrite( "blocks_not_linked_to_a_unique_vertex",
                 &BRepBlocksTopologyInspectionResult::
                     blocks_not_linked_to_a_unique_vertex )
