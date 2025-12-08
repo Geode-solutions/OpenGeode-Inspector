@@ -341,7 +341,7 @@ namespace geode
                 if( surface_edges.size() <= 1 )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
-                        " is part of Line",
+                        " is part of Line ",
                         brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
                         "), which should not be embedded in Surface ",
