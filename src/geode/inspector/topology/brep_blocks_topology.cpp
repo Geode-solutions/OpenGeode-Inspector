@@ -260,6 +260,7 @@ namespace
         absl::Span< const geode::uuid > not_boundary_surfaces )
     {
         std::vector< geode::uuid > dangling_surfaces;
+        geode::BRepRayTracing ray_tracing{ brep };
         for( const auto& surface_id : not_boundary_surfaces )
         {
             const auto& surface_mesh = brep.surface( surface_id ).mesh();
@@ -272,8 +273,8 @@ namespace
             bool is_dangling{ true };
             for( const auto& block : brep.blocks() )
             {
-                if( geode::is_point_inside_block(
-                        brep, block, polygon_barycenter ) )
+                if( ray_tracing.is_point_inside_block(
+                        polygon_barycenter, block ) )
                 {
                     is_dangling = false;
                     break;
