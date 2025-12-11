@@ -188,8 +188,8 @@ namespace
                       " cmvs of surfaces boundary to the block, and ",
                       nb_line_on_boundary_cmvs,
                       " cmvs of lines on the boundary, with ", nb_block_cmvs,
-                      " Block CMVs (should be ", predicted_nb_block_cmvs,
-                      ")." ) ) );
+                      " Block CMVs (expected ", predicted_nb_block_cmvs,
+                      ") with valid topology." ) ) );
     }
 } // namespace
 

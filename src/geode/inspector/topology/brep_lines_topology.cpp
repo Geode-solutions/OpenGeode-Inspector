@@ -344,9 +344,10 @@ namespace geode
                         " is part of Line ",
                         brep_.line( cmv.component_id.id() ).name(), " (",
                         cmv.component_id.id().string(),
-                        "), which should not be embedded in Surface ",
+                        "), which is embedded in Surface ",
                         brep_.surface( embedding_surface.id() ).name(), " (",
-                        embedding_surface.id().string(), ")" );
+                        embedding_surface.id().string(),
+                        ") but doesn't cut it" );
                 }
             }
             if( brep_.nb_incidences( cmv.component_id.id() ) < 1
