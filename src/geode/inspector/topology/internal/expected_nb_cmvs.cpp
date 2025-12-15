@@ -25,6 +25,8 @@
 
 #include <absl/container/flat_hash_set.h>
 
+#include <geode/basic/logger.hpp>
+
 #include <geode/geometry/point.hpp>
 
 #include <geode/mesh/core/solid_mesh.hpp>
@@ -53,19 +55,24 @@ namespace
         return counter;
     }
 
-    bool line_is_on_block_boundary( const geode::BRep& brep,
+    geode::index_t line_on_block_boundary_count( const geode::BRep& brep,
         const geode::Line3D& line,
         const geode::Block3D& block )
     {
+        geode::index_t counter{ 0 };
         for( const auto& boundary_surface : brep.boundaries( block ) )
         {
-            if( brep.is_boundary( line, boundary_surface )
-                || brep.is_internal( line, boundary_surface ) )
+            if( brep.is_boundary( line, boundary_surface ) )
             {
-                return true;
+                counter++;
+            }
+            if( brep.is_internal( line, boundary_surface ) )
+            {
+                counter += 2;
             }
         }
-        return false;
+        counter /= 2;
+        return counter;
     }
 
     bool line_is_inside_block( const geode::BRep& brep,
@@ -109,6 +116,8 @@ namespace
             }
         }
         geode::index_t nb_line_on_boundary_cmvs{ 0 };
+        geode::index_t nb_lines_on_several_boundaries{ 0 };
+        geode::index_t nb_additional_corners_count{ 0 };
         geode::index_t nb_line_internal_to_internal_surface_cmvs{ 0 };
         geode::index_t nb_free_line_cmvs{ 0 };
         geode::index_t nb_line_boundary_to_several_internal_surfaces_cmvs{ 0 };
@@ -119,9 +128,16 @@ namespace
             {
                 continue;
             }
-            if( line_is_on_block_boundary( brep, cmv_line, block ) )
+            const auto boundary_count =
+                line_on_block_boundary_count( brep, cmv_line, block );
+            if( boundary_count > 0 )
             {
-                nb_line_on_boundary_cmvs++;
+                nb_line_on_boundary_cmvs += boundary_count;
+                if( boundary_count > 1 )
+                {
+                    nb_lines_on_several_boundaries++;
+                    nb_additional_corners_count += boundary_count - 1;
+                }
                 continue;
             }
             if( brep.nb_embedding_surfaces( cmv_line ) > 0 )
@@ -162,6 +178,27 @@ namespace
         if( nb_line_cmvs_to_remove != 0 || nb_line_on_boundary_cmvs != 0 )
         {
             predicted_nb_block_cmvs += unique_vertex_cmvs.corner_cmvs.size();
+            predicted_nb_block_cmvs += nb_additional_corners_count / 2;
+        }
+        if( nb_lines_on_several_boundaries % 2 == 1 )
+        {
+            /// On one side of a topological non-manifold => 2 cases possible,
+            /// depending on wether the topological non-manifold is on the
+            /// interior or exterior of the block
+            geode::Logger::warn( absl::StrCat(
+                "[expected_block_cmvs_and_error] Unique vertex ",
+                unique_vertex_id, " at position [",
+                brep.block( unique_vertex_cmvs.block_cmvs[0].component_id.id() )
+                    .mesh()
+                    .point( unique_vertex_cmvs.block_cmvs[0].vertex )
+                    .string(),
+                "] is on a topological non-manifold, which makes the correct "
+                "number of block cmvs unsure." ) );
+            if( nb_block_cmvs
+                == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
+            {
+                return std::make_pair( nb_block_cmvs, std::nullopt );
+            }
         }
         return std::make_pair( predicted_nb_block_cmvs,
             nb_block_cmvs == predicted_nb_block_cmvs
@@ -187,9 +224,9 @@ namespace
                       nb_boundary_surface_cmvs,
                       " cmvs of surfaces boundary to the block, and ",
                       nb_line_on_boundary_cmvs,
-                      " cmvs of lines on the boundary, with ", nb_block_cmvs,
-                      " Block CMVs (expected ", predicted_nb_block_cmvs,
-                      ") with valid topology." ) ) );
+                      " cmvs counted for lines on the boundary, with ",
+                      nb_block_cmvs, " Block CMVs (expected ",
+                      predicted_nb_block_cmvs, " with valid topology)." ) ) );
     }
 } // namespace
 
