@@ -25,7 +25,7 @@
 
 #include <absl/container/flat_hash_set.h>
 
-#include <geode/basic/logger.h>
+#include <geode/basic/logger.hpp>
 
 #include <geode/geometry/point.hpp>
 
@@ -182,8 +182,8 @@ namespace
         }
         if( nb_lines_on_several_boundaries % 2 == 1 )
         {
-            /// On one side of a topological non-variety => 2 cases possible,
-            /// depending on wether the topological non-variety is on the
+            /// On one side of a topological non-manifold => 2 cases possible,
+            /// depending on wether the topological non-manifold is on the
             /// interior or exterior of the block
             geode::Logger::warn( absl::StrCat(
                 "[expected_block_cmvs_and_error] Unique vertex ",
@@ -192,7 +192,7 @@ namespace
                     .mesh()
                     .point( unique_vertex_cmvs.block_cmvs[0].vertex )
                     .string(),
-                "] is on a topological non-variety, which makes the correct "
+                "] is on a topological non-manifold, which makes the correct "
                 "number of block cmvs unsure." ) );
             if( nb_block_cmvs
                 == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
