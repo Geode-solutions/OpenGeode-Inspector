@@ -2,14 +2,36 @@
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/include",
-        "${workspaceFolder}/build",
+        "${workspaceFolder}/build/include",
         "${workspaceFolder:OpenGeode}/include",
-        "${workspaceFolder:OpenGeode}/build/opengeode/install/include",
+        "${workspaceFolder:OpenGeode}/build/opengeode/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/abseil/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/bitsery/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/gdal/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/pybind11/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/asyncplusplus/install/include",
         "${workspaceFolder:OpenGeode-IO}/include",
-        "${workspaceFolder:OpenGeode-IO}/build/opengeode-io/install/include",
+        "${workspaceFolder:OpenGeode-IO}/build/opengeode-io/include",
         "${workspaceFolder:OpenGeode-Geosciences}/include",
         "${workspaceFolder:OpenGeode-GeosciencesIO}/include",
-        "${workspaceFolder:OpenGeode-GeosciencesIO}/build"
+        "${workspaceFolder:OpenGeode-GeosciencesIO}/build/include"
+    ],
+    "C_Cpp.default.browse.path": [
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/build/include",
+        "${workspaceFolder:OpenGeode}/include",
+        "${workspaceFolder:OpenGeode}/build/opengeode/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/abseil/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/bitsery/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/gdal/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/pybind11/install/include",
+        "${workspaceFolder:OpenGeode}/build/third_party/asyncplusplus/install/include",
+        "${workspaceFolder:OpenGeode-IO}/include",
+        "${workspaceFolder:OpenGeode-IO}/build/opengeode-io/include",
+        "${workspaceFolder:OpenGeode-Geosciences}/include",
+        "${workspaceFolder:OpenGeode-GeosciencesIO}/include",
+        "${workspaceFolder:OpenGeode-GeosciencesIO}/build/include"
     ],
     "files.watcherExclude": {
         "${workspaceFolder}/build/**": true
