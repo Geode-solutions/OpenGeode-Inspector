@@ -64,8 +64,8 @@ namespace geode
             std::vector<
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
                 line_tasks;
-            line_tasks.reserve( model_.nb_lines() );
-            for( const auto& line : model_.lines() )
+            line_tasks.reserve( model_.nb_active_lines() );
+            for( const auto& line : model_.active_lines() )
             {
                 line_tasks.emplace_back( async::spawn( [&threshold, &line] {
                     const EdgedCurveDegeneration< Model::dim > inspector{
@@ -87,9 +87,9 @@ namespace geode
             std::vector<
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
                 surface_tasks;
-            surface_tasks.reserve( model_.nb_surfaces() );
+            surface_tasks.reserve( model_.nb_active_surfaces() );
             const auto surfaces_to_enable = surfaces_on_which_enable_edges();
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 const auto enable_edges =
                     absl::c_contains( surfaces_to_enable, surface.id() );
@@ -134,8 +134,8 @@ namespace geode
             std::vector<
                 async::task< std::pair< uuid, InspectionIssues< index_t > > > >
                 tasks;
-            tasks.reserve( model_.nb_surfaces() );
-            for( const auto& surface : model_.surfaces() )
+            tasks.reserve( model_.nb_active_surfaces() );
+            for( const auto& surface : model_.active_surfaces() )
             {
                 tasks.emplace_back( async::spawn( [&threshold, &surface] {
                     const geode::SurfaceMeshDegeneration< Model::dim >
@@ -176,7 +176,7 @@ namespace geode
             Model >::surfaces_on_which_enable_edges() const
         {
             std::vector< uuid > result;
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 const auto& mesh = surface.mesh();
                 if( !mesh.are_edges_enabled()

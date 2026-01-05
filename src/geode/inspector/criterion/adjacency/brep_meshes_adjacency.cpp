@@ -83,7 +83,7 @@ namespace geode
             InspectionIssuesMap< PolyhedronFacet >&
                 components_wrong_adjacencies ) const
         {
-            for( const auto& block : model().blocks() )
+            for( const auto& block : model().active_blocks() )
             {
                 const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
                 auto wrong_adjacencies =

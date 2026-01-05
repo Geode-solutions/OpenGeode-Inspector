@@ -62,7 +62,7 @@ namespace geode
             block_negative_elements() const
         {
             BRepMeshesNegativeElementsInspectionResult result;
-            for( const auto& block : brep_.blocks() )
+            for( const auto& block : brep_.active_blocks() )
             {
                 const geode::SolidMeshNegativeElements3D inspector{
                     block.mesh()

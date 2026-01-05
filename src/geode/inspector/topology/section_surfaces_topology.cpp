@@ -100,7 +100,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Surface2D::component_type_static() )
+            if( cmv.component_id.type() != Surface2D::component_type_static()
+                || !section_.surface( cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -175,8 +176,8 @@ namespace geode
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( line_cmv.component_id.type()
-                != Line2D::component_type_static() )
+            if( line_cmv.component_id.type() != Line2D::component_type_static()
+                || !section_.line( line_cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -184,7 +185,9 @@ namespace geode
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
                 if( surface_cmv.component_id.type()
-                    != Surface2D::component_type_static() )
+                        != Surface2D::component_type_static()
+                    || !section_.surface( surface_cmv.component_id.id() )
+                        .is_active() )
                 {
                     continue;
                 }
@@ -209,7 +212,7 @@ namespace geode
         SectionSurfacesTopology::inspect_surfaces() const
     {
         SectionSurfacesTopologyInspectionResult result;
-        for( const auto& surface : section_.surfaces() )
+        for( const auto& surface : section_.active_surfaces() )
         {
             if( !surface_is_meshed( section_.surface( surface.id() ) ) )
             {

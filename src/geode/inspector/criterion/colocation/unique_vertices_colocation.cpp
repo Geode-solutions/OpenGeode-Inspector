@@ -94,11 +94,15 @@ namespace
 
     template < typename Model >
     bool model_cmvs_are_colocated_on_point( const Model& model,
-        const std::vector< geode::ComponentMeshVertex >& cmvs,
+        absl::Span< const geode::ComponentMeshVertex > cmvs,
         const geode::Point< Model::dim >& point )
     {
         for( const auto& cmv : cmvs )
         {
+            if( !model.component( cmv.component_id.id() ).is_active() )
+            {
+                continue;
+            }
             if( !model_cmv_is_colocated_on_point( model, cmv, point ) )
             {
                 return false;
@@ -108,40 +112,61 @@ namespace
     }
 
     template < typename Model >
-    geode::Point< Model::dim > model_unique_vertex_point_base(
+    geode::Point< Model::dim > model_cmv_point(
         const Model& model, const geode::ComponentMeshVertex& cmv )
     {
         if( cmv.component_id.type()
             == geode::Line< Model::dim >::component_type_static() )
         {
-            const auto& mesh = model.line( cmv.component_id.id() ).mesh();
-            return mesh.point( cmv.vertex );
+            return model.line( cmv.component_id.id() )
+                .mesh()
+                .point( cmv.vertex );
         }
         if( cmv.component_id.type()
             == geode::Surface< Model::dim >::component_type_static() )
         {
-            const auto& mesh = model.surface( cmv.component_id.id() ).mesh();
-            return mesh.point( cmv.vertex );
+            return model.surface( cmv.component_id.id() )
+                .mesh()
+                .point( cmv.vertex );
         }
-        const auto& mesh = model.corner( cmv.component_id.id() ).mesh();
-        return mesh.point( cmv.vertex );
+        return model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex );
     }
 
-    geode::Point2D model_unique_vertex_point(
-        const geode::Section& model, const geode::ComponentMeshVertex& cmv )
+    std::optional< geode::Point2D > model_unique_vertex_point(
+        const geode::Section& model,
+        absl::Span< const geode::ComponentMeshVertex > cmvs )
     {
-        return model_unique_vertex_point_base< geode::Section >( model, cmv );
-    }
-
-    geode::Point3D model_unique_vertex_point(
-        const geode::BRep& model, const geode::ComponentMeshVertex& cmv )
-    {
-        if( cmv.component_id.type() == geode::Block3D::component_type_static() )
+        for( const auto& cmv : cmvs )
         {
-            const auto& mesh = model.block( cmv.component_id.id() ).mesh();
-            return mesh.point( cmv.vertex );
+            if( !model.component( cmv.component_id.id() ).is_active() )
+            {
+                continue;
+            }
+            return model_cmv_point< geode::Section >( model, cmv );
         }
-        return model_unique_vertex_point_base< geode::BRep >( model, cmv );
+        return std::nullopt;
+    }
+
+    std::optional< geode::Point3D > model_unique_vertex_point(
+        const geode::BRep& model,
+        absl::Span< const geode::ComponentMeshVertex > cmvs )
+    {
+        for( const auto& cmv : cmvs )
+        {
+            if( !model.component( cmv.component_id.id() ).is_active() )
+            {
+                continue;
+            }
+            if( cmv.component_id.type()
+                == geode::Block3D::component_type_static() )
+            {
+                return model.block( cmv.component_id.id() )
+                    .mesh()
+                    .point( cmv.vertex );
+            }
+            return model_cmv_point< geode::BRep >( model, cmv );
+        }
+        return std::nullopt;
     }
 } // namespace
 
@@ -170,22 +195,27 @@ namespace geode
     public:
         Impl( const Model& model )
             : model_( model ),
-              unique_vertices_{ PointSet< Model::dim >::create() }
+              active_uv_pointset_{ PointSet< Model::dim >::create() }
         {
             auto builder =
-                PointSetBuilder< Model::dim >::create( *unique_vertices_ );
+                PointSetBuilder< Model::dim >::create( *active_uv_pointset_ );
             builder->create_vertices( model.nb_unique_vertices() );
+            std::vector< bool > not_assigned(
+                model.nb_unique_vertices(), true );
             for( const auto unique_vertex_id :
                 Range{ model.nb_unique_vertices() } )
             {
-                const auto& cmvs =
-                    model.component_mesh_vertices( unique_vertex_id );
-                if( cmvs.empty() )
+                if( auto point = model_unique_vertex_point( model,
+                        model.component_mesh_vertices( unique_vertex_id ) ) )
                 {
-                    continue;
+                    builder->set_point( unique_vertex_id, point.value() );
+                    not_assigned[unique_vertex_id] = false;
                 }
-                builder->set_point( unique_vertex_id,
-                    model_unique_vertex_point( model, cmvs.at( 0 ) ) );
+            }
+            const auto old2new = builder->delete_vertices( not_assigned );
+            for( const auto old_index : Indices{ old2new } )
+            {
+                uv_to_active_uv_.map( old_index, old2new[old_index] );
             }
         }
 
@@ -194,9 +224,15 @@ namespace geode
             for( const auto unique_vertex_id :
                 Range{ model_.nb_unique_vertices() } )
             {
+                const auto active_uv_id =
+                    uv_to_active_uv_.in2out( unique_vertex_id ).at( 0 );
+                if( active_uv_id == NO_ID )
+                {
+                    continue;
+                }
                 if( !model_cmvs_are_colocated_on_point( model_,
                         model_.component_mesh_vertices( unique_vertex_id ),
-                        unique_vertices_->point( unique_vertex_id ) ) )
+                        active_uv_pointset_->point( active_uv_id ) ) )
                 {
                     return true;
                 }
@@ -207,7 +243,7 @@ namespace geode
         bool model_has_colocated_unique_vertices() const
         {
             const PointSetColocation< Model::dim > pointset_inspector{
-                *unique_vertices_
+                *active_uv_pointset_
             };
             const auto has_colocation =
                 pointset_inspector.mesh_has_colocated_points();
@@ -220,9 +256,15 @@ namespace geode
             for( const auto unique_vertex_id :
                 Range{ model_.nb_unique_vertices() } )
             {
+                const auto active_uv_id =
+                    uv_to_active_uv_.in2out( unique_vertex_id ).at( 0 );
+                if( active_uv_id == NO_ID )
+                {
+                    continue;
+                }
                 if( !model_cmvs_are_colocated_on_point( model_,
                         model_.component_mesh_vertices( unique_vertex_id ),
-                        unique_vertices_->point( unique_vertex_id ) ) )
+                        active_uv_pointset_->point( active_uv_id ) ) )
                 {
                     vertices_issues.add_issue( unique_vertex_id,
                         absl::StrCat( "unique vertex ", unique_vertex_id,
@@ -236,7 +278,7 @@ namespace geode
             InspectionIssues< std::vector< index_t > >& vertices_issues ) const
         {
             const PointSetColocation< Model::dim > pointset_inspector{
-                *unique_vertices_
+                *active_uv_pointset_
             };
             const auto colocated_pts_groups =
                 pointset_inspector.colocated_points_groups();
@@ -244,33 +286,25 @@ namespace geode
             {
                 std::vector< index_t > fixed_point_group;
                 std::string point_group_string;
-                for( const auto point_index : Indices{ point_group } )
+                for( const auto active_uv_index : point_group )
                 {
-                    if( model_
-                            .component_mesh_vertices( point_group[point_index] )
-                            .empty() )
-                    {
-                        continue;
-                    }
-                    fixed_point_group.push_back( point_group[point_index] );
-                    absl::StrAppend(
-                        &point_group_string, " ", point_group[point_index] );
+                    const auto model_uv_index =
+                        uv_to_active_uv_.out2in( active_uv_index ).at( 0 );
+                    fixed_point_group.push_back( model_uv_index );
+                    absl::StrAppend( &point_group_string, " ", model_uv_index );
                 }
-                if( !fixed_point_group.empty() )
-                {
-                    vertices_issues.add_issue( fixed_point_group,
-                        absl::StrCat( "unique vertices ", point_group_string,
-                            " are colocated at the position [",
-                            unique_vertices_->point( fixed_point_group[0] )
-                                .string(),
-                            "]" ) );
-                }
+                vertices_issues.add_issue( fixed_point_group,
+                    absl::StrCat( "unique vertices ", point_group_string,
+                        " are colocated at the position [",
+                        active_uv_pointset_->point( point_group[0] ).string(),
+                        "]" ) );
             }
         }
 
     private:
         const Model& model_;
-        std::unique_ptr< PointSet< Model::dim > > unique_vertices_;
+        std::unique_ptr< PointSet< Model::dim > > active_uv_pointset_;
+        geode::GenericMapping< index_t > uv_to_active_uv_;
     };
 
     template < typename Model >

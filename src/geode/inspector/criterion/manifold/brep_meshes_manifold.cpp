@@ -105,7 +105,7 @@ namespace geode
             ComponentMeshesManifold< BRep >::
                 add_surfaces_meshes_non_manifold_vertices(
                     components_non_manifold_vertices );
-            for( const auto& block : model().blocks() )
+            for( const auto& block : model().active_blocks() )
             {
                 const SolidMeshVertexManifold3D inspector{ block.mesh() };
                 auto non_manifold_vertices = inspector.non_manifold_vertices();
@@ -124,7 +124,7 @@ namespace geode
             ComponentMeshesManifold< BRep >::
                 add_surfaces_meshes_non_manifold_edges(
                     components_non_manifold_edges );
-            for( const auto& block : model().blocks() )
+            for( const auto& block : model().active_blocks() )
             {
                 const SolidMeshEdgeManifold3D inspector{ block.mesh() };
                 auto non_manifold_edges = inspector.non_manifold_edges();
@@ -140,7 +140,7 @@ namespace geode
             InspectionIssuesMap< PolyhedronFacetVertices >&
                 components_non_manifold_facets ) const
         {
-            for( const auto& block : model().blocks() )
+            for( const auto& block : model().active_blocks() )
             {
                 const SolidMeshFacetManifold3D inspector{ block.mesh() };
                 auto non_manifold_facets = inspector.non_manifold_facets();
@@ -157,7 +157,7 @@ namespace geode
         {
             using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
             absl::flat_hash_map< Edge, std::vector< uuid > > edges;
-            for( const auto& surface : model().surfaces() )
+            for( const auto& surface : model().active_surfaces() )
             {
                 const auto& mesh = surface.mesh();
                 for( const auto polygon_id : Range{ mesh.nb_polygons() } )
@@ -197,19 +197,19 @@ namespace geode
                 std::string message = absl::StrCat(
                     "Model edge between unique vertices ",
                     edge.first.vertices()[0], " and ", edge.first.vertices()[1],
-                    " is not manifold: it does not belong to a Line "
-                    "but is on Surfaces " );
+                    " is not manifold: it is on several Surfaces: " );
                 for( const auto surface_uuid : edge.second )
                 {
                     absl::StrAppend( &message,
                         model().surface( surface_uuid ).name(), " (",
                         surface_uuid.string(), "), " );
                 }
+                absl::StrAppend( &message, "but not on their border" );
                 issues.add_issue(
                     BRepNonManifoldEdge{ edge.first.vertices(), edge.second },
                     message );
             }
-            for( const auto& line : model().lines() )
+            for( const auto& line : model().active_lines() )
             {
                 const auto& mesh = line.mesh();
                 if( mesh.nb_edges() != 1
@@ -243,7 +243,7 @@ namespace geode
         void add_model_non_manifold_facets(
             InspectionIssues< BRepNonManifoldFacet >& issues ) const
         {
-            for( const auto& surface : model().surfaces() )
+            for( const auto& surface : model().active_surfaces() )
             {
                 const auto& mesh = surface.mesh();
                 if( mesh.nb_polygons() != 1
