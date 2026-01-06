@@ -23,6 +23,8 @@
 
 #include <geode/inspector/topology/section_topology.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -170,10 +172,40 @@ namespace geode
             const SectionTopologyInspector& section_topology_inspector ) const
         {
             SectionTopologyInspectionResult result;
-            result.corners =
-                section_topology_inspector.inspect_corners_topology();
-            result.lines = section_topology_inspector.inspect_lines_topology();
-            result.surfaces = section_topology_inspector.inspect_surfaces();
+            async::parallel_invoke(
+                [&result, &section_topology_inspector] {
+                    try
+                    {
+                        result.corners = section_topology_inspector
+                                             .inspect_corners_topology();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
+                },
+                [&result, &section_topology_inspector] {
+                    try
+                    {
+                        result.lines =
+                            section_topology_inspector.inspect_lines_topology();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
+                },
+                [&result, &section_topology_inspector] {
+                    try
+                    {
+                        result.surfaces =
+                            section_topology_inspector.inspect_surfaces();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
+                } );
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }

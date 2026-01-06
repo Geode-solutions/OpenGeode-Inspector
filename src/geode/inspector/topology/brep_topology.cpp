@@ -178,19 +178,48 @@ namespace geode
             BRepTopologyInspectionResult result;
             async::parallel_invoke(
                 [&result, &brep_topology_inspector] {
-                    result.corners =
-                        brep_topology_inspector.inspect_corners_topology();
+                    try
+                    {
+                        result.corners =
+                            brep_topology_inspector.inspect_corners_topology();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
                 },
                 [&result, &brep_topology_inspector] {
-                    result.lines =
-                        brep_topology_inspector.inspect_lines_topology();
+                    try
+                    {
+                        result.lines =
+                            brep_topology_inspector.inspect_lines_topology();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
                 },
                 [&result, &brep_topology_inspector] {
-                    result.surfaces =
-                        brep_topology_inspector.inspect_surfaces_topology();
+                    try
+                    {
+                        result.surfaces =
+                            brep_topology_inspector.inspect_surfaces_topology();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
                 },
                 [&result, &brep_topology_inspector] {
-                    result.blocks = brep_topology_inspector.inspect_blocks();
+                    try
+                    {
+                        result.blocks =
+                            brep_topology_inspector.inspect_blocks();
+                    }
+                    catch( OpenGeodeException& )
+                    {
+                        return;
+                    }
                 } );
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
