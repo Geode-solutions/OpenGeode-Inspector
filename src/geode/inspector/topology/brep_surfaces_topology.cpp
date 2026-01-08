@@ -31,6 +31,7 @@
 
 #include <geode/geometry/point.hpp>
 
+#include <geode/mesh/core/point_set.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/helpers/component_mesh_polygons.hpp>
@@ -115,7 +116,8 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Surface3D::component_type_static() )
+            if( cmv.component_id.type() == Surface3D::component_type_static()
+                && brep_.surface( cmv.component_id.id() ).is_active() )
             {
                 surface_found = true;
                 break;
@@ -160,18 +162,26 @@ namespace geode
         for( const auto surface_id : internal::components_uuids( brep_,
                  unique_vertex_index, Surface3D::component_type_static() ) )
         {
+            const auto& surface = brep_.surface( surface_id );
+            if( !surface.is_active() )
+            {
+                continue;
+            }
             for( const auto& embedding : brep_.embeddings( surface_id ) )
             {
+                const auto& block = brep_.block( embedding.id() );
+                if( !block.is_active() )
+                {
+                    continue;
+                }
                 if( brep_.Relationships::is_boundary(
                         surface_id, embedding.id() ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
-                        " is part of Surface ",
-                        brep_.surface( surface_id ).name(), " (",
+                        " is part of Surface ", surface.name(), " (",
                         surface_id.string(),
                         "), which is both internal and boundary of ", "Block ",
-                        brep_.block( embedding.id() ).name(), " (",
-                        embedding.id().string(), ")" );
+                        block.name(), " (", embedding.id().string(), ")" );
                 }
                 if( internal::brep_blocks_are_meshed( brep_ )
                     && !absl::c_any_of(
@@ -181,11 +191,9 @@ namespace geode
                         } ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
-                        " is part of Surface ",
-                        brep_.surface( surface_id ).name(), " (",
+                        " is part of Surface ", surface.name(), " (",
                         surface_id.string(), "), which is embedded in Block ",
-                        brep_.block( embedding.id() ).name(), " (",
-                        embedding.id().string(),
+                        block.name(), " (", embedding.id().string(),
                         "), but the unique vertex is not linked to any "
                         "of the Block vertices." );
                 }
@@ -200,87 +208,99 @@ namespace geode
     {
         const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
-        if( surface_uuids.size() < 2 )
+        if( absl::c_count_if( surface_uuids,
+                [*this]( const uuid& surface_id ) {
+                    return brep_.surface( surface_id ).is_active();
+                } )
+            < 2 )
         {
             return std::nullopt;
         }
         const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
-        if( line_uuids.empty() )
-        {
-            bool is_corner_internal_to_all_surfaces{ true };
-            for( const auto& cmv :
-                brep_.component_mesh_vertices( unique_vertex_index ) )
-            {
-                if( cmv.component_id.type()
-                    == Corner3D::component_type_static() )
-                {
-                    if( brep_.Relationships::nb_embeddings(
-                            cmv.component_id.id() )
-                        != surface_uuids.size() )
-                    {
-                        is_corner_internal_to_all_surfaces = false;
-                    }
-                }
-            }
-            if( !is_corner_internal_to_all_surfaces )
-            {
-                return absl::StrCat( "unique vertex ", unique_vertex_index, " ",
-                    " is part of multiple Surfaces, but not part of any "
-                    "Line and there is no internal Corner to all Surfaces." );
-            }
-        }
+        // if( line_uuids.empty() )
+        // {
+        //     bool has_corner_internal_to_all_surfaces{ false };
+        //     for( const auto& cmv :
+        //         brep_.component_mesh_vertices( unique_vertex_index ) )
+        //     {
+        //         if( cmv.component_id.type()
+        //             != Corner3D::component_type_static() )
+        //         {
+        //             continue;
+        //         }
+        //         const auto& corner = brep_.corner( cmv.component_id.id() );
+        //         for( const auto& surface_id : surface_uuids )
+        //         {
+        //             const auto& surface = brep_.surface( surface_id );
+        //             if( surface.is_active()
+        //                 && !brep_.is_internal( corner, surface ) )
+        //             {
+        //                 return absl::StrCat( "unique vertex ",
+        //                     unique_vertex_index, " at position [",
+        //                     corner.mesh().point( cmv.vertex ).string(),
+        //                     "] is part of multiple active Surfaces, and not "
+        //                     "part of any Line, but is part of Corner ",
+        //                     corner.name(), " (", corner.id().string(),
+        //                     "), which is not internal to active Surface ",
+        //                     surface.name(), " (", surface_id.string(), ")."
+        //                     );
+        //             }
+        //         }
+        //         has_corner_internal_to_all_surfaces = true;
+        //     }
+        //     if( !has_corner_internal_to_all_surfaces )
+        //     {
+        //         return absl::StrCat( "unique vertex ", unique_vertex_index,
+        //             " is part of multiple active Surfaces, and not part of "
+        //             "any Line, but not part of any Corner internal to all "
+        //             "Surfaces." );
+        //     }
+        // }
         if( line_uuids.size() == 1 )
         {
-            bool corner_found{ false };
-            bool
-                is_corner_internal_to_surfaces_with_no_relationship_to_the_line{
-                    true
-                };
             index_t nb_cmv_lines{ 0 };
-            index_t nb_of_relationships_with_surfaces{ 0 };
+            index_t nb_of_line_relationships_with_surfaces{ 0 };
             for( const auto& cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( cmv.component_id.type() == Line3D::component_type_static() )
+                if( cmv.component_id.type() != Line3D::component_type_static() )
                 {
-                    nb_cmv_lines += 1;
-                    for( const auto& surface_id : surface_uuids )
+                    continue;
+                }
+                nb_cmv_lines += 1;
+                for( const auto& surface_id : surface_uuids )
+                {
+                    if( brep_.Relationships::is_boundary(
+                            cmv.component_id.id(), surface_id )
+                        || brep_.Relationships::is_internal(
+                            cmv.component_id.id(), surface_id ) )
                     {
-                        if( brep_.Relationships::is_boundary(
-                                cmv.component_id.id(), surface_id )
-                            || brep_.Relationships::is_internal(
-                                cmv.component_id.id(), surface_id ) )
-                        {
-                            nb_of_relationships_with_surfaces += 1;
-                        }
+                        nb_of_line_relationships_with_surfaces += 1;
                     }
                 }
+            }
+            if( nb_cmv_lines >= 2 )
+            {
+                return std::nullopt;
             }
             for( const auto& cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
                 if( cmv.component_id.type()
-                    == Corner3D::component_type_static() )
+                    != Corner3D::component_type_static() )
                 {
-                    if( brep_.Relationships::nb_embeddings(
-                            cmv.component_id.id() )
-                            + nb_of_relationships_with_surfaces
-                        != surface_uuids.size() )
-                    {
-                        is_corner_internal_to_surfaces_with_no_relationship_to_the_line =
-                            false;
-                    }
-                    corner_found = true;
+                    continue;
                 }
-            }
-            if( corner_found && nb_cmv_lines < 2
-                && !is_corner_internal_to_surfaces_with_no_relationship_to_the_line )
-            {
-                return absl::StrCat( "unique vertex ", unique_vertex_index,
-                    " is part of multiple Surfaces and only one Line, "
-                    "but is a Corner not internal to all Surfaces without "
-                    "relationship to the Line." );
+                if( brep_.Relationships::nb_embeddings( cmv.component_id.id() )
+                        + nb_of_line_relationships_with_surfaces
+                    != surface_uuids.size() )
+                {
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of multiple active Surfaces and only one "
+                        "Line, is a Corner, but is not internal to all the "
+                        "Surfaces without relationships to the Line." );
+                }
             }
         }
         return std::nullopt;
@@ -311,13 +331,13 @@ namespace geode
             for( const auto& line_id : line_uuids )
             {
                 const auto& line = brep_.line( line_id );
-                if( brep_.is_boundary( line, surface )
-                    || brep_.is_internal( line, surface ) )
+                if( line.is_active()
+                    && ( brep_.is_boundary( line, surface )
+                         || brep_.is_internal( line, surface ) ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
-                        " is part of a Line and of Surface ",
-                        brep_.surface( cmv.component_id.id() ).name(), " (",
-                        cmv.component_id.id().string(),
+                        " is part of a Line and of Surface ", surface.name(),
+                        " (", cmv.component_id.id().string(),
                         ") but the associated vertex in the "
                         "Surface mesh is not on the mesh border." );
                 }
@@ -333,34 +353,38 @@ namespace geode
         const auto cmp = component_mesh_polygons( brep_, surface, facet_index );
         for( const auto& [block_id, block_facets] : cmp.block_polygons )
         {
-            if( brep_.is_boundary( surface, brep_.block( block_id ) ) )
+            const auto& block = brep_.block( block_id );
+            if( !block.is_active() )
+            {
+                continue;
+            }
+            if( brep_.is_boundary( surface, block ) )
             {
                 if( block_facets.size() != 1 )
                 {
                     return absl::StrCat( "Surface ", surface.name(), " (",
                         surface.id().string(), ") is boundary of block ",
-                        brep_.block( block_id ).name(), " (", block_id.string(),
-                        "), but has ", block_facets.size(),
+                        block.name(), " (", block_id.string(), "), but has ",
+                        block_facets.size(),
                         " facets of this Block around it, it should be 1." );
                 }
                 continue;
             }
-            if( brep_.is_internal( surface, brep_.block( block_id ) ) )
+            if( brep_.is_internal( surface, block ) )
             {
                 if( block_facets.size() != 2 )
                 {
                     return absl::StrCat( "Surface ", surface.name(), " (",
                         surface.id().string(), ") is internal to block ",
-                        brep_.block( block_id ).name(), " (", block_id.string(),
-                        "), but has ", block_facets.size(),
+                        block.name(), " (", block_id.string(), "), but has ",
+                        block_facets.size(),
                         " facets of this Block around it, it should be 2." );
                 }
                 continue;
             }
             return absl::StrCat( "Surface ", surface.name(), " (",
                 surface.id().string(), ") has facet with id ", facet_index,
-                " in common with Block", brep_.block( block_id ).name(), " (",
-                block_id.string(),
+                " in common with Block", block.name(), " (", block_id.string(),
                 "), but is neither boundary of nor internal to it." );
         }
         return std::nullopt;
@@ -371,7 +395,7 @@ namespace geode
     {
         BRepSurfacesTopologyInspectionResult result;
         const auto meshed_blocks = internal::brep_blocks_are_meshed( brep_ );
-        for( const auto& surface : brep_.surfaces() )
+        for( const auto& surface : brep_.active_surfaces() )
         {
             if( !surface_is_meshed( brep_.surface( surface.id() ) ) )
             {

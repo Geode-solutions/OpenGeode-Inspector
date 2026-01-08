@@ -558,7 +558,7 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 if( surface.mesh().nb_polygons() == 0 )
                 {
@@ -570,7 +570,7 @@ namespace geode
                 }
             }
             const auto model_tree = create_surface_meshes_aabb_trees( model_ );
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 Action surfaces_intersection_action{ model_, surface.id(),
                     surface.id() };

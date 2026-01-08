@@ -51,7 +51,7 @@ namespace geode
                 InspectionIssuesMap< index_t >& surfaces_non_manifold_vertices )
                 const
         {
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 const SurfaceMeshVertexManifold< Model::dim > inspector{
                     surface.mesh()
@@ -72,7 +72,7 @@ namespace geode
                 InspectionIssuesMap< std::array< index_t, 2 > >&
                     surfaces_non_manifold_edges ) const
         {
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 const SurfaceMeshEdgeManifold< Model::dim > inspector{
                     surface.mesh()

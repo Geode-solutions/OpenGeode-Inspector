@@ -116,7 +116,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Line2D::component_type_static() )
+            if( cmv.component_id.type() == Line2D::component_type_static()
+                && section_.line( cmv.component_id.id() ).is_active() )
             {
                 is_a_line = true;
                 break;
@@ -158,7 +159,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Line2D::component_type_static() )
+            if( cmv.component_id.type() != Line2D::component_type_static()
+                || !section_.line( cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -182,8 +184,8 @@ namespace geode
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( line_cmv.component_id.type()
-                != Line2D::component_type_static() )
+            if( line_cmv.component_id.type() != Line2D::component_type_static()
+                || !section_.line( line_cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -210,6 +212,10 @@ namespace geode
             for( const auto& embedding :
                 section_.embeddings( line_cmv.component_id.id() ) )
             {
+                if( !section_.surface( embedding.id() ).is_active() )
+                {
+                    continue;
+                }
                 if( internal::section_surfaces_are_meshed( section_ )
                     && !absl::c_any_of(
                         section_.component_mesh_vertices( unique_vertex_index ),
@@ -238,7 +244,8 @@ namespace geode
     {
         const auto line_uuids = internal::components_uuids(
             section_, unique_vertex_index, Line2D::component_type_static() );
-        if( line_uuids.size() != 1 )
+        if( line_uuids.size() != 1
+            || !section_.line( line_uuids[0] ).is_active() )
         {
             return std::nullopt;
         }
@@ -297,7 +304,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Line2D::component_type_static() )
+            if( cmv.component_id.type() == Line2D::component_type_static()
+                && section_.line( cmv.component_id.id() ).is_active() )
             {
                 nb_cmv_lines += 1;
             }
@@ -319,7 +327,7 @@ namespace geode
         SectionLinesTopology::inspect_lines_topology() const
     {
         SectionLinesTopologyInspectionResult result;
-        for( const auto& line : section_.lines() )
+        for( const auto& line : section_.active_lines() )
         {
             if( !line_is_meshed( section_.line( line.id() ) ) )
             {

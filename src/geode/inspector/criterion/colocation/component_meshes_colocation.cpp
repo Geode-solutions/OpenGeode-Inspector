@@ -47,7 +47,7 @@ namespace
 {
     template < typename Model >
     std::vector< std::vector< geode::index_t > >
-        filter_colocated_points_with_same_uuid( const Model& model,
+        filter_colocated_points_with_same_unique_vertex( const Model& model,
             const geode::ComponentID& component_id,
             absl::Span< const std::vector< geode::index_t > >
                 colocated_points_groups )
@@ -100,13 +100,13 @@ namespace
         geode::InspectionIssuesMap< std::vector< geode::index_t > >&
             components_colocated_points )
     {
-        for( const auto& line : model.lines() )
+        for( const auto& line : model.active_lines() )
         {
             const geode::EdgedCurveColocation< Model::dim > inspector{
                 line.mesh()
             };
             auto colocated_pts =
-                filter_colocated_points_with_same_uuid< Model >( model,
+                filter_colocated_points_with_same_unique_vertex< Model >( model,
                     line.component_id(),
                     inspector.colocated_points_groups().issues() );
             if( !colocated_pts.empty() )
@@ -135,13 +135,13 @@ namespace
                     line.id(), std::move( line_issues ) );
             }
         }
-        for( const auto& surface : model.surfaces() )
+        for( const auto& surface : model.active_surfaces() )
         {
             const geode::SurfaceMeshColocation< Model::dim > inspector{
                 surface.mesh()
             };
             auto colocated_pts =
-                filter_colocated_points_with_same_uuid< Model >( model,
+                filter_colocated_points_with_same_unique_vertex< Model >( model,
                     surface.component_id(),
                     inspector.colocated_points_groups().issues() );
             if( !colocated_pts.empty() )
@@ -187,12 +187,12 @@ namespace
     {
         add_model_components_colocated_points_groups_base< geode::BRep >(
             model, components_colocated_points );
-        for( const auto& block : model.blocks() )
+        for( const auto& block : model.active_blocks() )
         {
             const geode::SolidMeshColocation3D inspector{ block.mesh() };
             auto colocated_pts =
-                filter_colocated_points_with_same_uuid< geode::BRep >( model,
-                    block.component_id(),
+                filter_colocated_points_with_same_unique_vertex< geode::BRep >(
+                    model, block.component_id(),
                     inspector.colocated_points_groups().issues() );
             if( !colocated_pts.empty() )
             {

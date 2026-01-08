@@ -106,7 +106,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner2D::component_type_static() )
+            if( cmv.component_id.type() != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -172,15 +173,17 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner2D::component_type_static() )
+            if( cmv.component_id.type() != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id() ).is_active() )
             {
-                if( corner_found )
-                {
-                    return absl::StrCat( "unique vertex ", unique_vertex_index,
-                        " is part of several Corners." );
-                }
-                corner_found = true;
+                continue;
             }
+            if( corner_found )
+            {
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is part of several Corners." );
+            }
+            corner_found = true;
         }
         return std::nullopt;
     }
@@ -193,6 +196,7 @@ namespace geode
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() == Corner2D::component_type_static()
+                && section_.corner( cmv.component_id.id() ).is_active()
                 && section_.nb_embeddings( cmv.component_id.id() ) > 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
@@ -213,6 +217,7 @@ namespace geode
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
             if( cmv.component_id.type() == Corner2D::component_type_static()
+                && section_.corner( cmv.component_id.id() ).is_active()
                 && section_.nb_embeddings( cmv.component_id.id() ) < 1
                 && section_.nb_incidences( cmv.component_id.id() ) < 1 )
             {
@@ -233,7 +238,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner2D::component_type_static() )
+            if( cmv.component_id.type() != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -266,7 +272,7 @@ namespace geode
         SectionCornersTopology::inspect_corners_topology() const
     {
         SectionCornersTopologyInspectionResult result;
-        for( const auto& corner : section_.corners() )
+        for( const auto& corner : section_.active_corners() )
         {
             if( !corner_is_meshed( section_.corner( corner.id() ) ) )
             {

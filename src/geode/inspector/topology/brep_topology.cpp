@@ -83,15 +83,15 @@ namespace geode
                 }
                 for( const auto& cmv : unique_vertex_cmvs )
                 {
-                    if( cmv_exists_in_brep( cmv ) )
+                    if( !cmv_exists_in_brep( cmv ) )
                     {
-                        if( brep_.unique_vertex( cmv ) != uv_id )
-                        {
-                            return false;
-                        }
-                        continue;
+                        return false;
                     }
-                    return false;
+                    if( brep_.component( cmv.component_id.id() ).is_active()
+                        && brep_.unique_vertex( cmv ) != uv_id )
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -119,21 +119,22 @@ namespace geode
                 }
                 for( const auto& cmv : unique_vertex_cmvs )
                 {
-                    if( cmv_exists_in_brep( cmv ) )
+                    if( !cmv_exists_in_brep( cmv ) )
                     {
-                        if( brep_.unique_vertex( cmv ) != uv_id )
-                        {
-                            linked_to_nonbijective_result.add_issue( uv_id,
-                                absl::StrCat( "unique vertex ", uv_id,
-                                    " is linked to inexistant mesh vertex [",
-                                    cmv.string(), "]." ) );
-                        }
+                        linked_to_inexistant_result.add_issue(
+                            uv_id, absl::StrCat( "unique vertex ", uv_id,
+                                       " is linked to inexistant mesh vertex [",
+                                       cmv.string(), "]." ) );
                         continue;
                     }
-                    linked_to_inexistant_result.add_issue(
-                        uv_id, absl::StrCat( "unique vertex ", uv_id,
-                                   " is linked to inexistant mesh vertex [",
-                                   cmv.string(), "]." ) );
+                    if( brep_.component( cmv.component_id.id() ).is_active()
+                        && brep_.unique_vertex( cmv ) != uv_id )
+                    {
+                        linked_to_nonbijective_result.add_issue(
+                            uv_id, absl::StrCat( "unique vertex ", uv_id,
+                                       " is linked to inexistant mesh vertex [",
+                                       cmv.string(), "]." ) );
+                    }
                 }
             }
         }
@@ -245,7 +246,7 @@ namespace geode
         bool brep_meshed_components_are_linked_to_unique_vertices(
             const BRepTopologyInspector& topology_inspector ) const
         {
-            for( const auto& corner : brep_.corners() )
+            for( const auto& corner : brep_.active_corners() )
             {
                 if( topology_inspector.corner_is_meshed( corner )
                     && !topology_inspector
@@ -255,7 +256,7 @@ namespace geode
                     return false;
                 }
             }
-            for( const auto& line : brep_.lines() )
+            for( const auto& line : brep_.active_lines() )
             {
                 if( topology_inspector.line_is_meshed( line )
                     && !topology_inspector
@@ -265,7 +266,7 @@ namespace geode
                     return false;
                 }
             }
-            for( const auto& surface : brep_.surfaces() )
+            for( const auto& surface : brep_.active_surfaces() )
             {
                 if( topology_inspector.surface_is_meshed( surface )
                     && !topology_inspector
@@ -275,7 +276,7 @@ namespace geode
                     return false;
                 }
             }
-            for( const auto& block : brep_.blocks() )
+            for( const auto& block : brep_.active_blocks() )
             {
                 if( topology_inspector.block_is_meshed( block )
                     && !topology_inspector

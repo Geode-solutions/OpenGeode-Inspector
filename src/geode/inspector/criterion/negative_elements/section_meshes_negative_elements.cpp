@@ -64,7 +64,7 @@ namespace geode
             surface_negative_elements() const
         {
             SectionMeshesNegativeElementsInspectionResult result;
-            for( const auto& surface : section_.surfaces() )
+            for( const auto& surface : section_.active_surfaces() )
             {
                 const geode::SurfaceMeshNegativeElements2D inspector{
                     surface.mesh()

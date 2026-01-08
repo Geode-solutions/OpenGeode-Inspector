@@ -91,7 +91,7 @@ namespace geode
             InspectionIssuesMap< index_t >& small_polyhedra_map,
             double threshold ) const
         {
-            for( const auto& block : model().blocks() )
+            for( const auto& block : model().active_blocks() )
             {
                 const auto& mesh = block.mesh();
                 if( !mesh.are_edges_enabled() )

@@ -73,7 +73,7 @@ namespace geode
                 InspectionIssuesMap< PolygonEdge >&
                     components_wrong_adjacencies ) const
         {
-            for( const auto& surface : model_.surfaces() )
+            for( const auto& surface : model_.active_surfaces() )
             {
                 const SurfaceMeshAdjacency< Model::dim > inspector{
                     surface.mesh()

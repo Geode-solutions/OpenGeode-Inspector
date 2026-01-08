@@ -79,22 +79,10 @@ namespace
         return false;
     }
 
-    std::vector< geode::uuid > block_boundary_surfaces(
-        const geode::BRep& brep, const geode::Block3D& block )
-    {
-        std::vector< geode::uuid > block_boundary_uuids;
-        block_boundary_uuids.reserve( brep.nb_boundaries( block.id() ) );
-        for( const auto& boundary_surface : brep.boundaries( block ) )
-        {
-            block_boundary_uuids.push_back( boundary_surface.id() );
-        }
-        return block_boundary_uuids;
-    }
-
     bool is_line_incident_to_another_block_boundary_surface(
         const geode::Line3D& line,
         const geode::BRep& brep,
-        absl::Span< const geode::uuid > block_boundary_uuids,
+        const geode::Block3D& block,
         const geode::uuid& boundary_surface_id )
     {
         for( const auto& incident_surface : brep.incidences( line ) )
@@ -103,8 +91,7 @@ namespace
             {
                 continue;
             }
-            if( absl::c_find( block_boundary_uuids, incident_surface.id() )
-                != block_boundary_uuids.end() )
+            if( brep.is_boundary( incident_surface, block ) )
             {
                 return true;
             }
@@ -112,19 +99,18 @@ namespace
         return false;
     }
 
-    bool surface_should_not_be_boundary_to_block( const geode::uuid& bsurf_uuid,
+    bool surface_should_not_be_boundary_to_block(
+        const geode::Surface3D& surface,
         const geode::BRep& brep,
-        const std::vector< geode::uuid >& block_boundary_uuids )
+        const geode::Block3D& block )
     {
-        const auto& surface = brep.surface( bsurf_uuid );
         for( const auto& line : brep.boundaries( surface ) )
         {
-            if( is_line_incident_to_another_block_boundary_surface(
-                    line, brep, block_boundary_uuids, bsurf_uuid ) )
+            if( !is_line_incident_to_another_block_boundary_surface(
+                    line, brep, block, surface.id() ) )
             {
-                continue;
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -514,6 +500,13 @@ namespace geode
         {
             return std::nullopt;
         }
+        for( const auto& block_uuid : block_uuids )
+        {
+            if( !brep_.block( block_uuid ).is_active() )
+            {
+                return std::nullopt;
+            }
+        }
         for( const auto& surface_cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
@@ -565,6 +558,10 @@ namespace geode
             internal::vertex_cmvs_by_component( brep_, unique_vertex_index );
         for( const auto& block_uuid : block_uuids )
         {
+            if( !brep_.block( block_uuid ).is_active() )
+            {
+                continue;
+            }
             if( auto error_message = internal::wrong_nb_expected_block_cmvs(
                     brep_, unique_vertex_index, block_uuid, component_cmvs ) )
             {
@@ -583,7 +580,8 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Surface3D::component_type_static() )
+            if( cmv.component_id.type() != Surface3D::component_type_static()
+                || !brep_.surface( cmv.component_id.id() ).is_active() )
             {
                 continue;
             }
@@ -632,7 +630,8 @@ namespace geode
     {
         const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
-        if( surface_uuids.size() != 1 )
+        if( surface_uuids.size() != 1
+            || !brep_.surface( surface_uuids[0] ).is_active() )
         {
             return std::nullopt;
         }
@@ -755,55 +754,31 @@ namespace geode
         BRepBlocksTopology::inspect_blocks() const
     {
         BRepBlocksTopologyInspectionResult result;
-        if( brep_.nb_blocks() == 0 || brep_.nb_active_blocks() == 0 )
+        if( brep_.nb_active_blocks() == 0 )
         {
             return result;
         }
-        std::vector< geode::uuid > meshed_blocks;
         const auto not_boundary_surfaces = find_not_boundary_surfaces( brep_ );
         const auto dangling_surfaces =
             find_dangling_surfaces( brep_, not_boundary_surfaces );
-        std::vector< geode::uuid > boundary_uuids;
-        for( const auto& block : brep_.blocks() )
+        std::vector< geode::uuid > blocks_not_meshed;
+        std::vector< geode::uuid > meshed_blocks;
+        for( const auto& block : brep_.active_blocks() )
         {
-            for( const auto& boundary : brep_.boundaries( block ) )
+            if( !block_is_meshed( brep_.block( block.id() ) ) )
             {
-                if( absl::c_contains( boundary_uuids, boundary.id() ) )
-                {
-                    continue;
-                }
-                boundary_uuids.push_back( boundary.id() );
-            }
-        }
-        for( const auto& boundary : brep_.model_boundaries() )
-        {
-            if( boundary.component_type_static()
-                != Surface3D::component_type_static() )
-            {
+                blocks_not_meshed.push_back( block.id() );
                 continue;
             }
-            if( absl::c_contains( boundary_uuids, boundary.id() ) )
-            {
-                continue;
-            }
-            boundary_uuids.push_back( boundary.id() );
+            meshed_blocks.push_back( block.id() );
         }
-        for( const auto& block : brep_.blocks() )
+        if( !blocks_not_meshed.empty() && !meshed_blocks.empty() )
         {
-            if( block_is_meshed( brep_.block( block.id() ) ) )
+            for( const auto& block_id : blocks_not_meshed )
             {
-                meshed_blocks.push_back( block.id() );
-            }
-        }
-        if( meshed_blocks.size() != brep_.nb_blocks()
-            || meshed_blocks.size() == 0 )
-        {
-            for( const auto& meshed_block_id : meshed_blocks )
-            {
-                result.some_blocks_not_meshed.add_issue( meshed_block_id,
-                    absl::StrCat( "Block ",
-                        brep_.block( meshed_block_id ).name(), " (",
-                        meshed_block_id.string(), ") is not meshed." ) );
+                result.some_blocks_not_meshed.add_issue( block_id,
+                    absl::StrCat( "Block ", brep_.block( block_id ).name(),
+                        " (", block_id.string(), ") is not meshed." ) );
             }
         }
         for( const auto& meshed_block_id : meshed_blocks )
@@ -877,19 +852,20 @@ namespace geode
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
         }
-        for( const auto& block : brep_.blocks() )
+        for( const auto& block : brep_.active_blocks() )
         {
-            const auto block_boundary_uuids =
-                block_boundary_surfaces( brep_, block );
-            for( const auto& bsurf_uuid : block_boundary_uuids )
+            for( const auto& surface : brep_.boundaries( block ) )
             {
-                if( surface_should_not_be_boundary_to_block(
-                        bsurf_uuid, brep_, block_boundary_uuids ) )
+                if( !surface.is_active() )
                 {
-                    result.wrong_block_boundary_surface.add_issue( bsurf_uuid,
-                        absl::StrCat( "Surface ",
-                            brep_.surface( bsurf_uuid ).name(), " (",
-                            bsurf_uuid.string(),
+                    continue;
+                }
+                if( surface_should_not_be_boundary_to_block(
+                        surface, brep_, block ) )
+                {
+                    result.wrong_block_boundary_surface.add_issue( surface.id(),
+                        absl::StrCat( "Surface ", surface.name(), " (",
+                            surface.id().string(),
                             ") should not be boundary of Block ", block.name(),
                             " (", block.id().string(),
                             ") : it has a boundary Line not incident to any "
