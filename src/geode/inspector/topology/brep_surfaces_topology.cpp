@@ -31,6 +31,7 @@
 
 #include <geode/geometry/point.hpp>
 
+#include <geode/mesh/core/point_set.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/helpers/component_mesh_polygons.hpp>
@@ -217,43 +218,45 @@ namespace geode
         }
         const auto line_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Line3D::component_type_static() );
-        if( line_uuids.empty() )
-        {
-            bool has_corner_internal_to_all_surfaces{ false };
-            for( const auto& cmv :
-                brep_.component_mesh_vertices( unique_vertex_index ) )
-            {
-                if( cmv.component_id.type()
-                    != Corner3D::component_type_static() )
-                {
-                    continue;
-                }
-                const auto& corner = brep_.corner( cmv.component_id.id() );
-                for( const auto& surface_id : surface_uuids )
-                {
-                    const auto& surface = brep_.surface( surface_id );
-                    if( surface.is_active()
-                        && !brep_.is_internal( corner, surface ) )
-                    {
-                        return absl::StrCat( "unique vertex ",
-                            unique_vertex_index,
-                            " is part of multiple active Surfaces, and not "
-                            "part of any Line, but is part of Corner ",
-                            corner.name(), " (", corner.id().string(),
-                            "), which is not internal to active Surface ",
-                            surface.name(), " (", surface_id.string(), ")." );
-                    }
-                }
-                has_corner_internal_to_all_surfaces = true;
-            }
-            if( !has_corner_internal_to_all_surfaces )
-            {
-                return absl::StrCat( "unique vertex ", unique_vertex_index, " ",
-                    " is part of multiple active Surfaces, and not part of any "
-                    "Line, but not part of any Corner internal to all "
-                    "Surfaces." );
-            }
-        }
+        // if( line_uuids.empty() )
+        // {
+        //     bool has_corner_internal_to_all_surfaces{ false };
+        //     for( const auto& cmv :
+        //         brep_.component_mesh_vertices( unique_vertex_index ) )
+        //     {
+        //         if( cmv.component_id.type()
+        //             != Corner3D::component_type_static() )
+        //         {
+        //             continue;
+        //         }
+        //         const auto& corner = brep_.corner( cmv.component_id.id() );
+        //         for( const auto& surface_id : surface_uuids )
+        //         {
+        //             const auto& surface = brep_.surface( surface_id );
+        //             if( surface.is_active()
+        //                 && !brep_.is_internal( corner, surface ) )
+        //             {
+        //                 return absl::StrCat( "unique vertex ",
+        //                     unique_vertex_index, " at position [",
+        //                     corner.mesh().point( cmv.vertex ).string(),
+        //                     "] is part of multiple active Surfaces, and not "
+        //                     "part of any Line, but is part of Corner ",
+        //                     corner.name(), " (", corner.id().string(),
+        //                     "), which is not internal to active Surface ",
+        //                     surface.name(), " (", surface_id.string(), ")."
+        //                     );
+        //             }
+        //         }
+        //         has_corner_internal_to_all_surfaces = true;
+        //     }
+        //     if( !has_corner_internal_to_all_surfaces )
+        //     {
+        //         return absl::StrCat( "unique vertex ", unique_vertex_index,
+        //             " is part of multiple active Surfaces, and not part of "
+        //             "any Line, but not part of any Corner internal to all "
+        //             "Surfaces." );
+        //     }
+        // }
         if( line_uuids.size() == 1 )
         {
             index_t nb_cmv_lines{ 0 };
