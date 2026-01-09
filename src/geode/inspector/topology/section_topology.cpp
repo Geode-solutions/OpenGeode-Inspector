@@ -172,40 +172,25 @@ namespace geode
             const SectionTopologyInspector& section_topology_inspector ) const
         {
             SectionTopologyInspectionResult result;
-            async::parallel_invoke(
-                [&result, &section_topology_inspector] {
-                    try
-                    {
+            try
+            {
+                async::parallel_invoke(
+                    [&result, &section_topology_inspector] {
                         result.corners = section_topology_inspector
                                              .inspect_corners_topology();
-                    }
-                    catch( OpenGeodeException& )
-                    {
-                        return;
-                    }
-                },
-                [&result, &section_topology_inspector] {
-                    try
-                    {
+                    },
+                    [&result, &section_topology_inspector] {
                         result.lines =
                             section_topology_inspector.inspect_lines_topology();
-                    }
-                    catch( OpenGeodeException& )
-                    {
-                        return;
-                    }
-                },
-                [&result, &section_topology_inspector] {
-                    try
-                    {
+                    },
+                    [&result, &section_topology_inspector] {
                         result.surfaces =
                             section_topology_inspector.inspect_surfaces();
-                    }
-                    catch( OpenGeodeException& )
-                    {
-                        return;
-                    }
-                } );
+                    } );
+            }
+            catch( OpenGeodeException& )
+            {
+            }
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }
