@@ -177,22 +177,29 @@ namespace geode
             const BRepTopologyInspector& brep_topology_inspector ) const
         {
             BRepTopologyInspectionResult result;
-            async::parallel_invoke(
-                [&result, &brep_topology_inspector] {
-                    result.corners =
-                        brep_topology_inspector.inspect_corners_topology();
-                },
-                [&result, &brep_topology_inspector] {
-                    result.lines =
-                        brep_topology_inspector.inspect_lines_topology();
-                },
-                [&result, &brep_topology_inspector] {
-                    result.surfaces =
-                        brep_topology_inspector.inspect_surfaces_topology();
-                },
-                [&result, &brep_topology_inspector] {
-                    result.blocks = brep_topology_inspector.inspect_blocks();
-                } );
+            try
+            {
+                async::parallel_invoke(
+                    [&result, &brep_topology_inspector] {
+                        result.corners =
+                            brep_topology_inspector.inspect_corners_topology();
+                    },
+                    [&result, &brep_topology_inspector] {
+                        result.lines =
+                            brep_topology_inspector.inspect_lines_topology();
+                    },
+                    [&result, &brep_topology_inspector] {
+                        result.surfaces =
+                            brep_topology_inspector.inspect_surfaces_topology();
+                    },
+                    [&result, &brep_topology_inspector] {
+                        result.blocks =
+                            brep_topology_inspector.inspect_blocks();
+                    } );
+            }
+            catch( OpenGeodeException& )
+            {
+            }
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }
