@@ -198,7 +198,6 @@ namespace geode
             }
             catch( OpenGeodeException& )
             {
-                return;
             }
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
