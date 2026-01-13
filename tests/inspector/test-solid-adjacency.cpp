@@ -167,6 +167,7 @@ int main()
     try
     {
         geode::InspectorInspectorLibrary::initialize();
+        geode::Logger::set_level( geode::Logger::LEVEL::debug );
         check_adjacency();
         check_non_adjacency_no_bijection();
         check_non_adjacency_wrong_facet();
