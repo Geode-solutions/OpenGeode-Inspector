@@ -44,14 +44,15 @@ namespace geode
     index_t BRepLinesTopologyInspectionResult::nb_issues() const
     {
         return lines_not_meshed.nb_issues()
+               + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                     .nb_issues()
                + lines_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_a_line_with_invalid_embeddings
                      .nb_issues()
                + unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
-               + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                     .nb_issues()
                + unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
-                     .nb_issues();
+                     .nb_issues()
+               + line_edges_with_wrong_component_edges_around.nb_issues();
     }
 
     std::string BRepLinesTopologyInspectionResult::string() const
@@ -60,6 +61,15 @@ namespace geode
         if( lines_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, lines_not_meshed.string() );
+        }
+        if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                    .string(),
+                "\n" );
         }
         if( lines_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
@@ -80,15 +90,6 @@ namespace geode
                 unique_vertices_linked_to_a_single_and_invalid_line.string(),
                 "\n" );
         }
-        if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                .nb_issues()
-            != 0 )
-        {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                    .string(),
-                "\n" );
-        }
         if( unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                 .nb_issues()
             != 0 )
@@ -96,6 +97,11 @@ namespace geode
             absl::StrAppend( &message,
                 unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                     .string() );
+        }
+        if( line_edges_with_wrong_component_edges_around.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                line_edges_with_wrong_component_edges_around.string() );
         }
         if( !message.empty() )
         {
