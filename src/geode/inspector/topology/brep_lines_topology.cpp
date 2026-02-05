@@ -44,14 +44,15 @@ namespace geode
     index_t BRepLinesTopologyInspectionResult::nb_issues() const
     {
         return lines_not_meshed.nb_issues()
+               + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                     .nb_issues()
                + lines_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_a_line_with_invalid_embeddings
                      .nb_issues()
                + unique_vertices_linked_to_a_single_and_invalid_line.nb_issues()
-               + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                     .nb_issues()
                + unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
-                     .nb_issues();
+                     .nb_issues()
+               + line_edges_with_wrong_component_edges_around.nb_issues();
     }
 
     std::string BRepLinesTopologyInspectionResult::string() const
@@ -60,6 +61,15 @@ namespace geode
         if( lines_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, lines_not_meshed.string() );
+        }
+        if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                .nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_line_with_wrong_relationship_to_surface
+                    .string(),
+                "\n" );
         }
         if( lines_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
@@ -80,15 +90,6 @@ namespace geode
                 unique_vertices_linked_to_a_single_and_invalid_line.string(),
                 "\n" );
         }
-        if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                .nb_issues()
-            != 0 )
-        {
-            absl::StrAppend( &message,
-                unique_vertices_linked_to_line_with_wrong_relationship_to_surface
-                    .string(),
-                "\n" );
-        }
         if( unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                 .nb_issues()
             != 0 )
@@ -96,6 +97,11 @@ namespace geode
             absl::StrAppend( &message,
                 unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
                     .string() );
+        }
+        if( line_edges_with_wrong_component_edges_around.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                line_edges_with_wrong_component_edges_around.string() );
         }
         if( !message.empty() )
         {
@@ -452,6 +458,36 @@ namespace geode
                 surface.name(), " (", surface_id.string(),
                 "), but is neither boundary of nor internal to it." );
         }
+        for( const auto& embedding_surface : brep_.embedding_surfaces( line ) )
+        {
+            if( !embedding_surface.is_active() )
+            {
+                continue;
+            }
+            if( !cme.surface_edges.contains( embedding_surface.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is embedded in Surface ",
+                    embedding_surface.name(), " (",
+                    embedding_surface.id().string(), ") but edge ", edge_index,
+                    " has no common edge with the surface" );
+            }
+        }
+        for( const auto& incident_surface : brep_.incidences( line ) )
+        {
+            if( !incident_surface.is_active() )
+            {
+                continue;
+            }
+            if( !cme.surface_edges.contains( incident_surface.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is incident to Surface ",
+                    incident_surface.name(), " (",
+                    incident_surface.id().string(), ") but edge ", edge_index,
+                    " has no common edge with the surface" );
+            }
+        }
         for( const auto& [block_id, block_edges] : cme.block_edges )
         {
             const auto& block = brep_.block( block_id );
@@ -466,6 +502,22 @@ namespace geode
                         " edges of this Block around it, it should be 1." );
                 }
                 continue;
+            }
+        }
+        for( const auto& embedding_block : brep_.embedding_blocks( line ) )
+        {
+            if( !embedding_block.is_active()
+                || embedding_block.mesh().nb_polyhedra() == 0 )
+            {
+                continue;
+            }
+            if( !cme.block_edges.contains( embedding_block.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is embedded in Block ",
+                    embedding_block.name(), " (", embedding_block.id().string(),
+                    ") but edge ", edge_index,
+                    " has no common edge with the block" );
             }
         }
         return std::nullopt;
