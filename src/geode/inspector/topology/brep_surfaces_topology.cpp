@@ -293,12 +293,21 @@ namespace geode
                 }
                 if( brep_.Relationships::nb_embeddings( cmv.component_id.id() )
                         + nb_of_line_relationships_with_surfaces
-                    != surface_uuids.size() )
+                    < surface_uuids.size() )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of multiple active Surfaces and only one "
                         "Line, is a Corner, but is not internal to all the "
                         "Surfaces without relationships to the Line." );
+                }
+                if( brep_.Relationships::nb_embeddings( cmv.component_id.id() )
+                        + nb_of_line_relationships_with_surfaces
+                    > surface_uuids.size() )
+                {
+                    return absl::StrCat( "unique vertex ", unique_vertex_index,
+                        " is part of multiple active Surfaces and only one "
+                        "Line, is a Corner, but is internal to Surfaces with "
+                        "relationships to the Line." );
                 }
             }
         }
