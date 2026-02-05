@@ -452,6 +452,36 @@ namespace geode
                 surface.name(), " (", surface_id.string(),
                 "), but is neither boundary of nor internal to it." );
         }
+        for( const auto& embedding_surface : brep_.embedding_surfaces( line ) )
+        {
+            if( !embedding_surface.is_active() )
+            {
+                continue;
+            }
+            if( !cme.surface_edges.contains( embedding_surface.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is embedded in Surface ",
+                    embedding_surface.name(), " (",
+                    embedding_surface.id().string(), ") but edge ", edge_index,
+                    " has no common edge with the surface" );
+            }
+        }
+        for( const auto& incident_surface : brep_.incidences( line ) )
+        {
+            if( !incident_surface.is_active() )
+            {
+                continue;
+            }
+            if( !cme.surface_edges.contains( incident_surface.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is incident to Surface ",
+                    incident_surface.name(), " (",
+                    incident_surface.id().string(), ") but edge ", edge_index,
+                    " has no common edge with the surface" );
+            }
+        }
         for( const auto& [block_id, block_edges] : cme.block_edges )
         {
             const auto& block = brep_.block( block_id );
@@ -466,6 +496,22 @@ namespace geode
                         " edges of this Block around it, it should be 1." );
                 }
                 continue;
+            }
+        }
+        for( const auto& embedding_block : brep_.embedding_blocks( line ) )
+        {
+            if( !embedding_block.is_active()
+                || embedding_block.mesh().nb_polyhedra() == 0 )
+            {
+                continue;
+            }
+            if( !cme.block_edges.contains( embedding_block.id() ) )
+            {
+                return absl::StrCat( "Line ", line.name(), " (",
+                    line.id().string(), ") is embedded in Block ",
+                    embedding_block.name(), " (", embedding_block.id().string(),
+                    ") but edge ", edge_index,
+                    " has no common edge with the block" );
             }
         }
         return std::nullopt;
