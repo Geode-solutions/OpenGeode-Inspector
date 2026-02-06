@@ -96,4 +96,4 @@ For questions and support please use the official [slack](https://opengeode-slac
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2019 - 2025, Geode-solutions
+Copyright (c) 2019 - 2026, Geode-solutions
