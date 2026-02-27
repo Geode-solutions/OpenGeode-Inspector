@@ -201,8 +201,10 @@ namespace geode
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated to Corner",
-                    section_.corner( cmv.component_id.id() ).name(), " (",
-                    cmv.component_id.id().string(),
+                    section_.corner( cmv.component_id.id() )
+                        .name()
+                        .value_or( cmv.component_id.id().string() ),
+                    " (", cmv.component_id.id().string(),
                     "), which has several embeddings." );
             }
         }
@@ -223,8 +225,10 @@ namespace geode
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated to Corner ",
-                    section_.corner( cmv.component_id.id() ).name(), " (",
-                    cmv.component_id.id().string(),
+                    section_.corner( cmv.component_id.id() )
+                        .name()
+                        .value_or( cmv.component_id.id().string() ),
+                    " (", cmv.component_id.id().string(),
                     "), which is neither internal nor boundary." );
             }
         }
@@ -257,10 +261,14 @@ namespace geode
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is associated with Corner ",
-                        section_.corner( corner_uuid ).name(), " (",
-                        corner_uuid.string(), "), part of Line ",
-                        section_.line( line.component_id.id() ).name(), " (",
-                        line.component_id.id().string(),
+                        section_.corner( corner_uuid )
+                            .name()
+                            .value_or( corner_uuid.string() ),
+                        " (", corner_uuid.string(), "), part of Line ",
+                        section_.line( line.component_id.id() )
+                            .name()
+                            .value_or( line.component_id.id().string() ),
+                        " (", line.component_id.id().string(),
                         "), but is not a boundary of the Line." );
                 }
             }
@@ -277,7 +285,8 @@ namespace geode
             if( !corner_is_meshed( section_.corner( corner.id() ) ) )
             {
                 result.corners_not_meshed.add_issue( corner.id(),
-                    absl::StrCat( "Corner ", corner.name(), " (",
+                    absl::StrCat( "Corner ",
+                        corner.name().value_or( corner.id().string() ), " (",
                         corner.id().string(), ") is not meshed" ) );
                 continue;
             }
@@ -287,7 +296,8 @@ namespace geode
             if( corner_result.nb_issues() != 0 )
             {
                 corner_result.set_description( absl::StrCat( "Corner ",
-                    corner.name(), " (", corner.id().string(), ")" ) );
+                    corner.name().value_or( corner.id().string() ), " (",
+                    corner.id().string(), ")" ) );
                 result.corners_not_linked_to_a_unique_vertex.add_issues_to_map(
                     corner.id(), std::move( corner_result ) );
             }

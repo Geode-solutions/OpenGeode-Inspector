@@ -521,10 +521,12 @@ namespace geode
                 const auto& surface2 =
                     model_.surface( polygon_pair.second.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Surfaces ", surface1.name(), " (",
-                        polygon_pair.first.component_id.id().string(), ") and ",
-                        surface2.name(), " (",
-                        polygon_pair.second.component_id.id().string(),
+                    absl::StrCat( "Surfaces ",
+                        surface1.name().value_or( surface1.id().string() ),
+                        " (", polygon_pair.first.component_id.id().string(),
+                        ") and ",
+                        surface2.name().value_or( surface2.id().string() ),
+                        " (", polygon_pair.second.component_id.id().string(),
                         ") intersect on polygons ",
                         polygon_pair.first.element_id, " and ",
                         polygon_pair.second.element_id ) );
@@ -542,7 +544,8 @@ namespace geode
                 const auto& surface =
                     model_.surface( polygon_pair.first.component_id.id() );
                 intersection_issues.add_issue( polygon_pair,
-                    absl::StrCat( "Surface ", surface.name(), " (",
+                    absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
                         polygon_pair.first.component_id.id().string(),
                         ") has a self intersection on polygons ",
                         polygon_pair.first.element_id, "and ",

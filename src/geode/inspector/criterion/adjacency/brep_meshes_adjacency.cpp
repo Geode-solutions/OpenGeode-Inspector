@@ -27,6 +27,7 @@
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
+#include <geode/basic/range.hpp>
 
 #include <geode/mesh/core/solid_mesh.hpp>
 
@@ -89,7 +90,8 @@ namespace geode
                 auto wrong_adjacencies =
                     inspector.polyhedron_facets_with_wrong_adjacency();
                 wrong_adjacencies.set_description( absl::StrCat( "Block ",
-                    block.name(), " (", block.id().string(),
+                    block.name().value_or( block.id().string() ), " (",
+                    block.id().string(),
                     ") polyhedron facets adjacencies issues" ) );
                 const auto& mesh = block.mesh();
                 for( const auto polyhedron_id : Range{ mesh.nb_polyhedra() } )

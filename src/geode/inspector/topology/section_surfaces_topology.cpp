@@ -198,7 +198,8 @@ namespace geode
                     return absl::StrCat( "Unique vertex ", unique_vertex_index,
                         " is part of a Line and of Surface ",
                         section_.surface( surface_cmv.component_id.id() )
-                            .name(),
+                            .name()
+                            .value_or( surface_cmv.component_id.id().string() ),
                         " (", surface_cmv.component_id.id().string(),
                         ") but the associated vertex in the Surface "
                         "mesh is not on the mesh border." );
@@ -217,7 +218,8 @@ namespace geode
             if( !surface_is_meshed( section_.surface( surface.id() ) ) )
             {
                 result.surfaces_not_meshed.add_issue( surface.id(),
-                    absl::StrCat( "Surface ", surface.name(), " (",
+                    absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
                         surface.id().string(), ") is not meshed" ) );
             }
 
@@ -227,7 +229,8 @@ namespace geode
             if( surface_result.nb_issues() != 0 )
             {
                 surface_result.set_description( absl::StrCat( "Surface ",
-                    surface.name(), " (", surface.id().string(), ")" ) );
+                    surface.name().value_or( surface.id().string() ), " (",
+                    surface.id().string(), ")" ) );
                 result.surfaces_not_linked_to_a_unique_vertex.add_issues_to_map(
                     surface.id(), std::move( surface_result ) );
             }

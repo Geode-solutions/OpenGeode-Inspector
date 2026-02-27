@@ -169,8 +169,10 @@ namespace geode
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Line ",
-                    section_.line( cmv.component_id.id() ).name(), " (",
-                    cmv.component_id.id().string(),
+                    section_.line( cmv.component_id.id() )
+                        .name()
+                        .value_or( cmv.component_id.id().string() ),
+                    " (", cmv.component_id.id().string(),
                     "), which is neither embedded nor incident." );
             }
         }
@@ -197,16 +199,20 @@ namespace geode
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of line ",
-                    section_.line( line_cmv.component_id.id() ).name(), " (",
-                    line_cmv.component_id.id().string(),
+                    section_.line( line_cmv.component_id.id() )
+                        .name()
+                        .value_or( line_cmv.component_id.id().string() ),
+                    " (", line_cmv.component_id.id().string(),
                     "), which has multiple embeddings." );
             }
             if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Line ",
-                    section_.line( line_cmv.component_id.id() ).name(), " (",
-                    line_cmv.component_id.id().string(),
+                    section_.line( line_cmv.component_id.id() )
+                        .name()
+                        .value_or( line_cmv.component_id.id().string() ),
+                    " (", line_cmv.component_id.id().string(),
                     "), which has both an embedding and incidence(s)." );
             }
             for( const auto& embedding :
@@ -225,11 +231,15 @@ namespace geode
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of Line ",
-                        section_.line( line_cmv.component_id.id() ).name(),
+                        section_.line( line_cmv.component_id.id() )
+                            .name()
+                            .value_or( line_cmv.component_id.id().string() ),
                         " (", line_cmv.component_id.string(),
                         "), which is embedded in surface ",
-                        section_.surface( embedding.id() ).name(), " (",
-                        embedding.id().string(),
+                        section_.surface( embedding.id() )
+                            .name()
+                            .value_or( embedding.id().string() ),
+                        " (", embedding.id().string(),
                         "), but the unique vertex is not linked to the "
                         "Surface mesh vertices." );
                 }
@@ -255,7 +265,8 @@ namespace geode
         if( surface_uuids.size() > 2 )
         {
             return absl::StrCat( "unique vertex ", unique_vertex_index,
-                " is part of only one Line ", section_.line( line_id ).name(),
+                " is part of only one Line ",
+                section_.line( line_id ).name().value_or( line_id.string() ),
                 " (", line_id.string(),
                 "), but part of more than two Surfaces" );
         }
@@ -268,7 +279,9 @@ namespace geode
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of only one Line ",
-                    section_.line( line_id ).name(), " (", line_id.string(),
+                    section_.line( line_id ).name().value_or(
+                        line_id.string() ),
+                    " (", line_id.string(),
                     "), which has embeddings, but there are more than "
                     "one meshed Surface associated to the vertex, or "
                     "the Line is not internal to the meshed Surface "
@@ -284,11 +297,15 @@ namespace geode
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of only one Line ",
-                        section_.line( line_id ).name(), " (", line_id.string(),
+                        section_.line( line_id ).name().value_or(
+                            line_id.string() ),
+                        " (", line_id.string(),
                         "), and mutiple Surfaces, but the Line is not "
                         "boundary of associated Surface ",
-                        section_.surface( surface_id ).name(), " (",
-                        surface_id.string(), ")" );
+                        section_.surface( surface_id )
+                            .name()
+                            .value_or( surface_id.string() ),
+                        " (", surface_id.string(), ")" );
                 }
             }
         }
@@ -331,17 +348,19 @@ namespace geode
         {
             if( !line_is_meshed( section_.line( line.id() ) ) )
             {
-                result.lines_not_meshed.add_issue(
-                    line.id(), absl::StrCat( "Line ", line.name(), " (",
-                                   line.id().string(), ") is not meshed" ) );
+                result.lines_not_meshed.add_issue( line.id(),
+                    absl::StrCat( "Line ",
+                        line.name().value_or( line.id().string() ), " (",
+                        line.id().string(), ") is not meshed" ) );
             }
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(
                     section_, line.component_id(), line.mesh() );
             if( line_result.nb_issues() != 0 )
             {
-                line_result.set_description( absl::StrCat(
-                    "Line ", line.name(), " (", line.id().string(), ")" ) );
+                line_result.set_description( absl::StrCat( "Line ",
+                    line.name().value_or( line.id().string() ), " (",
+                    line.id().string(), ")" ) );
                 result.lines_not_linked_to_a_unique_vertex.add_issues_to_map(
                     line.id(), std::move( line_result ) );
             }

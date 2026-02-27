@@ -68,9 +68,9 @@ namespace geode
                     block.mesh()
                 };
                 auto negative_elements = inspector.negative_polyhedra();
-                negative_elements.set_description(
-                    absl::StrCat( "Block ", block.name(), " (",
-                        block.id().string(), ") negative polyhedra" ) );
+                negative_elements.set_description( absl::StrCat( "Block ",
+                    block.name().value_or( block.id().string() ), " (",
+                    block.id().string(), ") negative polyhedra" ) );
                 result.negative_polyhedra.add_issues_to_map(
                     block.id(), std::move( negative_elements ) );
             }
