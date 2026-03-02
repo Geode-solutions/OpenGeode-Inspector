@@ -210,7 +210,8 @@ namespace
                           .mesh()
                           .point( unique_vertex_cmvs.block_cmvs[0].vertex )
                           .string(),
-                      "] is part of Block ", block.name(), " (",
+                      "] is part of Block ",
+                      block.name().value_or( block.id().string() ), " (",
                       block_uuid.string(), "), and has ",
                       unique_vertex_cmvs.corner_cmvs.size(),
                       " cmvs of corners, ", nb_internal_surface_cmvs,

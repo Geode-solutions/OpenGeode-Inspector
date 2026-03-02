@@ -112,7 +112,8 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    line_issues{ absl::StrCat( "Line ", line.name(), " (",
+                    line_issues{ absl::StrCat( "Line ",
+                        line.name().value_or( line.id().string() ), " (",
                         line.id().string(), ") colocated vertices" ) };
                 const auto& line_mesh = line.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
@@ -124,7 +125,8 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     line_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Line ", line.name(), " (",
+                        absl::StrCat( "Line ",
+                            line.name().value_or( line.id().string() ), " (",
                             line.id().string(), ") has vertices ",
                             point_group_string, " colocated at position [",
                             line_mesh.point( colocated_points_group[0] )
@@ -147,8 +149,9 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    surface_issues{ absl::StrCat( "Surface ", surface.name(),
-                        " (", surface.id().string(), ") colocated vertices" ) };
+                    surface_issues{ absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
+                        surface.id().string(), ") colocated vertices" ) };
                 const auto& surface_mesh = surface.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
                 {
@@ -159,8 +162,9 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     surface_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Surface ", surface.name(), " (",
-                            surface.id().string(), ") has vertices ",
+                        absl::StrCat( "Surface ",
+                            surface.name().value_or( surface.id().string() ),
+                            " (", surface.id().string(), ") has vertices ",
                             point_group_string, " colocated at position [",
                             surface_mesh.point( colocated_points_group[0] )
                                 .string(),
@@ -197,7 +201,8 @@ namespace
             if( !colocated_pts.empty() )
             {
                 geode::InspectionIssues< std::vector< geode::index_t > >
-                    block_issues{ absl::StrCat( "Block ", block.name(), " (",
+                    block_issues{ absl::StrCat( "Block ",
+                        block.name().value_or( block.id().string() ), " (",
                         block.id().string(), ") colocated vertices" ) };
                 const auto& block_mesh = block.mesh();
                 for( const auto& colocated_points_group : colocated_pts )
@@ -209,7 +214,8 @@ namespace
                             &point_group_string, " ", point_index );
                     }
                     block_issues.add_issue( colocated_points_group,
-                        absl::StrCat( "Block ", block.name(), " (",
+                        absl::StrCat( "Block ",
+                            block.name().value_or( block.id().string() ), " (",
                             block.id().string(), ") has vertices ",
                             point_group_string, " colocated at position [",
                             block_mesh.point( colocated_points_group[0] )
