@@ -107,9 +107,7 @@ namespace geode
                     }
                     const auto polyhedra_around = mesh_.polyhedra_around_edge(
                         polyhedron_edge_vertices, polyhedron_id );
-                    if( !polyhedra_around_edge_are_the_same(
-                            mesh_.polyhedra_around_edge(
-                                polyhedron_edge_vertices, polyhedron_id ),
+                    if( !polyhedra_around_edge_are_the_same( polyhedra_around,
                             polyhedra_around_edges_.at( polyhedron_edge ) ) )
                     {
                         return false;
