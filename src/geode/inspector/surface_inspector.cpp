@@ -37,7 +37,8 @@ namespace geode
                + degenerated_polygons.nb_issues()
                + non_manifold_edges.nb_issues()
                + non_manifold_vertices.nb_issues()
-               + intersecting_elements.nb_issues();
+               + intersecting_elements.nb_issues()
+               + negative_polygons.nb_issues();
     }
 
     std::string SurfaceInspectionResult::string() const
@@ -45,7 +46,8 @@ namespace geode
         return absl::StrCat( polygon_edges_with_wrong_adjacency.string(),
             colocated_points_groups.string(), degenerated_edges.string(),
             degenerated_polygons.string(), non_manifold_edges.string(),
-            non_manifold_vertices.string(), intersecting_elements.string() );
+            non_manifold_vertices.string(), intersecting_elements.string(),
+            negative_polygons.string() );
     }
 
     std::string SurfaceInspectionResult::inspection_type() const
@@ -62,7 +64,8 @@ namespace geode
               SurfaceMeshDegeneration< dimension >,
               SurfaceMeshEdgeManifold< dimension >,
               SurfaceMeshVertexManifold< dimension >,
-              SurfaceMeshIntersections< dimension > >{ mesh }
+              SurfaceMeshIntersections< dimension >,
+              SurfaceMeshNegativeElements< dimension > >{ mesh }
     {
     }
 
@@ -94,6 +97,9 @@ namespace geode
             },
             [&result, this] {
                 result.intersecting_elements = this->intersecting_elements();
+            },
+            [&result, this] {
+                result.negative_polygons = this->negative_polygons();
             } );
         return result;
     }
