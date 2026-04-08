@@ -30,6 +30,7 @@
 #include <geode/inspector/criterion/intersections/surface_intersections.hpp>
 #include <geode/inspector/criterion/manifold/surface_edge_manifold.hpp>
 #include <geode/inspector/criterion/manifold/surface_vertex_manifold.hpp>
+#include <geode/inspector/criterion/negative_elements/surface_negative_elements.hpp>
 #include <geode/inspector/mixin/add_inspectors.hpp>
 
 namespace geode
@@ -57,6 +58,9 @@ namespace geode
         InspectionIssues< std::pair< index_t, index_t > > intersecting_elements{
             "Intersection between mesh elements not tested"
         };
+        InspectionIssues< index_t > negative_polygons{
+            "Negative polygons not tested"
+        };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -71,6 +75,8 @@ namespace geode
      * @extends SurfaceMeshDegeneration
      * @extends SurfaceMeshEdgeManifold
      * @extends SurfaceMeshVertexManifold
+     * @extends SurfaceMeshIntersections
+     * @extends SurfaceMeshNegativeElements
      */
     template < index_t dimension >
     class SurfaceMeshInspector : public AddInspectors< SurfaceMesh< dimension >,
@@ -79,7 +85,8 @@ namespace geode
                                      SurfaceMeshDegeneration< dimension >,
                                      SurfaceMeshEdgeManifold< dimension >,
                                      SurfaceMeshVertexManifold< dimension >,
-                                     SurfaceMeshIntersections< dimension > >
+                                     SurfaceMeshIntersections< dimension >,
+                                     SurfaceMeshNegativeElements< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 

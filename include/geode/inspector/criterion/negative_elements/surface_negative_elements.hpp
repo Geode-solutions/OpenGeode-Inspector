@@ -42,7 +42,6 @@ namespace geode
     class opengeode_inspector_inspector_api SurfaceMeshNegativeElements
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshNegativeElements );
-        OPENGEODE_TEMPLATE_ASSERT_2D( dimension );
 
     public:
         explicit SurfaceMeshNegativeElements(
