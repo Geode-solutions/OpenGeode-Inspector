@@ -44,11 +44,15 @@ namespace geode
 
         bool mesh_has_negative_elements() const
         {
-            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
+            if constexpr( dimension == 2 )
             {
-                if( polygon_has_negative_area( polygon_id ) )
+                for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
-                    return true;
+                    if( polygon_area_sign( mesh_.polygon( polygon_id ) )
+                        == Sign::negative )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -59,22 +63,19 @@ namespace geode
             InspectionIssues< index_t > wrong_polygons{
                 "negative area polygons"
             };
-            for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
+            if constexpr( dimension == 2 )
             {
-                if( polygon_has_negative_area( polygon_id ) )
+                for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
-                    wrong_polygons.add_issue( polygon_id,
-                        absl::StrCat( "negative polygon ", polygon_id ) );
+                    if( polygon_area_sign( mesh_.polygon( polygon_id ) )
+                        == Sign::negative )
+                    {
+                        wrong_polygons.add_issue( polygon_id,
+                            absl::StrCat( "negative polygon ", polygon_id ) );
+                    }
                 }
             }
             return wrong_polygons;
-        }
-
-    private:
-        bool polygon_has_negative_area( index_t polygon_id ) const
-        {
-            return polygon_area_sign( mesh_.polygon( polygon_id ) )
-                   == Sign::negative;
         }
 
     private:
@@ -108,4 +109,6 @@ namespace geode
 
     template class opengeode_inspector_inspector_api
         SurfaceMeshNegativeElements< 2 >;
+    template class opengeode_inspector_inspector_api
+        SurfaceMeshNegativeElements< 3 >;
 } // namespace geode
