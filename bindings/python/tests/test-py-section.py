@@ -193,6 +193,6 @@ def check_section(verbose):
 
 
 if __name__ == "__main__":
-    inspector.InspectorInspectorLibrary.initialize()
+    inspector.OpenGeodeInspectorInspectorLibrary.initialize()
     verbose = False
     check_section(verbose)

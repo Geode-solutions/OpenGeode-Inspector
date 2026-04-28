@@ -62,7 +62,7 @@ def lines_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner.nb_issues()
     )
-    nb_issues+=result.line_edges_with_wrong_component_edges_around.nb_issues()
+    nb_issues += result.line_edges_with_wrong_component_edges_around.nb_issues()
     print("BRep Lines Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
@@ -80,8 +80,10 @@ def surfaces_topological_validity(result, verbose):
     nb_issues += (
         result.unique_vertices_linked_to_several_and_invalid_surfaces.nb_issues()
     )
-    nb_issues+=result.unique_vertices_linked_to_a_surface_with_invalid_embbedings.nb_issues()
-    nb_issues +=result.surface_polygons_with_wrong_component_facets_around.nb_issues()
+    nb_issues += (
+        result.unique_vertices_linked_to_a_surface_with_invalid_embbedings.nb_issues()
+    )
+    nb_issues += result.surface_polygons_with_wrong_component_facets_around.nb_issues()
     print("BRep Surfaces Topology check: ", nb_issues, " issues.")
     if verbose:
         print(result.string(), "\n")
@@ -228,7 +230,8 @@ def check_a1(verbose):
             "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
-def inspect_model_A1(model_brep,verbose):
+
+def inspect_model_A1(model_brep, verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
     if brep_inspector.brep_topology_is_valid():
@@ -248,13 +251,15 @@ def inspect_model_A1(model_brep,verbose):
             "[Test] model model_A1_valid should have 13494 component meshes issues (pairs of component meshes triangles intersecting)."
         )
 
+
 def check_a1_valid(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
     model_brep = opengeode.load_brep(data_dir + "/model_A1_valid.og_brep")
-    inspect_model_A1(model_brep,verbose)
+    inspect_model_A1(model_brep, verbose)
 
-def inspect_model_mss(model_brep,verbose):
+
+def inspect_model_mss(model_brep, verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
     if brep_inspector.brep_topology_is_valid():
@@ -264,7 +269,8 @@ def inspect_model_mss(model_brep,verbose):
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
     if nb_model_issues != 52:
         raise ValueError(
-            "[Test] model mss.og_strm should have 37 topological problems, not " + str(nb_model_issues)
+            "[Test] model mss.og_strm should have 37 topological problems, not "
+            + str(nb_model_issues)
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -272,13 +278,15 @@ def inspect_model_mss(model_brep,verbose):
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model mss should have no component meshes issues.")
 
+
 def check_model_mss(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
     model_brep = opengeode.load_brep(data_dir + "/mss.og_brep")
-    inspect_model_mss(model_brep,verbose)
+    inspect_model_mss(model_brep, verbose)
 
-def inspect_model_D(model_brep,verbose):
+
+def inspect_model_D(model_brep, verbose):
     brep_inspector = inspector.BRepInspector(model_brep)
     result = brep_inspector.inspect_brep()
 
@@ -296,16 +304,17 @@ def inspect_model_D(model_brep,verbose):
     )
     if nb_component_meshes_issues != 0:
         raise ValueError("[Test] model_D should have no component meshes issues.")
-    
+
 
 def check_model_D(verbose):
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
     model_brep = opengeode.load_brep(data_dir + "/model_D.og_brep")
-    inspect_model_D(model_brep,verbose)
+    inspect_model_D(model_brep, verbose)
+
 
 if __name__ == "__main__":
-    inspector.InspectorInspectorLibrary.initialize()
+    inspector.OpenGeodeInspectorInspectorLibrary.initialize()
     verbose = False
     check_a1(verbose)
     check_a1_valid(verbose)

@@ -44,20 +44,21 @@ void check_negative_elements()
     builder->create_triangle( { 2, 3, 1 } );
 
     const geode::SurfaceMeshNegativeElements2D inspector{ *surface };
-    OPENGEODE_EXCEPTION( inspector.mesh_has_negative_elements(),
-        "[Test] Surface should have negative elements." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        inspector.mesh_has_negative_elements(),
+        "Surface should have negative elements." );
     const auto issues = inspector.negative_polygons();
-    OPENGEODE_EXCEPTION( issues.nb_issues() == 1,
-        "[Test] Surface should have 1 negative element." );
-    OPENGEODE_EXCEPTION( issues.issues().at( 0 ) == 1,
-        "[Test] Surface negative element should be 1." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        issues.nb_issues() == 1, "Surface should have 1 negative element." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        issues.issues().at( 0 ) == 1, "Surface negative element should be 1." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_negative_elements();
 
         geode::Logger::info( "TEST SUCCESS" );

@@ -41,11 +41,12 @@ void check_non_colocation2D()
     builder->set_point( 3, geode::Point2D{ { 3., 3. } } );
 
     const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
-    OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Surface has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !colocation_inspector.mesh_has_colocated_points(),
+        "Surface has colocated points when it should have none." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocation_inspector.colocated_points_groups().nb_issues() == 0,
-        "[Test] Surface has more colocated points than it should." );
+        "Surface has more colocated points than it should." );
 }
 
 void check_colocation2D()
@@ -64,33 +65,35 @@ void check_colocation2D()
         6, geode::Point2D{ { geode::GLOBAL_EPSILON / 1.1, 2. } } );
 
     const geode::SurfaceMeshColocation2D colocation_inspector{ *surface };
-    OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Surface doesn't have colocated points whereas it should have "
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocation_inspector.mesh_has_colocated_points(),
+        "Surface doesn't have colocated points whereas it should have "
         "several." );
     const auto colocated_points_groups =
         colocation_inspector.colocated_points_groups();
-    OPENGEODE_EXCEPTION( colocated_points_groups.nb_issues() == 2,
-        "[Test] Surface has wrong number of colocated groups of "
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocated_points_groups.nb_issues() == 2,
+        "Surface has wrong number of colocated groups of "
         "points." );
     auto nb_colocated_points{ 0 };
     for( const auto &group : colocated_points_groups.issues() )
     {
         nb_colocated_points += group.size();
     }
-    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
-        "[Test] Surface has wrong number of colocated points." );
+    geode::OpenGeodeInspectorInspectorException::test( nb_colocated_points == 5,
+        "Surface has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[0] == first_colocated_points_group
             || colocated_points_groups.issues()[0]
                    == second_colocated_points_group,
-        "[Test] Surface has wrong first colocated points group." );
-    OPENGEODE_EXCEPTION(
+        "Surface has wrong first colocated points group." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[1] == first_colocated_points_group
             || colocated_points_groups.issues()[1]
                    == second_colocated_points_group,
-        "[Test] Surface has wrong second colocated points group." );
+        "Surface has wrong second colocated points group." );
 }
 
 void check_non_colocation3D()
@@ -104,11 +107,12 @@ void check_non_colocation3D()
     builder->set_point( 3, geode::Point3D{ { 3., 3., 2. } } );
 
     const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
-    OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
-        "[Test] (3D) Surface has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !colocation_inspector.mesh_has_colocated_points(),
+        "(3D) Surface has colocated points when it should have none." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocation_inspector.colocated_points_groups().nb_issues() == 0,
-        "[Test] (3D) Surface has more colocated points than it should." );
+        "(3D) Surface has more colocated points than it should." );
 }
 
 void check_colocation3D()
@@ -127,40 +131,42 @@ void check_colocation3D()
         6, geode::Point3D{ { geode::GLOBAL_EPSILON / 1.1, 2., 1. } } );
 
     const geode::SurfaceMeshColocation3D colocation_inspector{ *surface };
-    OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
-        "[Test] (3D) Surface doesn't have colocated points whereas it should "
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocation_inspector.mesh_has_colocated_points(),
+        "(3D) Surface doesn't have colocated points whereas it should "
         "have several." );
     const auto colocated_points_groups =
         colocation_inspector.colocated_points_groups();
-    OPENGEODE_EXCEPTION( colocated_points_groups.nb_issues() == 2,
-        "[Test] (3D) Surface has wrong number of colocated groups of "
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocated_points_groups.nb_issues() == 2,
+        "(3D) Surface has wrong number of colocated groups of "
         "points." );
     auto nb_colocated_points{ 0 };
     for( const auto &group : colocated_points_groups.issues() )
     {
         nb_colocated_points += group.size();
     }
-    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
-        "[Test] (3D) Surface has wrong number of colocated points." );
+    geode::OpenGeodeInspectorInspectorException::test( nb_colocated_points == 5,
+        "(3D) Surface has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[0] == first_colocated_points_group
             || colocated_points_groups.issues()[0]
                    == second_colocated_points_group,
-        "[Test] (3D) Surface has wrong first colocated points group." );
-    OPENGEODE_EXCEPTION(
+        "(3D) Surface has wrong first colocated points group." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[1] == first_colocated_points_group
             || colocated_points_groups.issues()[1]
                    == second_colocated_points_group,
-        "[Test] (3D) Surface has wrong second colocated points group." );
+        "(3D) Surface has wrong second colocated points group." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_non_colocation2D();
         check_colocation2D();
         check_non_colocation3D();

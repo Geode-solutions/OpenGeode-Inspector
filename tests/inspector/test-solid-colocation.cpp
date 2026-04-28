@@ -42,11 +42,12 @@ void check_non_colocation()
     builder->set_point( 4, geode::Point3D{ { 1., 2., -3. } } );
 
     const geode::SolidMeshColocation3D colocation_inspector{ *solid };
-    OPENGEODE_EXCEPTION( !colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Solid has colocated points when it should have none." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !colocation_inspector.mesh_has_colocated_points(),
+        "Solid has colocated points when it should have none." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocation_inspector.colocated_points_groups().nb_issues() == 0,
-        "[Test] Solid has more colocated points than it should." );
+        "Solid has more colocated points than it should." );
 }
 
 void check_colocation()
@@ -65,39 +66,41 @@ void check_colocation()
         6, geode::Point3D{ { 5. + geode::GLOBAL_EPSILON / 1.1, 2., 1. } } );
 
     const geode::SolidMeshColocation3D colocation_inspector{ *solid };
-    OPENGEODE_EXCEPTION( colocation_inspector.mesh_has_colocated_points(),
-        "[Test] Solid doesn't have colocated points whereas it should have "
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocation_inspector.mesh_has_colocated_points(),
+        "Solid doesn't have colocated points whereas it should have "
         "several." );
     const auto colocated_points_groups =
         colocation_inspector.colocated_points_groups();
-    OPENGEODE_EXCEPTION( colocated_points_groups.nb_issues() == 2,
-        "[Test] Solid has wrong number of colocated groups of points." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        colocated_points_groups.nb_issues() == 2,
+        "Solid has wrong number of colocated groups of points." );
     auto nb_colocated_points{ 0 };
     for( const auto &group : colocated_points_groups.issues() )
     {
         nb_colocated_points += group.size();
     }
-    OPENGEODE_EXCEPTION( nb_colocated_points == 5,
-        "[Test] Solid has wrong number of colocated points." );
+    geode::OpenGeodeInspectorInspectorException::test( nb_colocated_points == 5,
+        "Solid has wrong number of colocated points." );
     const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
     const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[0] == first_colocated_points_group
             || colocated_points_groups.issues()[0]
                    == second_colocated_points_group,
-        "[Test] Solid has wrong first colocated points group." );
-    OPENGEODE_EXCEPTION(
+        "Solid has wrong first colocated points group." );
+    geode::OpenGeodeInspectorInspectorException::test(
         colocated_points_groups.issues()[1] == second_colocated_points_group
             || colocated_points_groups.issues()[1]
                    == first_colocated_points_group,
-        "[Test] Solid has wrong second colocated points group." );
+        "Solid has wrong second colocated points group." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_non_colocation();
         check_colocation();
 

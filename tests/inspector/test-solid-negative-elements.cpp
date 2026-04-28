@@ -45,20 +45,22 @@ void check_negative_elements()
     builder->create_tetrahedron( { 0, 1, 2, 4 } );
 
     const geode::SolidMeshNegativeElements3D inspector{ *solid };
-    OPENGEODE_EXCEPTION( inspector.mesh_has_negative_elements(),
-        "[Test] Solid should have negative elements." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        inspector.mesh_has_negative_elements(),
+        "Solid should have negative elements." );
     const auto issues = inspector.negative_polyhedra();
-    OPENGEODE_EXCEPTION( issues.nb_issues() == 1,
-        "[Test] Solid should have one negative polyhedron." );
-    OPENGEODE_EXCEPTION( issues.issues().at( 0 ) == 1,
-        "[Test] Solid negative polyhedron should be 1." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        issues.nb_issues() == 1, "Solid should have one negative polyhedron." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        issues.issues().at( 0 ) == 1,
+        "Solid negative polyhedron should be 1." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_negative_elements();
 
         geode::Logger::info( "TEST SUCCESS" );

@@ -22,110 +22,133 @@
 import os
 import sys
 import platform
+
 if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
-    for path in [x.strip() for x in os.environ['PATH'].split(';') if x]:
+    for path in [x.strip() for x in os.environ["PATH"].split(";") if x]:
         os.add_dll_directory(path)
 
 import opengeode as geode
 import opengeode_inspector_py_inspector as inspector
 
+
 def check_non_colocation2D():
     curve = geode.EdgedCurve2D.create()
     builder = geode.EdgedCurveBuilder2D.create(curve)
     builder.create_vertices(4)
-    builder.set_point(0, geode.Point2D([0., 2.]))
-    builder.set_point(1, geode.Point2D([2., 0.]))
-    builder.set_point(2, geode.Point2D([1., 4.]))
-    builder.set_point(3, geode.Point2D([3., 3.]))
+    builder.set_point(0, geode.Point2D([0.0, 2.0]))
+    builder.set_point(1, geode.Point2D([2.0, 0.0]))
+    builder.set_point(2, geode.Point2D([1.0, 4.0]))
+    builder.set_point(3, geode.Point2D([3.0, 3.0]))
 
     colocation_inspector = inspector.EdgedCurveColocation2D(curve)
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
-            "[Test] EdgedCurve has colocated points when it should have none.")
+            "[Test] EdgedCurve has colocated points when it should have none."
+        )
     if not colocation_inspector.colocated_points_groups().nb_issues() == 0:
-        raise ValueError(
-            "[Test] EdgedCurve has more colocated points than it should.")
+        raise ValueError("[Test] EdgedCurve has more colocated points than it should.")
+
 
 def check_colocation2D():
     curve = geode.EdgedCurve2D.create()
     builder = geode.EdgedCurveBuilder2D.create(curve)
     builder.create_vertices(7)
-    builder.set_point(0, geode.Point2D([0., 2.]))
-    builder.set_point(1, geode.Point2D([0., 2.]))
-    builder.set_point(2, geode.Point2D([0., 0.]))
-    builder.set_point(3, geode.Point2D([2., 0.]))
-    builder.set_point(4, geode.Point2D([1., 4.]))
-    builder.set_point(5, geode.Point2D([2., geode.GLOBAL_EPSILON / 2]))
-    builder.set_point(6, geode.Point2D([geode.GLOBAL_EPSILON / 1.1, 2.]))
+    builder.set_point(0, geode.Point2D([0.0, 2.0]))
+    builder.set_point(1, geode.Point2D([0.0, 2.0]))
+    builder.set_point(2, geode.Point2D([0.0, 0.0]))
+    builder.set_point(3, geode.Point2D([2.0, 0.0]))
+    builder.set_point(4, geode.Point2D([1.0, 4.0]))
+    builder.set_point(5, geode.Point2D([2.0, geode.GLOBAL_EPSILON / 2]))
+    builder.set_point(6, geode.Point2D([geode.GLOBAL_EPSILON / 1.1, 2.0]))
 
     colocation_inspector = inspector.EdgedCurveColocation2D(curve)
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
-            "[Test] EdgedCurve doesn't have colocated points whereas it should have several.")
+            "[Test] EdgedCurve doesn't have colocated points whereas it should have several."
+        )
     issues = colocation_inspector.colocated_points_groups()
     if not issues.nb_issues() == 2:
         raise ValueError(
-            "[Test] EdgedCurve has wrong number of colocated points groups.")
+            "[Test] EdgedCurve has wrong number of colocated points groups."
+        )
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    if not issues.issues()[0] == first_colocated_points_group and not issues.issues()[0] == second_colocated_points_group:
-        raise ValueError(
-            "[Test] EdgedCurve has wrong first colocated points group.")
-    if not issues.issues()[1] == first_colocated_points_group and not issues.issues()[1] == second_colocated_points_group:
-        raise ValueError(
-            "[Test] EdgedCurve has wrong second colocated points group.")
+    if (
+        not issues.issues()[0] == first_colocated_points_group
+        and not issues.issues()[0] == second_colocated_points_group
+    ):
+        raise ValueError("[Test] EdgedCurve has wrong first colocated points group.")
+    if (
+        not issues.issues()[1] == first_colocated_points_group
+        and not issues.issues()[1] == second_colocated_points_group
+    ):
+        raise ValueError("[Test] EdgedCurve has wrong second colocated points group.")
 
 
 def check_non_colocation3D():
     curve = geode.EdgedCurve3D.create()
     builder = geode.EdgedCurveBuilder3D.create(curve)
     builder.create_vertices(4)
-    builder.set_point(0, geode.Point3D([0., 2., 0.]))
-    builder.set_point(1, geode.Point3D([2., 0., 0.5]))
-    builder.set_point(2, geode.Point3D([1., 4., 1.]))
-    builder.set_point(3, geode.Point3D([3., 3., 2.]))
+    builder.set_point(0, geode.Point3D([0.0, 2.0, 0.0]))
+    builder.set_point(1, geode.Point3D([2.0, 0.0, 0.5]))
+    builder.set_point(2, geode.Point3D([1.0, 4.0, 1.0]))
+    builder.set_point(3, geode.Point3D([3.0, 3.0, 2.0]))
 
     colocation_inspector = inspector.EdgedCurveColocation3D(curve)
     if colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
-            "[Test] (3D) EdgedCurve has colocated points when it should have none.")
+            "[Test] (3D) EdgedCurve has colocated points when it should have none."
+        )
     if not colocation_inspector.colocated_points_groups().nb_issues() == 0:
         raise ValueError(
-            "[Test] (3D) EdgedCurve has more colocated points than it should.")
+            "[Test] (3D) EdgedCurve has more colocated points than it should."
+        )
+
 
 def check_colocation3D():
     curve = geode.EdgedCurve3D.create()
     builder = geode.EdgedCurveBuilder3D.create(curve)
     builder.create_vertices(7)
-    builder.set_point(0, geode.Point3D([0., 2., 1.]))
-    builder.set_point(1, geode.Point3D([0., 2., 1.]))
-    builder.set_point(2, geode.Point3D([0., 0., 0.]))
-    builder.set_point(3, geode.Point3D([2., 0., 0.]))
-    builder.set_point(4, geode.Point3D([1., 4., 3.]))
+    builder.set_point(0, geode.Point3D([0.0, 2.0, 1.0]))
+    builder.set_point(1, geode.Point3D([0.0, 2.0, 1.0]))
+    builder.set_point(2, geode.Point3D([0.0, 0.0, 0.0]))
+    builder.set_point(3, geode.Point3D([2.0, 0.0, 0.0]))
+    builder.set_point(4, geode.Point3D([1.0, 4.0, 3.0]))
     builder.set_point(
-        5, geode.Point3D([2., geode.GLOBAL_EPSILON / 2, geode.GLOBAL_EPSILON / 2]))
-    builder.set_point(6, geode.Point3D([geode.GLOBAL_EPSILON / 1.1, 2., 1.]))
+        5, geode.Point3D([2.0, geode.GLOBAL_EPSILON / 2, geode.GLOBAL_EPSILON / 2])
+    )
+    builder.set_point(6, geode.Point3D([geode.GLOBAL_EPSILON / 1.1, 2.0, 1.0]))
 
     colocation_inspector = inspector.EdgedCurveColocation3D(curve)
     if not colocation_inspector.mesh_has_colocated_points():
         raise ValueError(
-            "[Test] (3D) EdgedCurve doesn't have colocated points whereas it should have several.")
+            "[Test] (3D) EdgedCurve doesn't have colocated points whereas it should have several."
+        )
     issues = colocation_inspector.colocated_points_groups()
     if not issues.nb_issues() == 2:
         raise ValueError(
-            "[Test] (3D) EdgedCurve has wrong number ofgroup of colocated points.")
+            "[Test] (3D) EdgedCurve has wrong number ofgroup of colocated points."
+        )
     first_colocated_points_group = [0, 1, 6]
     second_colocated_points_group = [3, 5]
-    if not issues.issues()[0] == first_colocated_points_group and not issues.issues()[0] == second_colocated_points_group:
+    if (
+        not issues.issues()[0] == first_colocated_points_group
+        and not issues.issues()[0] == second_colocated_points_group
+    ):
         raise ValueError(
-            "[Test] (3D) EdgedCurve has wrong first colocated points group.")
-    if not issues.issues()[1] == first_colocated_points_group and not issues.issues()[1] == second_colocated_points_group:
+            "[Test] (3D) EdgedCurve has wrong first colocated points group."
+        )
+    if (
+        not issues.issues()[1] == first_colocated_points_group
+        and not issues.issues()[1] == second_colocated_points_group
+    ):
         raise ValueError(
-            "[Test] (3D) EdgedCurve has wrong second colocated points group.")
+            "[Test] (3D) EdgedCurve has wrong second colocated points group."
+        )
 
 
-if __name__ == '__main__':
-    inspector.InspectorInspectorLibrary.initialize()
+if __name__ == "__main__":
+    inspector.OpenGeodeInspectorInspectorLibrary.initialize()
     check_non_colocation2D()
     check_colocation2D()
     check_non_colocation3D()

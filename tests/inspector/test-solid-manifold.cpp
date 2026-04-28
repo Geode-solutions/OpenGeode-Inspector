@@ -48,11 +48,12 @@ void check_vertex_manifold()
     builder->set_polyhedron_adjacent( { 1, 1 }, 0 );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( manifold_inspector.mesh_vertices_are_manifold(),
-        "[Test] Solid is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        manifold_inspector.mesh_vertices_are_manifold(),
+        "Solid is shown non-manifold whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().nb_issues() == 0,
-        "[Test] Solid has more non manifold vertices than it should." );
+        "Solid has more non manifold vertices than it should." );
 }
 
 void check_vertex_non_manifold()
@@ -71,14 +72,15 @@ void check_vertex_non_manifold()
     builder->create_tetrahedron( { 5, 4, 6, 3 } );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( !manifold_inspector.mesh_vertices_are_manifold(),
-        "[Test] Solid is shown manifold whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !manifold_inspector.mesh_vertices_are_manifold(),
+        "Solid is shown manifold whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().nb_issues() == 1,
-        "[Test] Solid has wrong number of non manifold vertices." );
-    OPENGEODE_EXCEPTION(
+        "Solid has wrong number of non manifold vertices." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().issues()[0] == 3,
-        "[Test] Solid shows wrong non manifold vertex id." );
+        "Solid shows wrong non manifold vertex id." );
 }
 
 void check_edge_manifold()
@@ -97,11 +99,12 @@ void check_edge_manifold()
     builder->set_polyhedron_adjacent( { 1, 1 }, 0 );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( manifold_inspector.mesh_edges_are_manifold(),
-        "[Test] Solid is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        manifold_inspector.mesh_edges_are_manifold(),
+        "Solid is shown non-manifold whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_edges().nb_issues() == 0,
-        "[Test] Solid has more non manifold edges than it should." );
+        "Solid has more non manifold edges than it should." );
 }
 
 void check_edge_non_manifold()
@@ -119,15 +122,17 @@ void check_edge_non_manifold()
     builder->create_tetrahedron( { 5, 4, 2, 3 } );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),
-        "[Test] Solid is shown manifold whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !manifold_inspector.mesh_edges_are_manifold(),
+        "Solid is shown manifold whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_edges().nb_issues() == 1,
-        "[Test] Solid has wrong number of non manifold edges." );
+        "Solid has wrong number of non manifold edges." );
     const auto non_manifold_e = manifold_inspector.non_manifold_edges();
-    OPENGEODE_EXCEPTION( non_manifold_e.issues()[0][0] == 2
-                             && non_manifold_e.issues()[0][1] == 3,
-        "[Test] Solid shows wrong non manifold edge id." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        non_manifold_e.issues()[0][0] == 2
+            && non_manifold_e.issues()[0][1] == 3,
+        "Solid shows wrong non manifold edge id." );
 }
 
 void check_facet_manifold()
@@ -144,11 +149,12 @@ void check_facet_manifold()
     builder->create_tetrahedron( { 1, 4, 2, 3 } );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( manifold_inspector.mesh_facets_are_manifold(),
-        "[Test] Solid is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        manifold_inspector.mesh_facets_are_manifold(),
+        "Solid is shown non-manifold whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_facets().nb_issues() == 0,
-        "[Test] Solid has more non manifold facets than it should." );
+        "Solid has more non manifold facets than it should." );
 }
 
 void check_facet_non_manifold()
@@ -167,23 +173,24 @@ void check_facet_non_manifold()
     builder->create_tetrahedron( { 1, 5, 2, 3 } );
 
     const geode::SolidMeshInspector3D manifold_inspector{ *solid };
-    OPENGEODE_EXCEPTION( !manifold_inspector.mesh_facets_are_manifold(),
-        "[Test] Solid is shown manifold whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !manifold_inspector.mesh_facets_are_manifold(),
+        "Solid is shown manifold whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_facets().nb_issues() == 1,
-        "[Test] Solid has wrong number of non manifold facets." );
+        "Solid has wrong number of non manifold facets." );
     const auto non_manifold_f = manifold_inspector.non_manifold_facets();
-    OPENGEODE_EXCEPTION( non_manifold_f.issues()[0][0] == 1
-                             && non_manifold_f.issues()[0][1] == 2
-                             && non_manifold_f.issues()[0][2] == 3,
-        "[Test] Solid shows wrong non manifold facet id." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        non_manifold_f.issues()[0][0] == 1 && non_manifold_f.issues()[0][1] == 2
+            && non_manifold_f.issues()[0][2] == 3,
+        "Solid shows wrong non manifold facet id." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_vertex_manifold();
         check_vertex_non_manifold();
         check_edge_manifold();

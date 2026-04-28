@@ -34,6 +34,12 @@ option(OPENGEODE_INSPECTOR_WITH_EXECUTABLES "Compile executable projects" ON)
 find_package(OpenGeode REQUIRED)
 find_package(Async++ REQUIRED)
 
+install(
+    FILES include/geode/inspector/project.hpp
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geode/inspector
+    COMPONENT public
+)
+
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
 add_subdirectory(src/geode)

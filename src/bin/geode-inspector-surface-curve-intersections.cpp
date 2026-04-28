@@ -74,8 +74,8 @@ int main( int argc, char* argv[] )
             " --surface my_surface.og_tsf3d --curve my_curve.og_edc3d\n" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::IOMeshLibrary::initialize();
-        geode::GeosciencesIOMeshLibrary::initialize();
+        geode::OpenGeodeIOMeshLibrary::initialize();
+        geode::OpenGeodeGeosciencesIOMeshLibrary::initialize();
         const auto filename_surf = absl::GetFlag( FLAGS_surface );
         const auto filename_curv = absl::GetFlag( FLAGS_curve );
         const auto ext_surf =
@@ -96,8 +96,9 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeException(
-                "Unable to load as TrigulatedSurface file ", filename_surf );
+            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+                geode::OpenGeodeException::TYPE::data, "Unable to load file ",
+                filename_surf };
         }
 
         return 0;
