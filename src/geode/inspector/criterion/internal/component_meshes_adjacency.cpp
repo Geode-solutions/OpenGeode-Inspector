@@ -45,13 +45,13 @@ namespace
     {
         const auto edge_unique_vertices =
             geode::edge_unique_vertices( model, surface, polygon_edge );
-        geode::OpenGeodeInspectorInspectorException::check(
+        geode::OpenGeodeInspectorInspectorException::check_exception(
             edge_unique_vertices[0] != geode::NO_ID
                 && edge_unique_vertices[1] != geode::NO_ID,
             surface.mesh().edge_barycenter( polygon_edge ),
             geode::OpenGeodeException::TYPE::data,
             "[ComponentMeshesAdjacency] Missing unique_vertices" );
-        geode::OpenGeodeInspectorInspectorException::check(
+        geode::OpenGeodeInspectorInspectorException::check_exception(
             edge_unique_vertices[0] < model.nb_unique_vertices()
                 && edge_unique_vertices[1] < model.nb_unique_vertices(),
             surface.mesh().edge_barycenter( polygon_edge ),
