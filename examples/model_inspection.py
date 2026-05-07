@@ -28,7 +28,7 @@ def check_invalid_components_topology_unique_vertices(brep_inspector):
     )
     for vertex_index in invalid_components_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " has invalid components.",
         )
@@ -45,7 +45,7 @@ def check_unique_vertices_linked_to_multiple_corners(brep_inspector):
     )
     for vertex_index in unique_vertices_linked_to_multiple_corners:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is associated to multiple corners.",
         )
@@ -62,7 +62,7 @@ def check_unique_vertices_linked_to_multiple_internals_corner(brep_inspector):
     )
     for vertex_index in unique_vertices_linked_to_multiple_internals_corner:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is a corner associated with multiple embeddings.",
         )
@@ -79,7 +79,7 @@ def check_unique_vertices_linked_to_not_internal_nor_boundary_corner(brep_inspec
     )
     for vertex_index in unique_vertices_linked_to_not_internal_nor_boundary_corner:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is neither internal nor a boundary.",
         )
@@ -96,7 +96,7 @@ def check_unique_vertices_liked_to_not_boundary_line_corner(brep_inspector):
     )
     for vertex_index in unique_vertices_liked_to_not_boundary_line_corner:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is a corner but has a line for which it is not a boundary.",
         )
@@ -117,7 +117,7 @@ def check_unique_vertices_linked_to_line_with_wrong_relationship_to_surface(
         vertex_index
     ) in unique_vertices_linked_to_line_with_wrong_relationship_to_surface:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a line which is neither boundary nor internal.",
         )
@@ -134,7 +134,7 @@ def check_unique_vertices_linked_to_a_line_with_invalid_embeddings(brep_inspecto
     )
     for vertex_index in unique_vertices_linked_to_a_line_with_invalid_embeddings:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a line with invalid internal properties.",
         )
@@ -151,7 +151,7 @@ def check_unique_vertices_linked_to_a_single_and_invalid_line(brep_inspector):
     )
     for vertex_index in unique_vertices_linked_to_a_single_and_invalid_line:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a unique line with invalid topological properties.",
         )
@@ -172,7 +172,7 @@ def check_unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner(
         vertex_index
     ) in unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of multiple lines but is not a corner.",
         )
@@ -189,7 +189,7 @@ def check_part_of_not_boundary_nor_internal_surface_unique_vertices(brep_inspect
     )
     for vertex_index in part_of_not_boundary_nor_internal_surface_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a surface which is neither internal nor boundary.",
         )
@@ -208,7 +208,7 @@ def check_part_of_surface_with_invalid_internal_topology_unique_vertices(
     )
     for vertex_index in part_of_surface_with_invalid_internal_topology_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a surface with invalid internal topology.",
         )
@@ -225,7 +225,7 @@ def check_part_of_invalid_unique_surface_unique_vertices(brep_inspector):
     )
     for vertex_index in part_of_invalid_unique_surface_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of a unique surface with invalid topology.",
         )
@@ -242,7 +242,7 @@ def check_part_of_invalid_multiple_surfaces_unique_vertices(brep_inspector):
     )
     for vertex_index in part_of_invalid_multiple_surfaces_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " is part of invalid multiple surfaces.",
         )
@@ -259,7 +259,7 @@ def check_part_of_invalid_blocks_unique_vertices(brep_inspector):
     )
     for vertex_index in part_of_invalid_blocks_unique_vertices:
         print(
-            "[Test] Model unique vertex with index ",
+            "Model unique vertex with index ",
             vertex_index,
             " has invalid blocks topology.",
         )

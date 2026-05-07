@@ -27,7 +27,7 @@
 
 namespace geode
 {
-    OPENGEODE_LIBRARY_IMPLEMENTATION( InspectorInspector )
+    OPENGEODE_LIBRARY_IMPLEMENTATION( OpenGeodeInspector, Inspector )
     {
         OpenGeodeModelLibrary::initialize();
     }

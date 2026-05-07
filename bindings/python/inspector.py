@@ -24,4 +24,4 @@ import opengeode
 
 from opengeode_inspector_py_inspector import *
 
-InspectorInspectorLibrary.initialize()
+OpenGeodeInspectorInspectorLibrary.initialize()

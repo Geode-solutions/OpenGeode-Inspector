@@ -25,6 +25,8 @@
 
 #include <geode/basic/logger.hpp>
 
+#include <geode/geometry/point.hpp>
+
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/helpers/component_mesh_edges.hpp>
@@ -43,12 +45,17 @@ namespace
     {
         const auto edge_unique_vertices =
             geode::edge_unique_vertices( model, surface, polygon_edge );
-        OPENGEODE_EXCEPTION( edge_unique_vertices[0] != geode::NO_ID
-                                 && edge_unique_vertices[1] != geode::NO_ID,
+        geode::OpenGeodeInspectorInspectorException::check_exception(
+            edge_unique_vertices[0] != geode::NO_ID
+                && edge_unique_vertices[1] != geode::NO_ID,
+            surface.mesh().edge_barycenter( polygon_edge ),
+            geode::OpenGeodeException::TYPE::data,
             "[ComponentMeshesAdjacency] Missing unique_vertices" );
-        OPENGEODE_EXCEPTION(
+        geode::OpenGeodeInspectorInspectorException::check_exception(
             edge_unique_vertices[0] < model.nb_unique_vertices()
                 && edge_unique_vertices[1] < model.nb_unique_vertices(),
+            surface.mesh().edge_barycenter( polygon_edge ),
+            geode::OpenGeodeException::TYPE::data,
             "[ComponentMeshesAdjacency] Wrong unique_vertices" );
         return !geode::detail::line_component_mesh_edges(
             model, edge_unique_vertices )

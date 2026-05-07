@@ -165,7 +165,6 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        DEBUG_CONST
         absl::flat_hash_map< Edge, std::vector< geode::index_t > >
             polyhedra_around_edges_;
     };

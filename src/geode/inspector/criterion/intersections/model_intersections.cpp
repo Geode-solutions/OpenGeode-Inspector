@@ -196,7 +196,7 @@ namespace
 
     private:
         const Model& model_;
-        DEBUG_CONST bool same_surface_;
+        bool same_surface_;
         const geode::Surface< Model::dim >& surface1_;
         const geode::Surface< Model::dim >& surface2_;
         const geode::SurfaceMesh< Model::dim >& mesh1_;
@@ -235,7 +235,7 @@ namespace
         }
 
     private:
-        DEBUG_CONST bool same_surface_;
+        bool same_surface_;
     };
 
     template < typename Model >
@@ -266,7 +266,7 @@ namespace
         }
 
     private:
-        DEBUG_CONST bool same_surface_;
+        bool same_surface_;
     };
 
     template < typename Model >
@@ -301,7 +301,7 @@ namespace
         }
 
     private:
-        DEBUG_CONST bool same_surface_;
+        bool same_surface_;
     };
 
     geode::index_t third_point_index( const geode::PolygonVertices& vertices,
@@ -317,9 +317,10 @@ namespace
             }
             return vertex_id;
         }
-        OPENGEODE_ASSERT_NOT_REACHED( "Should have found a third point index "
-                                      "in second PolygonVertices." );
-        return geode::NO_ID;
+        throw geode::OpenGeodeInspectorInspectorException{
+            nullptr, geode::OpenGeodeException::TYPE::internal,
+            "Should have found a third point index in second PolygonVertices."
+        };
     }
 
     template <>

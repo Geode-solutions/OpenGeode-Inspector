@@ -23,14 +23,13 @@
 
 #pragma once
 
-#include <geode/basic/common.hpp>
-#include <geode/basic/library.hpp>
-
-#include <geode/inspector/opengeode_inspector_inspector_export.hpp>
-#include <geode/inspector/project.hpp>
+#include <geode/basic/assert.hpp>
 
 namespace geode
 {
-    OPENGEODE_LIBRARY(
-        opengeode_inspector_inspector_api, OpenGeodeInspector, Inspector );
+    class OpenGeodeInspectorException : public OpenGeodeException
+    {
+    protected:
+        using OpenGeodeException::OpenGeodeException;
+    };
 } // namespace geode

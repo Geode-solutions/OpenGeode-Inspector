@@ -44,11 +44,12 @@ void check_non_degeneration2D()
     builder->create_edge( 2, 0 );
 
     const geode::EdgedCurveDegeneration2D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
-        "[Test] EdgedCurve is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !degeneration_inspector.is_mesh_degenerated(),
+        "EdgedCurve is shown degenerated whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 0,
-        "[Test] EdgedCurve has more degenerated edges than it should." );
+        "EdgedCurve has more degenerated edges than it should." );
 }
 
 void check_degeneration_by_colocalisation2D()
@@ -66,14 +67,15 @@ void check_degeneration_by_colocalisation2D()
     builder->create_edge( 1, 2 );
 
     const geode::EdgedCurveDegeneration2D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] EdgedCurve is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.is_mesh_degenerated(),
+        "EdgedCurve is shown not degenerated whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 1,
-        "[Test] EdgedCurve has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION(
+        "EdgedCurve has wrong number of degenerated edges." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().issues()[0] == 2,
-        "[Test] EdgedCurve has wrong degenerated edges." );
+        "EdgedCurve has wrong degenerated edges." );
 }
 
 void check_non_degeneration3D()
@@ -90,11 +92,12 @@ void check_non_degeneration3D()
     builder->create_edge( 2, 0 );
 
     const geode::EdgedCurveDegeneration3D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
-        "[Test] (3D) EdgedCurve is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !degeneration_inspector.is_mesh_degenerated(),
+        "(3D) EdgedCurve is shown degenerated whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 0,
-        "[Test] (3D) EdgedCurve has more degenerated edges than it should." );
+        "(3D) EdgedCurve has more degenerated edges than it should." );
 }
 
 void check_degeneration_by_colocalisation3D()
@@ -112,21 +115,22 @@ void check_degeneration_by_colocalisation3D()
     builder->create_edge( 1, 2 );
 
     const geode::EdgedCurveDegeneration3D degeneration_inspector{ *curve };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] (3D) EdgedCurve is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.is_mesh_degenerated(),
+        "(3D) EdgedCurve is shown not degenerated whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 1,
-        "[Test] (3D) EdgedCurve has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION(
+        "(3D) EdgedCurve has wrong number of degenerated edges." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().issues()[0] == 2,
-        "[Test] (3D) EdgedCurve has wrong degenerated edges." );
+        "(3D) EdgedCurve has wrong degenerated edges." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_non_degeneration2D();
         check_degeneration_by_colocalisation2D();
         check_non_degeneration3D();

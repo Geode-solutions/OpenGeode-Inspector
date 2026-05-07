@@ -144,7 +144,7 @@ namespace geode
 
     private:
         const SurfaceMesh< dimension >& mesh_;
-        DEBUG_CONST bool verbose_;
+        bool verbose_;
     };
 
     template < index_t dimension >

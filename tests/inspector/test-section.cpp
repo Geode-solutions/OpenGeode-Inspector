@@ -270,12 +270,14 @@ void check_section( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 0, "[Test] model_D has ",
-        nb_topological_issues, " topological problems instead of 0." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_topological_issues == 0, "model_D has ", nb_topological_issues,
+        " topological problems instead of 0." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0, "[Test] model_D has ",
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_component_meshes_issues == 0, "model_D has ",
         nb_component_meshes_issues, " meshes problems instead of 0." );
 }
 
@@ -294,8 +296,8 @@ int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
-        geode::GeosciencesIOModelLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
+        geode::OpenGeodeGeosciencesIOModelLibrary::initialize();
         geode::Logger::set_level( geode::Logger::LEVEL::trace );
         check_section( false );
         check_section_test();

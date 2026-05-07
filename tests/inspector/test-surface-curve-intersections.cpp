@@ -73,12 +73,14 @@ void check_intersections2D()
 
     const geode::SurfaceCurveIntersections2D intersections_inspector{ *surface,
         *curve };
-    OPENGEODE_EXCEPTION( intersections_inspector.meshes_have_intersections(),
-        "[Test] 2D Surface and Curve should have intersections." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersections_inspector.meshes_have_intersections(),
+        "2D Surface and Curve should have intersections." );
     const auto intersection_result =
         intersections_inspector.intersecting_elements();
-    OPENGEODE_EXCEPTION( intersection_result.nb_issues() == 7,
-        "[Test] 2D Surface and Curve should have 7 intersecting elements "
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersection_result.nb_issues() == 7,
+        "2D Surface and Curve should have 7 intersecting elements "
         "pair, get ",
         intersection_result.nb_issues() );
     absl::flat_hash_set< std::pair< geode::index_t, geode::index_t > > answer{
@@ -86,8 +88,9 @@ void check_intersections2D()
     };
     for( const auto& inter : intersection_result.issues() )
     {
-        OPENGEODE_EXCEPTION( answer.contains( inter ),
-            "[Test] 2D Surface and Curve has at least one wrong intersecting "
+        geode::OpenGeodeInspectorInspectorException::test(
+            answer.contains( inter ),
+            "2D Surface and Curve has at least one wrong intersecting "
             "elements pair: (triangle = ",
             inter.first, ", edge = ", inter.second, ")" );
     }
@@ -134,12 +137,14 @@ void check_intersections3D()
 
     const geode::SurfaceCurveIntersections3D intersections_inspector{ *surface,
         *curve };
-    OPENGEODE_EXCEPTION( intersections_inspector.meshes_have_intersections(),
-        "[Test] 3D Surface and Curve should have intersections." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersections_inspector.meshes_have_intersections(),
+        "3D Surface and Curve should have intersections." );
     const auto intersection_result =
         intersections_inspector.intersecting_elements();
-    OPENGEODE_EXCEPTION( intersection_result.nb_issues() == 6,
-        "[Test] 3D Surface and Curve should have 6 intersecting elements "
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersection_result.nb_issues() == 6,
+        "3D Surface and Curve should have 6 intersecting elements "
         "pair, get ",
         intersection_result.nb_issues() );
     absl::flat_hash_set< std::pair< geode::index_t, geode::index_t > > answer{
@@ -147,8 +152,9 @@ void check_intersections3D()
     };
     for( const auto& inter : intersection_result.issues() )
     {
-        OPENGEODE_EXCEPTION( answer.contains( inter ),
-            "[Test] 3D Surface and Curve should have at least one wrong "
+        geode::OpenGeodeInspectorInspectorException::test(
+            answer.contains( inter ),
+            "3D Surface and Curve should have at least one wrong "
             "intersecting elements pair: (triangle = ",
             inter.first, ", edge = ", inter.second, ")" );
     }
@@ -158,7 +164,7 @@ int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_intersections2D();
         check_intersections3D();
 

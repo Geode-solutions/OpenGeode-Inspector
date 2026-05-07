@@ -59,7 +59,7 @@ int main( int argc, char* argv[] )
                 "use --noXXX, e.g. --nocomponent_linking" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::IOModelLibrary::initialize();
+        geode::OpenGeodeIOModelLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
 
         inspect_brep( geode::load_brep( filename ) );

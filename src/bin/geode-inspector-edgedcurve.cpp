@@ -63,8 +63,8 @@ int main( int argc, char* argv[] )
                 "use --noXXX, e.g. --nocolocation" ) );
         absl::ParseCommandLine( argc, argv );
 
-        geode::IOMeshLibrary::initialize();
-        geode::GeosciencesIOMeshLibrary::initialize();
+        geode::OpenGeodeIOMeshLibrary::initialize();
+        geode::OpenGeodeGeosciencesIOMeshLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
         const auto ext =
             geode::to_string( geode::extension_from_filename( filename ) );
@@ -79,7 +79,9 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeException( "Unable to load file ", filename );
+            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+                geode::OpenGeodeException::TYPE::data, "Unable to load file ",
+                filename };
         }
 
         return 0;

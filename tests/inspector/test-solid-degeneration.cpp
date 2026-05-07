@@ -46,11 +46,12 @@ void check_non_degeneration()
     builder->create_tetrahedron( { 0, 1, 4, 2 } );
 
     const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
-    OPENGEODE_EXCEPTION( !degeneration_inspector.is_mesh_degenerated(),
-        "[Test] Solid is shown degenerated whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !degeneration_inspector.is_mesh_degenerated(),
+        "Solid is shown degenerated whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 0,
-        "[Test] Solid has more degenerated edges than it should." );
+        "Solid has more degenerated edges than it should." );
 }
 
 void check_degeneration_by_colocalisation()
@@ -70,14 +71,16 @@ void check_degeneration_by_colocalisation()
     solid->enable_edges();
 
     const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] Solid is shown not degenerated whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.is_mesh_degenerated(),
+        "Solid is shown not degenerated whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 1,
-        "[Test] Solid has wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().issues()[0]
-                             == solid->edges().edge_from_vertices( { 1, 4 } ),
-        "[Test] Solid has wrong degenerated edges." );
+        "Solid has wrong number of degenerated edges." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.degenerated_edges().issues()[0]
+            == solid->edges().edge_from_vertices( { 1, 4 } ),
+        "Solid has wrong degenerated edges." );
 }
 
 void check_degeneration_by_point_multiple_presence()
@@ -95,21 +98,23 @@ void check_degeneration_by_point_multiple_presence()
     solid->enable_edges();
 
     const geode::SolidMeshDegeneration3D degeneration_inspector{ *solid };
-    OPENGEODE_EXCEPTION( degeneration_inspector.is_mesh_degenerated(),
-        "[Test] Solid is not shown degenerated whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.is_mesh_degenerated(),
+        "Solid is not shown degenerated whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         degeneration_inspector.degenerated_edges().nb_issues() == 1,
-        "[Test] Solid has the wrong number of degenerated edges." );
-    OPENGEODE_EXCEPTION( degeneration_inspector.degenerated_edges().issues()[0]
-                             == solid->edges().edge_from_vertices( { 1, 1 } ),
-        "[Test] Solid shows the wrong degenerated edges." );
+        "Solid has the wrong number of degenerated edges." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        degeneration_inspector.degenerated_edges().issues()[0]
+            == solid->edges().edge_from_vertices( { 1, 1 } ),
+        "Solid shows the wrong degenerated edges." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_non_degeneration();
         check_degeneration_by_colocalisation();
         check_degeneration_by_point_multiple_presence();

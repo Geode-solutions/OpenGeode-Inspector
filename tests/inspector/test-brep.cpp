@@ -324,14 +324,15 @@ void check_model_a1( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5201, "[Test] model_A1 has ",
-        nb_topological_issues, " topological problems instead of 5201." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_topological_issues == 5201, "model_A1 has ", nb_topological_issues,
+        " topological problems instead of 5201." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
-        "[Test] model_A1 has ", nb_component_meshes_issues,
-        " meshes problems instead of 13494." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_component_meshes_issues == 13494, "model_A1 has ",
+        nb_component_meshes_issues, " meshes problems instead of 13494." );
 }
 
 void check_model_a1_valid( bool string )
@@ -346,15 +347,15 @@ void check_model_a1_valid( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 5201,
-        "[Test] model_A1_valid has ", nb_topological_issues,
-        " topological problems instead of 5201." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_topological_issues == 5201, "model_A1_valid has ",
+        nb_topological_issues, " topological problems instead of 5201." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 13494,
-        "[Test] model_A1_valid has ", nb_component_meshes_issues,
-        " meshes problems instead of 13494." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_component_meshes_issues == 13494, "model_A1_valid has ",
+        nb_component_meshes_issues, " meshes problems instead of 13494." );
 }
 
 void check_model_mss( bool string )
@@ -369,13 +370,15 @@ void check_model_mss( bool string )
 
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 52, "[Test] mss has ",
-        nb_topological_issues, " topological problems instead of 37." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_topological_issues == 52, "mss has ", nb_topological_issues,
+        " topological problems instead of 37." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0, "[Test] mss has ",
-        nb_component_meshes_issues, " meshes problems instead of 0." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_component_meshes_issues == 0, "mss has ", nb_component_meshes_issues,
+        " meshes problems instead of 0." );
 }
 
 void check_model_D( bool string )
@@ -389,11 +392,13 @@ void check_model_D( bool string )
         brep_inspector.brep_topology_is_valid() ? "valid." : "invalid." );
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
-    OPENGEODE_EXCEPTION( nb_topological_issues == 0, "[Test] model_D has ",
-        nb_topological_issues, " topological problems instead of 0." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_topological_issues == 0, "model_D has ", nb_topological_issues,
+        " topological problems instead of 0." );
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
-    OPENGEODE_EXCEPTION( nb_component_meshes_issues == 0, "[Test] model_D has ",
+    geode::OpenGeodeInspectorInspectorException::test(
+        nb_component_meshes_issues == 0, "model_D has ",
         nb_component_meshes_issues, " meshes problems instead of 0." );
 }
 
@@ -403,11 +408,10 @@ void check_wrong_bsurfaces_model()
         geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
         result.topology.blocks.wrong_block_boundary_surface.nb_issues() == 3,
-        absl::StrCat(
-            "[Test] Wrong number of wrong block boundary surfaces detected: "
-            "should be 3, and it is ",
+        absl::StrCat( "Wrong number of wrong block boundary surfaces detected: "
+                      "should be 3, and it is ",
             result.topology.blocks.wrong_block_boundary_surface.nb_issues(),
             "." ) );
     std::vector< geode::uuid > wrong_bsurf{
@@ -418,9 +422,9 @@ void check_wrong_bsurfaces_model()
     for( const auto& issue :
         result.topology.blocks.wrong_block_boundary_surface.issues() )
     {
-        OPENGEODE_EXCEPTION(
+        geode::OpenGeodeInspectorInspectorException::test(
             absl::c_find( wrong_bsurf, issue ) != wrong_bsurf.end(),
-            "[Test] Surface (", issue.string(),
+            "Surface (", issue.string(),
             ") is detected as a wrong boundary surface but is not one." );
     }
 }
@@ -443,7 +447,7 @@ int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         geode::Logger::set_level( geode::Logger::LEVEL::debug );
         check_model_a1( false );
         check_model_a1_valid( false );

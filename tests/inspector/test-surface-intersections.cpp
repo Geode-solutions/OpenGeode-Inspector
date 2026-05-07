@@ -49,11 +49,13 @@ void check_intersections2D()
     builder->set_polygon_adjacent( { 2, 0 }, 1 );
 
     const geode::SurfaceMeshIntersections2D intersections_inspector{ *surface };
-    OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
-        "[Test] 2D Surface should have intersections." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersections_inspector.mesh_has_self_intersections(),
+        "2D Surface should have intersections." );
     const auto inspection = intersections_inspector.intersecting_elements();
-    OPENGEODE_EXCEPTION( inspection.nb_issues() == 3,
-        "[Test] 2D Surface should have 3 intersecting elements pair." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        inspection.nb_issues() == 3,
+        "2D Surface should have 3 intersecting elements pair." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
     if( absl::c_find( triangles_inter, std::make_pair( 2u, 0u ) )
@@ -71,8 +73,8 @@ void check_intersections2D()
     {
         right_intersections = false;
     }
-    OPENGEODE_EXCEPTION( right_intersections,
-        "[Test] 2D Surface has wrong intersecting elements pairs." );
+    geode::OpenGeodeInspectorInspectorException::test( right_intersections,
+        "2D Surface has wrong intersecting elements pairs." );
 }
 
 void check_intersections3D()
@@ -100,11 +102,13 @@ void check_intersections3D()
     builder->set_polygon_adjacent( { 3, 0 }, 2 );
 
     const geode::SurfaceMeshIntersections3D intersections_inspector{ *surface };
-    OPENGEODE_EXCEPTION( intersections_inspector.mesh_has_self_intersections(),
-        "[Test] 3D Surface should have intersections." );
+    geode::OpenGeodeInspectorInspectorException::test(
+        intersections_inspector.mesh_has_self_intersections(),
+        "3D Surface should have intersections." );
     const auto inspection = intersections_inspector.intersecting_elements();
-    OPENGEODE_EXCEPTION( inspection.nb_issues() == 2,
-        "[Test] 3D Surface should have 2 intersecting elements pair, not ",
+    geode::OpenGeodeInspectorInspectorException::test(
+        inspection.nb_issues() == 2,
+        "3D Surface should have 2 intersecting elements pair, not ",
         inspection.nb_issues(), "." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
@@ -118,15 +122,15 @@ void check_intersections3D()
     {
         right_intersections = false;
     }
-    OPENGEODE_EXCEPTION( right_intersections,
-        "[Test] 3D Surface has wrong intersecting elements pairs." );
+    geode::OpenGeodeInspectorInspectorException::test( right_intersections,
+        "3D Surface has wrong intersecting elements pairs." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_intersections2D();
         check_intersections3D();
 

@@ -47,11 +47,12 @@ void check_vertex_manifold2D()
     builder->set_polygon_adjacent( { 1, 2 }, 0 );
 
     const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
-    OPENGEODE_EXCEPTION( manifold_inspector.mesh_vertices_are_manifold(),
-        "[Test] Surface is shown non-manifold whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        manifold_inspector.mesh_vertices_are_manifold(),
+        "Surface is shown non-manifold whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().nb_issues() == 0,
-        "[Test] Surface has more non manifold vertices than it should." );
+        "Surface has more non manifold vertices than it should." );
 }
 
 void check_vertex_non_manifold2D()
@@ -68,14 +69,15 @@ void check_vertex_non_manifold2D()
     builder->create_triangle( { 1, 3, 4 } );
 
     const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
-    OPENGEODE_EXCEPTION( !manifold_inspector.mesh_vertices_are_manifold(),
-        "[Test] Surface vertices are shown manifold whereas one is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !manifold_inspector.mesh_vertices_are_manifold(),
+        "Surface vertices are shown manifold whereas one is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().nb_issues() == 1,
-        "[Test] Surface has wrong number of non manifold vertices." );
-    OPENGEODE_EXCEPTION(
+        "Surface has wrong number of non manifold vertices." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_vertices().issues()[0] == 1,
-        "[Test] Surface shows wrong non manifold vertex id." );
+        "Surface shows wrong non manifold vertex id." );
 }
 
 void check_edge_manifold2D()
@@ -97,11 +99,12 @@ void check_edge_manifold2D()
     builder->set_polygon_adjacent( { 2, 2 }, 1 );
 
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
-    OPENGEODE_EXCEPTION( manifold_inspector.mesh_edges_are_manifold(),
-        "[Test] Surface is shown non-manifold through edges whereas it is." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        manifold_inspector.mesh_edges_are_manifold(),
+        "Surface is shown non-manifold through edges whereas it is." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_edges().nb_issues() == 0,
-        "[Test] Surface has more non manifold edges than it should." );
+        "Surface has more non manifold edges than it should." );
 }
 
 void check_edge_non_manifold2D()
@@ -122,22 +125,23 @@ void check_edge_non_manifold2D()
     builder->set_polygon_adjacent( { 2, 2 }, 0 );
 
     const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
-    OPENGEODE_EXCEPTION( !manifold_inspector.mesh_edges_are_manifold(),
-        "[Test] Surface is shown manifold through edges whereas it is not." );
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
+        !manifold_inspector.mesh_edges_are_manifold(),
+        "Surface is shown manifold through edges whereas it is not." );
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_edges().nb_issues() == 1,
-        "[Test] Surface has wrong number of non manifold edges." );
+        "Surface has wrong number of non manifold edges." );
     const std::array< geode::index_t, 2 > pt1_pt2_edge{ 1, 2 };
-    OPENGEODE_EXCEPTION(
+    geode::OpenGeodeInspectorInspectorException::test(
         manifold_inspector.non_manifold_edges().issues()[0] == pt1_pt2_edge,
-        "[Test] Surface edges are shown non manifold whereas they are." );
+        "Surface edges are shown non manifold whereas they are." );
 }
 
 int main()
 {
     try
     {
-        geode::InspectorInspectorLibrary::initialize();
+        geode::OpenGeodeInspectorInspectorLibrary::initialize();
         check_vertex_manifold2D();
         check_vertex_non_manifold2D();
         check_edge_manifold2D();
