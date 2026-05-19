@@ -83,8 +83,7 @@ namespace
         BRepLineSurfacesIntersection( const geode::BRep& model,
             const geode::uuid& surface_id,
             const geode::uuid& line_id )
-            : model_( model ),
-              surface_( model.surface( surface_id ) ),
+            : surface_( model.surface( surface_id ) ),
               line_( model.line( line_id ) ),
               surface_mesh_( surface_.mesh() ),
               line_mesh_( line_.mesh() )
@@ -152,7 +151,6 @@ namespace
         }
 
     private:
-        const geode::BRep& model_;
         const geode::Surface3D& surface_;
         const geode::Line3D& line_;
         const geode::SurfaceMesh3D& surface_mesh_;
@@ -739,7 +737,7 @@ namespace geode
         }
 
         std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
-            intersecting_lines_surfaces( const geode::BRep& brep ) const
+            intersecting_lines_surfaces( const BRep& brep ) const
         {
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
