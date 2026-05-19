@@ -824,8 +824,8 @@ namespace geode
         {
             if( !are_brep_boundaries_closed( brep_ ) )
             {
-                result.model_boundaries_dont_form_a_closed_surface.add_issue( 0,
-                    absl::StrCat( "boundaries are not topologically valid." ) );
+                result.model_boundaries_dont_form_a_closed_surface.add_issue(
+                    0, "boundaries don't form a valid closed surface." );
             }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )

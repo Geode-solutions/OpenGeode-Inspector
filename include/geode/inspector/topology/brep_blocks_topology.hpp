@@ -77,7 +77,7 @@ namespace geode
             "Blocks with non-closed boundary Surfaces"
         };
         InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
-            "model boundaries don't form a closed Surface (uuids listed)"
+            "ModelBoundaries are not valid"
         };
         InspectionIssues< index_t >
             unique_vertex_linked_to_multiple_invalid_surfaces{
