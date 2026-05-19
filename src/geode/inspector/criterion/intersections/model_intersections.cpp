@@ -146,7 +146,6 @@ namespace
         }
         void emplace( geode::index_t p_id, geode::index_t e_id )
         {
-            std::lock_guard< std::mutex > lock( mutex_ );
             intersecting_surface_polygon_line_edge_.emplace_back( p_id, e_id );
         }
 
@@ -256,7 +255,6 @@ namespace
 
         void emplace( geode::index_t p1_id, geode::index_t p2_id )
         {
-            std::lock_guard< std::mutex > lock( mutex_ );
             intersecting_polygons_.emplace_back( p1_id, p2_id );
         }
 
