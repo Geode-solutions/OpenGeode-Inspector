@@ -45,7 +45,7 @@
 
 #include <geode/geosciences_io/mesh/common.hpp>
 
-#include <geode/inspector/solid_inspector.hpp>
+#include <geode/inspector/inspection/solid_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/solid.og_tso3d", "Input solid" );
 
@@ -92,7 +92,7 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+            throw geode::OpenGeodeInspectorInspectionException{ nullptr,
                 geode::OpenGeodeException::TYPE::data, "Unable to load file ",
                 filename };
         }

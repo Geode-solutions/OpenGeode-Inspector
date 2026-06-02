@@ -43,7 +43,7 @@
 
 #include <geode/geosciences_io/mesh/common.hpp>
 
-#include <geode/inspector/surface_inspector.hpp>
+#include <geode/inspector/inspection/surface_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/surface.og_tsf3d", "Input surface" );
 
@@ -96,7 +96,7 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+            throw geode::OpenGeodeInspectorInspectionException{ nullptr,
                 geode::OpenGeodeException::TYPE::data, "Unable to load file ",
                 filename };
         }

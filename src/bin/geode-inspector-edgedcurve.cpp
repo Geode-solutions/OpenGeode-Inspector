@@ -39,7 +39,7 @@
 
 #include <geode/geosciences_io/mesh/common.hpp>
 
-#include <geode/inspector/edgedcurve_inspector.hpp>
+#include <geode/inspector/inspection/edgedcurve_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/curve.og_edc3d", "Input edged curve" );
 
@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+            throw geode::OpenGeodeInspectorInspectionException{ nullptr,
                 geode::OpenGeodeException::TYPE::data, "Unable to load file ",
                 filename };
         }

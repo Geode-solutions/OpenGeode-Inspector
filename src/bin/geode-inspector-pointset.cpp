@@ -39,7 +39,7 @@
 
 #include <geode/geosciences_io/mesh/common.hpp>
 
-#include <geode/inspector/pointset_inspector.hpp>
+#include <geode/inspector/inspection/pointset_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/pointset.og_pts3d", "Input pointset" );
 
@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+            throw geode::OpenGeodeInspectorInspectionException{ nullptr,
                 geode::OpenGeodeException::TYPE::data, "Unable to load file ",
                 filename };
         }

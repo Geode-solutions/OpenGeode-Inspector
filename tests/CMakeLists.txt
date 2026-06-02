@@ -20,7 +20,7 @@
 
 cmake_minimum_required(VERSION 3.15)
     
-if(NOT TARGET OpenGeode-Inspector::inspector)
+if(NOT TARGET OpenGeode-Inspector::inspection)
     project(OpenGeode-Inspector CXX)
     find_package(OpenGeode REQUIRED CONFIG)
     find_package(OpenGeode-Inspector REQUIRED CONFIG)
@@ -35,5 +35,6 @@ set(test_config_file ${PROJECT_BINARY_DIR}/geode/tests_config.hpp)
 configure_file(${test_config_file_in} ${test_config_file})
 include_directories(${PROJECT_BINARY_DIR})
 
-add_subdirectory(inspector)
+add_subdirectory(inspection)
+add_subdirectory(validity)
 

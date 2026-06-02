@@ -58,7 +58,7 @@ endif()
 if(OPENGEODE_INSPECTOR_WITH_TESTS)
     # Enable testing with CTest
     enable_testing()
-    message(STATUS "Configuring OpenGeode-inspector with tests")
+    message(STATUS "Configuring OpenGeode-Inspector with tests")
     add_subdirectory(tests)
 endif()
 
