@@ -37,7 +37,7 @@
 
 #include <geode/io/model/common.hpp>
 
-#include <geode/inspector/brep_inspector.hpp>
+#include <geode/inspector/inspection/brep_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/model.og_brep", "Input model" );
 

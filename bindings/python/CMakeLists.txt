@@ -29,6 +29,7 @@ add_geode_python_wheel(
     DESCRIPTION 
         "Open source framework for inspecting the validity of geometric models"
     MODULES
-        "inspector.py"
+        "inspection.py"
+        "validity.py"
     LICENSE "MIT"
 )

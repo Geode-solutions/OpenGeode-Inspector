@@ -1,0 +1,182 @@
+/*
+ * Copyright (c) 2019 - 2026 Geode-solutions
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+#include <geode/basic/assert.hpp>
+#include <geode/basic/logger.hpp>
+
+#include <geode/geometry/point.hpp>
+#include <geode/mesh/builder/point_set_builder.hpp>
+#include <geode/mesh/core/point_set.hpp>
+
+#include <geode/inspector/inspection/pointset_inspector.hpp>
+
+void check_non_colocation2D()
+{
+    auto pointset = geode::PointSet2D::create();
+    auto builder = geode::PointSetBuilder2D::create( *pointset );
+    builder->create_vertices( 4 );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
+    builder->set_point( 3, geode::Point2D{ { 3., 3. } } );
+
+    const geode::PointSetInspector2D inspector{ *pointset };
+    geode::OpenGeodeInspectorInspectionException::test(
+        !inspector.mesh_has_colocated_points(),
+        "PointSet has colocated points when it should have none." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        inspector.colocated_points_groups().nb_issues() == 0,
+        "PointSet has more colocated points than it should." );
+}
+
+void check_colocation2D()
+{
+    auto pointset = geode::PointSet2D::create();
+    auto builder = geode::PointSetBuilder2D::create( *pointset );
+    builder->create_vertices( 7 );
+    builder->set_point( 0, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 1, geode::Point2D{ { 0., 2. } } );
+    builder->set_point( 2, geode::Point2D{ { 0., 0. } } );
+    builder->set_point( 3, geode::Point2D{ { 2., 0. } } );
+    builder->set_point( 4, geode::Point2D{ { 1., 4. } } );
+    builder->set_point(
+        5, geode::Point2D{ { 2., geode::GLOBAL_EPSILON / 2 } } );
+    builder->set_point(
+        6, geode::Point2D{ { geode::GLOBAL_EPSILON / 1.1, 2. } } );
+
+    const geode::PointSetInspector2D inspector{ *pointset };
+    geode::OpenGeodeInspectorInspectionException::test(
+        inspector.mesh_has_colocated_points(),
+        "PointSet doesn't have colocated points whereas it should have "
+        "several." );
+    const auto colocated_points_groups = inspector.colocated_points_groups();
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.nb_issues() == 2,
+        "PointSet has wrong number of colocated groups of points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto &group : colocated_points_groups.issues() )
+    {
+        nb_colocated_points += group.size();
+    }
+    geode::OpenGeodeInspectorInspectionException::test(
+        nb_colocated_points == 5,
+        "PointSet has wrong number of colocated points." );
+    const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
+    const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.issues()[0] == first_colocated_points_group
+            || colocated_points_groups.issues()[0]
+                   == second_colocated_points_group,
+        "PointSet has wrong first colocated points group." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.issues()[1] == first_colocated_points_group
+            || colocated_points_groups.issues()[1]
+                   == second_colocated_points_group,
+        "PointSet has wrong second colocated points group." );
+}
+
+void check_non_colocation3D()
+{
+    auto pointset = geode::PointSet3D::create();
+    auto builder = geode::PointSetBuilder3D::create( *pointset );
+    builder->create_vertices( 4 );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 0. } } );
+    builder->set_point( 1, geode::Point3D{ { 2., 0., 0.5 } } );
+    builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
+    builder->set_point( 3, geode::Point3D{ { 3., 3., 2. } } );
+
+    const geode::PointSetInspector3D inspector{ *pointset };
+    geode::OpenGeodeInspectorInspectionException::test(
+        !inspector.mesh_has_colocated_points(),
+        "(3D) PointSet has colocated points when it should have none." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        inspector.colocated_points_groups().nb_issues() == 0,
+        "(3D) PointSet has more colocated points than it should." );
+}
+
+void check_colocation3D()
+{
+    auto pointset = geode::PointSet3D::create();
+    auto builder = geode::PointSetBuilder3D::create( *pointset );
+    builder->create_vertices( 7 );
+    builder->set_point( 0, geode::Point3D{ { 0., 2., 1. } } );
+    builder->set_point( 1, geode::Point3D{ { 0., 2., 1. } } );
+    builder->set_point( 2, geode::Point3D{ { 0., 0., 0. } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 0., 0. } } );
+    builder->set_point( 4, geode::Point3D{ { 1., 4., 3. } } );
+    builder->set_point( 5, geode::Point3D{ { 2., geode::GLOBAL_EPSILON / 2,
+                               geode::GLOBAL_EPSILON / 2 } } );
+    builder->set_point(
+        6, geode::Point3D{ { geode::GLOBAL_EPSILON / 1.1, 2., 1. } } );
+
+    const geode::PointSetInspector3D inspector{ *pointset };
+    geode::OpenGeodeInspectorInspectionException::test(
+        inspector.mesh_has_colocated_points(),
+        "(3D) PointSet doesn't have colocated points whereas it should "
+        "have "
+        "several." );
+    const auto colocated_points_groups = inspector.colocated_points_groups();
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.nb_issues() == 2,
+        "(3D) PointSet has wrong number of colocated groups of "
+        "points." );
+    auto nb_colocated_points{ 0 };
+    for( const auto &group : colocated_points_groups.issues() )
+    {
+        nb_colocated_points += group.size();
+    }
+    geode::OpenGeodeInspectorInspectionException::test(
+        nb_colocated_points == 5,
+        "(3D) PointSet has wrong number of colocated points." );
+    const std::vector< geode::index_t > first_colocated_points_group{ 0, 1, 6 };
+    const std::vector< geode::index_t > second_colocated_points_group{ 3, 5 };
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.issues()[0] == first_colocated_points_group
+            || colocated_points_groups.issues()[0]
+                   == second_colocated_points_group,
+        "(3D) PointSet has wrong first colocated points group." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        colocated_points_groups.issues()[1] == first_colocated_points_group
+            || colocated_points_groups.issues()[1]
+                   == second_colocated_points_group,
+        "(3D) PointSet has wrong second colocated points group." );
+}
+
+int main()
+{
+    try
+    {
+        geode::OpenGeodeInspectorInspectionLibrary::initialize();
+        check_non_colocation2D();
+        check_colocation2D();
+        check_non_colocation3D();
+        check_colocation3D();
+
+        geode::Logger::info( "TEST SUCCESS" );
+        return 0;
+    }
+    catch( ... )
+    {
+        return geode::geode_lippincott();
+    }
+}

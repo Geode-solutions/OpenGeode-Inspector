@@ -45,7 +45,7 @@
 
 #include <geode/geosciences_io/mesh/common.hpp>
 
-#include <geode/inspector/criterion/intersections/surface_curve_intersections.hpp>
+#include <geode/inspector/inspection/criterion/intersections/surface_curve_intersections.hpp>
 
 ABSL_FLAG( std::string,
     surface,
@@ -96,7 +96,7 @@ int main( int argc, char* argv[] )
         }
         else
         {
-            throw geode::OpenGeodeInspectorInspectorException{ nullptr,
+            throw geode::OpenGeodeInspectorInspectionException{ nullptr,
                 geode::OpenGeodeException::TYPE::data, "Unable to load file ",
                 filename_surf };
         }

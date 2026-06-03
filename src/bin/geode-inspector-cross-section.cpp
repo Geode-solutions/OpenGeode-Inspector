@@ -36,7 +36,7 @@
 
 #include <geode/geosciences_io/model/common.hpp>
 
-#include <geode/inspector/section_inspector.hpp>
+#include <geode/inspector/inspection/section_inspector.hpp>
 
 ABSL_FLAG( std::string, input, "/path/my/model.og_xsctn", "Input model" );
 
