@@ -170,10 +170,13 @@ def launch_component_meshes_validity_checks(result, verbose):
     return nb_issues
 
 
-def check_section(verbose):
+def data_dir():
     test_dir = os.path.dirname(__file__)
-    data_dir = os.path.abspath(os.path.join(test_dir, "../../../tests/data"))
-    model_section = opengeode.load_section(data_dir + "/vertical_lines.og_sctn")
+    return os.path.abspath(os.path.join(test_dir, "../../../../tests/data"))
+
+
+def check_section(verbose):
+    model_section = opengeode.load_section(data_dir() + "/vertical_lines.og_sctn")
     result = inspector.inspect_section(model_section)
     section_inspector = inspector.SectionInspector(model_section)
     if section_inspector.section_topology_is_valid():
