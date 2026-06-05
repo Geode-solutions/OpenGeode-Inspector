@@ -27,13 +27,17 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
-    struct ObjectValidity;
-} // namespace geode
+    struct opengeode_inspector_validity_api ObjectValidity
+    {
+        explicit operator bool() const
+        {
+            return invalidities.empty();
+        }
 
-namespace geode
-{
-    template < index_t dimension >
-    ObjectValidity is_pointset_valid( const PointSet< dimension >& pointset );
+        index_t nb_issues() const;
+
+        std::string string() const;
+
+        std::vector< std::string > invalidities{};
+    };
 } // namespace geode

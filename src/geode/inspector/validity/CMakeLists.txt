@@ -23,10 +23,18 @@ add_geode_library(
     FOLDER "geode/inspector/validity"
     SOURCES
         "common.cpp"
+        "edgedcurve_validity.cpp"
+        "object_validity.cpp"
         "pointset_validity.cpp"
+        "solid_validity.cpp"
+        "surface_validity.cpp"
     PUBLIC_HEADERS
         "common.hpp"
+        "edgedcurve_validity.hpp"
+        "object_validity.hpp"
         "pointset_validity.hpp"
+        "solid_validity.hpp"
+        "surface_validity.hpp"
     PUBLIC_DEPENDENCIES
         OpenGeode::basic
     PRIVATE_DEPENDENCIES

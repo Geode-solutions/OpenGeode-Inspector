@@ -27,13 +27,13 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
+    FORWARD_DECLARATION_DIMENSION_CLASS( EdgedCurve );
+    ALIAS_2D_AND_3D( EdgedCurve );
     struct ObjectValidity;
 } // namespace geode
 
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_pointset_valid( const PointSet< dimension >& pointset );
+    ObjectValidity is_edged_curve_valid( const EdgedCurve< dimension >& curve );
 } // namespace geode

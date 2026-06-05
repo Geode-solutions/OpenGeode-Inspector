@@ -69,10 +69,16 @@ namespace geode
 
         [[nodiscard]] std::string inspection_type() const;
     };
+
     /*!
      * Class for inspecting a SolidMesh
+     * @extends SolidMeshAdjacency
      * @extends SolidMeshColocation
      * @extends SolidMeshDegeneration
+     * @extends SolidMeshVertexManifold
+     * @extends SolidMeshEdgeManifold
+     * @extends SolidMeshFacetManifold
+     * @extends SolidMeshNegativeElements
      */
     template < index_t dimension >
     class opengeode_inspector_inspection_api SolidMeshInspector

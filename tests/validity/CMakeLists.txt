@@ -19,7 +19,34 @@
 # SOFTWARE.
 
 add_geode_test(
+    SOURCE "test-edgedcurve-validity.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::validity
+)
+
+add_geode_test(
     SOURCE "test-pointset-validity.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::validity
+)
+
+add_geode_test(
+    SOURCE "test-solid-validity.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::validity
+)
+
+add_geode_test(
+    SOURCE "test-surface-validity.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

@@ -87,6 +87,7 @@ namespace geode
             {
                 try
                 {
+                    DEBUG( vertex_id );
                     if( !polygons_around_vertex_are_the_same(
                             polygons_around_vertices_list[vertex_id],
                             mesh_.polygons_around_vertex( vertex_id ) ) )

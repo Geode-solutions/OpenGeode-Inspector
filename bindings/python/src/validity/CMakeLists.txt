@@ -21,8 +21,11 @@
 add_geode_python_binding(
     NAME "py_validity"
     SOURCES
-        "validity.cpp"
+        "edgedcurve_validity.hpp"
         "pointset_validity.hpp"
+        "solid_validity.hpp"
+        "surface_validity.hpp"
+        "validity.cpp"
     DEPENDENCIES
         ${PROJECT_NAME}::validity
 )

@@ -21,31 +21,37 @@
  *
  */
 
-#include <geode/inspector/validity/pointset_validity.hpp>
+#include <geode/inspector/validity/edgedcurve_validity.hpp>
 
-#include <geode/mesh/core/point_set.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
 
-#include <geode/inspector/inspection/pointset_inspector.hpp>
+#include <geode/inspector/inspection/edgedcurve_inspector.hpp>
 #include <geode/inspector/validity/object_validity.hpp>
 
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_pointset_valid( const PointSet< dimension >& pointset )
+    ObjectValidity is_edged_curve_valid( const EdgedCurve< dimension >& curve )
     {
-        PointSetInspector< dimension > pointset_inspector{ pointset };
-        const auto inspection_result = pointset_inspector.inspect_point_set();
+        EdgedCurveInspector< dimension > edgedcurve_inspector{ curve };
+        const auto inspection_result =
+            edgedcurve_inspector.inspect_edged_curve();
         ObjectValidity invalidities;
-        if( inspection_result.nb_issues() != 0 )
+        if( inspection_result.colocated_points_groups.nb_issues() != 0 )
         {
             invalidities.invalidities.emplace_back(
-                inspection_result.string() );
+                inspection_result.colocated_points_groups.string() );
+        }
+        if( inspection_result.degenerated_edges.nb_issues() != 0 )
+        {
+            invalidities.invalidities.emplace_back(
+                inspection_result.degenerated_edges.string() );
         }
         return invalidities;
     }
 
-    template ObjectValidity opengeode_inspector_validity_api is_pointset_valid(
-        const PointSet< 2 >& );
-    template ObjectValidity opengeode_inspector_validity_api is_pointset_valid(
-        const PointSet< 3 >& );
+    template ObjectValidity opengeode_inspector_validity_api
+        is_edged_curve_valid( const EdgedCurve< 2 >& );
+    template ObjectValidity opengeode_inspector_validity_api
+        is_edged_curve_valid( const EdgedCurve< 3 >& );
 } // namespace geode
