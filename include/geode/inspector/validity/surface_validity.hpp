@@ -35,5 +35,6 @@ namespace geode
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_surface_valid( const SurfaceMesh< dimension >& surface );
+    [[nodiscard]] ObjectValidity is_surface_valid(
+        const SurfaceMesh< dimension >& surface );
 } // namespace geode

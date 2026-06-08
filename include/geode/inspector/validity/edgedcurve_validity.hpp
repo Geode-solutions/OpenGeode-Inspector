@@ -35,5 +35,6 @@ namespace geode
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_edged_curve_valid( const EdgedCurve< dimension >& curve );
+    [[nodiscard]] ObjectValidity is_edged_curve_valid(
+        const EdgedCurve< dimension >& curve );
 } // namespace geode

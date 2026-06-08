@@ -45,7 +45,7 @@ void check_non_validity2D()
     geode::OpenGeodeInspectorValidityException::test(
         object_validity.nb_issues() == 0, "PointSet has ",
         object_validity.nb_issues(),
-        " object_validity when it should have none." );
+        " invalidities when it should have none." );
 }
 
 void check_validity2D()
@@ -85,7 +85,7 @@ void check_non_validity3D()
     geode::OpenGeodeInspectorValidityException::test(
         object_validity.nb_issues() == 0, "PointSet has ",
         object_validity.nb_issues(),
-        " object_validity when it should have none." );
+        " invalidities when it should have none." );
 }
 
 void check_validity3D()

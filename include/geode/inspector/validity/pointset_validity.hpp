@@ -35,5 +35,6 @@ namespace geode
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_pointset_valid( const PointSet< dimension >& pointset );
+    [[nodiscard]] ObjectValidity is_pointset_valid(
+        const PointSet< dimension >& pointset );
 } // namespace geode

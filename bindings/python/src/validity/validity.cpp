@@ -26,6 +26,7 @@
 #include "pybind11/stl.h"
 
 #include "edgedcurve_validity.hpp"
+#include "object_validity.hpp"
 #include "pointset_validity.hpp"
 #include "solid_validity.hpp"
 #include "surface_validity.hpp"
@@ -37,6 +38,7 @@ PYBIND11_MODULE( opengeode_inspector_py_validity, module )
         module, "OpenGeodeInspectorValidityLibrary" )
         .def( "initialize",
             &geode::OpenGeodeInspectorValidityLibrary::initialize );
+    geode::define_object_validity( module );
     geode::define_edged_curve_validity( module );
     geode::define_point_set_validity( module );
     geode::define_solid_mesh_validity( module );

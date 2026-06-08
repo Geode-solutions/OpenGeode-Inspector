@@ -23,21 +23,17 @@
 
 #pragma once
 
-#include <geode/inspector/validity/common.hpp>
+#include <string>
+
+#include <geode/inspector/validity/object_validity.hpp>
 
 namespace geode
 {
-    struct opengeode_inspector_validity_api ObjectValidity
+    inline void define_object_validity( pybind11::module& module )
     {
-        explicit operator bool() const
-        {
-            return invalidities.empty();
-        }
-
-        [[nodiscard]] index_t nb_issues() const;
-
-        [[nodiscard]] std::string string() const;
-
-        std::vector< std::string > invalidities{};
-    };
+        pybind11::class_< ObjectValidity >( module, "ObjectValidity" )
+            .def( "nb_issues", &ObjectValidity::nb_issues )
+            .def( "string", &ObjectValidity::string )
+            .def_readwrite( "invalidities", &ObjectValidity::invalidities );
+    }
 } // namespace geode

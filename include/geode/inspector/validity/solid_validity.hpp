@@ -35,5 +35,6 @@ namespace geode
 namespace geode
 {
     template < index_t dimension >
-    ObjectValidity is_solid_valid( const SolidMesh< dimension >& solid );
+    [[nodiscard]] ObjectValidity is_solid_valid(
+        const SolidMesh< dimension >& solid );
 } // namespace geode

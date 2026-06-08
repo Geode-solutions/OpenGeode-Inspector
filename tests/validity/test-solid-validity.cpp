@@ -54,7 +54,6 @@ void check_invalidity()
 
     builder->create_tetrahedron( { 0, 1, 2, 3 } );
     builder->create_tetrahedron( { 5, 4, 6, 3 } );
-    geode::save_tetrahedral_solid( *solid, "test_solid.og_tso3d" );
 
     object_validity = geode::is_solid_valid( *solid );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
