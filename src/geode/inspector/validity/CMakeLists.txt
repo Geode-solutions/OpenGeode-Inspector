@@ -22,17 +22,21 @@ add_geode_library(
     NAME validity
     FOLDER "geode/inspector/validity"
     SOURCES
+        "brep_validity.cpp"
         "common.cpp"
         "edgedcurve_validity.cpp"
         "object_validity.cpp"
         "pointset_validity.cpp"
+        "section_validity.cpp"
         "solid_validity.cpp"
         "surface_validity.cpp"
     PUBLIC_HEADERS
+        "brep_validity.hpp"
         "common.hpp"
         "edgedcurve_validity.hpp"
         "object_validity.hpp"
         "pointset_validity.hpp"
+        "section_validity.hpp"
         "solid_validity.hpp"
         "surface_validity.hpp"
     PUBLIC_DEPENDENCIES

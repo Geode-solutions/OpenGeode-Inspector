@@ -19,6 +19,16 @@
 # SOFTWARE.
 
 add_geode_test(
+    SOURCE "test-brep-validity.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::validity
+)
+
+add_geode_test(
     SOURCE "test-edgedcurve-validity.cpp"
     DEPENDENCIES
         OpenGeode::basic
@@ -33,6 +43,16 @@ add_geode_test(
         OpenGeode::basic
         OpenGeode::geometry
         OpenGeode::mesh
+        ${PROJECT_NAME}::validity
+)
+
+add_geode_test(
+    SOURCE "test-section-validity.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
         ${PROJECT_NAME}::validity
 )
 

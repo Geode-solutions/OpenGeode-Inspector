@@ -39,6 +39,7 @@ namespace geode
         return corners_not_meshed.nb_issues()
                + corners_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_multiple_corners.nb_issues()
+               + unique_vertices_linked_to_multiply_embedded_corner.nb_issues()
                + unique_vertices_linked_to_not_internal_nor_boundary_corner
                      .nb_issues()
                + unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
@@ -60,6 +61,12 @@ namespace geode
         {
             absl::StrAppend(
                 &message, unique_vertices_linked_to_multiple_corners.string() );
+        }
+        if( unique_vertices_linked_to_multiply_embedded_corner.nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiply_embedded_corner.string() );
         }
         if( unique_vertices_linked_to_not_internal_nor_boundary_corner
                 .nb_issues()
@@ -163,6 +170,29 @@ namespace geode
                     " is part of several Corners." );
             }
             corner_found = true;
+        }
+        return std::nullopt;
+    }
+
+    std::optional< std::string >
+        BRepCornersTopology::corner_is_multiply_embedded(
+            index_t unique_vertex_index ) const
+    {
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Corner3D::component_type_static()
+                && brep_.corner( cmv.component_id.id() ).is_active()
+                && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
+            {
+                return absl::StrCat( "unique vertex ", unique_vertex_index,
+                    " is associated to Corner ",
+                    brep_.corner( cmv.component_id.id() )
+                        .name()
+                        .value_or( cmv.component_id.id().string() ),
+                    " (", cmv.component_id.id().string(),
+                    "), which is embedded in several components." );
+            }
         }
         return std::nullopt;
     }
@@ -299,6 +329,12 @@ namespace geode
             {
                 result.unique_vertices_linked_to_multiple_corners.add_issue(
                     unique_vertex_id, problem_message.value() );
+            }
+            if( const auto problem_message =
+                    corner_is_multiply_embedded( unique_vertex_id ) )
+            {
+                result.unique_vertices_linked_to_multiply_embedded_corner
+                    .add_issue( unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
                     corner_is_not_internal_nor_boundary( unique_vertex_id ) )
