@@ -36,7 +36,7 @@ def corners_topological_validity(result, verbose):
     for corner_issue in result.corners_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += corner_issue[1].nb_issues()
     nb_issues += result.corners_not_meshed.nb_issues()
-    nb_issues += result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues()
+    nb_issues += result.unique_vertices_linked_to_not_boundary_line_corner.nb_issues()
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_not_internal_nor_boundary_corner.nb_issues()

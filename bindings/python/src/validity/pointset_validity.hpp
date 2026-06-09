@@ -24,13 +24,14 @@
 
 #include <geode/mesh/core/point_set.hpp>
 
+#include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/pointset_validity.hpp>
 
 namespace geode
 {
     void define_point_set_validity( pybind11::module& module )
     {
-        module.def( "pointset_invalidity2D", &pointset_invalidity< 2 > );
-        module.def( "pointset_invalidity3D", &pointset_invalidity< 3 > );
+        module.def( "is_pointset_valid2D", &is_pointset_valid< 2 > );
+        module.def( "is_pointset_valid3D", &is_pointset_valid< 3 > );
     }
 } // namespace geode

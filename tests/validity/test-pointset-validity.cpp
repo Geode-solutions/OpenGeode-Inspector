@@ -28,6 +28,7 @@
 #include <geode/mesh/builder/point_set_builder.hpp>
 #include <geode/mesh/core/point_set.hpp>
 
+#include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/pointset_validity.hpp>
 
 void check_non_validity2D()
@@ -40,9 +41,11 @@ void check_non_validity2D()
     builder->set_point( 2, geode::Point2D{ { 1., 4. } } );
     builder->set_point( 3, geode::Point2D{ { 3., 3. } } );
 
-    const auto invalidities = geode::pointset_invalidity( *pointset );
-    geode::OpenGeodeInspectorValidityException::test( invalidities.empty(),
-        "PointSet has invalidities when it should have none." );
+    const auto object_validity = geode::is_pointset_valid( *pointset );
+    geode::OpenGeodeInspectorValidityException::test(
+        object_validity.nb_issues() == 0, "PointSet has ",
+        object_validity.nb_issues(),
+        " invalidities when it should have none." );
 }
 
 void check_validity2D()
@@ -60,10 +63,12 @@ void check_validity2D()
     builder->set_point(
         6, geode::Point2D{ { geode::GLOBAL_EPSILON / 1.1, 2. } } );
 
-    const auto invalidities = geode::pointset_invalidity( *pointset );
-    geode::OpenGeodeInspectorValidityException::test( invalidities.size() == 1,
-        "PointSet should have 1 invalidity reason, not ", invalidities.size() );
-    geode::Logger::info( "2D invalidities: ", invalidities.front() );
+    const auto object_validity = geode::is_pointset_valid( *pointset );
+    geode::OpenGeodeInspectorValidityException::test(
+        object_validity.nb_issues() == 1,
+        "PointSet should have 1 invalidity reason, not ",
+        object_validity.nb_issues() );
+    geode::Logger::info( "2D object_validity: \n", object_validity.string() );
 }
 
 void check_non_validity3D()
@@ -76,9 +81,11 @@ void check_non_validity3D()
     builder->set_point( 2, geode::Point3D{ { 1., 4., 1. } } );
     builder->set_point( 3, geode::Point3D{ { 3., 3., 2. } } );
 
-    const auto invalidities = geode::pointset_invalidity( *pointset );
-    geode::OpenGeodeInspectorValidityException::test( invalidities.empty(),
-        "PointSet has invalidities when it should have none." );
+    const auto object_validity = geode::is_pointset_valid( *pointset );
+    geode::OpenGeodeInspectorValidityException::test(
+        object_validity.nb_issues() == 0, "PointSet has ",
+        object_validity.nb_issues(),
+        " invalidities when it should have none." );
 }
 
 void check_validity3D()
@@ -96,10 +103,12 @@ void check_validity3D()
     builder->set_point(
         6, geode::Point3D{ { geode::GLOBAL_EPSILON / 1.1, 2., 1. } } );
 
-    const auto invalidities = geode::pointset_invalidity( *pointset );
-    geode::OpenGeodeInspectorValidityException::test( invalidities.size() == 1,
-        "PointSet should have 1 invalidity reason, not ", invalidities.size() );
-    geode::Logger::info( "3D invalidities: ", invalidities.front() );
+    const auto object_validity = geode::is_pointset_valid( *pointset );
+    geode::OpenGeodeInspectorValidityException::test(
+        object_validity.nb_issues() == 1,
+        "PointSet should have 1 invalidity reason, not ",
+        object_validity.nb_issues() );
+    geode::Logger::info( "3D object_validity: \n", object_validity.string() );
 }
 
 int main()

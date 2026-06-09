@@ -27,14 +27,12 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
+    class BRep;
     struct ObjectValidity;
 } // namespace geode
 
 namespace geode
 {
-    template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    [[nodiscard]] ObjectValidity opengeode_inspector_validity_api is_brep_valid(
+        const BRep& brep );
 } // namespace geode

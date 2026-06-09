@@ -20,21 +20,17 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
-#pragma once
+#include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/inspector/validity/common.hpp>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
-    struct ObjectValidity;
-} // namespace geode
+#include <geode/inspector/validity/object_validity.hpp>
+#include <geode/inspector/validity/solid_validity.hpp>
 
 namespace geode
 {
-    template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    void define_solid_mesh_validity( pybind11::module& module )
+    {
+        module.def( "is_solid_valid3D", &is_solid_valid< 3 > );
+    }
 } // namespace geode

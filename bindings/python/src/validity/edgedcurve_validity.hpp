@@ -20,21 +20,18 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
-#pragma once
+#include <geode/mesh/core/edged_curve.hpp>
 
-#include <geode/inspector/validity/common.hpp>
-
-namespace geode
-{
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
-    struct ObjectValidity;
-} // namespace geode
+#include <geode/inspector/validity/edgedcurve_validity.hpp>
+#include <geode/inspector/validity/object_validity.hpp>
 
 namespace geode
 {
-    template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    void define_edged_curve_validity( pybind11::module& module )
+    {
+        module.def( "is_edged_curve_valid2D", &is_edged_curve_valid< 2 > );
+        module.def( "is_edged_curve_valid3D", &is_edged_curve_valid< 3 > );
+    }
 } // namespace geode
