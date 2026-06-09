@@ -42,7 +42,7 @@ geode::index_t corners_topological_validity(
     }
     nb_issues += result.corners_not_meshed.nb_issues();
     nb_issues +=
-        result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+        result.unique_vertices_linked_to_not_boundary_line_corner.nb_issues();
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues();
     nb_issues +=
         result.unique_vertices_linked_to_multiply_embedded_corner.nb_issues();

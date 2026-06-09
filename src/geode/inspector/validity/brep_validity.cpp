@@ -185,12 +185,12 @@ namespace
                     .unique_vertices_linked_to_not_internal_nor_boundary_corner
                     .string() );
         }
-        if( corners_topo.unique_vertices_liked_to_not_boundary_line_corner
+        if( corners_topo.unique_vertices_linked_to_not_boundary_line_corner
                 .nb_issues()
             > 0 )
         {
             invalidities.invalidities.push_back(
-                corners_topo.unique_vertices_liked_to_not_boundary_line_corner
+                corners_topo.unique_vertices_linked_to_not_boundary_line_corner
                     .string() );
         }
     }

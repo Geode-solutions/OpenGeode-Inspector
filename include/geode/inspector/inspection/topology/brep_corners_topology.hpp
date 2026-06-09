@@ -63,7 +63,7 @@ namespace geode
                 "boundary nor internal status"
             };
         InspectionIssues< index_t >
-            unique_vertices_liked_to_not_boundary_line_corner{
+            unique_vertices_linked_to_not_boundary_line_corner{
                 "unique vertices linked to a Line's Corner without boundary "
                 "status"
             };

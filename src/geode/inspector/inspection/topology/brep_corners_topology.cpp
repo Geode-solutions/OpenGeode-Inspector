@@ -42,7 +42,7 @@ namespace geode
                + unique_vertices_linked_to_multiply_embedded_corner.nb_issues()
                + unique_vertices_linked_to_not_internal_nor_boundary_corner
                      .nb_issues()
-               + unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+               + unique_vertices_linked_to_not_boundary_line_corner.nb_issues();
     }
 
     std::string BRepCornersTopologyInspectionResult::string() const
@@ -76,10 +76,11 @@ namespace geode
                 unique_vertices_linked_to_not_internal_nor_boundary_corner
                     .string() );
         }
-        if( unique_vertices_liked_to_not_boundary_line_corner.nb_issues() != 0 )
+        if( unique_vertices_linked_to_not_boundary_line_corner.nb_issues()
+            != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_liked_to_not_boundary_line_corner.string() );
+                unique_vertices_linked_to_not_boundary_line_corner.string() );
         }
         if( !message.empty() )
         {
@@ -347,7 +348,7 @@ namespace geode
                     corner_is_part_of_line_but_not_boundary(
                         unique_vertex_id ) )
             {
-                result.unique_vertices_liked_to_not_boundary_line_corner
+                result.unique_vertices_linked_to_not_boundary_line_corner
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
         }

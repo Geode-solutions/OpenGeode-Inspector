@@ -49,9 +49,10 @@ namespace geode
                 "unique_vertices_linked_to_not_internal_nor_boundary_corner",
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_internal_nor_boundary_corner )
-            .def_readwrite( "unique_vertices_liked_to_not_boundary_line_corner",
+            .def_readwrite(
+                "unique_vertices_linked_to_not_boundary_line_corner",
                 &BRepCornersTopologyInspectionResult::
-                    unique_vertices_liked_to_not_boundary_line_corner )
+                    unique_vertices_linked_to_not_boundary_line_corner )
             .def( "string", &BRepCornersTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepCornersTopologyInspectionResult::inspection_type );

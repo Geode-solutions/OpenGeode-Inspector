@@ -85,16 +85,16 @@ def check_unique_vertices_linked_to_not_internal_nor_boundary_corner(brep_inspec
         )
 
 
-def check_unique_vertices_liked_to_not_boundary_line_corner(brep_inspector):
-    unique_vertices_liked_to_not_boundary_line_corner = (
-        brep_inspector.unique_vertices_liked_to_not_boundary_line_corner()
+def check_unique_vertices_linked_to_not_boundary_line_corner(brep_inspector):
+    unique_vertices_linked_to_not_boundary_line_corner = (
+        brep_inspector.unique_vertices_linked_to_not_boundary_line_corner()
     )
     print(
         "There are ",
-        len(unique_vertices_liked_to_not_boundary_line_corner),
+        len(unique_vertices_linked_to_not_boundary_line_corner),
         " corner vertices part of a line but not its boundary.",
     )
-    for vertex_index in unique_vertices_liked_to_not_boundary_line_corner:
+    for vertex_index in unique_vertices_linked_to_not_boundary_line_corner:
         print(
             "Model unique vertex with index ",
             vertex_index,
@@ -271,7 +271,7 @@ def launch_topological_validity_checks(brep_inspector):
     check_unique_vertices_linked_to_multiple_corners(brep_inspector)
     check_unique_vertices_linked_to_multiple_internals_corner(brep_inspector)
     check_unique_vertices_linked_to_not_internal_nor_boundary_corner(brep_inspector)
-    check_unique_vertices_liked_to_not_boundary_line_corner(brep_inspector)
+    check_unique_vertices_linked_to_not_boundary_line_corner(brep_inspector)
     check_unique_vertices_linked_to_line_with_wrong_relationship_to_surface(
         brep_inspector
     )
