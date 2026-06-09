@@ -53,12 +53,17 @@ namespace geode
             "unique vertices shared by several Corners"
         };
         InspectionIssues< index_t >
+            unique_vertices_linked_to_multiply_embedded_corner{
+                "unique vertices linked to a Corner embedded in more than two "
+                "components"
+            };
+        InspectionIssues< index_t >
             unique_vertices_linked_to_not_internal_nor_boundary_corner{
                 "unique vertices linked to a Corner with neither "
                 "boundary nor internal status"
             };
         InspectionIssues< index_t >
-            unique_vertices_liked_to_not_boundary_line_corner{
+            unique_vertices_linked_to_not_boundary_line_corner{
                 "unique vertices linked to a Line's Corner without boundary "
                 "status"
             };
@@ -94,6 +99,9 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             unique_vertex_has_multiple_corners(
                 index_t unique_vertex_index ) const;
+
+        [[nodiscard]] std::optional< std::string > corner_is_multiply_embedded(
+            index_t unique_vertex_index ) const;
 
         [[nodiscard]] std::optional< std::string >
             corner_is_not_internal_nor_boundary(

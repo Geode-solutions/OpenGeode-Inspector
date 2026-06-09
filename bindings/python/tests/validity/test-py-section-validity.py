@@ -27,20 +27,21 @@ if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
     for path in [x.strip() for x in os.environ["PATH"].split("") if x]:
         os.add_dll_directory(path)
 
-import opengeode
+import opengeode as geode
 import opengeode_inspector_py_validity as validity
 
+def data_dir():
+    test_dir = os.path.dirname(__file__)
+    return os.path.abspath(os.path.join(test_dir, "../../../../tests/data"))
 
-def test_validity():
-    return True
 
+def check_section():
+    model_section = geode.load_section(data_dir() + "/vertical_lines.og_sctn")
+    result = validity.is_section_valid(model_section)
+    if result.nb_issues()!=0:
+        raise ValueError( "[Test] Section vertical_lines should have 0 issues." )
 
-def check_validity():
-    if not test_validity():
-        raise ValueError(
-            "[Test] Should be true"
-        )
 
 if __name__ == "__main__":
     validity.OpenGeodeInspectorValidityLibrary.initialize()
-    check_validity()
+    check_section()

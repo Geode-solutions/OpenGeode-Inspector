@@ -26,7 +26,6 @@
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
 
-#include <geode/model/helpers/convert_model_meshes.hpp>
 #include <geode/model/representation/core/brep.hpp>
 #include <geode/model/representation/io/brep_input.hpp>
 
@@ -43,8 +42,10 @@ geode::index_t corners_topological_validity(
     }
     nb_issues += result.corners_not_meshed.nb_issues();
     nb_issues +=
-        result.unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+        result.unique_vertices_linked_to_not_boundary_line_corner.nb_issues();
     nb_issues += result.unique_vertices_linked_to_multiple_corners.nb_issues();
+    nb_issues +=
+        result.unique_vertices_linked_to_multiply_embedded_corner.nb_issues();
     nb_issues +=
         result.unique_vertices_linked_to_not_internal_nor_boundary_corner
             .nb_issues();

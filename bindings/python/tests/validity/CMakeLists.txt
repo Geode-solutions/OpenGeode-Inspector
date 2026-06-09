@@ -19,7 +19,37 @@
 # SOFTWARE.
 
  add_geode_python_test(
-     SOURCE "test-py-model-validity.py"
+     SOURCE "test-py-brep-validity.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_validity
+ )
+
+ add_geode_python_test(
+     SOURCE "test-py-edgedcurve-validity.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_validity
+ )
+
+ add_geode_python_test(
+     SOURCE "test-py-pointset-validity.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_validity
+ )
+
+ add_geode_python_test(
+     SOURCE "test-py-section-validity.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_validity
+ )
+
+ add_geode_python_test(
+     SOURCE "test-py-solid-validity.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_validity
+ )
+
+ add_geode_python_test(
+     SOURCE "test-py-surface-validity.py"
      DEPENDENCIES 
          ${PROJECT_NAME}::py_validity
  )

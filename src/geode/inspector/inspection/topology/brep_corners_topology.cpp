@@ -28,6 +28,7 @@
 
 #include <geode/mesh/core/point_set.hpp>
 
+#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/representation/core/brep.hpp>
@@ -39,9 +40,10 @@ namespace geode
         return corners_not_meshed.nb_issues()
                + corners_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_multiple_corners.nb_issues()
+               + unique_vertices_linked_to_multiply_embedded_corner.nb_issues()
                + unique_vertices_linked_to_not_internal_nor_boundary_corner
                      .nb_issues()
-               + unique_vertices_liked_to_not_boundary_line_corner.nb_issues();
+               + unique_vertices_linked_to_not_boundary_line_corner.nb_issues();
     }
 
     std::string BRepCornersTopologyInspectionResult::string() const
@@ -61,6 +63,12 @@ namespace geode
             absl::StrAppend(
                 &message, unique_vertices_linked_to_multiple_corners.string() );
         }
+        if( unique_vertices_linked_to_multiply_embedded_corner.nb_issues()
+            != 0 )
+        {
+            absl::StrAppend( &message,
+                unique_vertices_linked_to_multiply_embedded_corner.string() );
+        }
         if( unique_vertices_linked_to_not_internal_nor_boundary_corner
                 .nb_issues()
             != 0 )
@@ -69,10 +77,11 @@ namespace geode
                 unique_vertices_linked_to_not_internal_nor_boundary_corner
                     .string() );
         }
-        if( unique_vertices_liked_to_not_boundary_line_corner.nb_issues() != 0 )
+        if( unique_vertices_linked_to_not_boundary_line_corner.nb_issues()
+            != 0 )
         {
             absl::StrAppend( &message,
-                unique_vertices_liked_to_not_boundary_line_corner.string() );
+                unique_vertices_linked_to_not_boundary_line_corner.string() );
         }
         if( !message.empty() )
         {
@@ -108,13 +117,9 @@ namespace geode
             }
             corner_found = true;
             const auto& corner_uuid = cmv.component_id.id();
-            if( brep_.nb_embeddings( corner_uuid ) > 1 )
+            if( brep_.nb_embeddings( corner_uuid ) == 0 )
             {
-                return false;
-            }
-            if( brep_.nb_embeddings( corner_uuid ) != 1 )
-            {
-                if( brep_.nb_incidences( corner_uuid ) < 1 )
+                if( brep_.nb_incidences( corner_uuid ) == 0 )
                 {
                     return false;
                 }
@@ -123,10 +128,14 @@ namespace geode
             {
                 return false;
             }
-            if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
-            {
-                return false;
-            }
+        }
+        if( corner_is_multiply_embedded( unique_vertex_index ) )
+        {
+            return false;
+        }
+        if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
+        {
+            return false;
         }
         return true;
     }
@@ -163,6 +172,38 @@ namespace geode
                     " is part of several Corners." );
             }
             corner_found = true;
+        }
+        return std::nullopt;
+    }
+
+    std::optional< std::string >
+        BRepCornersTopology::corner_is_multiply_embedded(
+            index_t unique_vertex_index ) const
+    {
+        for( const auto& cmv :
+            brep_.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type() == Corner3D::component_type_static()
+                && brep_.corner( cmv.component_id.id() ).is_active()
+                && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
+            {
+                for( const auto& embedding :
+                    brep_.embeddings( cmv.component_id.id() ) )
+                {
+                    if( embedding.type() == Block3D::component_type_static()
+                        && brep_.block( embedding.id() ).is_active() )
+                    {
+                        return absl::StrCat( "unique vertex ",
+                            unique_vertex_index, " is associated to Corner ",
+                            brep_.corner( cmv.component_id.id() )
+                                .name()
+                                .value_or( cmv.component_id.id().string() ),
+                            " (", cmv.component_id.id().string(),
+                            "), which is embedded in several components "
+                            "including a Block." );
+                    }
+                }
+            }
         }
         return std::nullopt;
     }
@@ -301,6 +342,12 @@ namespace geode
                     unique_vertex_id, problem_message.value() );
             }
             if( const auto problem_message =
+                    corner_is_multiply_embedded( unique_vertex_id ) )
+            {
+                result.unique_vertices_linked_to_multiply_embedded_corner
+                    .add_issue( unique_vertex_id, problem_message.value() );
+            }
+            if( const auto problem_message =
                     corner_is_not_internal_nor_boundary( unique_vertex_id ) )
             {
                 result
@@ -311,7 +358,7 @@ namespace geode
                     corner_is_part_of_line_but_not_boundary(
                         unique_vertex_id ) )
             {
-                result.unique_vertices_liked_to_not_boundary_line_corner
+                result.unique_vertices_linked_to_not_boundary_line_corner
                     .add_issue( unique_vertex_id, problem_message.value() );
             }
         }

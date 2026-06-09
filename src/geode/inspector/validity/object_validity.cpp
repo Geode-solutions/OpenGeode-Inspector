@@ -21,20 +21,22 @@
  *
  */
 
-#pragma once
-
-#include <geode/inspector/validity/common.hpp>
+#include <geode/inspector/validity/object_validity.hpp>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
-    struct ObjectValidity;
-} // namespace geode
+    index_t ObjectValidity::nb_issues() const
+    {
+        return invalidities.size();
+    }
 
-namespace geode
-{
-    template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    std::string ObjectValidity::string() const
+    {
+        std::string result;
+        for( const auto& invalidity : invalidities )
+        {
+            absl::StrAppend( &result, invalidity );
+        }
+        return result;
+    }
 } // namespace geode

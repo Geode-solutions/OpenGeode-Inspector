@@ -23,18 +23,17 @@
 
 #pragma once
 
-#include <geode/inspector/validity/common.hpp>
+#include <string>
+
+#include <geode/inspector/validity/object_validity.hpp>
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
-    struct ObjectValidity;
-} // namespace geode
-
-namespace geode
-{
-    template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    inline void define_object_validity( pybind11::module& module )
+    {
+        pybind11::class_< ObjectValidity >( module, "ObjectValidity" )
+            .def( "nb_issues", &ObjectValidity::nb_issues )
+            .def( "string", &ObjectValidity::string )
+            .def_readwrite( "invalidities", &ObjectValidity::invalidities );
+    }
 } // namespace geode

@@ -27,14 +27,14 @@
 
 namespace geode
 {
-    FORWARD_DECLARATION_DIMENSION_CLASS( PointSet );
-    ALIAS_2D_AND_3D( PointSet );
+    FORWARD_DECLARATION_DIMENSION_CLASS( SurfaceMesh );
+    ALIAS_2D_AND_3D( SurfaceMesh );
     struct ObjectValidity;
 } // namespace geode
 
 namespace geode
 {
     template < index_t dimension >
-    [[nodiscard]] ObjectValidity is_pointset_valid(
-        const PointSet< dimension >& pointset );
+    [[nodiscard]] ObjectValidity is_surface_valid(
+        const SurfaceMesh< dimension >& surface );
 } // namespace geode

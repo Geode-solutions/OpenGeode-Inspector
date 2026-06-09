@@ -26,7 +26,6 @@
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
 
-#include <geode/model/helpers/convert_model_meshes.hpp>
 #include <geode/model/representation/core/section.hpp>
 #include <geode/model/representation/io/section_input.hpp>
 
