@@ -20,31 +20,17 @@
  * SOFTWARE.
  *
  */
+#include <string>
 
-#include "pybind11/iostream.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/stl.h"
+#include <geode/model/representation/core/brep.hpp>
 
-#include "brep_validity.hpp"
-#include "edgedcurve_validity.hpp"
-#include "object_validity.hpp"
-#include "pointset_validity.hpp"
-#include "section_validity.hpp"
-#include "solid_validity.hpp"
-#include "surface_validity.hpp"
+#include <geode/inspector/validity/brep_validity.hpp>
+#include <geode/inspector/validity/object_validity.hpp>
 
-PYBIND11_MODULE( opengeode_inspector_py_validity, module )
+namespace geode
 {
-    module.doc() = "OpenGeode-Inspector Python binding";
-    pybind11::class_< geode::OpenGeodeInspectorValidityLibrary >(
-        module, "OpenGeodeInspectorValidityLibrary" )
-        .def( "initialize",
-            &geode::OpenGeodeInspectorValidityLibrary::initialize );
-    geode::define_object_validity( module );
-    geode::define_brep_validity( module );
-    geode::define_edged_curve_validity( module );
-    geode::define_point_set_validity( module );
-    geode::define_section_validity( module );
-    geode::define_solid_mesh_validity( module );
-    geode::define_surface_mesh_validity( module );
-}
+    void define_brep_validity( pybind11::module& module )
+    {
+        module.def( "is_brep_valid", &is_brep_valid );
+    }
+} // namespace geode

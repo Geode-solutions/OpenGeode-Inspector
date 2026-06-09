@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2019 - 2026 Geode-solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,17 +19,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-add_geode_python_binding(
-    NAME "py_validity"
-    SOURCES
-        "brep_validity.hpp"
-        "edgedcurve_validity.hpp"
-        "object_validity.hpp"
-        "pointset_validity.hpp"
-        "section_validity.hpp"
-        "solid_validity.hpp"
-        "surface_validity.hpp"
-        "validity.cpp"
-    DEPENDENCIES
-        ${PROJECT_NAME}::validity
-)
+import os
+import sys
+import platform
+
+if sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
+    for path in [x.strip() for x in os.environ["PATH"].split("") if x]:
+        os.add_dll_directory(path)
+
+import opengeode as geode
+import opengeode_inspector_py_validity as validity
+
+def data_dir():
+    test_dir = os.path.dirname(__file__)
+    return os.path.abspath(os.path.join(test_dir, "../../../../tests/data"))
+
+
+def check_section():
+    model_section = geode.load_section(data_dir() + "/vertical_lines.og_sctn")
+    result = validity.is_section_valid(model_section)
+    if result.nb_issues()!=0:
+        raise ValueError( "[Test] Section vertical_lines should have 0 issues." )
+
+
+if __name__ == "__main__":
+    validity.OpenGeodeInspectorValidityLibrary.initialize()
+    check_section()
