@@ -28,6 +28,7 @@
 
 #include <geode/mesh/core/point_set.hpp>
 
+#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/representation/core/brep.hpp>
@@ -116,13 +117,9 @@ namespace geode
             }
             corner_found = true;
             const auto& corner_uuid = cmv.component_id.id();
-            if( brep_.nb_embeddings( corner_uuid ) > 1 )
+            if( brep_.nb_embeddings( corner_uuid ) == 0 )
             {
-                return false;
-            }
-            if( brep_.nb_embeddings( corner_uuid ) != 1 )
-            {
-                if( brep_.nb_incidences( corner_uuid ) < 1 )
+                if( brep_.nb_incidences( corner_uuid ) == 0 )
                 {
                     return false;
                 }
@@ -131,10 +128,14 @@ namespace geode
             {
                 return false;
             }
-            if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
-            {
-                return false;
-            }
+        }
+        if( corner_is_multiply_embedded( unique_vertex_index ) )
+        {
+            return false;
+        }
+        if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
+        {
+            return false;
         }
         return true;
     }
@@ -186,13 +187,22 @@ namespace geode
                 && brep_.corner( cmv.component_id.id() ).is_active()
                 && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
             {
-                return absl::StrCat( "unique vertex ", unique_vertex_index,
-                    " is associated to Corner ",
-                    brep_.corner( cmv.component_id.id() )
-                        .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
-                    "), which is embedded in several components." );
+                for( const auto& embedding :
+                    brep_.embeddings( cmv.component_id.id() ) )
+                {
+                    if( embedding.type() == Block3D::component_type_static()
+                        && brep_.block( embedding.id() ).is_active() )
+                    {
+                        return absl::StrCat( "unique vertex ",
+                            unique_vertex_index, " is associated to Corner ",
+                            brep_.corner( cmv.component_id.id() )
+                                .name()
+                                .value_or( cmv.component_id.id().string() ),
+                            " (", cmv.component_id.id().string(),
+                            "), which is embedded in several components "
+                            "including a Block." );
+                    }
+                }
             }
         }
         return std::nullopt;
