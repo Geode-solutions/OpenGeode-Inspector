@@ -96,7 +96,7 @@ The available checks for each mesh type are:
 
 ## Questions
 
-For questions and support please use the official [slack](https://opengeode-slack-invite.herokuapp.com) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests.
+For questions and support please use the official [slack](https://geode-solutions.com/#slack) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests.
 
 ## License
 
