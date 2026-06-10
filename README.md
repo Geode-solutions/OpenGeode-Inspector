@@ -2,10 +2,10 @@
 <h3 align="center">OpenGeode module for inspecting meshes and models</h3>
 
 <p align="center">
-  <img src="https://github.com/Geode-solutions/OpenGeode-ModuleTemplate/workflows/CI/badge.svg" alt="Build Status">
-  <img src="https://github.com/Geode-solutions/OpenGeode-ModuleTemplate/workflows/CD/badge.svg" alt="Deploy Status">
-  <img src="https://codecov.io/gh/Geode-solutions/OpenGeode-ModuleTemplate/branch/master/graph/badge.svg" alt="Coverage Status">
-  <img src="https://img.shields.io/github/release/Geode-solutions/OpenGeode-ModuleTemplate.svg" alt="Version">
+  <img src="https://github.com/Geode-solutions/OpenGeode-Inspector/actions/workflows/schedule.yml/badge.svg" alt="Build Status">
+  <img src="https://github.com/Geode-solutions/OpenGeode-Inspector/actions/workflows/deploy.yml/badge.svg" alt="Deploy Status">
+  <img src="https://img.shields.io/github/release/Geode-solutions/OpenGeode-Inspector.svg" alt="Version">
+  <img src="https://img.shields.io/pypi/v/opengeode-inspector" alt="PyPI" >
 </p>
 
 <p align="center">
@@ -15,15 +15,22 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/C%2B%2B-11-blue.svg" alt="Language">
+  <img src="https://img.shields.io/badge/C%2B%2B-17-blue.svg" alt="Language">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="Semantic-release">
+</p>
+
+<p align="center">
   <a href="https://geode-solutions.com/#slack">
-    <img src="https://opengeode-slack-invite.herokuapp.com/badge.svg" alt="Slack invite">
+    <img src="https://img.icons8.com/?size=20&id=kikR2jIn6485&format=png&color=000000" alt="Slack invite">
   </a>
-  <a href="https://doi.org/10.5281/zenodo.3610370">
-    <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3610370.svg" alt="DOI">
+  <a href="https://www.linkedin.com/company/geode-solutions">
+    <img src="https://img.icons8.com/?size=25&id=13930&format=png&color=000000" alt="Linkedin">
   </a>
+  <a href="mailto:contact@geode-solutions.com">
+    <img src="https://img.icons8.com/?size=24&id=YRRhCXfA0Vd0&format=png&color=999999" alt="Mail Us">
+  </a>
+</p>
 
 ---
 
@@ -51,7 +58,6 @@ To use OpenGeode-Inspector, several options are available:
 - If you installed and compiled the C++ source code, you can use the executable binaries to apply an inspection of your meshes/models and toggle on/off the various checks directly.
 - or use the API functions (check the tests to see how it is done) if you want to go further or use the resulting errors to repair your meshes/models.
 - If you installed the python library, you can add `import opengeode_inspector` in your Python script to use the available API functions. Check [this documentation page](https://docs.geode-solutions.com/guides/use-opengeode-binding.html) for more details. Examples are also procured in the `examples` folder.
-- You can inspect your models without any installation, by using the API of the [Geode-solutions free tools](https://geode-solutions.com/tools).
 
 The available checks for each mesh type are:
 
@@ -90,7 +96,7 @@ The available checks for each mesh type are:
 
 ## Questions
 
-For questions and support please use the official [slack](https://opengeode-slack-invite.herokuapp.com) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests.
+For questions and support please use the official [slack](https://geode-solutions.com/#slack) and go to the channel #inspector. The issue list of this repo is exclusively for bug reports and feature requests.
 
 ## License
 
