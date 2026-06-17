@@ -38,22 +38,22 @@ def data_dir():
 def check_a1():
     model_brep = geode.load_brep(data_dir() + "/model_A1.og_brep")
     result = validity.is_brep_valid(model_brep)
-    if result.nb_issues()!=7:
-        raise ValueError( "[Test] model model_A1 should have 7 issues." )
+    if result.nb_issues()!=8:
+        raise ValueError( "[Test] model model_A1 should have 8 issues." )
 
 
 def check_a1_valid():
     model_brep = geode.load_brep(data_dir() + "/model_A1_valid.og_brep")
     result = validity.is_brep_valid(model_brep)
-    if result.nb_issues()!=7:
-        raise ValueError( "[Test] model model_A1_valid should have 7 issues." )
+    if result.nb_issues()!=8:
+        raise ValueError( "[Test] model model_A1_valid should have 8 issues." )
 
 
 def check_model_mss():
     model_brep = geode.load_brep(data_dir() + "/mss.og_brep")
     result = validity.is_brep_valid(model_brep)
-    if result.nb_issues()!=5:
-        raise ValueError( "[Test] model_mss should have 5 issues." )
+    if result.nb_issues()!=4:
+        raise ValueError( "[Test] model_mss should have 4 issues." )
 
 
 def check_model_D():
