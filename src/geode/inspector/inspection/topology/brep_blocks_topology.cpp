@@ -87,11 +87,8 @@ namespace
     {
         for( const auto& incident_surface : brep.incidences( line ) )
         {
-            if( incident_surface.id() == boundary_surface_id )
-            {
-                continue;
-            }
-            if( brep.is_boundary( incident_surface, block ) )
+            if( incident_surface.id() != boundary_surface_id
+                && brep.is_boundary( incident_surface, block ) )
             {
                 return true;
             }
@@ -99,7 +96,7 @@ namespace
         return false;
     }
 
-    bool surface_should_not_be_boundary_to_block(
+    bool surface_boundaries_are_not_linked_to_another_block_boundary(
         const geode::Surface3D& surface,
         const geode::BRep& brep,
         const geode::Block3D& block )
@@ -379,10 +376,11 @@ namespace geode
 {
     index_t BRepBlocksTopologyInspectionResult::nb_issues() const
     {
-        return wrong_block_boundary_surface.nb_issues()
-               + model_boundaries_dont_form_a_closed_surface.nb_issues()
-               + some_blocks_not_meshed.nb_issues()
+        return some_blocks_not_meshed.nb_issues()
+               + wrong_block_boundary_surface.nb_issues()
                + blocks_not_linked_to_a_unique_vertex.nb_issues()
+               + blocks_with_not_closed_boundary_surfaces.nb_issues()
+               + model_boundaries_dont_form_a_closed_surface.nb_issues()
                + unique_vertices_part_of_two_blocks_and_no_boundary_surface
                      .nb_issues()
                + unique_vertices_with_incorrect_block_cmvs_count.nb_issues()
@@ -396,23 +394,28 @@ namespace geode
     std::string BRepBlocksTopologyInspectionResult::string() const
     {
         std::string message;
-        if( wrong_block_boundary_surface.nb_issues() != 0 )
-        {
-            absl::StrAppend( &message, wrong_block_boundary_surface.string() );
-        }
-        if( model_boundaries_dont_form_a_closed_surface.nb_issues() != 0 )
-        {
-            absl::StrAppend( &message,
-                model_boundaries_dont_form_a_closed_surface.string() );
-        }
         if( some_blocks_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, some_blocks_not_meshed.string(), "\n" );
+        }
+        if( wrong_block_boundary_surface.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, wrong_block_boundary_surface.string() );
         }
         if( blocks_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
             absl::StrAppend(
                 &message, blocks_not_linked_to_a_unique_vertex.string() );
+        }
+        if( blocks_with_not_closed_boundary_surfaces.nb_issues() != 0 )
+        {
+            absl::StrAppend(
+                &message, blocks_with_not_closed_boundary_surfaces.string() );
+        }
+        if( model_boundaries_dont_form_a_closed_surface.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message,
+                model_boundaries_dont_form_a_closed_surface.string() );
         }
         if( unique_vertices_part_of_two_blocks_and_no_boundary_surface
                 .nb_issues()
@@ -811,21 +814,13 @@ namespace geode
                 result.blocks_not_linked_to_a_unique_vertex.add_issues_to_map(
                     block.id(), std::move( block_result ) );
             }
-            if( verify_blocks_boundaries( brep_, block ) )
-            {
-                result.blocks_with_not_closed_boundary_surfaces.add_issue(
-                    block.id(),
-                    absl::StrCat( "Block ",
-                        block.name().value_or( block.id().string() ), " (",
-                        block.id().string(), ") boundaries are valid." ) );
-            }
         }
         if( brep_.nb_model_boundaries() != 0 )
         {
             if( !are_brep_boundaries_closed( brep_ ) )
             {
                 result.model_boundaries_dont_form_a_closed_surface.add_issue(
-                    0, "boundaries don't form a valid closed surface." );
+                    0, "ModelBoundaries don't form a valid closed surface." );
             }
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
@@ -871,24 +866,36 @@ namespace geode
         }
         for( const auto& block : brep_.active_blocks() )
         {
+            if( !verify_blocks_boundaries( brep_, block ) )
+            {
+                result.blocks_with_not_closed_boundary_surfaces.add_issue(
+                    block.id(),
+                    absl::StrCat( "Block ",
+                        block.name().value_or( block.id().string() ), " (",
+                        block.id().string(),
+                        ") boundaries are not closed or form several closed "
+                        "volumes." ) );
+            }
             for( const auto& surface : brep_.boundaries( block ) )
             {
                 if( !surface.is_active() )
                 {
                     continue;
                 }
-                if( surface_should_not_be_boundary_to_block(
+                if( surface_boundaries_are_not_linked_to_another_block_boundary(
                         surface, brep_, block ) )
                 {
                     result.wrong_block_boundary_surface.add_issue( surface.id(),
                         absl::StrCat( "Surface ",
                             surface.name().value_or( surface.id().string() ),
                             " (", surface.id().string(),
-                            ") should not be boundary of Block ",
+                            ") is boundary of Block ",
                             block.name().value_or( block.id().string() ), " (",
                             block.id().string(),
-                            ") : it has a boundary Line not incident to any "
-                            "other Block boundary Surface." ) );
+                            ") but it has a boundary Line not incident to any "
+                            "other Block boundary Surface. Either the surface "
+                            "shouldn't be boundary, or there is a hole in the "
+                            "block boundaries" ) );
                 }
             }
         }

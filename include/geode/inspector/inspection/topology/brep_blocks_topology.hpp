@@ -49,10 +49,17 @@ namespace geode
             "Blocks without mesh (uuid listed)"
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
-            "Surfaces incorrectly bounding Blocks (uuids listed)"
+            "Surfaces boundary of Blocks but not linked to another boundary "
+            "Surface by a line (uuids listed)"
         };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
             "Blocks containing mesh vertices not linked to unique vertices"
+        };
+        InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
+            "Blocks with non-closed boundary Surfaces"
+        };
+        InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
+            "ModelBoundaries do not form a valid closed surface"
         };
         InspectionIssues< index_t >
             unique_vertices_part_of_two_blocks_and_no_boundary_surface{
@@ -73,12 +80,6 @@ namespace geode
             unique_vertices_linked_to_a_single_and_invalid_surface{
                 "unique vertices linked to a single Surface that is invalid"
             };
-        InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
-            "Blocks with non-closed boundary Surfaces"
-        };
-        InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
-            "ModelBoundaries are not valid"
-        };
         InspectionIssues< index_t >
             unique_vertex_linked_to_multiple_invalid_surfaces{
                 "unique vertices linked to multiple Surfaces in an invalid way"
