@@ -49,11 +49,12 @@ namespace geode
             "Blocks without mesh (uuid listed)"
         };
         InspectionIssues< uuid > wrong_block_boundary_surface{
-            "Surfaces boundary of Blocks but not linked to another boundary "
-            "Surface by a line (uuids listed)"
+            "Blocks with boundary surface(s) not linked to another boundary "
+            "Surface by a line (Surface shouldn't be boundary or there is a "
+            "hole in the block boundaries)"
         };
         InspectionIssuesMap< index_t > blocks_not_linked_to_a_unique_vertex{
-            "Blocks containing mesh vertices not linked to unique vertices"
+            "Blocks mesh vertices not linked to unique vertices"
         };
         InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
             "Blocks with non-closed boundary Surfaces"

@@ -24,6 +24,7 @@
 #include <geode/inspector/inspection/topology/brep_blocks_topology.hpp>
 
 #include <optional>
+#include <queue>
 
 #include <absl/container/flat_hash_set.h>
 
@@ -271,104 +272,94 @@ namespace
         return dangling_surfaces;
     }
 
-    bool verify_blocks_boundaries(
-        const geode::BRep& brep, const geode::Block3D& block )
+    bool find_linked_processed_surface( const geode::BRep& brep,
+        const geode::uuid& surface_uuid,
+        const absl::flat_hash_set< geode::uuid >& processed )
     {
-        auto polygonal_surface = geode::PolygonalSurface3D::create();
-        auto polygonal_surface_builder =
-            geode::PolygonalSurfaceBuilder3D::create( *polygonal_surface );
-        polygonal_surface->enable_edges();
-        geode::BijectiveMapping< geode::index_t, geode::index_t >
-            unique_vertices_to_polygonal_surface_vertices;
-        for( const auto& boundary : brep.boundaries( block ) )
+        const auto& surface = brep.surface( surface_uuid );
+        for( const auto& line : brep.boundaries( surface ) )
         {
-            const auto& surface_mesh = boundary.mesh();
-            for( const auto polygon :
-                geode::Range{ surface_mesh.nb_polygons() } )
+            for( const auto& other_surface : brep.incidences( line ) )
             {
-                auto polygon_vertices =
-                    surface_mesh.polygon_vertices( polygon );
-                for( auto& polygon_vertex : polygon_vertices )
+                if( processed.contains( other_surface.id() ) )
                 {
-                    const auto unique_vertex = brep.unique_vertex(
-                        { boundary.component_id(), polygon_vertex } );
-                    if( !unique_vertices_to_polygonal_surface_vertices
-                            .has_mapping_input( unique_vertex ) )
-                    {
-                        const auto new_vertex =
-                            polygonal_surface_builder->create_point(
-                                surface_mesh.point( polygon_vertex ) );
-                        unique_vertices_to_polygonal_surface_vertices.map(
-                            unique_vertex, new_vertex );
-                        polygon_vertex = new_vertex;
-                    }
-                    else
-                    {
-                        polygon_vertex =
-                            unique_vertices_to_polygonal_surface_vertices
-                                .in2out( unique_vertex );
-                    }
+                    return true;
                 }
-                polygonal_surface_builder->create_polygon( polygon_vertices );
             }
         }
-        polygonal_surface_builder->compute_polygon_adjacencies();
-        return polygonal_surface->nb_vertices()
-                   - polygonal_surface->edges().nb_edges()
-                   + polygonal_surface->nb_polygons()
-               == 2;
+        return false;
     }
 
-    bool are_brep_boundaries_closed( const geode::BRep& brep )
+    bool surfaces_are_closed(
+        const geode::BRep& brep, std::queue< geode::uuid > to_process )
     {
-        auto polygonal_surface = geode::PolygonalSurface3D::create();
-        auto polygonal_surface_builder =
-            geode::PolygonalSurfaceBuilder3D::create( *polygonal_surface );
-        polygonal_surface->enable_edges();
-        geode::BijectiveMapping< geode::index_t, geode::index_t >
-            unique_vertices_to_polygonal_surface_vertices;
-        for( const auto& model_boundary : brep.model_boundaries() )
+        absl::flat_hash_set< geode::uuid > processed;
+        const auto first_surface_uuid = to_process.front();
+        to_process.pop();
+        processed.emplace( first_surface_uuid );
+        geode::index_t skip_counter{ 0 };
+        while( !to_process.empty() )
         {
-            for( const auto& boundary :
-                brep.model_boundary_items( model_boundary ) )
+            if( skip_counter == to_process.size() )
             {
-                const auto& surface_mesh = boundary.mesh();
-                for( const auto polygon :
-                    geode::Range{ surface_mesh.nb_polygons() } )
-                {
-                    auto polygon_vertices =
-                        surface_mesh.polygon_vertices( polygon );
-                    for( auto& polygon_vertex : polygon_vertices )
-                    {
-                        const auto unique_vertex = brep.unique_vertex(
-                            { boundary.component_id(), polygon_vertex } );
-                        if( !unique_vertices_to_polygonal_surface_vertices
-                                .has_mapping_input( unique_vertex ) )
-                        {
-                            const auto new_vertex =
-                                polygonal_surface_builder->create_point(
-                                    surface_mesh.point( polygon_vertex ) );
-                            unique_vertices_to_polygonal_surface_vertices.map(
-                                unique_vertex, new_vertex );
-                            polygon_vertex = new_vertex;
-                        }
-                        else
-                        {
-                            polygon_vertex =
-                                unique_vertices_to_polygonal_surface_vertices
-                                    .in2out( unique_vertex );
-                        }
-                    }
-                    polygonal_surface_builder->create_polygon(
-                        polygon_vertices );
-                }
+                return false;
+            }
+            const auto surface_uuid = to_process.front();
+            to_process.pop();
+            if( processed.contains( surface_uuid ) )
+            {
+                continue;
+            }
+            if( find_linked_processed_surface( brep, surface_uuid, processed ) )
+            {
+                processed.emplace( surface_uuid );
+                skip_counter = 0;
+            }
+            else
+            {
+                to_process.emplace( surface_uuid );
+                skip_counter++;
             }
         }
-        polygonal_surface_builder->compute_polygon_adjacencies();
-        return polygonal_surface->nb_vertices()
-                   - polygonal_surface->edges().nb_edges()
-                   + polygonal_surface->nb_polygons()
-               == 2;
+        return true;
+    }
+
+    std::queue< geode::uuid > queue_with_block_boundaries(
+        const geode::BRep& brep, const geode::Block3D& block )
+    {
+        std::queue< geode::uuid > to_process;
+        for( const auto& surface : brep.boundaries( block ) )
+        {
+            to_process.emplace( surface.id() );
+        }
+        return to_process;
+    }
+
+    std::queue< geode::uuid > queue_with_model_boundaries(
+        const geode::BRep& brep )
+    {
+        std::queue< geode::uuid > to_process;
+        for( const auto& model_boundary : brep.model_boundaries() )
+        {
+            for( const auto& surface :
+                brep.model_boundary_items( model_boundary ) )
+            {
+                to_process.emplace( surface.id() );
+            }
+        }
+        return to_process;
+    }
+
+    bool block_boundaries_are_closed(
+        const geode::BRep& brep, const geode::Block3D& block )
+    {
+        return surfaces_are_closed(
+            brep, queue_with_block_boundaries( brep, block ) );
+    }
+
+    bool brep_boundaries_are_closed( const geode::BRep& brep )
+    {
+        return surfaces_are_closed( brep, queue_with_model_boundaries( brep ) );
     }
 } // namespace
 
@@ -817,7 +808,7 @@ namespace geode
         }
         if( brep_.nb_model_boundaries() != 0 )
         {
-            if( !are_brep_boundaries_closed( brep_ ) )
+            if( !brep_boundaries_are_closed( brep_ ) )
             {
                 result.model_boundaries_dont_form_a_closed_surface.add_issue(
                     0, "ModelBoundaries don't form a valid closed surface." );
@@ -866,7 +857,7 @@ namespace geode
         }
         for( const auto& block : brep_.active_blocks() )
         {
-            if( !verify_blocks_boundaries( brep_, block ) )
+            if( !block_boundaries_are_closed( brep_, block ) )
             {
                 result.blocks_with_not_closed_boundary_surfaces.add_issue(
                     block.id(),
@@ -885,17 +876,17 @@ namespace geode
                 if( surface_boundaries_are_not_linked_to_another_block_boundary(
                         surface, brep_, block ) )
                 {
-                    result.wrong_block_boundary_surface.add_issue( surface.id(),
-                        absl::StrCat( "Surface ",
+                    result.wrong_block_boundary_surface.add_issue( block.id(),
+                        absl::StrCat( "Block ",
+                            block.name().value_or( block.id().string() ), " (",
+                            block.id().string(), ") boundary Surface ",
                             surface.name().value_or( surface.id().string() ),
                             " (", surface.id().string(),
-                            ") is boundary of Block ",
-                            block.name().value_or( block.id().string() ), " (",
-                            block.id().string(),
-                            ") but it has a boundary Line not incident to any "
+                            ") has a boundary Line not incident to any "
                             "other Block boundary Surface. Either the surface "
                             "shouldn't be boundary, or there is a hole in the "
                             "block boundaries" ) );
+                    break;
                 }
             }
         }
