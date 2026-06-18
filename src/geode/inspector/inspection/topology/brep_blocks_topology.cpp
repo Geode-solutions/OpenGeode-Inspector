@@ -368,26 +368,33 @@ namespace
         const geode::BRep& brep,
         const std::vector< std::vector< geode::uuid > >& linked_surfaces_list )
     {
-        geode::index_t enclosing_surface_index{ 0 };
-        auto current_enclosing_bbox =
-            surface_list_box( brep, linked_surfaces_list[0] );
-        for( const auto& surface_part_id :
-            geode::Range{ 1, linked_surfaces_list.size() } )
+        std::vector< geode::BoundingBox3D > bounding_boxes;
+        for( const auto& surface_list : linked_surfaces_list )
         {
-            auto surface_part_box =
-                surface_list_box( brep, linked_surfaces_list[surface_part_id] );
-            if( current_enclosing_bbox.contains( surface_part_box ) )
-            {
-                continue;
-            }
-            if( !surface_part_box.contains( current_enclosing_bbox ) )
-            {
-                return std::nullopt;
-            }
-            enclosing_surface_index = surface_part_id;
-            current_enclosing_bbox = std::move( surface_part_box );
+            bounding_boxes.emplace_back(
+                surface_list_box( brep, surface_list ) );
         }
-        return enclosing_surface_index;
+        for( const auto first_surface_list_id :
+            geode::Indices{ linked_surfaces_list } )
+        {
+            bool contains_others{ true };
+            for( const auto second_surface_list_id :
+                geode::Indices{ linked_surfaces_list } )
+            {
+                if( second_surface_list_id != first_surface_list_id
+                    && !bounding_boxes[first_surface_list_id].contains(
+                        bounding_boxes[second_surface_list_id] ) )
+                {
+                    contains_others = false;
+                    break;
+                }
+            }
+            if( contains_others )
+            {
+                return first_surface_list_id;
+            }
+        }
+        return std::nullopt;
     }
 
     std::unique_ptr< geode::PolygonalSurface3D > fuse_brep_surfaces_from_list(
