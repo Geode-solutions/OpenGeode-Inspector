@@ -32,6 +32,8 @@
 #include <geode/basic/attribute_manager.hpp>
 #include <geode/basic/logger.hpp>
 
+#include <geode/geometry/aabb.hpp>
+#include <geode/geometry/bounding_box.hpp>
 #include <geode/geometry/point.hpp>
 
 #include <geode/mesh/builder/graph_builder.hpp>
@@ -40,6 +42,7 @@
 #include <geode/mesh/core/polygonal_surface.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_edges.hpp>
+#include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 
 #include <geode/model/helpers/ray_tracing.hpp>
 #include <geode/model/mixin/core/block.hpp>
@@ -274,14 +277,14 @@ namespace
 
     bool find_linked_processed_surface( const geode::BRep& brep,
         const geode::uuid& surface_uuid,
-        const absl::flat_hash_set< geode::uuid >& processed )
+        absl::Span< const geode::uuid > processed )
     {
         const auto& surface = brep.surface( surface_uuid );
         for( const auto& line : brep.boundaries( surface ) )
         {
             for( const auto& other_surface : brep.incidences( line ) )
             {
-                if( processed.contains( other_surface.id() ) )
+                if( absl::c_contains( processed, other_surface.id() ) )
                 {
                     return true;
                 }
@@ -290,29 +293,29 @@ namespace
         return false;
     }
 
-    bool surfaces_are_closed(
-        const geode::BRep& brep, std::queue< geode::uuid > to_process )
+    std::vector< geode::uuid > closed_linked_surfaces(
+        const geode::BRep& brep, std::queue< geode::uuid >& to_process )
     {
-        absl::flat_hash_set< geode::uuid > processed;
+        std::vector< geode::uuid > processed;
         const auto first_surface_uuid = to_process.front();
         to_process.pop();
-        processed.emplace( first_surface_uuid );
+        processed.emplace_back( first_surface_uuid );
         geode::index_t skip_counter{ 0 };
         while( !to_process.empty() )
         {
             if( skip_counter == to_process.size() )
             {
-                return false;
+                return processed;
             }
             const auto surface_uuid = to_process.front();
             to_process.pop();
-            if( processed.contains( surface_uuid ) )
+            if( absl::c_contains( processed, surface_uuid ) )
             {
                 continue;
             }
             if( find_linked_processed_surface( brep, surface_uuid, processed ) )
             {
-                processed.emplace( surface_uuid );
+                processed.emplace_back( surface_uuid );
                 skip_counter = 0;
             }
             else
@@ -321,7 +324,7 @@ namespace
                 skip_counter++;
             }
         }
-        return true;
+        return processed;
     }
 
     std::queue< geode::uuid > queue_with_block_boundaries(
@@ -350,16 +353,153 @@ namespace
         return to_process;
     }
 
+    geode::BoundingBox3D surface_list_box(
+        const geode::BRep& brep, absl::Span< const geode::uuid > surface_list )
+    {
+        geode::BoundingBox3D result;
+        for( const auto& surface_id : surface_list )
+        {
+            result.add_box( brep.surface( surface_id ).mesh().bounding_box() );
+        }
+        return result;
+    }
+
+    std::optional< geode::index_t > enclosing_surface_list(
+        const geode::BRep& brep,
+        const std::vector< std::vector< geode::uuid > >& linked_surfaces_list )
+    {
+        geode::index_t enclosing_surface_index{ 0 };
+        auto current_enclosing_bbox =
+            surface_list_box( brep, linked_surfaces_list[0] );
+        for( const auto& surface_part_id :
+            geode::Range{ 1, linked_surfaces_list.size() } )
+        {
+            auto surface_part_box =
+                surface_list_box( brep, linked_surfaces_list[surface_part_id] );
+            if( current_enclosing_bbox.contains( surface_part_box ) )
+            {
+                continue;
+            }
+            if( !surface_part_box.contains( current_enclosing_bbox ) )
+            {
+                return std::nullopt;
+            }
+            enclosing_surface_index = surface_part_id;
+            current_enclosing_bbox = std::move( surface_part_box );
+        }
+        return enclosing_surface_index;
+    }
+
+    std::unique_ptr< geode::PolygonalSurface3D > fuse_brep_surfaces_from_list(
+        const geode::BRep& brep,
+        const std::vector< geode::uuid >& surface_list )
+    {
+        auto polygonal_surface = geode::PolygonalSurface3D::create();
+        auto polygonal_surface_builder =
+            geode::PolygonalSurfaceBuilder3D::create( *polygonal_surface );
+        geode::BijectiveMapping< geode::index_t, geode::index_t >
+            unique_vertices_to_polygonal_surface_vertices;
+        for( const auto& surface_id : surface_list )
+        {
+            const auto& surface = brep.surface( surface_id );
+            const auto& surface_mesh = surface.mesh();
+            for( const auto polygon :
+                geode::Range{ surface_mesh.nb_polygons() } )
+            {
+                auto polygon_vertices =
+                    surface_mesh.polygon_vertices( polygon );
+                for( auto& polygon_vertex : polygon_vertices )
+                {
+                    const auto unique_vertex = brep.unique_vertex(
+                        { surface.component_id(), polygon_vertex } );
+                    if( !unique_vertices_to_polygonal_surface_vertices
+                            .has_mapping_input( unique_vertex ) )
+                    {
+                        const auto new_vertex =
+                            polygonal_surface_builder->create_point(
+                                surface_mesh.point( polygon_vertex ) );
+                        unique_vertices_to_polygonal_surface_vertices.map(
+                            unique_vertex, new_vertex );
+                        polygon_vertex = new_vertex;
+                    }
+                    else
+                    {
+                        polygon_vertex =
+                            unique_vertices_to_polygonal_surface_vertices
+                                .in2out( unique_vertex );
+                    }
+                }
+                polygonal_surface_builder->create_polygon( polygon_vertices );
+            }
+        }
+        polygonal_surface_builder->compute_polygon_adjacencies();
+        return polygonal_surface;
+    }
+
     bool block_boundaries_are_closed(
         const geode::BRep& brep, const geode::Block3D& block )
     {
-        return surfaces_are_closed(
-            brep, queue_with_block_boundaries( brep, block ) );
+        auto to_process = queue_with_block_boundaries( brep, block );
+        std::vector< std::vector< geode::uuid > > linked_boundary_parts;
+        while( !to_process.empty() )
+        {
+            linked_boundary_parts.emplace_back(
+                closed_linked_surfaces( brep, to_process ) );
+        }
+        if( linked_boundary_parts.size() < 2 )
+        {
+            return true;
+        }
+        const auto enclosing_surface_index =
+            enclosing_surface_list( brep, linked_boundary_parts );
+        if( !enclosing_surface_index )
+        {
+            return false;
+        }
+        const auto enclosing_surface_mesh = fuse_brep_surfaces_from_list(
+            brep, linked_boundary_parts[enclosing_surface_index.value()] );
+        const auto enclosing_surface_aabb =
+            geode::create_aabb_tree( *enclosing_surface_mesh );
+        for( const auto surface_list_id :
+            geode::Indices{ linked_boundary_parts } )
+        {
+            if( surface_list_id == enclosing_surface_index.value() )
+            {
+                continue;
+            }
+            for( const auto& surface_id :
+                linked_boundary_parts[surface_list_id] )
+            {
+                const auto& surface_mesh = brep.surface( surface_id ).mesh();
+                for( const auto vertex_id :
+                    geode::Range{ surface_mesh.nb_vertices() } )
+                {
+                    try
+                    {
+                        if( !geode::is_point_inside_closed_surface(
+                                surface_mesh.point( vertex_id ),
+                                *enclosing_surface_mesh,
+                                enclosing_surface_aabb ) )
+                        {
+                            return false;
+                        }
+                    }
+                    catch( const geode::OpenGeodeException& )
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     bool brep_boundaries_are_closed( const geode::BRep& brep )
     {
-        return surfaces_are_closed( brep, queue_with_model_boundaries( brep ) );
+        auto to_process = queue_with_model_boundaries( brep );
+        auto compute_closed_linked_surfaces =
+            closed_linked_surfaces( brep, to_process );
+        return to_process.empty();
     }
 } // namespace
 
