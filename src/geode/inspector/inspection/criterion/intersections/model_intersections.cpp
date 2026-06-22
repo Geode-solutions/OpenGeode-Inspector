@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/intersections/model_intersections.hpp>
 
+#include <async++.h>
+
 #include <absl/algorithm/container.h>
 
 #include <geode/basic/logger.hpp>
@@ -579,7 +581,11 @@ namespace geode
     class ModelMeshesIntersections< Model >::Impl
     {
     public:
-        Impl( const Model& model ) : model_( model ) {}
+        Impl( const Model& model )
+            : model_( model ),
+              surfaces_model_tree_{ create_surface_meshes_aabb_trees( model ) }
+        {
+        }
 
         bool model_has_intersecting_surfaces() const
         {
@@ -666,13 +672,14 @@ namespace geode
         }
 
     private:
+        using IntersectionResult =
+            std::pair< ComponentMeshElement, ComponentMeshElement >;
+        using IntersectionsResult = std::vector< IntersectionResult >;
         template < typename Action >
         std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_polygons() const
         {
-            std::vector<
-                std::pair< ComponentMeshElement, ComponentMeshElement > >
-                component_intersections;
+            IntersectionsResult component_intersections;
             for( const auto& surface : model_.active_surfaces() )
             {
                 if( surface.mesh().nb_polygons() == 0 )
@@ -685,51 +692,65 @@ namespace geode
                     return component_intersections;
                 }
             }
-            const auto model_tree = create_surface_meshes_aabb_trees( model_ );
+            using Task = async::task< IntersectionsResult >;
+            std::vector< Task > tasks;
             for( const auto& surface : model_.active_surfaces() )
             {
-                Action surfaces_intersection_action{ model_, surface.id(),
-                    surface.id() };
-                model_tree
-                    .mesh_trees_[model_tree.mesh_tree_ids_.at( surface.id() )]
-                    .compute_self_element_bbox_intersections(
-                        surfaces_intersection_action );
-                for( const auto& polygon_pair :
-                    surfaces_intersection_action.intersecting_polygons() )
-                {
-                    component_intersections.emplace_back(
-                        ComponentMeshElement{
-                            surface.component_id(), polygon_pair.first },
-                        ComponentMeshElement{
-                            surface.component_id(), polygon_pair.second } );
-                }
+                tasks.emplace_back( async::spawn( [this, &surface] {
+                    Action surfaces_intersection_action{ model_, surface.id(),
+                        surface.id() };
+                    surfaces_model_tree_
+                        .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
+                            surface.id() )]
+                        .compute_self_element_bbox_intersections(
+                            surfaces_intersection_action );
+                    IntersectionsResult result;
+                    const auto surface_id = surface.component_id();
+                    for( const auto& [polygon1, polygon2] :
+                        surfaces_intersection_action.intersecting_polygons() )
+                    {
+                        result.emplace_back(
+                            ComponentMeshElement{ surface_id, polygon1 },
+                            ComponentMeshElement{ surface_id, polygon2 } );
+                    }
+                    return result;
+                } ) );
             }
             ComponentOverlap surfaces_overlap;
-            model_tree.components_tree_.compute_self_element_bbox_intersections(
-                surfaces_overlap );
+            surfaces_model_tree_.components_tree_
+                .compute_self_element_bbox_intersections( surfaces_overlap );
             for( const auto& components : surfaces_overlap.component_pairs )
             {
-                const auto surface_uuid1 = model_tree.uuids_[components.first];
-                const auto surface_uuid2 = model_tree.uuids_[components.second];
-                Action surfaces_intersection_action{ model_, surface_uuid1,
-                    surface_uuid2 };
-                model_tree.mesh_trees_[components.first]
-                    .compute_other_element_bbox_intersections(
-                        model_tree.mesh_trees_[components.second],
-                        surfaces_intersection_action );
-                const auto component_id1 =
-                    model_.surface( surface_uuid1 ).component_id();
-                const auto component_id2 =
-                    model_.surface( surface_uuid2 ).component_id();
-                for( const auto& polygon_pair :
-                    surfaces_intersection_action.intersecting_polygons() )
-                {
-                    component_intersections.emplace_back(
-                        ComponentMeshElement{
-                            component_id1, polygon_pair.first },
-                        ComponentMeshElement{
-                            component_id2, polygon_pair.second } );
-                }
+                tasks.emplace_back( async::spawn( [this, &components] {
+                    const auto surface_uuid1 =
+                        surfaces_model_tree_.uuids_[components.first];
+                    const auto surface_uuid2 =
+                        surfaces_model_tree_.uuids_[components.second];
+                    Action surfaces_intersection_action{ model_, surface_uuid1,
+                        surface_uuid2 };
+                    surfaces_model_tree_.mesh_trees_[components.first]
+                        .compute_other_element_bbox_intersections(
+                            surfaces_model_tree_.mesh_trees_[components.second],
+                            surfaces_intersection_action );
+                    IntersectionsResult result;
+                    const auto component_id1 =
+                        model_.surface( surface_uuid1 ).component_id();
+                    const auto component_id2 =
+                        model_.surface( surface_uuid2 ).component_id();
+                    for( const auto& [polygon1, polygon2] :
+                        surfaces_intersection_action.intersecting_polygons() )
+                    {
+                        result.emplace_back(
+                            ComponentMeshElement{ component_id1, polygon1 },
+                            ComponentMeshElement{ component_id2, polygon2 } );
+                    }
+                    return result;
+                } ) );
+            }
+            for( auto& task : async::when_all( tasks ).get() )
+            {
+                absl::c_move(
+                    task.get(), std::back_inserter( component_intersections ) );
             }
             return component_intersections;
         }
@@ -746,8 +767,7 @@ namespace geode
                 {
                     geode::Logger::warn(
                         "One of the surface meshes has an empty mesh, "
-                        "skipping "
-                        "line-surface intersection detection." );
+                        "skipping line-surface intersection detection." );
                     return component_intersections;
                 }
             }
@@ -757,18 +777,16 @@ namespace geode
                 {
                     geode::Logger::warn(
                         "One of the line meshes has an empty mesh, "
-                        "skipping "
-                        "line-surface intersection detection." );
+                        "skipping line-surface intersection detection." );
                     return component_intersections;
                 }
             }
-            const auto surfaces_model_tree =
-                create_surface_meshes_aabb_trees( brep );
-            const auto lines_model_tree = create_line_meshes_aabb_trees( brep );
+            const auto lines_model_tree =
+                create_line_meshes_aabb_trees( model_ );
             for( const auto& surface : brep.active_surfaces() )
             {
                 const auto& surface_tree =
-                    surfaces_model_tree.mesh_trees_[surfaces_model_tree
+                    surfaces_model_tree_.mesh_trees_[surfaces_model_tree_
                             .mesh_tree_ids_.at( surface.id() )];
                 for( const auto& line : brep.active_lines() )
                 {
@@ -799,6 +817,7 @@ namespace geode
 
     private:
         const Model& model_;
+        ModelMeshesAABBTree< Model::dim > surfaces_model_tree_;
     };
 
     template < typename Model >
