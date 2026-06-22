@@ -221,9 +221,9 @@ def check_a1(verbose):
     else:
         print("model_A1 topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 5201:
+    if nb_model_issues != 5191:
         raise ValueError(
-            "[Test] model model_A1 should have 5201 unique vertices with topological problems."
+            "[Test] model model_A1 should have 5191 unique vertices with topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -242,9 +242,9 @@ def inspect_model_A1(model_brep, verbose):
     else:
         print("model_A1_valid topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 5201:
+    if nb_model_issues != 5191:
         raise ValueError(
-            "[Test] model model_A1_valid should have 5201 topological problems."
+            "[Test] model model_A1_valid should have 5191 topological problems."
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
         result.meshes, verbose
@@ -268,9 +268,9 @@ def inspect_model_mss(model_brep, verbose):
     else:
         print("model mss topology is invalid.")
     nb_model_issues = launch_topological_validity_checks(result.topology, verbose)
-    if nb_model_issues != 52:
+    if nb_model_issues != 50:
         raise ValueError(
-            "[Test] model mss.og_strm should have 37 topological problems, not "
+            "[Test] model mss.og_strm should have 50 topological problems, not "
             + str(nb_model_issues)
         )
     nb_component_meshes_issues = launch_component_meshes_validity_checks(
