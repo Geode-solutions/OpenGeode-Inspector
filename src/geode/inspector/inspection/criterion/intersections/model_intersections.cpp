@@ -436,11 +436,11 @@ namespace
             {
                 return true;
             }
-            const auto t1 = mesh_triangle( mesh1_, t1_vertices );
-            const auto t2 = mesh_triangle( mesh2_, t2_vertices );
-            return geode::point_triangle_position( t1_third_pt, t2 )
+            const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
+            const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
+            return geode::point_triangle_position( t1_third_pt, triangle2 )
                        != geode::POSITION::outside
-                   || geode::point_triangle_position( t2_third_pt, t1 )
+                   || geode::point_triangle_position( t2_third_pt, triangle1 )
                           != geode::POSITION::outside;
         }
         for( const auto t1_edge_v : geode::LRange{ 3 } )
@@ -490,8 +490,9 @@ namespace
         return false;
     }
 
-    [[nodiscard]] bool triangle_intersects_other( const geode::Triangle3D& t1,
-        const geode::Triangle3D& t2,
+    [[nodiscard]] bool triangle_intersects_other(
+        const geode::Triangle3D& triangle1,
+        const geode::Triangle3D& triangle2,
         const geode::PolygonVertices& t1_vertices,
         const geode::PolygonVertices& t2_vertices,
         absl::Span< const std::array< geode::index_t, 2 > > common_vertices,
@@ -501,7 +502,8 @@ namespace
         {
             const auto v2_id = v_id == 2 ? 0 : v_id + 1;
             const auto intersection = segment_triangle_intersection_detection(
-                { t1.vertices()[v_id], t1.vertices()[v2_id] }, t2 );
+                { triangle1.vertices()[v_id], triangle1.vertices()[v2_id] },
+                triangle2 );
             if( intersection.first != geode::POSITION::outside )
             {
                 if( common_vertices.size() != 1 )
@@ -537,28 +539,28 @@ namespace
             absl::Span< const std::array< geode::index_t, 2 > >
                 common_vertices ) const
     {
-        const auto t2 = mesh_triangle( mesh2_, t2_vertices );
+        const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
         if( common_vertices.size() == 2 )
         {
             const auto& t1_third_pt = mesh1_.point(
                 third_point_index( t1_vertices, common_vertices, 0 ) );
             return geode::segment_triangle_intersection_detection(
                        { mesh1_.point( common_vertices[0][0] ), t1_third_pt },
-                       t2 )
+                       triangle2 )
                            .first
                        == geode::POSITION::parallel
                    || geode::segment_triangle_intersection_detection(
                           { mesh1_.point( common_vertices[1][0] ),
                               t1_third_pt },
-                          t2 )
+                          triangle2 )
                               .first
                           == geode::POSITION::parallel;
         }
-        const auto t1 = mesh_triangle( mesh1_, t1_vertices );
-        return triangle_intersects_other(
-                   t1, t2, t1_vertices, t2_vertices, common_vertices, 1 )
-               || triangle_intersects_other(
-                   t2, t1, t2_vertices, t1_vertices, common_vertices, 0 );
+        const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
+        return triangle_intersects_other( triangle1, triangle2, t1_vertices,
+                   t2_vertices, common_vertices, 1 )
+               || triangle_intersects_other( triangle2, triangle1, t2_vertices,
+                   t1_vertices, common_vertices, 0 );
     }
 } // namespace
 
@@ -678,7 +680,8 @@ namespace geode
             std::pair< ComponentMeshElement, ComponentMeshElement >;
         using IntersectionsResult = std::vector< IntersectionResult >;
         template < typename Action >
-        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
+        [[nodiscard]] std::vector<
+            std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_polygons() const
         {
             IntersectionsResult component_intersections;
@@ -757,7 +760,8 @@ namespace geode
             return component_intersections;
         }
 
-        std::vector< std::pair< ComponentMeshElement, ComponentMeshElement > >
+        [[nodiscard]] std::vector<
+            std::pair< ComponentMeshElement, ComponentMeshElement > >
             intersecting_lines_surfaces( const BRep& brep ) const
         {
             std::vector<
