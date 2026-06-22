@@ -595,11 +595,7 @@ namespace geode
         {
             const auto intersections = intersecting_polygons<
                 OneModelSurfacesIntersection< Model > >();
-            if( intersections.empty() )
-            {
-                return false;
-            }
-            return true;
+            return !intersections.empty();
         }
 
         void add_intersecting_surfaces_elements(
