@@ -326,8 +326,8 @@ void check_model_a1( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 5201, "model_A1 has ", nb_topological_issues,
-        " topological problems instead of 5201." );
+        nb_topological_issues == 5191, "model_A1 has ", nb_topological_issues,
+        " topological problems instead of 5191." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -349,8 +349,8 @@ void check_model_a1_valid( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 5201, "model_A1_valid has ",
-        nb_topological_issues, " topological problems instead of 5201." );
+        nb_topological_issues == 5191, "model_A1_valid has ",
+        nb_topological_issues, " topological problems instead of 5191." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -372,8 +372,8 @@ void check_model_mss( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 52, "mss has ", nb_topological_issues,
-        " topological problems instead of 37." );
+        nb_topological_issues == 50, "mss has ", nb_topological_issues,
+        " topological problems instead of 50." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
@@ -415,17 +415,18 @@ void check_wrong_bsurfaces_model()
                       "should be 3, and it is ",
             result.topology.blocks.wrong_block_boundary_surface.nb_issues(),
             "." ) );
-    std::vector< geode::uuid > wrong_bsurf{
-        geode::uuid{ "00000000-78d4-4e10-8000-0000cb3a3a27" },
-        geode::uuid{ "00000000-7a4e-4a1c-8000-00003732de1f" },
-        geode::uuid{ "00000000-980f-49d4-8000-00002f79374e" }
+    std::vector< geode::uuid > wrong_bsurf_blocks{
+        geode::uuid{ "00000000-e821-4e90-8000-00000089237c" },
+        geode::uuid{ "00000000-3c71-472b-8000-0000fa07558c" },
+        geode::uuid{ "00000000-fbad-4231-8000-000085ca0c23" }
     };
     for( const auto& issue :
         result.topology.blocks.wrong_block_boundary_surface.issues() )
     {
+        DEBUG( issue.string() );
         geode::OpenGeodeInspectorInspectionException::test(
-            absl::c_find( wrong_bsurf, issue ) != wrong_bsurf.end(),
-            "Surface (", issue.string(),
+            absl::c_contains( wrong_bsurf_blocks, issue ), "Block (",
+            issue.string(),
             ") is detected as a wrong boundary surface but is not one." );
     }
 }

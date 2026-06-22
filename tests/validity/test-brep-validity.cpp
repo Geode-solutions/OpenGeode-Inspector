@@ -36,10 +36,11 @@ void check_model_a1()
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug( "model_A1 invalidities: \n", invalidities.string()
+    // );
     geode::OpenGeodeInspectorValidityException::test(
-        invalidities.nb_issues() == 7, "model_A1 has ",
-        invalidities.nb_issues(), " issues instead of 7." );
+        invalidities.nb_issues() == 8, "model_A1 has ",
+        invalidities.nb_issues(), " issues instead of 8." );
 }
 
 void check_model_a1_valid()
@@ -47,10 +48,11 @@ void check_model_a1_valid()
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug(
+    //     "model_A1_valid invalidities: \n", invalidities.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        invalidities.nb_issues() == 7, "model_A1_valid has ",
-        invalidities.nb_issues(), " issues instead of 7." );
+        invalidities.nb_issues() == 8, "model_A1_valid has ",
+        invalidities.nb_issues(), " issues instead of 8." );
 }
 
 void check_model_mss()
@@ -58,10 +60,11 @@ void check_model_mss()
     const auto model_brep =
         geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug( "model mss invalidities: \n", invalidities.string()
+    // );
     geode::OpenGeodeInspectorValidityException::test(
-        invalidities.nb_issues() == 5, "model_mss has ",
-        invalidities.nb_issues(), " issues instead of 5." );
+        invalidities.nb_issues() == 4, "model_mss has ",
+        invalidities.nb_issues(), " issues instead of 4." );
 }
 
 void check_model_D()
@@ -69,7 +72,8 @@ void check_model_D()
     const auto model_brep =
         geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug( "model_D invalidities: \n", invalidities.string()
+    // );
     geode::OpenGeodeInspectorValidityException::test(
         invalidities.nb_issues() == 0, "model_D has ", invalidities.nb_issues(),
         " issues instead of 0." );
@@ -80,10 +84,11 @@ void check_wrong_bsurfaces_model()
     const auto model_brep = geode::load_brep( absl::StrCat(
         geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug( "wrong_boundary_surface_model invalidities: \n",
+    //     invalidities.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        invalidities.nb_issues() == 2, "wrong_boundary_surface_model has ",
-        invalidities.nb_issues(), " issues instead of 2." );
+        invalidities.nb_issues() == 1, "wrong_boundary_surface_model has ",
+        invalidities.nb_issues(), " issues instead of 1." );
 }
 
 void check_segmented_cube()
@@ -91,10 +96,11 @@ void check_segmented_cube()
     const auto model_brep = geode::load_brep(
         absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
-
+    // geode::Logger::debug(
+    //     "cube_segmented invalidities: \n", invalidities.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        invalidities.nb_issues() == 1, "cube_segmented has ",
-        invalidities.nb_issues(), " issues instead of 1." );
+        invalidities.nb_issues() == 0, "cube_segmented has ",
+        invalidities.nb_issues(), " issues instead of 0." );
 }
 
 int main()

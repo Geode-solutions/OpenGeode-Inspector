@@ -340,11 +340,11 @@ namespace geode
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of Line ",
                         line.name().value_or( line.id().string() ), " (",
-                        line.id().string(),
-                        "), which should be boundary of Surface ",
+                        line.id().string(), "), which is boundary of Surface ",
                         incident_surface.name().value_or(
                             incident_surface.id().string() ),
-                        " (", incident_surface.id().string(), ")" );
+                        " (", incident_surface.id().string(),
+                        "), but Line edge 0 is not part of this surface" );
                 }
                 if( cme.surface_edges.at( incident_surface.id() ).size() != 1 )
                 {
@@ -352,10 +352,12 @@ namespace geode
                         " is part of Line ",
                         line.name().value_or( line.id().string() ), " (",
                         cmv.component_id.id().string(),
-                        "), which should not be boundary of Surface ",
+                        "), which is boundary of Surface ",
                         incident_surface.name().value_or(
                             incident_surface.id().string() ),
-                        " (", incident_surface.id().string(), ")" );
+                        " (", incident_surface.id().string(),
+                        ") but has several surface edges of this surface "
+                        "around Line edge 0" );
                 }
             }
             for( const auto& embedding_surface :
@@ -371,10 +373,11 @@ namespace geode
                         " is part of Line ",
                         line.name().value_or( line.id().string() ), " (",
                         cmv.component_id.id().string(),
-                        "', which should be embedded in Surface ",
+                        "), which is embedded in Surface ",
                         embedding_surface.name().value_or(
                             embedding_surface.id().string() ),
-                        " (", embedding_surface.id().string(), "'" );
+                        " (", embedding_surface.id().string(),
+                        "), but has no surface edge around Line edge 0" );
                 }
                 if( cme.surface_edges.at( embedding_surface.id() ).size() <= 1 )
                 {
@@ -386,7 +389,8 @@ namespace geode
                         embedding_surface.name().value_or(
                             embedding_surface.id().string() ),
                         " (", embedding_surface.id().string(),
-                        ") but doesn't cut it" );
+                        ") but doesn't cut it (should have more than 1 Surface "
+                        "edge around Line edge 0)" );
                 }
             }
             if( brep_.nb_incidences( cmv.component_id.id() ) == 0
