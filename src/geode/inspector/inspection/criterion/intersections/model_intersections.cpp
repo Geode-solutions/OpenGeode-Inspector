@@ -591,7 +591,7 @@ namespace geode
         {
         }
 
-        bool model_has_intersecting_surfaces() const
+        [[nodiscard]] bool model_has_intersecting_surfaces() const
         {
             const auto intersections = intersecting_polygons<
                 OneModelSurfacesIntersection< Model > >();
