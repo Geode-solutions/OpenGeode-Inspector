@@ -256,12 +256,7 @@ namespace geode
                 {
                     continue;
                 }
-                auto [itr, inserted] =
-                    line_to_nb_cmvs.try_emplace( line_id, 1 );
-                if( !inserted )
-                {
-                    itr->second++;
-                }
+                line_to_nb_cmvs.try_emplace( line_id, 0 ).first->second++;
             }
             for( const auto& [line_id, nb_cmvs] : line_to_nb_cmvs )
             {

@@ -480,7 +480,8 @@ namespace geode
                         surface.name().value_or( surface_id.string() ), " (",
                         surface_id.string(), "), but has ",
                         surface_edges.size(),
-                        " edges of this surface around it, it should be 2." );
+                        " edges of this surface around edge ", edge_index,
+                        ", it should be 2." );
                 }
                 continue;
             }
