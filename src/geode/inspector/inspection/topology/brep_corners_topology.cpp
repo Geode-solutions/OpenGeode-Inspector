@@ -267,7 +267,7 @@ namespace geode
             {
                 if( brep_.Relationships::is_boundary( corner_uuid, line_id ) )
                 {
-                    if( nb_cmvs != 1 )
+                    if( nb_cmvs != 1 && nb_cmvs != 2 )
                     {
                         return absl::StrCat( "unique vertex with index ",
                             unique_vertex_index, " is associated with Corner ",
@@ -279,7 +279,7 @@ namespace geode
                             brep_.line( line_id ).name().value_or(
                                 line_id.string() ),
                             " (", line_id.string(),
-                            "), so Line should have one cmv on this unique "
+                            "), so Line should have 1 or 2 cmv on this unique "
                             "vertex, but has ",
                             nb_cmvs, " vertices on it instead." );
                     }
