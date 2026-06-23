@@ -245,33 +245,49 @@ namespace geode
                 continue;
             }
             const auto& corner_uuid = cmv.component_id.id();
+            absl::linked_hash_map< uuid, index_t > line_to_nb_cmvs;
             for( const auto& cmv_line :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
+                const auto& line_id = cmv_line.component_id.id();
                 if( cmv_line.component_id.type()
                         != Line3D::component_type_static()
-                    || !brep_.line( cmv_line.component_id.id() ).is_active() )
+                    || !brep_.line( line_id ).is_active() )
                 {
                     continue;
                 }
-                if( brep_.Relationships::is_boundary(
-                        corner_uuid, cmv_line.component_id.id() ) )
+                auto [itr, inserted] =
+                    line_to_nb_cmvs.try_emplace( line_id, 1 );
+                if( !inserted )
                 {
-                    continue;
+                    itr->second++;
                 }
-                if( brep_.Relationships::is_internal(
-                        corner_uuid, cmv_line.component_id.id() ) )
+            }
+            for( const auto& [line_id, nb_cmvs] : line_to_nb_cmvs )
+            {
+                if( brep_.Relationships::is_boundary( corner_uuid, line_id ) )
                 {
-                    index_t line_vertex_count{ 0 };
-                    for( const auto& cmv2 :
-                        brep_.component_mesh_vertices( unique_vertex_index ) )
+                    if( nb_cmvs != 1 )
                     {
-                        if( cmv2.component_id.id() == corner_uuid )
-                        {
-                            line_vertex_count++;
-                        }
+                        return absl::StrCat( "unique vertex with index ",
+                            unique_vertex_index, " is associated with Corner ",
+                            brep_.corner( corner_uuid )
+                                .name()
+                                .value_or( corner_uuid.string() ),
+                            " (", corner_uuid.string(),
+                            "), which is boundary to Line ",
+                            brep_.line( line_id ).name().value_or(
+                                line_id.string() ),
+                            " (", line_id.string(),
+                            "), so Line should have one cmv on this unique "
+                            "vertex, but has ",
+                            nb_cmvs, " vertices on it instead." );
                     }
-                    if( line_vertex_count != 2 )
+                    continue;
+                }
+                if( brep_.Relationships::is_internal( corner_uuid, line_id ) )
+                {
+                    if( nb_cmvs != 2 )
                     {
                         return absl::StrCat( "unique vertex with index ",
                             unique_vertex_index, " is associated with Corner ",
@@ -280,14 +296,12 @@ namespace geode
                                 .value_or( corner_uuid.string() ),
                             " (", corner_uuid.string(),
                             "), which is internal to Line ",
-                            brep_.line( cmv_line.component_id.id() )
-                                .name()
-                                .value_or(
-                                    cmv_line.component_id.id().string() ),
-                            " (", cmv_line.component_id.id().string(),
+                            brep_.line( line_id ).name().value_or(
+                                line_id.string() ),
+                            " (", line_id.string(),
                             "), so Line should be closed and have two "
                             "different vertices on unique vertex, but has ",
-                            line_vertex_count, " vertices on it instead." );
+                            nb_cmvs, " vertices on it instead." );
                     }
                     continue;
                 }
@@ -297,10 +311,8 @@ namespace geode
                         .name()
                         .value_or( corner_uuid.string() ),
                     " (", corner_uuid.string() + "), part of line ",
-                    brep_.line( cmv_line.component_id.id() )
-                        .name()
-                        .value_or( cmv_line.component_id.id().string() ),
-                    " (", cmv_line.component_id.id().string(),
+                    brep_.line( line_id ).name().value_or( line_id.string() ),
+                    " (", line_id.string(),
                     "), but is neither boundary nor internal of it." );
             }
         }
