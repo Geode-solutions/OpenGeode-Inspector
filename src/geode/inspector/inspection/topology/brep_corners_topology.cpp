@@ -244,7 +244,7 @@ namespace geode
             {
                 continue;
             }
-            const auto& corner_uuid = cmv.component_id.id();
+            const auto& corner = brep_.corner( cmv.component_id.id() );
             absl::linked_hash_map< uuid, index_t > line_to_nb_cmvs;
             for( const auto& cmv_line :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
@@ -260,40 +260,35 @@ namespace geode
             }
             for( const auto& [line_id, nb_cmvs] : line_to_nb_cmvs )
             {
-                if( brep_.Relationships::is_boundary( corner_uuid, line_id ) )
+                const auto& line = brep_.line( line_id );
+                if( brep_.is_boundary( corner, line ) )
                 {
                     if( nb_cmvs != 1 && nb_cmvs != 2 )
                     {
                         return absl::StrCat( "unique vertex with index ",
                             unique_vertex_index, " is associated with Corner ",
-                            brep_.corner( corner_uuid )
-                                .name()
-                                .value_or( corner_uuid.string() ),
-                            " (", corner_uuid.string(),
+                            corner.name().value_or( corner.id().string() ),
+                            " (", corner.id().string(),
                             "), which is boundary to Line ",
-                            brep_.line( line_id ).name().value_or(
-                                line_id.string() ),
-                            " (", line_id.string(),
+                            line.name().value_or( line_id.string() ), " (",
+                            line_id.string(),
                             "), so Line should have 1 or 2 cmv on this unique "
                             "vertex, but has ",
                             nb_cmvs, " vertices on it instead." );
                     }
                     continue;
                 }
-                if( brep_.Relationships::is_internal( corner_uuid, line_id ) )
+                if( brep_.is_internal( corner, line ) )
                 {
                     if( nb_cmvs != 2 )
                     {
                         return absl::StrCat( "unique vertex with index ",
                             unique_vertex_index, " is associated with Corner ",
-                            brep_.corner( corner_uuid )
-                                .name()
-                                .value_or( corner_uuid.string() ),
-                            " (", corner_uuid.string(),
+                            corner.name().value_or( corner.id().string() ),
+                            " (", corner.id().string(),
                             "), which is internal to Line ",
-                            brep_.line( line_id ).name().value_or(
-                                line_id.string() ),
-                            " (", line_id.string(),
+                            line.name().value_or( line_id.string() ), " (",
+                            line_id.string(),
                             "), so Line should be closed and have two "
                             "different vertices on unique vertex, but has ",
                             nb_cmvs, " vertices on it instead." );
@@ -302,12 +297,10 @@ namespace geode
                 }
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated with Corner ",
-                    brep_.corner( corner_uuid )
-                        .name()
-                        .value_or( corner_uuid.string() ),
-                    " (", corner_uuid.string() + "), part of line ",
-                    brep_.line( line_id ).name().value_or( line_id.string() ),
-                    " (", line_id.string(),
+                    corner.name().value_or( corner.id().string() ), " (",
+                    corner.id().string() + "), part of line ",
+                    line.name().value_or( line.id().string() ), " (",
+                    line_id.string(),
                     "), but is neither boundary nor internal of it." );
             }
         }
