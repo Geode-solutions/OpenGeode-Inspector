@@ -34,22 +34,6 @@ add_geode_binary(
 )
 
 add_geode_binary(
-    SOURCE "geode-inspector-cross-section.cpp"
-    DEPENDENCIES
-        Async++
-        absl::flags
-        absl::flags_parse
-        absl::flags_usage
-        OpenGeode::basic
-        OpenGeode::geometry
-        OpenGeode::mesh
-        OpenGeode::model
-        OpenGeode-Geosciences::explicit
-        OpenGeode-GeosciencesIO::model
-        ${PROJECT_NAME}::inspection
-)
-
-add_geode_binary(
     SOURCE "geode-inspector-edgedcurve.cpp"
     DEPENDENCIES
         Async++
@@ -60,38 +44,6 @@ add_geode_binary(
         OpenGeode::mesh
         OpenGeode-IO::mesh
         OpenGeode-GeosciencesIO::mesh
-        ${PROJECT_NAME}::inspection
-)
-
-add_geode_binary(
-    SOURCE "geode-inspector-implicit-cross-section.cpp"
-    DEPENDENCIES
-        Async++
-        absl::flags
-        absl::flags_parse
-        absl::flags_usage
-        OpenGeode::basic
-        OpenGeode::geometry
-        OpenGeode::mesh
-        OpenGeode::model
-        OpenGeode-Geosciences::implicit
-        OpenGeode-GeosciencesIO::model
-        ${PROJECT_NAME}::inspection
-)
-
-add_geode_binary(
-    SOURCE "geode-inspector-implicit-structural-model.cpp"
-    DEPENDENCIES
-        Async++
-        absl::flags
-        absl::flags_parse
-        absl::flags_usage
-        OpenGeode::basic
-        OpenGeode::geometry
-        OpenGeode::mesh
-        OpenGeode::model
-        OpenGeode-Geosciences::implicit
-        OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspection
 )
 
@@ -135,22 +87,6 @@ add_geode_binary(
         OpenGeode::mesh
         OpenGeode-IO::mesh
         OpenGeode-GeosciencesIO::mesh
-        ${PROJECT_NAME}::inspection
-)
-
-add_geode_binary(
-    SOURCE "geode-inspector-structural-model.cpp"
-    DEPENDENCIES
-        Async++
-        absl::flags
-        absl::flags_parse
-        absl::flags_usage
-        OpenGeode::basic
-        OpenGeode::geometry
-        OpenGeode::mesh
-        OpenGeode::model
-        OpenGeode-Geosciences::explicit
-        OpenGeode-GeosciencesIO::model
         ${PROJECT_NAME}::inspection
 )
 
