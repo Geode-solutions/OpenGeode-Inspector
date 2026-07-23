@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-#include <absl/container/flat_hash_map.h>
+#include <absl/container/linked_hash_map.h>
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/types.hpp>
@@ -150,7 +150,7 @@ namespace geode
             return message;
         }
 
-        [[nodiscard]] const absl::flat_hash_map< uuid,
+        [[nodiscard]] const absl::linked_hash_map< uuid,
             InspectionIssues< IssueType > >&
             issues_map() const
         {
@@ -162,6 +162,7 @@ namespace geode
             "Default inspection issue message. This message "
             "should have been overriden."
         };
-        absl::flat_hash_map< uuid, InspectionIssues< IssueType > > issues_map_;
+        absl::linked_hash_map< uuid, InspectionIssues< IssueType > >
+            issues_map_;
     };
 } // namespace geode

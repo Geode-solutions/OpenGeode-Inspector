@@ -156,7 +156,7 @@ namespace geode
             InspectionIssues< BRepNonManifoldEdge >& issues ) const
         {
             using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
-            absl::flat_hash_map< Edge, std::vector< uuid > > edges;
+            absl::linked_hash_map< Edge, std::vector< uuid > > edges;
             for( const auto& surface : model().active_surfaces() )
             {
                 const auto& mesh = surface.mesh();

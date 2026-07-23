@@ -36,10 +36,10 @@ namespace
     using Edge = geode::detail::VertexCycle< std::array< geode::index_t, 2 > >;
 
     template < geode::index_t dimension >
-    absl::flat_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+    absl::linked_hash_map< Edge, std::pair< geode::local_index_t, bool > >
         edge_to_polygons_around( const geode::SurfaceMesh< dimension >& mesh )
     {
-        absl::flat_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+        absl::linked_hash_map< Edge, std::pair< geode::local_index_t, bool > >
             polygons_around_edges;
         for( const auto polygon_id : geode::Range{ mesh.nb_polygons() } )
         {
