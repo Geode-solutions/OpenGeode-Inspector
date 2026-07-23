@@ -36,7 +36,8 @@ namespace
     using Edge = geode::detail::VertexCycle< std::array< geode::index_t, 2 > >;
 
     template < geode::index_t dimension >
-    absl::linked_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+    [[nodiscard]] absl::linked_hash_map< Edge,
+        std::pair< geode::local_index_t, bool > >
         edge_to_polygons_around( const geode::SurfaceMesh< dimension >& mesh )
     {
         absl::linked_hash_map< Edge, std::pair< geode::local_index_t, bool > >
@@ -76,9 +77,9 @@ namespace geode
     class SurfaceMeshEdgeManifold< dimension >::Impl
     {
     public:
-        Impl( const SurfaceMesh< dimension >& mesh ) : mesh_( mesh ) {}
+        explicit Impl( const SurfaceMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
-        bool mesh_edges_are_manifold() const
+        [[nodiscard]] bool mesh_edges_are_manifold() const
         {
             for( const auto& edge : edge_to_polygons_around( mesh_ ) )
             {
@@ -95,7 +96,8 @@ namespace geode
             return true;
         }
 
-        InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const
+        [[nodiscard]] InspectionIssues< std::array< index_t, 2 > >
+            non_manifold_edges() const
         {
             InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
                 "non manifold edges"

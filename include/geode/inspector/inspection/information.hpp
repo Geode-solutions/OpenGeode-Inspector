@@ -94,8 +94,8 @@ namespace geode
             "Default inspection issue message. This message "
             "should have been overriden."
         };
-        std::vector< IssueType > issues_{};
-        std::vector< std::string > messages_{};
+        std::vector< IssueType > issues_;
+        std::vector< std::string > messages_;
     };
 
     template < typename IssueType >
