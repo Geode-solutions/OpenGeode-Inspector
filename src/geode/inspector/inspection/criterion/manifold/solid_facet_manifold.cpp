@@ -23,8 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/solid_facet_manifold.hpp>
 
-#include <absl/container/flat_hash_map.h>
 #include <absl/container/flat_hash_set.h>
+#include <absl/container/linked_hash_map.h>
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
@@ -37,11 +37,11 @@ namespace
     using Facet = geode::detail::VertexCycle< geode::PolyhedronFacetVertices >;
 
     template < geode::index_t dimension >
-    absl::flat_hash_map< Facet, geode::index_t >
+    [[nodiscard]] absl::linked_hash_map< Facet, geode::index_t >
         facets_to_nb_adjacent_polyhedra(
             const geode::SolidMesh< dimension >& mesh )
     {
-        absl::flat_hash_map< Facet, geode::index_t >
+        absl::linked_hash_map< Facet, geode::index_t >
             nb_polyhedra_adjacent_to_facets;
         for( const auto polyhedron_id : geode::Range{ mesh.nb_polyhedra() } )
         {
@@ -67,9 +67,9 @@ namespace geode
     class SolidMeshFacetManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
+        explicit Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
-        bool mesh_facets_are_manifold() const
+        [[nodiscard]] bool mesh_facets_are_manifold() const
         {
             const auto nb_polyhedra_adjacent_to_facets =
                 facets_to_nb_adjacent_polyhedra( mesh_ );
@@ -84,7 +84,8 @@ namespace geode
             return true;
         }
 
-        InspectionIssues< PolyhedronFacetVertices > non_manifold_facets() const
+        [[nodiscard]] InspectionIssues< PolyhedronFacetVertices >
+            non_manifold_facets() const
         {
             const auto nb_polyhedra_adjacent_to_facets =
                 facets_to_nb_adjacent_polyhedra( mesh_ );

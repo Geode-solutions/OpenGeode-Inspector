@@ -79,6 +79,12 @@ namespace pybind11
         {
         };
 
+        template < typename Key, typename Value >
+        struct type_caster< absl::linked_hash_map< Key, Value > >
+            : map_caster< absl::linked_hash_map< Key, Value >, Key, Value >
+        {
+        };
+
         template < typename Type, size_t dimension >
         struct type_caster< absl::InlinedVector< Type, dimension > >
             : list_caster< absl::InlinedVector< Type, dimension >, Type >
