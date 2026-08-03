@@ -49,7 +49,7 @@ namespace geode
                 for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
                     if( polygon_area_sign( mesh_.polygon( polygon_id ) )
-                        == Sign::negative )
+                        == SIGN::negative )
                     {
                         return true;
                     }
@@ -68,7 +68,7 @@ namespace geode
                 for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
                     if( polygon_area_sign( mesh_.polygon( polygon_id ) )
-                        == Sign::negative )
+                        == SIGN::negative )
                     {
                         wrong_polygons.add_issue( polygon_id,
                             absl::StrCat( "negative polygon ", polygon_id ) );
