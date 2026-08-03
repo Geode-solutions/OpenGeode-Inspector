@@ -112,7 +112,7 @@ namespace geode
                         }
                         catch( const OpenGeodeException& e )
                         {
-                            Logger::warn( e.what() );
+                            Logger::warning( e.what() );
                             issues.add_issue( polygon_edge,
                                 absl::StrCat( "edge ", edge_id, " of polygon ",
                                     polygon_id,

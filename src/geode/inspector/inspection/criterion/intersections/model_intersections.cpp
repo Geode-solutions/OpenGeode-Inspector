@@ -772,7 +772,7 @@ namespace geode
             {
                 if( surface.mesh().nb_polygons() == 0 )
                 {
-                    geode::Logger::warn(
+                    geode::Logger::warning(
                         "One of the surface meshes has an empty mesh, cannot "
                         "compute the AABBTree used for detecting the mesh "
                         "intersections, no intersections will be "
@@ -854,7 +854,7 @@ namespace geode
             {
                 if( line.mesh().nb_edges() == 0 )
                 {
-                    geode::Logger::warn(
+                    geode::Logger::warning(
                         "One of the line meshes has an empty mesh, "
                         "skipping line-surface intersection detection." );
                     return component_intersections;
@@ -934,7 +934,7 @@ namespace geode
             {
                 if( surface.mesh().nb_polygons() == 0 )
                 {
-                    geode::Logger::warn(
+                    geode::Logger::warning(
                         "One of the surface meshes has an empty mesh, "
                         "skipping line-surface intersection detection." );
                     return component_intersections;
@@ -944,7 +944,7 @@ namespace geode
             {
                 if( line.mesh().nb_edges() == 0 )
                 {
-                    geode::Logger::warn(
+                    geode::Logger::warning(
                         "One of the line meshes has an empty mesh, "
                         "skipping line-surface intersection detection." );
                     return component_intersections;
