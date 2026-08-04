@@ -82,7 +82,7 @@ namespace geode
                         mesh_.polyhedron_vertex( { polyhedron_id, 2 } ) ),
                     mesh_.point(
                         mesh_.polyhedron_vertex( { polyhedron_id, 3 } ) ) };
-                return tetrahedron_volume_sign( tetrahedron ) == Sign::negative;
+                return tetrahedron_volume_sign( tetrahedron ) == SIGN::negative;
             }
             return mesh_.polyhedron_volume( polyhedron_id ) < 0;
         }
