@@ -52,7 +52,8 @@ namespace
                 };
                 if( !polygons_around_edges
                         .try_emplace( polygon_edge_vertex_cycle,
-                            std::make_pair( 1, false ) )
+                            std::pair< geode::local_index_t, bool >{
+                                1, false } )
                         .second )
                 {
                     polygons_around_edges[polygon_edge_vertex_cycle].first += 1;

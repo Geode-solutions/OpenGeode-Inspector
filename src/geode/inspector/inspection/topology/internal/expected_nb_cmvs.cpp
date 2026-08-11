@@ -197,10 +197,10 @@ namespace
             if( nb_block_cmvs
                 == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
             {
-                return std::make_pair( nb_block_cmvs, std::nullopt );
+                return { nb_block_cmvs, std::nullopt };
             }
         }
-        return std::make_pair( predicted_nb_block_cmvs,
+        return { predicted_nb_block_cmvs,
             nb_block_cmvs == predicted_nb_block_cmvs
                 ? std::nullopt
                 : std::make_optional( absl::StrCat( "unique vertex ",
@@ -227,7 +227,7 @@ namespace
                       nb_line_on_boundary_cmvs,
                       " cmvs counted for lines on the boundary, with ",
                       nb_block_cmvs, " Block CMVs (expected ",
-                      predicted_nb_block_cmvs, " with valid topology)." ) ) );
+                      predicted_nb_block_cmvs, " with valid topology)." ) ) };
     }
 } // namespace
 

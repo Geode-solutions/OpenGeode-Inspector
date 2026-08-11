@@ -58,17 +58,20 @@ void check_intersections2D()
         "2D Surface should have 3 intersecting elements pair." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
-    if( absl::c_find( triangles_inter, std::make_pair( 2u, 0u ) )
+    if( absl::c_find( triangles_inter,
+            std::pair< geode::index_t, geode::index_t >{ 2u, 0u } )
         == triangles_inter.end() )
     {
         right_intersections = false;
     }
-    if( absl::c_find( triangles_inter, std::make_pair( 2u, 1u ) )
+    if( absl::c_find( triangles_inter,
+            std::pair< geode::index_t, geode::index_t >{ 2u, 1u } )
         == triangles_inter.end() )
     {
         right_intersections = false;
     }
-    if( absl::c_find( triangles_inter, std::make_pair( 0u, 1u ) )
+    if( absl::c_find( triangles_inter,
+            std::pair< geode::index_t, geode::index_t >{ 0u, 1u } )
         == triangles_inter.end() )
     {
         right_intersections = false;
@@ -112,12 +115,14 @@ void check_intersections3D()
         inspection.nb_issues(), "." );
     bool right_intersections{ true };
     const auto &triangles_inter = inspection.issues();
-    if( absl::c_find( triangles_inter, std::make_pair( 0u, 4u ) )
+    if( absl::c_find( triangles_inter,
+            std::pair< geode::index_t, geode::index_t >{ 0u, 4u } )
         == triangles_inter.end() )
     {
         right_intersections = false;
     }
-    if( absl::c_find( triangles_inter, std::make_pair( 2u, 4u ) )
+    if( absl::c_find( triangles_inter,
+            std::pair< geode::index_t, geode::index_t >{ 2u, 4u } )
         == triangles_inter.end() )
     {
         right_intersections = false;

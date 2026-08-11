@@ -71,11 +71,14 @@ namespace geode
                     const EdgedCurveDegeneration< Model::dim > inspector{
                         line.mesh()
                     };
-                    auto issues = inspector.small_edges( threshold );
+                    std::pair< uuid, InspectionIssues< index_t > > result;
+                    auto& [line_id, issues] = result;
+                    line_id = line.id();
+                    issues = inspector.small_edges( threshold );
                     issues.set_description( absl::StrCat( "Line ",
                         line.name().value_or( line.id().string() ), " (",
                         line.id().string(), ") small edges" ) );
-                    return std::make_pair( line.id(), std::move( issues ) );
+                    return result;
                 } ) );
             }
             for( auto& task :
@@ -102,13 +105,15 @@ namespace geode
                         }
                         const geode::SurfaceMeshDegeneration< Model::dim >
                             inspector{ surface.mesh() };
-                        auto issues = inspector.small_edges( threshold );
+                        std::pair< uuid, InspectionIssues< index_t > > result;
+                        auto& [surface_id, issues] = result;
+                        surface_id = surface.id();
+                        issues = inspector.small_edges( threshold );
                         issues.set_description( absl::StrCat( "Surface ",
                             surface.name().value_or( surface.id().string() ),
                             " (", surface.id().string(),
                             ") small facet edges" ) );
-                        return std::make_pair(
-                            surface.id(), std::move( issues ) );
+                        return result;
                     } ) );
             }
             for( auto& task :
@@ -142,11 +147,14 @@ namespace geode
                 tasks.emplace_back( async::spawn( [&threshold, &surface] {
                     const geode::SurfaceMeshDegeneration< Model::dim >
                         inspector{ surface.mesh() };
-                    auto issues = inspector.small_height_polygons( threshold );
+                    std::pair< uuid, InspectionIssues< index_t > > result;
+                    auto& [surface_id, issues] = result;
+                    surface_id = surface.id();
+                    issues = inspector.small_height_polygons( threshold );
                     issues.set_description( absl::StrCat( "Surface ",
                         surface.name().value_or( surface.id().string() ), " (",
                         surface.id().string(), ") small height polygons" ) );
-                    return std::make_pair( surface.id(), std::move( issues ) );
+                    return result;
                 } ) );
             }
             for( auto& task :
