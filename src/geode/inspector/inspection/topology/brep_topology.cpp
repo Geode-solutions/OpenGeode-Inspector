@@ -87,7 +87,7 @@ namespace geode
                     {
                         return false;
                     }
-                    if( brep_.component( cmv.component_id.id() ).is_active()
+                    if( brep_.component( cmv.component_id.id ).is_active()
                         && brep_.unique_vertex( cmv ) != uv_id )
                     {
                         return false;
@@ -127,7 +127,7 @@ namespace geode
                                        cmv.string(), "]." ) );
                         continue;
                     }
-                    if( brep_.component( cmv.component_id.id() ).is_active()
+                    if( brep_.component( cmv.component_id.id ).is_active()
                         && brep_.unique_vertex( cmv ) != uv_id )
                     {
                         linked_to_nonbijective_result.add_issue(
@@ -207,40 +207,40 @@ namespace geode
     private:
         bool cmv_exists_in_brep( const ComponentMeshVertex& cmv ) const
         {
-            if( cmv.component_id.type() == Corner3D::component_type_static() )
+            if( cmv.component_id.type == Corner3D::component_type_static() )
             {
-                if( brep_.has_corner( cmv.component_id.id() )
-                    && cmv.vertex < brep_.corner( cmv.component_id.id() )
+                if( brep_.has_corner( cmv.component_id.id )
+                    && cmv.vertex < brep_.corner( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {
                     return true;
                 }
             }
-            if( cmv.component_id.type() == Line3D::component_type_static() )
+            if( cmv.component_id.type == Line3D::component_type_static() )
             {
-                if( brep_.has_line( cmv.component_id.id() )
-                    && cmv.vertex < brep_.line( cmv.component_id.id() )
+                if( brep_.has_line( cmv.component_id.id )
+                    && cmv.vertex < brep_.line( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {
                     return true;
                 }
             }
-            if( cmv.component_id.type() == Surface3D::component_type_static() )
+            if( cmv.component_id.type == Surface3D::component_type_static() )
             {
-                if( brep_.has_surface( cmv.component_id.id() )
-                    && cmv.vertex < brep_.surface( cmv.component_id.id() )
+                if( brep_.has_surface( cmv.component_id.id )
+                    && cmv.vertex < brep_.surface( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {
                     return true;
                 }
             }
-            if( cmv.component_id.type() == Block3D::component_type_static() )
+            if( cmv.component_id.type == Block3D::component_type_static() )
             {
-                if( brep_.has_block( cmv.component_id.id() )
-                    && cmv.vertex < brep_.block( cmv.component_id.id() )
+                if( brep_.has_block( cmv.component_id.id )
+                    && cmv.vertex < brep_.block( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {

@@ -672,16 +672,16 @@ namespace geode
             for( const auto& polygon_pair : intersections )
             {
                 const auto& surface1 =
-                    model_.surface( polygon_pair.first.component_id.id() );
+                    model_.surface( polygon_pair.first.component_id.id );
                 const auto& surface2 =
-                    model_.surface( polygon_pair.second.component_id.id() );
+                    model_.surface( polygon_pair.second.component_id.id );
                 intersection_issues.add_issue( polygon_pair,
                     absl::StrCat( "Surfaces ",
                         surface1.name().value_or( surface1.id().string() ),
-                        " (", polygon_pair.first.component_id.id().string(),
+                        " (", polygon_pair.first.component_id.id.string(),
                         ") and ",
                         surface2.name().value_or( surface2.id().string() ),
-                        " (", polygon_pair.second.component_id.id().string(),
+                        " (", polygon_pair.second.component_id.id.string(),
                         ") intersect on polygons ",
                         polygon_pair.first.element_id, " and ",
                         polygon_pair.second.element_id ) );
@@ -696,15 +696,15 @@ namespace geode
             for( const auto& edge_pair : intersections )
             {
                 const auto& line1 =
-                    model_.line( edge_pair.first.component_id.id() );
+                    model_.line( edge_pair.first.component_id.id );
                 const auto& line2 =
-                    model_.line( edge_pair.second.component_id.id() );
+                    model_.line( edge_pair.second.component_id.id );
                 intersection_issues.add_issue( edge_pair,
                     absl::StrCat( "Lines ",
                         line1.name().value_or( line1.id().string() ), " (",
-                        edge_pair.first.component_id.id().string(), ") and ",
+                        edge_pair.first.component_id.id.string(), ") and ",
                         line2.name().value_or( line2.id().string() ), " (",
-                        edge_pair.second.component_id.id().string(),
+                        edge_pair.second.component_id.id.string(),
                         ") intersect on edges ", edge_pair.first.element_id,
                         " and ", edge_pair.second.element_id ) );
             }
@@ -719,11 +719,11 @@ namespace geode
             for( const auto& polygon_pair : intersections )
             {
                 const auto& surface =
-                    model_.surface( polygon_pair.first.component_id.id() );
+                    model_.surface( polygon_pair.first.component_id.id );
                 intersection_issues.add_issue( polygon_pair,
                     absl::StrCat( "Surface ",
                         surface.name().value_or( surface.id().string() ), " (",
-                        polygon_pair.first.component_id.id().string(),
+                        polygon_pair.first.component_id.id.string(),
                         ") has a self intersection on polygons ",
                         polygon_pair.first.element_id, "and ",
                         polygon_pair.second.element_id ) );
@@ -741,16 +741,16 @@ namespace geode
                 for( const auto& element_pair : intersections )
                 {
                     const auto& surface =
-                        model_.surface( element_pair.first.component_id.id() );
+                        model_.surface( element_pair.first.component_id.id );
                     const auto& line =
-                        model_.line( element_pair.second.component_id.id() );
+                        model_.line( element_pair.second.component_id.id );
                     intersection_issues.add_issue( element_pair,
                         absl::StrCat( "Surface ",
                             surface.name().value_or( surface.id().string() ),
-                            " (", element_pair.first.component_id.id().string(),
+                            " (", element_pair.first.component_id.id.string(),
                             ") and Line ",
                             line.name().value_or( line.id().string() ), " (",
-                            element_pair.second.component_id.id().string(),
+                            element_pair.second.component_id.id.string(),
                             ") intersect on polygon ",
                             element_pair.first.element_id, " and edge ",
                             element_pair.second.element_id ) );
