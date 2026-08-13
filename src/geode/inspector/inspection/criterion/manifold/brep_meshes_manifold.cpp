@@ -93,7 +93,7 @@ namespace geode
         : public internal::ComponentMeshesManifold< BRep >
     {
     public:
-        Impl( const BRep& brep )
+        explicit Impl( const BRep& brep )
             : internal::ComponentMeshesManifold< BRep >( brep )
         {
         }
@@ -156,7 +156,7 @@ namespace geode
             InspectionIssues< BRepNonManifoldEdge >& issues ) const
         {
             using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
-            absl::flat_hash_map< Edge, std::vector< uuid > > edges;
+            absl::linked_hash_map< Edge, std::vector< uuid > > edges;
             for( const auto& surface : model().active_surfaces() )
             {
                 const auto& mesh = surface.mesh();
@@ -171,16 +171,16 @@ namespace geode
                         {
                             continue;
                         }
-                        const auto v0 = model().unique_vertex(
+                        const auto vertex0 = model().unique_vertex(
                             { surface.component_id(), vertices[edge_id] } );
-                        const auto v1 =
+                        const auto vertex1 =
                             model().unique_vertex( { surface.component_id(),
                                 vertices[edge_id == vertices.size() - 1
                                              ? 0
                                              : edge_id + 1] } );
                         const auto info = edges.try_emplace(
-                            Edge{ std::array< index_t, 2 >{ v0, v1 } },
-                            std::vector< uuid >{ surface.id() } );
+                            Edge{ std::array{ vertex0, vertex1 } },
+                            std::vector{ surface.id() } );
                         if( !info.second )
                         {
                             info.first->second.push_back( surface.id() );
@@ -220,7 +220,7 @@ namespace geode
                 {
                     continue;
                 }
-                std::array< index_t, 2 > edge_unique_vertices;
+                std::array< index_t, 2 > edge_unique_vertices{ NO_ID, NO_ID };
                 for( const auto edge_vertex : LRange{ 2 } )
                 {
                     edge_unique_vertices[edge_vertex] =
@@ -276,7 +276,7 @@ namespace geode
         }
 
     private:
-        bool several_cmvs_on_one_vertex(
+        [[nodiscard]] bool several_cmvs_on_one_vertex(
             absl::Span< const index_t > unique_vertices ) const
         {
             std::vector< uuid > surfaces;
