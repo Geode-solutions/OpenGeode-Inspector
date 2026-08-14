@@ -52,22 +52,21 @@ namespace
         const geode::ComponentMeshVertex& cmv,
         const geode::Point< Model::dim >& point )
     {
-        if( cmv.component_id.type()
+        if( cmv.component_id.type
             == geode::Line< Model::dim >::component_type_static() )
         {
-            return point.inexact_equal( model.line( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+            return point.inexact_equal(
+                model.line( cmv.component_id.id ).mesh().point( cmv.vertex ) );
         }
-        else if( cmv.component_id.type()
+        else if( cmv.component_id.type
                  == geode::Surface< Model::dim >::component_type_static() )
         {
-            return point.inexact_equal( model.surface( cmv.component_id.id() )
+            return point.inexact_equal( model.surface( cmv.component_id.id )
                     .mesh()
                     .point( cmv.vertex ) );
         }
         return point.inexact_equal(
-            model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex ) );
+            model.corner( cmv.component_id.id ).mesh().point( cmv.vertex ) );
     }
 
     bool model_cmv_is_colocated_on_point( const geode::Section& model,
@@ -82,11 +81,10 @@ namespace
         const geode::ComponentMeshVertex& cmv,
         const geode::Point3D& point )
     {
-        if( cmv.component_id.type() == geode::Block3D::component_type_static() )
+        if( cmv.component_id.type == geode::Block3D::component_type_static() )
         {
-            return point.inexact_equal( model.block( cmv.component_id.id() )
-                    .mesh()
-                    .point( cmv.vertex ) );
+            return point.inexact_equal(
+                model.block( cmv.component_id.id ).mesh().point( cmv.vertex ) );
         }
         return model_cmv_is_colocated_on_point_base< geode::BRep >(
             model, cmv, point );
@@ -99,7 +97,7 @@ namespace
     {
         for( const auto& cmv : cmvs )
         {
-            if( !model.component( cmv.component_id.id() ).is_active() )
+            if( !model.component( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -115,21 +113,19 @@ namespace
     geode::Point< Model::dim > model_cmv_point(
         const Model& model, const geode::ComponentMeshVertex& cmv )
     {
-        if( cmv.component_id.type()
+        if( cmv.component_id.type
             == geode::Line< Model::dim >::component_type_static() )
         {
-            return model.line( cmv.component_id.id() )
-                .mesh()
-                .point( cmv.vertex );
+            return model.line( cmv.component_id.id ).mesh().point( cmv.vertex );
         }
-        if( cmv.component_id.type()
+        if( cmv.component_id.type
             == geode::Surface< Model::dim >::component_type_static() )
         {
-            return model.surface( cmv.component_id.id() )
+            return model.surface( cmv.component_id.id )
                 .mesh()
                 .point( cmv.vertex );
         }
-        return model.corner( cmv.component_id.id() ).mesh().point( cmv.vertex );
+        return model.corner( cmv.component_id.id ).mesh().point( cmv.vertex );
     }
 
     std::optional< geode::Point2D > model_unique_vertex_point(
@@ -138,7 +134,7 @@ namespace
     {
         for( const auto& cmv : cmvs )
         {
-            if( !model.component( cmv.component_id.id() ).is_active() )
+            if( !model.component( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -153,14 +149,14 @@ namespace
     {
         for( const auto& cmv : cmvs )
         {
-            if( !model.component( cmv.component_id.id() ).is_active() )
+            if( !model.component( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            if( cmv.component_id.type()
+            if( cmv.component_id.type
                 == geode::Block3D::component_type_static() )
             {
-                return model.block( cmv.component_id.id() )
+                return model.block( cmv.component_id.id )
                     .mesh()
                     .point( cmv.vertex );
             }

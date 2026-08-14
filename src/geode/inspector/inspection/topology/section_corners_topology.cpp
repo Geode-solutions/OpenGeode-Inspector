@@ -106,8 +106,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner2D::component_type_static()
-                || !section_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -116,7 +116,7 @@ namespace geode
                 return false;
             }
             corner_found = true;
-            const auto& corner_uuid = cmv.component_id.id();
+            const auto& corner_uuid = cmv.component_id.id;
             if( section_.nb_embeddings( corner_uuid ) > 1 )
             {
                 return false;
@@ -135,13 +135,12 @@ namespace geode
             for( const auto& line :
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( line.component_id.type()
-                    != Line2D::component_type_static() )
+                if( line.component_id.type != Line2D::component_type_static() )
                 {
                     continue;
                 }
                 if( !section_.Relationships::is_boundary(
-                        corner_uuid, line.component_id.id() ) )
+                        corner_uuid, line.component_id.id ) )
                 {
                     return false;
                 }
@@ -173,8 +172,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner2D::component_type_static()
-                || !section_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -195,16 +194,16 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner2D::component_type_static()
-                && section_.corner( cmv.component_id.id() ).is_active()
-                && section_.nb_embeddings( cmv.component_id.id() ) > 1 )
+            if( cmv.component_id.type == Corner2D::component_type_static()
+                && section_.corner( cmv.component_id.id ).is_active()
+                && section_.nb_embeddings( cmv.component_id.id ) > 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated to Corner",
-                    section_.corner( cmv.component_id.id() )
+                    section_.corner( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which has several embeddings." );
             }
         }
@@ -218,17 +217,17 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner2D::component_type_static()
-                && section_.corner( cmv.component_id.id() ).is_active()
-                && section_.nb_embeddings( cmv.component_id.id() ) < 1
-                && section_.nb_incidences( cmv.component_id.id() ) < 1 )
+            if( cmv.component_id.type == Corner2D::component_type_static()
+                && section_.corner( cmv.component_id.id ).is_active()
+                && section_.nb_embeddings( cmv.component_id.id ) < 1
+                && section_.nb_incidences( cmv.component_id.id ) < 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated to Corner ",
-                    section_.corner( cmv.component_id.id() )
+                    section_.corner( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which is neither internal nor boundary." );
             }
         }
@@ -242,22 +241,21 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner2D::component_type_static()
-                || !section_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner2D::component_type_static()
+                || !section_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            const auto& corner_uuid = cmv.component_id.id();
+            const auto& corner_uuid = cmv.component_id.id;
             for( const auto& line :
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( line.component_id.type()
-                    != Line2D::component_type_static() )
+                if( line.component_id.type != Line2D::component_type_static() )
                 {
                     continue;
                 }
                 if( !section_.Relationships::is_boundary(
-                        corner_uuid, line.component_id.id() ) )
+                        corner_uuid, line.component_id.id ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is associated with Corner ",
@@ -265,10 +263,10 @@ namespace geode
                             .name()
                             .value_or( corner_uuid.string() ),
                         " (", corner_uuid.string(), "), part of Line ",
-                        section_.line( line.component_id.id() )
+                        section_.line( line.component_id.id )
                             .name()
-                            .value_or( line.component_id.id().string() ),
-                        " (", line.component_id.id().string(),
+                            .value_or( line.component_id.id.string() ),
+                        " (", line.component_id.id.string(),
                         "), but is not a boundary of the Line." );
                 }
             }

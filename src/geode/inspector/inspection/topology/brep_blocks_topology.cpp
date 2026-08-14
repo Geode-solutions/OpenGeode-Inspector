@@ -651,33 +651,32 @@ namespace geode
         for( const auto& surface_cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( surface_cmv.component_id.type()
+            if( surface_cmv.component_id.type
                 != Surface3D::component_type_static() )
             {
                 continue;
             }
             if( brep_.Relationships::is_boundary(
-                    surface_cmv.component_id.id(), block_uuids[0] )
+                    surface_cmv.component_id.id, block_uuids[0] )
                 && brep_.Relationships::is_boundary(
-                    surface_cmv.component_id.id(), block_uuids[1] ) )
+                    surface_cmv.component_id.id, block_uuids[1] ) )
             {
                 return std::nullopt;
             }
             for( const auto& line_cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( line_cmv.component_id.type()
+                if( line_cmv.component_id.type
                     != Line3D::component_type_static() )
                 {
                     continue;
                 }
                 if( brep_.Relationships::is_boundary(
-                        line_cmv.component_id.id(),
-                        surface_cmv.component_id.id() )
+                        line_cmv.component_id.id, surface_cmv.component_id.id )
                     && ( brep_.Relationships::is_boundary(
-                             surface_cmv.component_id.id(), block_uuids[0] )
+                             surface_cmv.component_id.id, block_uuids[0] )
                          || brep_.Relationships::is_boundary(
-                             surface_cmv.component_id.id(), block_uuids[1] ) ) )
+                             surface_cmv.component_id.id, block_uuids[1] ) ) )
                 {
                     return std::nullopt;
                 }
@@ -721,48 +720,47 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Surface3D::component_type_static()
-                || !brep_.surface( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Surface3D::component_type_static()
+                || !brep_.surface( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            if( brep_.nb_incidences( cmv.component_id.id() ) >= 1
+            if( brep_.nb_incidences( cmv.component_id.id ) >= 1
                 && absl::c_contains(
-                    not_boundary_surfaces, cmv.component_id.id() ) )
+                    not_boundary_surfaces, cmv.component_id.id ) )
             {
                 return absl::StrCat( "unique vertex with index ",
                     unique_vertex_index, " is part of Surface ",
-                    brep_.surface( cmv.component_id.id() )
+                    brep_.surface( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which should not be boundary of any Block." );
             }
-            if( brep_.nb_embeddings( cmv.component_id.id() ) >= 1
-                && brep_.nb_incidences( cmv.component_id.id() ) < 1
+            if( brep_.nb_embeddings( cmv.component_id.id ) >= 1
+                && brep_.nb_incidences( cmv.component_id.id ) < 1
                 && !absl::c_contains(
-                    not_boundary_surfaces, cmv.component_id.id() )
-                && absl::c_contains( dangling_surface, cmv.component_id.id() ) )
+                    not_boundary_surfaces, cmv.component_id.id )
+                && absl::c_contains( dangling_surface, cmv.component_id.id ) )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Surface ",
-                    brep_.surface( cmv.component_id.id() )
+                    brep_.surface( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which should not be embedded in any Block." );
             }
-            if( brep_.nb_incidences( cmv.component_id.id() ) < 1
-                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
-                && !absl::c_contains(
-                    dangling_surface, cmv.component_id.id() ) )
+            if( brep_.nb_incidences( cmv.component_id.id ) < 1
+                && brep_.nb_embeddings( cmv.component_id.id ) < 1
+                && !absl::c_contains( dangling_surface, cmv.component_id.id ) )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Surface ",
-                    brep_.surface( cmv.component_id.id() )
+                    brep_.surface( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which is not internal to "
                     "a Block while it should be." );
             }

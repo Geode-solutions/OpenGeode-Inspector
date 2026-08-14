@@ -116,8 +116,8 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Surface3D::component_type_static()
-                && brep_.surface( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type == Surface3D::component_type_static()
+                && brep_.surface( cmv.component_id.id ).is_active() )
             {
                 surface_found = true;
                 break;
@@ -169,13 +169,13 @@ namespace geode
             }
             for( const auto& embedding : brep_.embeddings( surface_id ) )
             {
-                const auto& block = brep_.block( embedding.id() );
+                const auto& block = brep_.block( embedding.id );
                 if( !block.is_active() )
                 {
                     continue;
                 }
                 if( brep_.Relationships::is_boundary(
-                        surface_id, embedding.id() ) )
+                        surface_id, embedding.id ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of Surface ",
@@ -183,13 +183,13 @@ namespace geode
                         surface_id.string(),
                         "), which is both internal and boundary of ", "Block ",
                         block.name().value_or( block.id().string() ), " (",
-                        embedding.id().string(), ")" );
+                        embedding.id.string(), ")" );
                 }
                 if( internal::brep_blocks_are_meshed( brep_ )
                     && !absl::c_any_of(
                         brep_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
-                            return cmv.component_id.id() == embedding.id();
+                            return cmv.component_id.id == embedding.id;
                         } ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
@@ -198,7 +198,7 @@ namespace geode
                         surface_id.string(), " (", surface_id.string(),
                         "), which is embedded in Block ",
                         block.name().value_or( block.id().string() ), " (",
-                        embedding.id().string(), " (", embedding.id().string(),
+                        embedding.id.string(), " (", embedding.id.string(),
                         "), but the unique vertex is not linked to any "
                         "of the Block vertices." );
                 }
@@ -229,12 +229,11 @@ namespace geode
             for( const auto& cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( cmv.component_id.type()
-                    != Corner3D::component_type_static() )
+                if( cmv.component_id.type != Corner3D::component_type_static() )
                 {
                     continue;
                 }
-                const auto& corner = brep_.corner( cmv.component_id.id() );
+                const auto& corner = brep_.corner( cmv.component_id.id );
                 for( const auto& surface_id : surface_uuids )
                 {
                     const auto& surface = brep_.surface( surface_id );
@@ -270,7 +269,7 @@ namespace geode
             for( const auto& cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( cmv.component_id.type() != Line3D::component_type_static() )
+                if( cmv.component_id.type != Line3D::component_type_static() )
                 {
                     continue;
                 }
@@ -278,9 +277,9 @@ namespace geode
                 for( const auto& surface_id : surface_uuids )
                 {
                     if( brep_.Relationships::is_boundary(
-                            cmv.component_id.id(), surface_id )
+                            cmv.component_id.id, surface_id )
                         || brep_.Relationships::is_internal(
-                            cmv.component_id.id(), surface_id ) )
+                            cmv.component_id.id, surface_id ) )
                     {
                         nb_of_line_relationships_with_surfaces += 1;
                     }
@@ -293,12 +292,11 @@ namespace geode
             for( const auto& cmv :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( cmv.component_id.type()
-                    != Corner3D::component_type_static() )
+                if( cmv.component_id.type != Corner3D::component_type_static() )
                 {
                     continue;
                 }
-                if( brep_.Relationships::nb_embeddings( cmv.component_id.id() )
+                if( brep_.Relationships::nb_embeddings( cmv.component_id.id )
                         + nb_of_line_relationships_with_surfaces
                     < surface_uuids.size() )
                 {
@@ -307,7 +305,7 @@ namespace geode
                         "Line, is a Corner, but is not internal to all the "
                         "Surfaces without relationships to the Line." );
                 }
-                if( brep_.Relationships::nb_embeddings( cmv.component_id.id() )
+                if( brep_.Relationships::nb_embeddings( cmv.component_id.id )
                         + nb_of_line_relationships_with_surfaces
                     > surface_uuids.size() )
                 {
@@ -334,11 +332,11 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Surface3D::component_type_static() )
+            if( cmv.component_id.type != Surface3D::component_type_static() )
             {
                 continue;
             }
-            const auto& surface = brep_.surface( cmv.component_id.id() );
+            const auto& surface = brep_.surface( cmv.component_id.id );
             if( surface.mesh().is_vertex_on_border( cmv.vertex ) )
             {
                 continue;
@@ -353,7 +351,7 @@ namespace geode
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of a Line and of Surface ",
                         surface.name().value_or( surface.id().string() ), " (",
-                        cmv.component_id.id().string(),
+                        cmv.component_id.id.string(),
                         ") but the associated vertex in the "
                         "Surface mesh is not on the mesh border." );
                 }

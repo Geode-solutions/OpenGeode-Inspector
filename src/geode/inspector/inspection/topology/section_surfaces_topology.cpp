@@ -100,8 +100,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Surface2D::component_type_static()
-                || !section_.surface( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Surface2D::component_type_static()
+                || !section_.surface( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -144,15 +144,15 @@ namespace geode
             for( const auto& line_cmv :
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( line_cmv.component_id.type()
+                if( line_cmv.component_id.type
                     != Line2D::component_type_static() )
                 {
                     continue;
                 }
                 if( section_.Relationships::is_boundary(
-                        line_cmv.component_id.id(), surface_uuids[0] )
+                        line_cmv.component_id.id, surface_uuids[0] )
                     && section_.Relationships::is_boundary(
-                        line_cmv.component_id.id(), surface_uuids[1] ) )
+                        line_cmv.component_id.id, surface_uuids[1] ) )
                 {
                     return std::nullopt;
                 }
@@ -176,31 +176,31 @@ namespace geode
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( line_cmv.component_id.type() != Line2D::component_type_static()
-                || !section_.line( line_cmv.component_id.id() ).is_active() )
+            if( line_cmv.component_id.type != Line2D::component_type_static()
+                || !section_.line( line_cmv.component_id.id ).is_active() )
             {
                 continue;
             }
             for( const auto& surface_cmv :
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( surface_cmv.component_id.type()
+                if( surface_cmv.component_id.type
                         != Surface2D::component_type_static()
-                    || !section_.surface( surface_cmv.component_id.id() )
+                    || !section_.surface( surface_cmv.component_id.id )
                         .is_active() )
                 {
                     continue;
                 }
-                if( !section_.surface( surface_cmv.component_id.id() )
+                if( !section_.surface( surface_cmv.component_id.id )
                         .mesh()
                         .is_vertex_on_border( surface_cmv.vertex ) )
                 {
                     return absl::StrCat( "Unique vertex ", unique_vertex_index,
                         " is part of a Line and of Surface ",
-                        section_.surface( surface_cmv.component_id.id() )
+                        section_.surface( surface_cmv.component_id.id )
                             .name()
-                            .value_or( surface_cmv.component_id.id().string() ),
-                        " (", surface_cmv.component_id.id().string(),
+                            .value_or( surface_cmv.component_id.id.string() ),
+                        " (", surface_cmv.component_id.id.string(),
                         ") but the associated vertex in the Surface "
                         "mesh is not on the mesh border." );
                 }

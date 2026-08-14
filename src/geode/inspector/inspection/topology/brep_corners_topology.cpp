@@ -106,8 +106,8 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner3D::component_type_static()
-                || !brep_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner3D::component_type_static()
+                || !brep_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -116,7 +116,7 @@ namespace geode
                 return false;
             }
             corner_found = true;
-            const auto& corner_uuid = cmv.component_id.id();
+            const auto& corner_uuid = cmv.component_id.id;
             if( brep_.nb_embeddings( corner_uuid ) == 0 )
             {
                 if( brep_.nb_incidences( corner_uuid ) == 0 )
@@ -161,8 +161,8 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner3D::component_type_static()
-                || !brep_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner3D::component_type_static()
+                || !brep_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
@@ -183,22 +183,22 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner3D::component_type_static()
-                && brep_.corner( cmv.component_id.id() ).is_active()
-                && brep_.nb_embeddings( cmv.component_id.id() ) > 1 )
+            if( cmv.component_id.type == Corner3D::component_type_static()
+                && brep_.corner( cmv.component_id.id ).is_active()
+                && brep_.nb_embeddings( cmv.component_id.id ) > 1 )
             {
                 for( const auto& embedding :
-                    brep_.embeddings( cmv.component_id.id() ) )
+                    brep_.embeddings( cmv.component_id.id ) )
                 {
-                    if( embedding.type() == Block3D::component_type_static()
-                        && brep_.block( embedding.id() ).is_active() )
+                    if( embedding.type == Block3D::component_type_static()
+                        && brep_.block( embedding.id ).is_active() )
                     {
                         return absl::StrCat( "unique vertex ",
                             unique_vertex_index, " is associated to Corner ",
-                            brep_.corner( cmv.component_id.id() )
+                            brep_.corner( cmv.component_id.id )
                                 .name()
-                                .value_or( cmv.component_id.id().string() ),
-                            " (", cmv.component_id.id().string(),
+                                .value_or( cmv.component_id.id.string() ),
+                            " (", cmv.component_id.id.string(),
                             "), which is embedded in several components "
                             "including a Block." );
                     }
@@ -215,17 +215,17 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Corner3D::component_type_static()
-                && brep_.corner( cmv.component_id.id() ).is_active()
-                && brep_.nb_embeddings( cmv.component_id.id() ) < 1
-                && brep_.nb_incidences( cmv.component_id.id() ) < 1 )
+            if( cmv.component_id.type == Corner3D::component_type_static()
+                && brep_.corner( cmv.component_id.id ).is_active()
+                && brep_.nb_embeddings( cmv.component_id.id ) < 1
+                && brep_.nb_incidences( cmv.component_id.id ) < 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is associated to Corner ",
-                    brep_.corner( cmv.component_id.id() )
+                    brep_.corner( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which is neither internal nor boundary." );
             }
         }
@@ -239,18 +239,18 @@ namespace geode
         for( const auto& cmv :
             brep_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Corner3D::component_type_static()
-                || !brep_.corner( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Corner3D::component_type_static()
+                || !brep_.corner( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            const auto& corner = brep_.corner( cmv.component_id.id() );
+            const auto& corner = brep_.corner( cmv.component_id.id );
             absl::linked_hash_map< uuid, index_t > line_to_nb_cmvs;
             for( const auto& cmv_line :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
-                const auto& line_id = cmv_line.component_id.id();
-                if( cmv_line.component_id.type()
+                const auto& line_id = cmv_line.component_id.id;
+                if( cmv_line.component_id.type
                         != Line3D::component_type_static()
                     || !brep_.line( line_id ).is_active() )
                 {
