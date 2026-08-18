@@ -84,7 +84,7 @@ namespace geode
                     {
                         return false;
                     }
-                    if( section_.component( cmv.component_id.id() ).is_active()
+                    if( section_.component( cmv.component_id.id ).is_active()
                         && section_.unique_vertex( cmv ) != uv_id )
                     {
                         return false;
@@ -124,7 +124,7 @@ namespace geode
                                        cmv.string(), "]." ) );
                         continue;
                     }
-                    if( section_.component( cmv.component_id.id() ).is_active()
+                    if( section_.component( cmv.component_id.id ).is_active()
                         && section_.unique_vertex( cmv ) != uv_id )
                     {
                         linked_to_nonbijective_result.add_issue(
@@ -199,30 +199,30 @@ namespace geode
     private:
         bool cmv_exists_in_section( const ComponentMeshVertex& cmv ) const
         {
-            if( cmv.component_id.type() == Corner2D::component_type_static() )
+            if( cmv.component_id.type == Corner2D::component_type_static() )
             {
-                if( section_.has_corner( cmv.component_id.id() )
-                    && cmv.vertex < section_.corner( cmv.component_id.id() )
+                if( section_.has_corner( cmv.component_id.id )
+                    && cmv.vertex < section_.corner( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {
                     return true;
                 }
             }
-            if( cmv.component_id.type() == Line2D::component_type_static() )
+            if( cmv.component_id.type == Line2D::component_type_static() )
             {
-                if( section_.has_line( cmv.component_id.id() )
-                    && cmv.vertex < section_.line( cmv.component_id.id() )
+                if( section_.has_line( cmv.component_id.id )
+                    && cmv.vertex < section_.line( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {
                     return true;
                 }
             }
-            if( cmv.component_id.type() == Surface2D::component_type_static() )
+            if( cmv.component_id.type == Surface2D::component_type_static() )
             {
-                if( section_.has_surface( cmv.component_id.id() )
-                    && cmv.vertex < section_.surface( cmv.component_id.id() )
+                if( section_.has_surface( cmv.component_id.id )
+                    && cmv.vertex < section_.surface( cmv.component_id.id )
                                .mesh()
                                .nb_vertices() )
                 {

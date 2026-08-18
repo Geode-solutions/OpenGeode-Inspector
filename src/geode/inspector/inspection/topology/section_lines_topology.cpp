@@ -116,8 +116,8 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Line2D::component_type_static()
-                && section_.line( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type == Line2D::component_type_static()
+                && section_.line( cmv.component_id.id ).is_active() )
             {
                 is_a_line = true;
                 break;
@@ -159,20 +159,20 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() != Line2D::component_type_static()
-                || !section_.line( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type != Line2D::component_type_static()
+                || !section_.line( cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            if( section_.nb_embeddings( cmv.component_id.id() ) < 1
-                && section_.nb_incidences( cmv.component_id.id() ) < 1 )
+            if( section_.nb_embeddings( cmv.component_id.id ) < 1
+                && section_.nb_incidences( cmv.component_id.id ) < 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Line ",
-                    section_.line( cmv.component_id.id() )
+                    section_.line( cmv.component_id.id )
                         .name()
-                        .value_or( cmv.component_id.id().string() ),
-                    " (", cmv.component_id.id().string(),
+                        .value_or( cmv.component_id.id.string() ),
+                    " (", cmv.component_id.id.string(),
                     "), which is neither embedded nor incident." );
             }
         }
@@ -186,39 +186,39 @@ namespace geode
         for( const auto& line_cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( line_cmv.component_id.type() != Line2D::component_type_static()
-                || !section_.line( line_cmv.component_id.id() ).is_active() )
+            if( line_cmv.component_id.type != Line2D::component_type_static()
+                || !section_.line( line_cmv.component_id.id ).is_active() )
             {
                 continue;
             }
-            if( section_.nb_embeddings( line_cmv.component_id.id() ) < 1 )
+            if( section_.nb_embeddings( line_cmv.component_id.id ) < 1 )
             {
                 return std::nullopt;
             }
-            if( section_.nb_embeddings( line_cmv.component_id.id() ) > 1 )
+            if( section_.nb_embeddings( line_cmv.component_id.id ) > 1 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of line ",
-                    section_.line( line_cmv.component_id.id() )
+                    section_.line( line_cmv.component_id.id )
                         .name()
-                        .value_or( line_cmv.component_id.id().string() ),
-                    " (", line_cmv.component_id.id().string(),
+                        .value_or( line_cmv.component_id.id.string() ),
+                    " (", line_cmv.component_id.id.string(),
                     "), which has multiple embeddings." );
             }
-            if( section_.nb_incidences( line_cmv.component_id.id() ) > 0 )
+            if( section_.nb_incidences( line_cmv.component_id.id ) > 0 )
             {
                 return absl::StrCat( "unique vertex ", unique_vertex_index,
                     " is part of Line ",
-                    section_.line( line_cmv.component_id.id() )
+                    section_.line( line_cmv.component_id.id )
                         .name()
-                        .value_or( line_cmv.component_id.id().string() ),
-                    " (", line_cmv.component_id.id().string(),
+                        .value_or( line_cmv.component_id.id.string() ),
+                    " (", line_cmv.component_id.id.string(),
                     "), which has both an embedding and incidence(s)." );
             }
             for( const auto& embedding :
-                section_.embeddings( line_cmv.component_id.id() ) )
+                section_.embeddings( line_cmv.component_id.id ) )
             {
-                if( !section_.surface( embedding.id() ).is_active() )
+                if( !section_.surface( embedding.id ).is_active() )
                 {
                     continue;
                 }
@@ -226,20 +226,20 @@ namespace geode
                     && !absl::c_any_of(
                         section_.component_mesh_vertices( unique_vertex_index ),
                         [&embedding]( const ComponentMeshVertex& cmv ) {
-                            return cmv.component_id.id() == embedding.id();
+                            return cmv.component_id.id == embedding.id;
                         } ) )
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of Line ",
-                        section_.line( line_cmv.component_id.id() )
+                        section_.line( line_cmv.component_id.id )
                             .name()
-                            .value_or( line_cmv.component_id.id().string() ),
+                            .value_or( line_cmv.component_id.id.string() ),
                         " (", line_cmv.component_id.string(),
                         "), which is embedded in surface ",
-                        section_.surface( embedding.id() )
+                        section_.surface( embedding.id )
                             .name()
-                            .value_or( embedding.id().string() ),
-                        " (", embedding.id().string(),
+                            .value_or( embedding.id.string() ),
+                        " (", embedding.id.string(),
                         "), but the unique vertex is not linked to the "
                         "Surface mesh vertices." );
                 }
@@ -321,12 +321,12 @@ namespace geode
         for( const auto& cmv :
             section_.component_mesh_vertices( unique_vertex_index ) )
         {
-            if( cmv.component_id.type() == Line2D::component_type_static()
-                && section_.line( cmv.component_id.id() ).is_active() )
+            if( cmv.component_id.type == Line2D::component_type_static()
+                && section_.line( cmv.component_id.id ).is_active() )
             {
                 nb_cmv_lines += 1;
             }
-            else if( cmv.component_id.type()
+            else if( cmv.component_id.type
                      == Corner2D::component_type_static() )
             {
                 corner_found = true;

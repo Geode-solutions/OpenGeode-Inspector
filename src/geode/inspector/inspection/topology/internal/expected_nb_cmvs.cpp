@@ -97,20 +97,19 @@ namespace
     {
         const auto nb_block_cmvs = count_cmvs(
             unique_vertex_cmvs.block_cmvs, [&block_uuid]( const auto& cmv ) {
-                return cmv.component_id.id() == block_uuid;
+                return cmv.component_id.id == block_uuid;
             } );
         const auto& block = brep.block( block_uuid );
         geode::index_t nb_boundary_surface_cmvs{ 0 };
         geode::index_t nb_internal_surface_cmvs{ 0 };
         for( const auto& cmv : unique_vertex_cmvs.surface_cmvs )
         {
-            if( brep.is_boundary(
-                    brep.surface( cmv.component_id.id() ), block ) )
+            if( brep.is_boundary( brep.surface( cmv.component_id.id ), block ) )
             {
                 nb_boundary_surface_cmvs++;
             }
             else if( brep.is_internal(
-                         brep.surface( cmv.component_id.id() ), block ) )
+                         brep.surface( cmv.component_id.id ), block ) )
             {
                 nb_internal_surface_cmvs++;
             }
@@ -123,7 +122,7 @@ namespace
         geode::index_t nb_line_boundary_to_several_internal_surfaces_cmvs{ 0 };
         for( const auto& cmv : unique_vertex_cmvs.line_cmvs )
         {
-            const auto& cmv_line = brep.line( cmv.component_id.id() );
+            const auto& cmv_line = brep.line( cmv.component_id.id );
             if( brep.nb_embedding_blocks( cmv_line ) != 0 )
             {
                 continue;
@@ -157,7 +156,7 @@ namespace
             {
                 continue;
             }
-            if( brep.nb_incidences( cmv.component_id.id() ) == 1 )
+            if( brep.nb_incidences( cmv.component_id.id ) == 1 )
             {
                 nb_free_line_cmvs++;
                 continue;
@@ -185,10 +184,10 @@ namespace
             /// On one side of a topological non-manifold => 2 cases possible,
             /// depending on wether the topological non-manifold is on the
             /// interior or exterior of the block
-            geode::Logger::warn( absl::StrCat(
+            geode::Logger::warning( absl::StrCat(
                 "[expected_block_cmvs_and_error] Unique vertex ",
                 unique_vertex_id, " at position [",
-                brep.block( unique_vertex_cmvs.block_cmvs[0].component_id.id() )
+                brep.block( unique_vertex_cmvs.block_cmvs[0].component_id.id )
                     .mesh()
                     .point( unique_vertex_cmvs.block_cmvs[0].vertex )
                     .string(),
@@ -197,16 +196,16 @@ namespace
             if( nb_block_cmvs
                 == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
             {
-                return std::make_pair( nb_block_cmvs, std::nullopt );
+                return { nb_block_cmvs, std::nullopt };
             }
         }
-        return std::make_pair( predicted_nb_block_cmvs,
+        return { predicted_nb_block_cmvs,
             nb_block_cmvs == predicted_nb_block_cmvs
                 ? std::nullopt
                 : std::make_optional( absl::StrCat( "unique vertex ",
                       unique_vertex_id, " at position [",
-                      brep.block( unique_vertex_cmvs.block_cmvs[0]
-                                      .component_id.id() )
+                      brep.block(
+                              unique_vertex_cmvs.block_cmvs[0].component_id.id )
                           .mesh()
                           .point( unique_vertex_cmvs.block_cmvs[0].vertex )
                           .string(),
@@ -227,7 +226,7 @@ namespace
                       nb_line_on_boundary_cmvs,
                       " cmvs counted for lines on the boundary, with ",
                       nb_block_cmvs, " Block CMVs (expected ",
-                      predicted_nb_block_cmvs, " with valid topology)." ) ) );
+                      predicted_nb_block_cmvs, " with valid topology)." ) ) };
     }
 } // namespace
 
@@ -242,22 +241,20 @@ namespace geode
             for( const auto& cmv :
                 brep.component_mesh_vertices( unique_vertex_id ) )
             {
-                if( cmv.component_id.type()
-                    == Block3D::component_type_static() )
+                if( cmv.component_id.type == Block3D::component_type_static() )
                 {
                     result.block_cmvs.push_back( cmv );
                 }
-                if( cmv.component_id.type()
+                if( cmv.component_id.type
                     == Surface3D::component_type_static() )
                 {
                     result.surface_cmvs.push_back( cmv );
                 }
-                if( cmv.component_id.type() == Line3D::component_type_static() )
+                if( cmv.component_id.type == Line3D::component_type_static() )
                 {
                     result.line_cmvs.push_back( cmv );
                 }
-                if( cmv.component_id.type()
-                    == Corner3D::component_type_static() )
+                if( cmv.component_id.type == Corner3D::component_type_static() )
                 {
                     result.corner_cmvs.push_back( cmv );
                 }

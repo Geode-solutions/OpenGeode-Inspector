@@ -37,7 +37,7 @@ namespace geode
     class Section;
     struct uuid;
     struct ComponentMeshVertex;
-    class ComponentID;
+    struct ComponentID;
     class VertexSet;
 } // namespace geode
 
@@ -59,9 +59,9 @@ namespace geode
             for( const auto& cmv :
                 model.component_mesh_vertices( unique_vertex_index ) )
             {
-                if( cmv.component_id.type() == type )
+                if( cmv.component_id.type == type )
                 {
-                    component_uuids.push_back( cmv.component_id.id() );
+                    component_uuids.push_back( cmv.component_id.id );
                 }
             }
             sort_unique( component_uuids );
