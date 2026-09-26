@@ -51,15 +51,11 @@ namespace
 {
     struct ComponentOverlap
     {
-        bool operator()(
-            geode::index_t first_component, geode::index_t second_component )
+        [[nodiscard]] bool operator()( geode::index_t /*first_component*/,
+            geode::index_t /*second_component*/ ) const
         {
-            component_pairs.emplace_back( first_component, second_component );
-            return false;
+            return true;
         }
-
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            component_pairs;
     };
 
     [[nodiscard]] absl::InlinedVector< geode::PolygonVertices, 1 >
@@ -203,6 +199,12 @@ namespace
               mesh1_( surface1_.mesh() ),
               mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() )
         {
+        }
+
+        [[nodiscard]] bool self_intersect(
+            geode::index_t p1_id, geode::index_t p2_id ) const
+        {
+            return p1_id != p2_id && polygons_intersect( p1_id, p2_id );
         }
 
     protected:
@@ -609,6 +611,12 @@ namespace
             return false;
         }
 
+        [[nodiscard]] bool self_intersect(
+            geode::index_t e1_id, geode::index_t e2_id ) const
+        {
+            return e1_id != e2_id && lines_intersect( e1_id, e2_id );
+        }
+
     private:
         bool lines_intersect( geode::index_t p1_id, geode::index_t p2_id ) const
         {
@@ -625,6 +633,25 @@ namespace
         const geode::EdgedCurve< dimension >& mesh1_;
         const geode::EdgedCurve< dimension >& mesh2_;
         const bool same_line_{ false };
+    };
+
+    template < typename Action >
+    class SelfIntersectionTest
+    {
+    public:
+        explicit SelfIntersectionTest( const Action& action )
+            : action_( action )
+        {
+        }
+
+        [[nodiscard]] bool operator()(
+            geode::index_t element1, geode::index_t element2 ) const
+        {
+            return action_.self_intersect( element1, element2 );
+        }
+
+    private:
+        const Action& action_;
     };
 } // namespace
 
@@ -785,17 +812,19 @@ namespace geode
             for( const auto& surface : model_.active_surfaces() )
             {
                 tasks.emplace_back( async::spawn( [this, &surface] {
-                    Action surfaces_intersection_action{ model_, surface.id(),
-                        surface.id() };
-                    surfaces_model_tree_
-                        .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
-                            surface.id() )]
-                        .compute_self_element_bbox_intersections(
-                            surfaces_intersection_action );
+                    const Action surfaces_intersection_action{ model_,
+                        surface.id(), surface.id() };
+                    const auto intersecting_elements =
+                        surfaces_model_tree_
+                            .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
+                                surface.id() )]
+                            .compute_self_element_bbox_intersections(
+                                SelfIntersectionTest< Action >{
+                                    surfaces_intersection_action } );
                     IntersectionsResult result;
                     const auto surface_id = surface.component_id();
                     for( const auto& [polygon1, polygon2] :
-                        surfaces_intersection_action.intersecting_elements() )
+                        intersecting_elements )
                     {
                         result.emplace_back(
                             ComponentMeshElement{ surface_id, polygon1 },
@@ -804,10 +833,11 @@ namespace geode
                     return result;
                 } ) );
             }
-            ComponentOverlap surfaces_overlap;
-            surfaces_model_tree_.components_tree_
-                .compute_self_element_bbox_intersections( surfaces_overlap );
-            for( const auto& components : surfaces_overlap.component_pairs )
+            const auto surfaces_overlap =
+                surfaces_model_tree_.components_tree_
+                    .compute_self_element_bbox_intersections(
+                        ComponentOverlap{} );
+            for( const auto& components : surfaces_overlap )
             {
                 tasks.emplace_back( async::spawn( [this, &components] {
                     const auto surface_uuid1 =
@@ -865,17 +895,20 @@ namespace geode
             for( const auto& line : model_.active_lines() )
             {
                 tasks.emplace_back( async::spawn( [this, &line] {
-                    LineLineIntersection lines_intersection_action{ model_,
-                        line.id(), line.id() };
-                    lines_model_tree_
-                        .mesh_trees_[lines_model_tree_.mesh_tree_ids_.at(
-                            line.id() )]
-                        .compute_self_element_bbox_intersections(
-                            lines_intersection_action );
+                    const LineLineIntersection lines_intersection_action{
+                        model_, line.id(), line.id()
+                    };
+                    const auto intersecting_elements =
+                        lines_model_tree_
+                            .mesh_trees_[lines_model_tree_.mesh_tree_ids_.at(
+                                line.id() )]
+                            .compute_self_element_bbox_intersections(
+                                SelfIntersectionTest<
+                                    LineLineIntersection< Model > >{
+                                    lines_intersection_action } );
                     IntersectionsResult result;
                     const auto line_id = line.component_id();
-                    for( const auto& [edge1, edge2] :
-                        lines_intersection_action.intersecting_elements() )
+                    for( const auto& [edge1, edge2] : intersecting_elements )
                     {
                         result.emplace_back(
                             ComponentMeshElement{ line_id, edge1 },
@@ -884,10 +917,11 @@ namespace geode
                     return result;
                 } ) );
             }
-            ComponentOverlap lines_overlap;
-            lines_model_tree_.components_tree_
-                .compute_self_element_bbox_intersections( lines_overlap );
-            for( const auto& components : lines_overlap.component_pairs )
+            const auto lines_overlap =
+                lines_model_tree_.components_tree_
+                    .compute_self_element_bbox_intersections(
+                        ComponentOverlap{} );
+            for( const auto& components : lines_overlap )
             {
                 tasks.emplace_back( async::spawn( [this, &components] {
                     const auto line_uuid1 =
