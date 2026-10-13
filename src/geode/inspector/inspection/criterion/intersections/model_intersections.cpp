@@ -87,24 +87,15 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t polygon_id, geode::index_t edge_id )
+        [[nodiscard]] bool operator()(
+            geode::index_t polygon_id, geode::index_t edge_id ) const
         {
-            if( polygon_edge_intersect( polygon_id, edge_id ) )
-            {
-                emplace( polygon_id, edge_id );
-            }
-            return false;
-        }
-
-        [[nodiscard]] std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_elements()
-        {
-            return std::move( intersecting_surface_polygon_line_edge_ );
+            return polygon_edge_intersect( polygon_id, edge_id );
         }
 
     private:
         [[nodiscard]] bool polygon_edge_intersect(
-            geode::index_t p_id, geode::index_t e_id )
+            geode::index_t p_id, geode::index_t e_id ) const
         {
             const auto polygon_vertices =
                 surface_mesh_.polygon_vertices( p_id );
@@ -142,18 +133,12 @@ namespace
             }
             return false;
         }
-        void emplace( geode::index_t p_id, geode::index_t e_id )
-        {
-            intersecting_surface_polygon_line_edge_.emplace_back( p_id, e_id );
-        }
 
     private:
         const geode::Surface3D& surface_;
         const geode::Line3D& line_;
         const geode::SurfaceMesh3D& surface_mesh_;
         const geode::EdgedCurve3D& line_mesh_;
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_surface_polygon_line_edge_;
     };
 
     template < typename Model >
@@ -162,27 +147,14 @@ namespace
     public:
         ModelIntersectionBase( const Model& model ) : model_( model ) {}
 
-        [[nodiscard]] std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_elements()
-        {
-            return std::move( intersecting_elements_ );
-        }
-
     protected:
         [[nodiscard]] const Model& model() const
         {
             return model_;
         }
 
-        void emplace( geode::index_t p1_id, geode::index_t p2_id )
-        {
-            intersecting_elements_.emplace_back( p1_id, p2_id );
-        }
-
     private:
         const Model& model_;
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_elements_;
     };
 
     template < typename Model >
@@ -199,12 +171,6 @@ namespace
               mesh1_( surface1_.mesh() ),
               mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() )
         {
-        }
-
-        [[nodiscard]] bool self_intersect(
-            geode::index_t p1_id, geode::index_t p2_id ) const
-        {
-            return p1_id != p2_id && polygons_intersect( p1_id, p2_id );
         }
 
     protected:
@@ -308,38 +274,6 @@ namespace
     };
 
     template < typename Model >
-    class OneModelSurfacesIntersection
-        : public ModelSurfacesIntersectionBase< Model >
-    {
-    public:
-        OneModelSurfacesIntersection( const Model& model,
-            const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< Model >(
-                  model, surface_id1, surface_id2 ),
-              same_surface_{ surface_id1 == surface_id2 }
-        {
-        }
-
-        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
-        {
-            if( same_surface_ && p1_id == p2_id )
-            {
-                return false;
-            }
-            if( this->polygons_intersect( p1_id, p2_id ) )
-            {
-                this->emplace( p1_id, p2_id );
-                return true;
-            }
-            return false;
-        }
-
-    private:
-        bool same_surface_;
-    };
-
-    template < typename Model >
     class AllModelSurfacesIntersection
         : public ModelSurfacesIntersectionBase< Model >
     {
@@ -353,17 +287,14 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
+        [[nodiscard]] bool operator()(
+            geode::index_t p1_id, geode::index_t p2_id ) const
         {
             if( same_surface_ && p1_id == p2_id )
             {
                 return false;
             }
-            if( this->polygons_intersect( p1_id, p2_id ) )
-            {
-                this->emplace( p1_id, p2_id );
-            }
-            return false;
+            return this->polygons_intersect( p1_id, p2_id );
         }
 
     private:
@@ -384,21 +315,14 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
+        [[nodiscard]] bool operator()(
+            geode::index_t p1_id, geode::index_t p2_id ) const
         {
-            if( !same_surface_ )
+            if( !same_surface_ || p1_id == p2_id )
             {
                 return false;
             }
-            if( same_surface_ && p1_id == p2_id )
-            {
-                return false;
-            }
-            if( this->polygons_intersect( p1_id, p2_id ) )
-            {
-                this->emplace( p1_id, p2_id );
-            }
-            return false;
+            return this->polygons_intersect( p1_id, p2_id );
         }
 
     private:
@@ -598,23 +522,14 @@ namespace
         {
         }
 
-        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
+        [[nodiscard]] bool operator()(
+            geode::index_t p1_id, geode::index_t p2_id ) const
         {
             if( same_line_ && p1_id == p2_id )
             {
                 return false;
             }
-            if( this->lines_intersect( p1_id, p2_id ) )
-            {
-                this->emplace( p1_id, p2_id );
-            }
-            return false;
-        }
-
-        [[nodiscard]] bool self_intersect(
-            geode::index_t e1_id, geode::index_t e2_id ) const
-        {
-            return e1_id != e2_id && lines_intersect( e1_id, e2_id );
+            return this->lines_intersect( p1_id, p2_id );
         }
 
     private:
@@ -633,25 +548,6 @@ namespace
         const geode::EdgedCurve< dimension >& mesh1_;
         const geode::EdgedCurve< dimension >& mesh2_;
         const bool same_line_{ false };
-    };
-
-    template < typename Action >
-    class SelfIntersectionTest
-    {
-    public:
-        explicit SelfIntersectionTest( const Action& action )
-            : action_( action )
-        {
-        }
-
-        [[nodiscard]] bool operator()(
-            geode::index_t element1, geode::index_t element2 ) const
-        {
-            return action_.self_intersect( element1, element2 );
-        }
-
-    private:
-        const Action& action_;
     };
 } // namespace
 
@@ -686,7 +582,7 @@ namespace geode
         [[nodiscard]] bool model_has_intersecting_surfaces() const
         {
             const auto intersections = intersecting_polygons<
-                OneModelSurfacesIntersection< Model > >();
+                AllModelSurfacesIntersection< Model > >();
             return !intersections.empty();
         }
 
@@ -819,8 +715,7 @@ namespace geode
                             .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
                                 surface.id() )]
                             .compute_self_element_bbox_intersections(
-                                SelfIntersectionTest< Action >{
-                                    surfaces_intersection_action } );
+                                surfaces_intersection_action );
                     IntersectionsResult result;
                     const auto surface_id = surface.component_id();
                     for( const auto& [polygon1, polygon2] :
@@ -844,19 +739,21 @@ namespace geode
                         surfaces_model_tree_.uuids_[components.first];
                     const auto surface_uuid2 =
                         surfaces_model_tree_.uuids_[components.second];
-                    Action surfaces_intersection_action{ model_, surface_uuid1,
-                        surface_uuid2 };
-                    surfaces_model_tree_.mesh_trees_[components.first]
-                        .compute_other_element_bbox_intersections(
-                            surfaces_model_tree_.mesh_trees_[components.second],
-                            surfaces_intersection_action );
+                    const Action surfaces_intersection_action{ model_,
+                        surface_uuid1, surface_uuid2 };
+                    const auto intersecting_elements =
+                        surfaces_model_tree_.mesh_trees_[components.first]
+                            .compute_other_element_bbox_intersections(
+                                surfaces_model_tree_
+                                    .mesh_trees_[components.second],
+                                surfaces_intersection_action );
                     IntersectionsResult result;
                     const auto component_id1 =
                         model_.surface( surface_uuid1 ).component_id();
                     const auto component_id2 =
                         model_.surface( surface_uuid2 ).component_id();
                     for( const auto& [polygon1, polygon2] :
-                        surfaces_intersection_action.intersecting_elements() )
+                        intersecting_elements )
                     {
                         result.emplace_back(
                             ComponentMeshElement{ component_id1, polygon1 },
@@ -903,9 +800,7 @@ namespace geode
                             .mesh_trees_[lines_model_tree_.mesh_tree_ids_.at(
                                 line.id() )]
                             .compute_self_element_bbox_intersections(
-                                SelfIntersectionTest<
-                                    LineLineIntersection< Model > >{
-                                    lines_intersection_action } );
+                                lines_intersection_action );
                     IntersectionsResult result;
                     const auto line_id = line.component_id();
                     for( const auto& [edge1, edge2] : intersecting_elements )
@@ -928,19 +823,21 @@ namespace geode
                         lines_model_tree_.uuids_[components.first];
                     const auto line_uuid2 =
                         lines_model_tree_.uuids_[components.second];
-                    LineLineIntersection lines_intersection_action{ model_,
-                        line_uuid1, line_uuid2 };
-                    lines_model_tree_.mesh_trees_[components.first]
-                        .compute_other_element_bbox_intersections(
-                            lines_model_tree_.mesh_trees_[components.second],
-                            lines_intersection_action );
+                    const LineLineIntersection lines_intersection_action{
+                        model_, line_uuid1, line_uuid2
+                    };
+                    const auto intersecting_elements =
+                        lines_model_tree_.mesh_trees_[components.first]
+                            .compute_other_element_bbox_intersections(
+                                lines_model_tree_
+                                    .mesh_trees_[components.second],
+                                lines_intersection_action );
                     IntersectionsResult result;
                     const auto component_id1 =
                         model_.line( line_uuid1 ).component_id();
                     const auto component_id2 =
                         model_.line( line_uuid2 ).component_id();
-                    for( const auto& [edge1, edge2] :
-                        lines_intersection_action.intersecting_elements() )
+                    for( const auto& [edge1, edge2] : intersecting_elements )
                     {
                         result.emplace_back(
                             ComponentMeshElement{ component_id1, edge1 },
@@ -995,15 +892,14 @@ namespace geode
                     {
                         continue;
                     }
-                    BRepLineSurfacesIntersection action{ brep, surface.id(),
-                        line.id() };
+                    const BRepLineSurfacesIntersection action{ brep,
+                        surface.id(), line.id() };
                     const auto& line_tree =
                         lines_model_tree_.mesh_trees_[lines_model_tree_
                                 .mesh_tree_ids_.at( line.id() )];
-                    surface_tree.compute_other_element_bbox_intersections(
-                        line_tree, action );
                     for( const auto& element_pair :
-                        action.intersecting_elements() )
+                        surface_tree.compute_other_element_bbox_intersections(
+                            line_tree, action ) )
                     {
                         component_intersections.emplace_back(
                             ComponentMeshElement{
