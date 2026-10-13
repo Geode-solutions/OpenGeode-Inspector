@@ -43,87 +43,33 @@
 namespace
 {
     template < geode::index_t dimension >
-    class TriangleEdgeIntersectionBase
+    class TriangleEdgeIntersection
     {
     public:
-        TriangleEdgeIntersectionBase(
+        TriangleEdgeIntersection(
             const geode::TriangulatedSurface< dimension >& surface,
             const geode::EdgedCurve< dimension >& curve )
             : surface_( surface ), curve_( curve )
         {
         }
 
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_elements()
+        [[nodiscard]] bool operator()(
+            geode::index_t triangle_id, geode::index_t edge_id ) const
         {
-            return std::move( intersecting_elements_ );
+            return edge_intersects_triangle( triangle_id, edge_id );
         }
 
-    protected:
-        bool edge_intersects_triangle(
+    private:
+        [[nodiscard]] bool edge_intersects_triangle(
             geode::index_t triangle_id, geode::index_t edge_id ) const;
-
-        void emplace( geode::index_t triangle_id, geode::index_t edge_id )
-        {
-            std::lock_guard< std::mutex > lock( mutex_ );
-            intersecting_elements_.emplace_back( triangle_id, edge_id );
-        }
 
     private:
         const geode::TriangulatedSurface< dimension >& surface_;
         const geode::EdgedCurve< dimension >& curve_;
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_elements_;
-        std::mutex mutex_;
-    };
-
-    template < geode::index_t dimension >
-    class OneTriangleEdgeIntersection
-        : public TriangleEdgeIntersectionBase< dimension >
-    {
-    public:
-        OneTriangleEdgeIntersection(
-            const geode::TriangulatedSurface< dimension >& surface,
-            const geode::EdgedCurve< dimension >& curve )
-            : TriangleEdgeIntersectionBase< dimension >( surface, curve )
-        {
-        }
-
-        bool operator()( geode::index_t triangle_id, geode::index_t edge_id )
-        {
-            if( this->edge_intersects_triangle( triangle_id, edge_id ) )
-            {
-                this->emplace( triangle_id, edge_id );
-                return true;
-            }
-            return false;
-        }
-    };
-
-    template < geode::index_t dimension >
-    class AllTriangleEdgeIntersection
-        : public TriangleEdgeIntersectionBase< dimension >
-    {
-    public:
-        AllTriangleEdgeIntersection(
-            const geode::TriangulatedSurface< dimension >& surface,
-            const geode::EdgedCurve< dimension >& curve )
-            : TriangleEdgeIntersectionBase< dimension >( surface, curve )
-        {
-        }
-
-        bool operator()( geode::index_t triangle_id, geode::index_t edge_id )
-        {
-            if( this->edge_intersects_triangle( triangle_id, edge_id ) )
-            {
-                this->emplace( triangle_id, edge_id );
-            }
-            return false;
-        }
     };
 
     template <>
-    bool TriangleEdgeIntersectionBase< 2 >::edge_intersects_triangle(
+    bool TriangleEdgeIntersection< 2 >::edge_intersects_triangle(
         geode::index_t triangle_id, geode::index_t edge_id ) const
     {
         const auto triangle = surface_.triangle( triangle_id );
@@ -158,7 +104,7 @@ namespace
     }
 
     template <>
-    bool TriangleEdgeIntersectionBase< 3 >::edge_intersects_triangle(
+    bool TriangleEdgeIntersection< 3 >::edge_intersects_triangle(
         geode::index_t triangle_id, geode::index_t edge_id ) const
     {
         const auto triangle = surface_.triangle( triangle_id );
@@ -225,8 +171,7 @@ namespace geode
 
         bool meshes_have_intersections() const
         {
-            const auto intersections = intersecting_triangles_with_edges<
-                OneTriangleEdgeIntersection< dimension > >();
+            const auto intersections = intersecting_triangles_with_edges();
             if( intersections.empty() )
             {
                 return false;
@@ -237,8 +182,7 @@ namespace geode
         InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
-            const auto intersections = intersecting_triangles_with_edges<
-                AllTriangleEdgeIntersection< dimension > >();
+            const auto intersections = intersecting_triangles_with_edges();
             InspectionIssues< std::pair< index_t, index_t > > issues{
                 "intersections between triangles and edges"
             };
@@ -252,16 +196,14 @@ namespace geode
         }
 
     private:
-        template < typename Action >
         std::vector< std::pair< index_t, index_t > >
             intersecting_triangles_with_edges() const
         {
             const auto surface_aabb = create_aabb_tree( surface_ );
             const auto curve_aabb = create_aabb_tree( curve_ );
-            Action action{ surface_, curve_ };
-            surface_aabb.compute_other_element_bbox_intersections(
-                curve_aabb, action );
-            return action.intersecting_elements();
+            return surface_aabb.compute_other_element_bbox_intersections(
+                curve_aabb,
+                TriangleEdgeIntersection< dimension >{ surface_, curve_ } );
         }
 
     private:

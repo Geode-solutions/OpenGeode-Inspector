@@ -41,55 +41,28 @@ namespace
     class PolygonPolygonIntersection
     {
     public:
-        PolygonPolygonIntersection( const geode::SurfaceMesh< dimension >& mesh,
-            bool stop_at_first_intersection )
-            : mesh_( mesh ),
-              stop_at_first_intersection_{ stop_at_first_intersection }
+        explicit PolygonPolygonIntersection(
+            const geode::SurfaceMesh< dimension >& mesh )
+            : mesh_( mesh )
         {
         }
 
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_polygons()
-        {
-            return std::move( intersecting_polygons_ );
-        }
-
-        bool operator()( geode::index_t p1_id, geode::index_t p2_id )
+        [[nodiscard]] bool operator()(
+            geode::index_t p1_id, geode::index_t p2_id ) const
         {
             if( p1_id == p2_id )
             {
                 return false;
             }
-            const auto p1_vertices = this->mesh().polygon_vertices( p1_id );
-            const auto p2_vertices = this->mesh().polygon_vertices( p2_id );
-            if( geode::detail::polygons_intersection_detection<
-                    geode::SurfaceMesh< dimension > >(
-                    mesh_, p1_vertices, p2_vertices ) )
-            {
-                this->emplace( p1_id, p2_id );
-                return stop_at_first_intersection_;
-            }
-            return false;
-        }
-
-    protected:
-        void emplace( geode::index_t p1_id, geode::index_t p2_id )
-        {
-            std::lock_guard< std::mutex > lock( mutex_ );
-            intersecting_polygons_.emplace_back( p1_id, p2_id );
-        }
-
-        const geode::SurfaceMesh< dimension >& mesh() const
-        {
-            return mesh_;
+            const auto p1_vertices = mesh_.polygon_vertices( p1_id );
+            const auto p2_vertices = mesh_.polygon_vertices( p2_id );
+            return geode::detail::polygons_intersection_detection<
+                geode::SurfaceMesh< dimension > >(
+                mesh_, p1_vertices, p2_vertices );
         }
 
     private:
         const geode::SurfaceMesh< dimension >& mesh_;
-        bool stop_at_first_intersection_;
-        std::vector< std::pair< geode::index_t, geode::index_t > >
-            intersecting_polygons_;
-        std::mutex mutex_;
     };
 } // namespace
 
@@ -106,7 +79,7 @@ namespace geode
 
         bool mesh_has_self_intersections() const
         {
-            const auto intersections = intersecting_polygons( true );
+            const auto intersections = intersecting_polygons();
             if( intersections.empty() )
             {
                 return false;
@@ -117,7 +90,7 @@ namespace geode
         InspectionIssues< std::pair< index_t, index_t > >
             intersecting_elements() const
         {
-            const auto intersections = intersecting_polygons( false );
+            const auto intersections = intersecting_polygons();
             InspectionIssues< std::pair< index_t, index_t > > issues{
                 "intersections between polygons"
             };
@@ -132,14 +105,13 @@ namespace geode
         }
 
     private:
-        std::vector< std::pair< index_t, index_t > > intersecting_polygons(
-            bool stop_at_first_intersection ) const
+        std::vector< std::pair< index_t, index_t > >
+            intersecting_polygons() const
         {
             const auto surface_aabb = create_aabb_tree( mesh_ );
-            PolygonPolygonIntersection< dimension > action{ mesh_,
-                stop_at_first_intersection };
-            surface_aabb.compute_self_element_bbox_intersections( action );
-            return action.intersecting_polygons();
+            const PolygonPolygonIntersection< dimension > action{ mesh_ };
+            return surface_aabb.compute_self_element_bbox_intersections(
+                action );
         }
 
     private:
