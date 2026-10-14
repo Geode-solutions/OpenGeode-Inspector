@@ -331,6 +331,35 @@ void check_brep_common_vertex_with_different_coordinates()
         "BRep common vertex with different coordinates" );
 }
 
+void check_brep_triangle_touching_plane()
+{
+    // A triangle with one vertex touching the inside of another triangle,
+    // its two other vertices being on the same side of the plane
+    const SurfaceDefinition< 3 > horizontal{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 2., 0., 0. } },
+            geode::Point3D{ { 0., 2., 0. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const SurfaceDefinition< 3 > touching{
+        { geode::Point3D{ { 0.5, 0.5, 0. } },
+            geode::Point3D{ { 0.5, 0.5, 1. } },
+            geode::Point3D{ { 1., 0., 1. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const auto brep = build_brep( { horizontal, touching }, {}, 0 );
+    check_nb_intersections(
+        nb_intersections( brep ), 1, "BRep triangle touching another" );
+
+    // Same configuration, slightly above the plane
+    const SurfaceDefinition< 3 > above{ { geode::Point3D{ { 0.5, 0.5, 0.1 } },
+                                            geode::Point3D{ { 0.5, 0.5, 1. } },
+                                            geode::Point3D{ { 1., 0., 1. } } },
+        { { 0, 1, 2 } }, {} };
+    const auto brep2 = build_brep( { horizontal, above }, {}, 0 );
+    check_nb_intersections(
+        nb_intersections( brep2 ), 0, "BRep triangle above another" );
+}
+
 void check_brep_with_empty_meshes()
 {
     // Two crossing triangles plus a surface and a line without vertices
@@ -362,6 +391,7 @@ int main()
         check_section_nested_triangles();
         check_brep_vertices_without_unique_vertex();
         check_brep_with_empty_meshes();
+        check_brep_triangle_touching_plane();
         check_brep_common_vertex_with_different_coordinates();
         check_collinear_lines();
         check_brep_line_in_surface_plane();

@@ -571,6 +571,28 @@ namespace
         return false;
     }
 
+    // True if the triangle vertices, except the common ones lying on the
+    // other triangle plane, are all strictly on the same side of this plane:
+    // both triangles can then only touch at their common vertex (if any).
+    [[nodiscard]] bool strictly_on_one_side( const geode::Triangle3D& triangle,
+        const geode::Triangle3D& other,
+        geode::index_t nb_common_vertices )
+    {
+        std::array< geode::SIDE, 3 > sides;
+        for( const auto v : geode::LRange{ 3 } )
+        {
+            sides[v] = geode::point_side_to_triangle(
+                triangle.vertices()[v].get(), other );
+        }
+        const auto nb_zeros = absl::c_count( sides, geode::SIDE::zero );
+        if( nb_zeros > nb_common_vertices )
+        {
+            return false;
+        }
+        const auto nb_positives = absl::c_count( sides, geode::SIDE::positive );
+        return nb_positives == 3 - nb_zeros || nb_positives == 0;
+    }
+
     template <>
     [[nodiscard]] bool
         ModelSurfacesIntersectionBase< geode::BRep >::triangles_intersect(
@@ -597,6 +619,12 @@ namespace
                           == geode::POSITION::parallel;
         }
         const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
+        if( strictly_on_one_side( triangle1, triangle2, common_vertices.size() )
+            || strictly_on_one_side(
+                triangle2, triangle1, common_vertices.size() ) )
+        {
+            return false;
+        }
         return triangle_intersects_other( triangle1, triangle2, t1_vertices,
                    t2_vertices, common_vertices, 1 )
                || triangle_intersects_other( triangle2, triangle1, t2_vertices,
