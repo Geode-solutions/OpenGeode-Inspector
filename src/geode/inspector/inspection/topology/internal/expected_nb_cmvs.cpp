@@ -191,15 +191,6 @@ namespace
             /// On one side of a topological non-manifold => 2 cases possible,
             /// depending on wether the topological non-manifold is on the
             /// interior or exterior of the block
-            geode::Logger::warning( absl::StrCat(
-                "[expected_block_cmvs_and_error] Unique vertex ",
-                unique_vertex_id, " at position [",
-                brep.block( unique_vertex_cmvs.block_cmvs[0].component_id.id )
-                    .mesh()
-                    .point( unique_vertex_cmvs.block_cmvs[0].vertex )
-                    .string(),
-                "] is on a topological non-manifold, which makes the correct "
-                "number of block cmvs unsure." ) );
             if( nb_block_cmvs_signed
                 == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
             {
