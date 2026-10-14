@@ -23,6 +23,10 @@
 
 #include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
 
+#include <absl/container/inlined_vector.h>
+
+#include <async++.h>
+
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
 
@@ -65,27 +69,47 @@ namespace geode
                     mesh_.name().value_or( mesh_.id().string() ),
                     " polyhedron facets adjacencies issues" )
             };
+            const auto wrong_facets = facets_with_wrong_adjacency();
             for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
             {
-                for( const auto facet_id :
-                    LRange{ mesh_.nb_polyhedron_facets( polyhedron_id ) } )
+                for( const auto facet_id : wrong_facets[polyhedron_id] )
                 {
-                    const PolyhedronFacet polyhedron_facet{ polyhedron_id,
-                        facet_id };
-                    if( !mesh_.is_polyhedron_facet_on_border( polyhedron_facet )
-                        && !mesh_polyhedron_facet_has_right_adjacency(
-                            polyhedron_facet ) )
-                    {
-                        wrong_adjacency_facets.add_issue( polyhedron_facet,
-                            absl::StrCat( "facet ", facet_id, " of polyhedron ",
-                                polyhedron_id, " has wrong adjacencies" ) );
-                    }
+                    wrong_adjacency_facets.add_issue(
+                        PolyhedronFacet{ polyhedron_id, facet_id },
+                        absl::StrCat( "facet ", facet_id, " of polyhedron ",
+                            polyhedron_id, " has wrong adjacencies" ) );
                 }
             }
             return wrong_adjacency_facets;
         }
 
     private:
+        // Facets with wrong adjacency of each polyhedron
+        std::vector< absl::InlinedVector< local_index_t, 1 > >
+            facets_with_wrong_adjacency() const
+        {
+            std::vector< absl::InlinedVector< local_index_t, 1 > > wrong_facets(
+                mesh_.nb_polyhedra() );
+            async::parallel_for(
+                async::irange( index_t{ 0 }, mesh_.nb_polyhedra() ),
+                [this, &wrong_facets]( index_t polyhedron_id ) {
+                    for( const auto facet_id :
+                        LRange{ mesh_.nb_polyhedron_facets( polyhedron_id ) } )
+                    {
+                        const PolyhedronFacet polyhedron_facet{ polyhedron_id,
+                            facet_id };
+                        if( !mesh_.is_polyhedron_facet_on_border(
+                                polyhedron_facet )
+                            && !mesh_polyhedron_facet_has_right_adjacency(
+                                polyhedron_facet ) )
+                        {
+                            wrong_facets[polyhedron_id].push_back( facet_id );
+                        }
+                    }
+                } );
+            return wrong_facets;
+        }
+
         bool mesh_polyhedron_facet_has_right_adjacency(
             const PolyhedronFacet& polyhedron_facet ) const
         {
