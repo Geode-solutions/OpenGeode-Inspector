@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/colocation/component_meshes_colocation.hpp>
 
+#include <absl/container/flat_hash_set.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
@@ -56,33 +58,23 @@ namespace
             new_colocated_points_groups;
         for( const auto& point_group : colocated_points_groups )
         {
-            absl::FixedArray< bool > filtered_colocation(
-                point_group.size() - 1, true );
-            for( const auto first_id : geode::Range{ point_group.size() - 1 } )
+            // Keep one point per unique vertex; points without unique vertex
+            // are always kept
+            absl::flat_hash_set< geode::index_t > unique_vertices;
+            const auto first_uv =
+                model.unique_vertex( { component_id, point_group[0] } );
+            if( first_uv != geode::NO_ID )
             {
-                if( !filtered_colocation[first_id] )
-                {
-                    continue;
-                }
-                const auto first_uv = model.unique_vertex(
-                    { component_id, point_group[first_id] } );
-                for( const auto second_id :
-                    geode::Range{ first_id + 1, point_group.size() } )
-                {
-                    if( first_uv
-                        == model.unique_vertex(
-                            { component_id, point_group[second_id] } ) )
-                    {
-                        filtered_colocation[second_id - 1] = false;
-                    }
-                }
+                unique_vertices.insert( first_uv );
             }
             std::vector< geode::index_t > colocated_points;
-            for( const auto pt_id : geode::Indices{ filtered_colocation } )
+            for( const auto pt_id : geode::Range{ 1, point_group.size() } )
             {
-                if( filtered_colocation[pt_id] )
+                const auto uv =
+                    model.unique_vertex( { component_id, point_group[pt_id] } );
+                if( uv == geode::NO_ID || unique_vertices.insert( uv ).second )
                 {
-                    colocated_points.push_back( point_group[pt_id + 1] );
+                    colocated_points.push_back( point_group[pt_id] );
                 }
             }
             if( !colocated_points.empty() )

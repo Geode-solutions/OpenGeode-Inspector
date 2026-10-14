@@ -63,6 +63,16 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-brep-colocation-degeneration.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-solid-colocation.cpp"
     DEPENDENCIES
         OpenGeode::basic
