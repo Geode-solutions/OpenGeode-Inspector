@@ -109,8 +109,9 @@ namespace geode
                         const auto is_on_surface =
                             polyhedron_facet_is_on_a_surface(
                                 block, polyhedron_facet );
-                        if( is_on_surface.has_value()
-                            && !is_on_surface.value() )
+                        // Facets with unlinked vertices cannot be on a
+                        // Surface
+                        if( !is_on_surface.value_or( false ) )
                         {
                             wrong_adjacencies.add_issue( polyhedron_facet,
                                 absl::StrCat( "facet ", facet_id,

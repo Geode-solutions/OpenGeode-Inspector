@@ -27,15 +27,19 @@
 #include <geode/geometry/point.hpp>
 
 #include <geode/mesh/builder/edged_curve_builder.hpp>
+#include <geode/mesh/builder/solid_mesh_builder.hpp>
 #include <geode/mesh/builder/surface_mesh_builder.hpp>
 #include <geode/mesh/core/edged_curve.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/builder/brep_builder.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
+#include <geode/inspector/inspection/criterion/adjacency/brep_meshes_adjacency.hpp>
 #include <geode/inspector/inspection/criterion/manifold/brep_meshes_manifold.hpp>
 
 namespace
@@ -93,6 +97,29 @@ void check_single_edge_line_without_unique_vertices()
         result.brep_non_manifold_edges.string() );
 }
 
+void check_block_facets_without_unique_vertices()
+{
+    geode::BRep brep;
+    geode::BRepBuilder builder{ brep };
+    const auto& block = brep.block( builder.add_block() );
+    auto mesh_builder = builder.block_mesh_builder( block );
+    mesh_builder->create_point( geode::Point3D{ { 0, 0, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 1, 0, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 0, 1, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 0, 0, 1 } } );
+    mesh_builder->create_polyhedron( { 0, 1, 2, 3 },
+        { { 1, 3, 2 }, { 0, 2, 3 }, { 3, 1, 0 }, { 0, 1, 2 } } );
+    const geode::BRepComponentMeshesAdjacency inspector{ brep };
+    const auto result = inspector.inspect_brep_meshes_adjacencies();
+    const auto& issues_map =
+        result.blocks_facets_with_wrong_adjacencies.issues_map();
+    geode::OpenGeodeInspectorInspectionException::test(
+        issues_map.contains( block.id() )
+            && issues_map.at( block.id() ).nb_issues() == 4,
+        "[Test] Block border facets without unique vertices should be "
+        "reported as not on a Surface" );
+}
+
 int main()
 {
     try
@@ -100,6 +127,7 @@ int main()
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_model_edges_without_unique_vertices();
         check_single_edge_line_without_unique_vertices();
+        check_block_facets_without_unique_vertices();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
