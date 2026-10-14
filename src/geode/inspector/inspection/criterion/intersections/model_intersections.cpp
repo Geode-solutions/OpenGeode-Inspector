@@ -74,6 +74,25 @@ namespace
         return triangles;
     }
 
+    // The segment lies in the triangle plane and overlaps it: it is an
+    // intersection unless the contact is reduced to triangle vertices
+    [[nodiscard]] bool segment_in_triangle_plane_intersects(
+        const geode::Segment3D& segment, const geode::Triangle3D& triangle )
+    {
+        for( const auto& vertex : segment.vertices() )
+        {
+            const auto position =
+                geode::point_triangle_position( vertex.get(), triangle );
+            if( position != geode::POSITION::vertex0
+                && position != geode::POSITION::vertex1
+                && position != geode::POSITION::vertex2 )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     class BRepLineSurfacesIntersection
     {
     public:
@@ -115,18 +134,19 @@ namespace
                         == geode::POSITION::inside
                     || segment_triangle_intersection.second
                            == geode::POSITION::inside
-                    || segment_triangle_intersection.first
-                           == geode::POSITION::edge0
-                    || segment_triangle_intersection.first
-                           == geode::POSITION::edge1
                     || segment_triangle_intersection.second
                            == geode::POSITION::edge0
                     || segment_triangle_intersection.second
                            == geode::POSITION::edge1
                     || segment_triangle_intersection.second
-                           == geode::POSITION::edge2
-                    || segment_triangle_intersection.first
                            == geode::POSITION::edge2 )
+                {
+                    return true;
+                }
+                if( segment_triangle_intersection.first
+                        == geode::POSITION::parallel
+                    && segment_in_triangle_plane_intersects(
+                        line_segment, triangle ) )
                 {
                     return true;
                 }

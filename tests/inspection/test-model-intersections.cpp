@@ -256,6 +256,30 @@ void check_brep_vertices_without_unique_vertex()
         "BRep surface without unique vertices (self)" );
 }
 
+void check_brep_line_in_surface_plane()
+{
+    // A line lying in the plane of a triangle and crossing it
+    const SurfaceDefinition< 3 > triangle{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 2., 0., 0. } },
+            geode::Point3D{ { 0., 2., 0. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const LineDefinition< 3 > crossing{ { geode::Point3D{ { -1., 0.5, 0. } },
+                                            geode::Point3D{ { 3., 0.5, 0. } } },
+        { { 0, 1 } }, {} };
+    const auto brep = build_brep( { triangle }, { crossing }, 0 );
+    check_nb_intersections( nb_intersections( brep ), 1,
+        "BRep line crossing a surface in its plane" );
+
+    // A line in the plane only touching a triangle vertex
+    const LineDefinition< 3 > touching{ { geode::Point3D{ { -1., 0., 0. } },
+                                            geode::Point3D{ { 0., 0., 0. } } },
+        { { 0, 1 } }, {} };
+    const auto brep2 = build_brep( { triangle }, { touching }, 0 );
+    check_nb_intersections( nb_intersections( brep2 ), 0,
+        "BRep line touching a surface vertex in its plane" );
+}
+
 void check_brep_with_empty_meshes()
 {
     // Two crossing triangles plus a surface and a line without vertices
@@ -287,6 +311,7 @@ int main()
         check_section_nested_triangles();
         check_brep_vertices_without_unique_vertex();
         check_brep_with_empty_meshes();
+        check_brep_line_in_surface_plane();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
