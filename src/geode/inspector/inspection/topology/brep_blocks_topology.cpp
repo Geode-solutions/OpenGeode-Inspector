@@ -255,19 +255,35 @@ namespace
             {
                 continue;
             }
-            const auto polygon_barycenter =
-                surface_mesh.polygon_barycenter( 0 );
-            bool is_dangling{ true };
-            for( const auto& block : brep.blocks() )
+            // Ray tracing may fail on ambiguous rays: try a few polygons, a
+            // surface which cannot be located is not reported as dangling
+            constexpr geode::index_t MAX_TRIALS{ 5 };
+            std::optional< bool > is_dangling;
+            for( const auto polygon_id : geode::Range{
+                     std::min( surface_mesh.nb_polygons(), MAX_TRIALS ) } )
             {
-                if( ray_tracing.is_point_inside_block(
-                        polygon_barycenter, block ) )
+                try
                 {
-                    is_dangling = false;
+                    const auto polygon_barycenter =
+                        surface_mesh.polygon_barycenter( polygon_id );
+                    is_dangling = true;
+                    for( const auto& block : brep.active_blocks() )
+                    {
+                        if( ray_tracing.is_point_inside_block(
+                                polygon_barycenter, block ) )
+                        {
+                            is_dangling = false;
+                            break;
+                        }
+                    }
                     break;
                 }
+                catch( const geode::OpenGeodeException& )
+                {
+                    is_dangling.reset();
+                }
             }
-            if( is_dangling )
+            if( is_dangling.value_or( false ) )
             {
                 dangling_surfaces.push_back( surface_id );
             }
