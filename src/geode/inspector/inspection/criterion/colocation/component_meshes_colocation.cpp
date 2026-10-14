@@ -25,6 +25,8 @@
 
 #include <absl/container/flat_hash_set.h>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
@@ -131,13 +133,24 @@ namespace
         geode::InspectionIssuesMap< std::vector< geode::index_t > >&
             components_colocated_points )
     {
+        using Issues = std::optional<
+            geode::InspectionIssues< std::vector< geode::index_t > > >;
+        std::vector< async::task< std::pair< geode::uuid, Issues > > > tasks;
         for( const auto& component : components )
         {
-            if( auto issues = component_colocated_points_groups< Inspector >(
-                    model, component ) )
+            tasks.emplace_back( async::spawn( [&model, &component] {
+                return std::pair{ component.id(),
+                    component_colocated_points_groups< Inspector >(
+                        model, component ) };
+            } ) );
+        }
+        for( auto& task : async::when_all( tasks ).get() )
+        {
+            auto [id, issues] = task.get();
+            if( issues )
             {
                 components_colocated_points.add_issues_to_map(
-                    component.id(), std::move( issues.value() ) );
+                    id, std::move( issues.value() ) );
             }
         }
     }
