@@ -186,6 +186,27 @@ void check_facet_non_manifold()
         "Solid shows wrong non manifold facet id." );
 }
 
+void check_edge_manifold_broken_adjacency()
+{
+    auto solid = geode::TetrahedralSolid3D::create();
+    auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
+    builder->create_vertices( 5 );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->set_point( 4, geode::Point3D{ { 3.5, 2.5, -.5 } } );
+    builder->create_tetrahedron( { 0, 1, 2, 3 } );
+    builder->create_tetrahedron( { 1, 4, 2, 3 } );
+    // One-way adjacency
+    builder->set_polyhedron_adjacent( { 0, 0 }, 1 );
+
+    const geode::SolidMeshEdgeManifold3D manifold_inspector{ *solid };
+    geode::OpenGeodeInspectorInspectionException::test(
+        !manifold_inspector.mesh_edges_are_manifold(),
+        "[Test] Solid with broken adjacency is shown as manifold." );
+}
+
 int main()
 {
     try
@@ -197,6 +218,8 @@ int main()
         check_edge_non_manifold();
         check_facet_manifold();
         check_facet_non_manifold();
+
+        check_edge_manifold_broken_adjacency();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
