@@ -92,6 +92,10 @@ namespace geode
             const auto adjacent_polyhedron =
                 mesh_.polyhedron_adjacent( polyhedron_facet );
             const auto polyhedron_adj_id = adjacent_polyhedron.value();
+            if( polyhedron_adj_id >= mesh_.nb_polyhedra() )
+            {
+                return false;
+            }
             const auto facet_vertices =
                 detail::OrientedVertexCycle< PolyhedronFacetVertices >(
                     mesh_.polyhedron_facet_vertices( polyhedron_facet ) );
