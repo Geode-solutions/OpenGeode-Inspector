@@ -39,6 +39,18 @@
 
 #include <geode/inspector/inspection/topology/internal/topology_helpers.hpp>
 
+namespace
+{
+    std::string embedding_label(
+        const geode::BRep& brep, const geode::ComponentID& embedding )
+    {
+        const auto name = brep.component( embedding.id ).name();
+        const auto id = embedding.id.string();
+        return absl::StrCat( embedding.type.get(), " ",
+            name ? name.value() : id, " (", id, ")" );
+    }
+} // namespace
+
 namespace geode
 {
     index_t BRepLinesTopologyInspectionResult::nb_issues() const
@@ -185,12 +197,8 @@ namespace geode
                         " is part of line ",
                         line.name().value_or( line_id.string() ), " (",
                         line_id.string(),
-                        "), which is both boundary and embedded in "
-                        "Surface ",
-                        brep_.surface( embedding.id )
-                            .name()
-                            .value_or( embedding.id.string() ),
-                        " (", embedding.id.string() + ")." );
+                        "), which is both boundary and embedded in ",
+                        embedding_label( brep_, embedding ), "." );
                 }
                 if( embedding.type == Block3D::component_type_static()
                     && !internal::brep_blocks_are_meshed( brep_ ) )
@@ -206,13 +214,10 @@ namespace geode
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is part of Line ",
                         line.name().value_or( line_id.string() ), " (",
-                        line_id.string(), "), which is embedded in Surface ",
-                        brep_.surface( embedding.id )
-                            .name()
-                            .value_or( embedding.id.string() ),
-                        " (", embedding.id.string(),
-                        "), but the unique vertex is not linked to the "
-                        "Surface mesh vertices." );
+                        line_id.string(), "), which is embedded in ",
+                        embedding_label( brep_, embedding ),
+                        ", but the unique vertex is not linked to the ",
+                        embedding.type.get(), " mesh vertices." );
                 }
             }
         }

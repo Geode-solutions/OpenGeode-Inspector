@@ -30,10 +30,14 @@
 
 #include <geode/geometry/point.hpp>
 
+#include <geode/mesh/builder/edged_curve_builder.hpp>
 #include <geode/mesh/builder/point_set_builder.hpp>
+#include <geode/mesh/builder/solid_mesh_builder.hpp>
 #include <geode/mesh/core/point_set.hpp>
 
+#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
 #include <geode/model/representation/builder/brep_builder.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
@@ -74,6 +78,48 @@ namespace
                 && has_message( non_bijective, "linked to unique vertex 1" ),
             "[non bijective] Wrong message: ", non_bijective.string() );
     }
+
+    void test_line_embedded_in_block_message()
+    {
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        const auto& block = brep.block( builder.add_block() );
+        auto block_builder = builder.block_mesh_builder( block );
+        block_builder->create_point( geode::Point3D{ { 0, 0, 0 } } );
+        block_builder->create_point( geode::Point3D{ { 4, 0, 0 } } );
+        block_builder->create_point( geode::Point3D{ { 0, 4, 0 } } );
+        block_builder->create_point( geode::Point3D{ { 0, 0, 4 } } );
+        block_builder->create_polyhedron( { 0, 1, 2, 3 },
+            { { 1, 3, 2 }, { 0, 2, 3 }, { 3, 1, 0 }, { 0, 1, 2 } } );
+        const auto& line = brep.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( geode::Point3D{ { 1, 1, 1 } } );
+        line_builder->create_point( geode::Point3D{ { 1, 1, 2 } } );
+        line_builder->create_edge( 0, 1 );
+        builder.add_line_block_internal_relationship( line, block );
+        builder.create_unique_vertices( 6 );
+        for( const auto v : geode::LRange{ 4 } )
+        {
+            builder.set_unique_vertex( { block.component_id(), v }, v );
+        }
+        // The line vertices are not linked to block mesh vertices
+        builder.set_unique_vertex( { line.component_id(), 0 }, 4 );
+        builder.set_unique_vertex( { line.component_id(), 1 }, 5 );
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        const auto& issues =
+            result.lines
+                .unique_vertices_linked_to_a_line_with_invalid_embeddings;
+        geode::OpenGeodeInspectorInspectionException::test(
+            issues.nb_issues() == 2,
+            "[line in block] Wrong number of invalid embedding issues: ",
+            issues.string() );
+        geode::OpenGeodeInspectorInspectionException::test(
+            has_message( issues, "which is embedded in Block" )
+                && has_message(
+                    issues, "not linked to the Block mesh vertices" ),
+            "[line in block] Wrong message: ", issues.string() );
+    }
 } // namespace
 
 int main()
@@ -82,6 +128,7 @@ int main()
     {
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         test_non_bijective_link_message();
+        test_line_embedded_in_block_message();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }
