@@ -228,9 +228,15 @@ namespace
                     { surface1_.component_id(), v1_id } );
                 for( const auto v2_id : t2_vertices )
                 {
-                    if( v1_unique_vertex
-                        == this->model().unique_vertex(
-                            { surface2_.component_id(), v2_id } ) )
+                    if( same_surface_ && v1_id == v2_id )
+                    {
+                        common_vertices.push_back( { v1_id, v2_id } );
+                        break;
+                    }
+                    if( v1_unique_vertex != geode::NO_ID
+                        && v1_unique_vertex
+                               == this->model().unique_vertex(
+                                   { surface2_.component_id(), v2_id } ) )
                     {
                         common_vertices.push_back( { v1_id, v2_id } );
                         break;

@@ -189,12 +189,46 @@ void check_section_adjacent_surfaces_different_numbering()
         "Section adjacent surfaces with different numbering" );
 }
 
+void check_brep_vertices_without_unique_vertex()
+{
+    // Two non-intersecting triangles with overlapping bounding boxes, no mesh
+    // vertex being linked to a unique vertex
+    const SurfaceDefinition< 3 > surface1{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 1., 0., 0. } },
+            geode::Point3D{ { 0., 1., 0. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const SurfaceDefinition< 3 > surface2{
+        { geode::Point3D{ { 0.8, 0.8, -1. } },
+            geode::Point3D{ { 0.8, 0.8, 1. } },
+            geode::Point3D{ { 1., 1., 0. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const auto brep = build_brep( { surface1, surface2 }, {}, 0 );
+    check_nb_intersections(
+        nb_intersections( brep ), 0, "BRep surfaces without unique vertices" );
+
+    // Two adjacent triangles of the same surface without unique vertices
+    const SurfaceDefinition< 3 > surface3{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 1., 0., 0. } },
+            geode::Point3D{ { 0., 1., 0. } },
+            geode::Point3D{ { 1., 1., 0. } } },
+        { { 0, 1, 2 }, { 1, 3, 2 } }, {}
+    };
+    const auto brep2 = build_brep( { surface3 }, {}, 0 );
+    check_nb_intersections(
+        nb_intersections( brep2 ), 0, "BRep surface without unique vertices" );
+    check_nb_intersections( nb_self_intersections( brep2 ), 0,
+        "BRep surface without unique vertices (self)" );
+}
+
 int main()
 {
     try
     {
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_section_adjacent_surfaces_different_numbering();
+        check_brep_vertices_without_unique_vertex();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
