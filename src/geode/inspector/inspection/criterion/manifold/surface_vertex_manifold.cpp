@@ -96,7 +96,8 @@ namespace geode
                 }
                 catch( const geode::OpenGeodeException& )
                 {
-                    continue;
+                    // Broken adjacencies around the vertex
+                    return false;
                 }
             }
             return true;
@@ -125,7 +126,11 @@ namespace geode
                 }
                 catch( const geode::OpenGeodeException& )
                 {
-                    continue;
+                    non_manifold_vertices.add_issue( vertex_id,
+                        absl::StrCat( "vertex ", vertex_id, ", at position [",
+                            mesh_.point( vertex_id ).string(),
+                            "] could not be checked; check issues with "
+                            "surface adjacencies" ) );
                 }
             }
             return non_manifold_vertices;
