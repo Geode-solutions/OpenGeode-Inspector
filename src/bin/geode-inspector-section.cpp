@@ -54,9 +54,7 @@ int main( int argc, char* argv[] )
     {
         absl::SetProgramUsageMessage(
             absl::StrCat( "Section inspector from Geode-solutions.\n",
-                "Sample usage:\n", argv[0], " --input my_section.og_sctn\n",
-                "Default behavior tests all available criteria, to disable one "
-                "use --noXXX, e.g. --nocomponent_linking" ) );
+                "Sample usage:\n", argv[0], " --input my_section.og_sctn\n" ) );
         absl::ParseCommandLine( argc, argv );
 
         geode::OpenGeodeIOModelLibrary::initialize();
