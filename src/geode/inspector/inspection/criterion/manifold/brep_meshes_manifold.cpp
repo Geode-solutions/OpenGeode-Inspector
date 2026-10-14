@@ -132,7 +132,7 @@ namespace geode
                     block.name().value_or( block.id().string() ), " (",
                     block.id().string(), ") non manifold edges" ) );
                 components_non_manifold_edges.add_issues_to_map(
-                    block.id(), non_manifold_edges );
+                    block.id(), std::move( non_manifold_edges ) );
             }
         }
 
@@ -148,7 +148,7 @@ namespace geode
                     block.name().value_or( block.id().string() ), " (",
                     block.id().string(), ") non manifold facets" ) );
                 components_non_manifold_facets.add_issues_to_map(
-                    block.id(), non_manifold_facets );
+                    block.id(), std::move( non_manifold_facets ) );
             }
         }
 
