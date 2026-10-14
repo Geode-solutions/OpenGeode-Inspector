@@ -120,6 +120,26 @@ namespace
                     issues, "not linked to the Block mesh vertices" ),
             "[line in block] Wrong message: ", issues.string() );
     }
+
+    void test_empty_model_boundary()
+    {
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        builder.add_model_boundary();
+        const auto& corner = brep.corner( builder.add_corner() );
+        builder.corner_mesh_builder( corner )->create_point(
+            geode::Point3D{ { 0, 0, 0 } } );
+        builder.create_unique_vertices( 1 );
+        builder.set_unique_vertex( { corner.component_id(), 0 }, 0 );
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        geode::OpenGeodeInspectorInspectionException::test(
+            result.blocks.model_boundaries_dont_form_a_closed_surface
+                    .nb_issues()
+                == 0,
+            "[empty model boundary] Empty model boundary should not be "
+            "reported" );
+    }
 } // namespace
 
 int main()
@@ -129,6 +149,7 @@ int main()
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         test_non_bijective_link_message();
         test_line_embedded_in_block_message();
+        test_empty_model_boundary();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

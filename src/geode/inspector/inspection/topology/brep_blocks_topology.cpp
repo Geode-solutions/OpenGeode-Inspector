@@ -297,6 +297,10 @@ namespace
         const geode::BRep& brep, std::queue< geode::uuid >& to_process )
     {
         std::vector< geode::uuid > processed;
+        if( to_process.empty() )
+        {
+            return processed;
+        }
         const auto first_surface_uuid = to_process.front();
         to_process.pop();
         processed.emplace_back( first_surface_uuid );
@@ -504,6 +508,11 @@ namespace
     bool brep_boundaries_are_closed( const geode::BRep& brep )
     {
         auto to_process = queue_with_model_boundaries( brep );
+        if( to_process.empty() )
+        {
+            // No boundary surface to check
+            return true;
+        }
         auto compute_closed_linked_surfaces =
             closed_linked_surfaces( brep, to_process );
         return to_process.empty();
