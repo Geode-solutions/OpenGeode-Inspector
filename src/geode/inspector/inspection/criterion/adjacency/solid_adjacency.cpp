@@ -96,19 +96,32 @@ namespace geode
             {
                 return false;
             }
-            const auto facet_vertices =
-                detail::OrientedVertexCycle< PolyhedronFacetVertices >(
-                    mesh_.polyhedron_facet_vertices( polyhedron_facet ) );
+            const auto nb_facet_vertices =
+                mesh_.nb_polyhedron_facet_vertices( polyhedron_facet );
+            std::optional<
+                detail::OrientedVertexCycle< PolyhedronFacetVertices > >
+                facet_vertices;
             for( const auto facet_id :
                 LRange{ mesh_.nb_polyhedron_facets( polyhedron_adj_id ) } )
             {
                 const PolyhedronFacet adj_facet{ polyhedron_adj_id, facet_id };
-                const auto adj_facet_vertices =
-                    detail::OrientedVertexCycle< PolyhedronFacetVertices >(
-                        mesh_.polyhedron_facet_vertices( adj_facet ) );
-                if( facet_vertices.is_opposite( adj_facet_vertices )
-                    && mesh_.polyhedron_adjacent( adj_facet )
-                           == polyhedron_facet.polyhedron_id )
+                // Cheap checks before comparing the vertex cycles
+                if( mesh_.polyhedron_adjacent( adj_facet )
+                        != polyhedron_facet.polyhedron_id
+                    || mesh_.nb_polyhedron_facet_vertices( adj_facet )
+                           != nb_facet_vertices )
+                {
+                    continue;
+                }
+                if( !facet_vertices )
+                {
+                    facet_vertices.emplace(
+                        mesh_.polyhedron_facet_vertices( polyhedron_facet ) );
+                }
+                const detail::OrientedVertexCycle< PolyhedronFacetVertices >
+                    adj_facet_vertices{ mesh_.polyhedron_facet_vertices(
+                        adj_facet ) };
+                if( facet_vertices->is_opposite( adj_facet_vertices ) )
                 {
                     return true;
                 }
