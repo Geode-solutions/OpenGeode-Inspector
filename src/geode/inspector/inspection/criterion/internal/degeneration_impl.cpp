@@ -30,8 +30,8 @@
 #include <geode/mesh/core/surface_edges.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/geometry/distance.hpp>
 #include <geode/geometry/point.hpp>
+#include <geode/geometry/vector.hpp>
 
 namespace geode
 {
@@ -103,9 +103,9 @@ namespace geode
         {
             const auto edge_vertices =
                 mesh_.edges().edge_vertices( edge_index );
-            const auto p1 = mesh_.point( edge_vertices[0] );
-            const auto p2 = mesh_.point( edge_vertices[1] );
-            return point_point_distance( p1, p2 ) < threshold;
+            const Vector< MeshType::dim > edge{ mesh_.point( edge_vertices[0] ),
+                mesh_.point( edge_vertices[1] ) };
+            return edge.length2() < threshold * threshold;
         }
 
         template < class MeshType >
