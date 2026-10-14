@@ -26,14 +26,18 @@
 
 #include <geode/geometry/point.hpp>
 
+#include <geode/mesh/builder/solid_mesh_builder.hpp>
 #include <geode/mesh/builder/surface_mesh_builder.hpp>
+#include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/model/mixin/core/block.hpp>
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/builder/brep_builder.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/criterion/colocation/component_meshes_colocation.hpp>
+#include <geode/inspector/inspection/criterion/degeneration/brep_meshes_degeneration.hpp>
 
 namespace
 {
@@ -99,12 +103,36 @@ void check_colocation_without_unique_vertices()
         "reported" );
 }
 
+void check_block_small_edges()
+{
+    geode::BRep brep;
+    geode::BRepBuilder builder{ brep };
+    const auto& block = brep.block( builder.add_block() );
+    auto mesh_builder = builder.block_mesh_builder( block );
+    mesh_builder->create_point( geode::Point3D{ { 0, 0, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 1e-3, 0, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 0, 1, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 0, 0, 1 } } );
+    mesh_builder->create_polyhedron( { 0, 1, 2, 3 },
+        { { 1, 3, 2 }, { 0, 2, 3 }, { 3, 1, 0 }, { 0, 1, 2 } } );
+
+    const geode::BRepComponentMeshesDegeneration inspector{ brep };
+    const auto result = inspector.inspect_edges_degeneration( 1e-2 );
+    const auto& issues_map = result.degenerated_edges.issues_map();
+    geode::OpenGeodeInspectorInspectionException::test(
+        issues_map.contains( block.id() )
+            && issues_map.at( block.id() ).nb_issues() == 1,
+        "[Test] Block small edge should be reported by "
+        "inspect_edges_degeneration" );
+}
+
 int main()
 {
     try
     {
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_colocation_without_unique_vertices();
+        check_block_small_edges();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
