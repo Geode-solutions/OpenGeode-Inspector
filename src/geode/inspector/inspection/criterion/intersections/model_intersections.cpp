@@ -898,41 +898,48 @@ namespace geode
                     return result;
                 } ) );
             }
-            const auto surfaces_overlap =
-                surfaces_model_tree_.components_tree_
-                    .compute_self_element_bbox_intersections(
-                        ComponentOverlap{} );
-            for( const auto& components : surfaces_overlap )
+            // Self intersections only: polygons of different surfaces are
+            // never tested
+            std::vector< std::pair< index_t, index_t > > surfaces_overlap;
+            if constexpr( !std::is_same_v< Action,
+                              AllModelSurfacesAutoIntersection< Model > > )
             {
-                tasks.emplace_back( async::spawn( [this, &components] {
-                    const auto surface_uuid1 =
-                        surfaces_model_tree_.uuids_[components.first];
-                    const auto surface_uuid2 =
-                        surfaces_model_tree_.uuids_[components.second];
-                    const Action surfaces_intersection_action{ model_,
-                        surface_uuid1, surface_uuid2,
-                        surfaces_unique_vertices_[components.first],
-                        surfaces_unique_vertices_[components.second] };
-                    const auto intersecting_elements =
-                        surfaces_model_tree_.mesh_trees_[components.first]
-                            .compute_other_element_bbox_intersections(
-                                surfaces_model_tree_
-                                    .mesh_trees_[components.second],
-                                surfaces_intersection_action );
-                    IntersectionsResult result;
-                    const auto component_id1 =
-                        model_.surface( surface_uuid1 ).component_id();
-                    const auto component_id2 =
-                        model_.surface( surface_uuid2 ).component_id();
-                    for( const auto& [polygon1, polygon2] :
-                        intersecting_elements )
-                    {
-                        result.emplace_back(
-                            ComponentMeshElement{ component_id1, polygon1 },
-                            ComponentMeshElement{ component_id2, polygon2 } );
-                    }
-                    return result;
-                } ) );
+                surfaces_overlap = surfaces_model_tree_.components_tree_
+                                       .compute_self_element_bbox_intersections(
+                                           ComponentOverlap{} );
+                for( const auto& components : surfaces_overlap )
+                {
+                    tasks.emplace_back( async::spawn( [this, &components] {
+                        const auto surface_uuid1 =
+                            surfaces_model_tree_.uuids_[components.first];
+                        const auto surface_uuid2 =
+                            surfaces_model_tree_.uuids_[components.second];
+                        const Action surfaces_intersection_action{ model_,
+                            surface_uuid1, surface_uuid2,
+                            surfaces_unique_vertices_[components.first],
+                            surfaces_unique_vertices_[components.second] };
+                        const auto intersecting_elements =
+                            surfaces_model_tree_.mesh_trees_[components.first]
+                                .compute_other_element_bbox_intersections(
+                                    surfaces_model_tree_
+                                        .mesh_trees_[components.second],
+                                    surfaces_intersection_action );
+                        IntersectionsResult result;
+                        const auto component_id1 =
+                            model_.surface( surface_uuid1 ).component_id();
+                        const auto component_id2 =
+                            model_.surface( surface_uuid2 ).component_id();
+                        for( const auto& [polygon1, polygon2] :
+                            intersecting_elements )
+                        {
+                            result.emplace_back(
+                                ComponentMeshElement{ component_id1, polygon1 },
+                                ComponentMeshElement{
+                                    component_id2, polygon2 } );
+                        }
+                        return result;
+                    } ) );
+                }
             }
             for( auto& task : async::when_all( tasks ).get() )
             {
