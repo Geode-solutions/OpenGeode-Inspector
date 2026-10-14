@@ -23,6 +23,9 @@
 
 #include <geode/inspector/inspection/criterion/adjacency/brep_meshes_adjacency.hpp>
 
+#include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_set.h>
+
 #include <async++.h>
 
 #include <geode/basic/logger.hpp>
@@ -30,9 +33,10 @@
 #include <geode/basic/range.hpp>
 
 #include <geode/mesh/core/solid_mesh.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/model/helpers/component_mesh_polygons.hpp>
 #include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
@@ -84,62 +88,135 @@ namespace geode
             InspectionIssuesMap< PolyhedronFacet >&
                 components_wrong_adjacencies ) const
         {
+            if( model().nb_active_blocks() == 0 )
+            {
+                return;
+            }
+            const auto surface_polygons = surfaces_polygons_unique_vertices();
+            std::vector< async::task<
+                std::pair< uuid, InspectionIssues< PolyhedronFacet > > > >
+                tasks;
             for( const auto& block : model().active_blocks() )
             {
-                const geode::SolidMeshAdjacency3D inspector{ block.mesh() };
-                auto wrong_adjacencies =
-                    inspector.polyhedron_facets_with_wrong_adjacency();
-                wrong_adjacencies.set_description( absl::StrCat( "Block ",
-                    block.name().value_or( block.id().string() ), " (",
-                    block.id().string(),
-                    ") polyhedron facets adjacencies issues" ) );
-                const auto& mesh = block.mesh();
-                for( const auto polyhedron_id : Range{ mesh.nb_polyhedra() } )
-                {
-                    for( const auto facet_id :
-                        LRange{ mesh.nb_polyhedron_facets( polyhedron_id ) } )
-                    {
-                        const PolyhedronFacet polyhedron_facet{ polyhedron_id,
-                            facet_id };
-                        if( !mesh.is_polyhedron_facet_on_border(
-                                polyhedron_facet ) )
-                        {
-                            continue;
-                        }
-                        const auto is_on_surface =
-                            polyhedron_facet_is_on_a_surface(
-                                block, polyhedron_facet );
-                        // Facets with unlinked vertices cannot be on a
-                        // Surface
-                        if( !is_on_surface.value_or( false ) )
-                        {
-                            wrong_adjacencies.add_issue( polyhedron_facet,
-                                absl::StrCat( "facet ", facet_id,
-                                    " of polyhedron ", polyhedron_id,
-                                    " has no adjacencies but is not part of a "
-                                    "model Surface." ) );
-                        }
-                    }
-                }
+                tasks.emplace_back( async::spawn( [this, &block,
+                                                      &surface_polygons] {
+                    return std::pair{ block.id(),
+                        block_wrong_adjacencies( block, surface_polygons ) };
+                } ) );
+            }
+            for( auto& task : async::when_all( tasks ).get() )
+            {
+                auto [block_id, issues] = task.get();
                 components_wrong_adjacencies.add_issues_to_map(
-                    block.id(), std::move( wrong_adjacencies ) );
+                    block_id, std::move( issues ) );
             }
         }
 
     private:
-        absl::optional< bool > polyhedron_facet_is_on_a_surface(
-            const Block3D& block,
-            const PolyhedronFacet& polyhedron_facet ) const
+        using SortedUniqueVertices = PolygonVertices;
+
+        std::vector< index_t > mesh_unique_vertices(
+            const ComponentID& component_id, index_t nb_vertices ) const
         {
-            const auto facet_unique_vertices =
-                polygon_unique_vertices( model(), block, polyhedron_facet );
-            if( absl::c_contains( facet_unique_vertices, geode::NO_ID ) )
+            std::vector< index_t > unique_vertices( nb_vertices );
+            for( const auto v : Indices{ unique_vertices } )
             {
-                return std::nullopt;
+                unique_vertices[v] =
+                    model().unique_vertex( { component_id, v } );
             }
-            return !detail::surface_component_mesh_polygons(
-                model(), facet_unique_vertices )
-                        .empty();
+            return unique_vertices;
+        }
+
+        // Sorted unique vertices of every surface polygon
+        absl::flat_hash_set< SortedUniqueVertices >
+            surfaces_polygons_unique_vertices() const
+        {
+            std::vector< async::task< std::vector< SortedUniqueVertices > > >
+                tasks;
+            for( const auto& surface : model().surfaces() )
+            {
+                tasks.emplace_back( async::spawn( [this, &surface] {
+                    const auto& mesh = surface.mesh();
+                    const auto unique_vertices = mesh_unique_vertices(
+                        surface.component_id(), mesh.nb_vertices() );
+                    std::vector< SortedUniqueVertices > surface_polygons;
+                    surface_polygons.reserve( mesh.nb_polygons() );
+                    for( const auto polygon_id : Range{ mesh.nb_polygons() } )
+                    {
+                        auto vertices = mesh.polygon_vertices( polygon_id );
+                        for( auto& vertex : vertices )
+                        {
+                            vertex = unique_vertices[vertex];
+                        }
+                        if( absl::c_contains( vertices, NO_ID ) )
+                        {
+                            continue;
+                        }
+                        absl::c_sort( vertices );
+                        surface_polygons.emplace_back( std::move( vertices ) );
+                    }
+                    return surface_polygons;
+                } ) );
+            }
+            absl::flat_hash_set< SortedUniqueVertices > polygons;
+            for( auto& task : async::when_all( tasks ).get() )
+            {
+                for( auto& polygon : task.get() )
+                {
+                    polygons.emplace( std::move( polygon ) );
+                }
+            }
+            return polygons;
+        }
+
+        InspectionIssues< PolyhedronFacet > block_wrong_adjacencies(
+            const Block3D& block,
+            const absl::flat_hash_set< SortedUniqueVertices >&
+                surface_polygons ) const
+        {
+            const auto& mesh = block.mesh();
+            const geode::SolidMeshAdjacency3D inspector{ mesh };
+            auto wrong_adjacencies =
+                inspector.polyhedron_facets_with_wrong_adjacency();
+            wrong_adjacencies.set_description( absl::StrCat( "Block ",
+                block.name().value_or( block.id().string() ), " (",
+                block.id().string(),
+                ") polyhedron facets adjacencies issues" ) );
+            const auto unique_vertices = mesh_unique_vertices(
+                block.component_id(), mesh.nb_vertices() );
+            for( const auto polyhedron_id : Range{ mesh.nb_polyhedra() } )
+            {
+                for( const auto facet_id :
+                    LRange{ mesh.nb_polyhedron_facets( polyhedron_id ) } )
+                {
+                    const PolyhedronFacet polyhedron_facet{ polyhedron_id,
+                        facet_id };
+                    if( !mesh.is_polyhedron_facet_on_border(
+                            polyhedron_facet ) )
+                    {
+                        continue;
+                    }
+                    SortedUniqueVertices facet_unique_vertices;
+                    for( const auto vertex :
+                        mesh.polyhedron_facet_vertices( polyhedron_facet ) )
+                    {
+                        facet_unique_vertices.push_back(
+                            unique_vertices[vertex] );
+                    }
+                    absl::c_sort( facet_unique_vertices );
+                    // Facets with unlinked vertices cannot be on a Surface
+                    if( absl::c_contains( facet_unique_vertices, NO_ID )
+                        || !surface_polygons.contains( facet_unique_vertices ) )
+                    {
+                        wrong_adjacencies.add_issue( polyhedron_facet,
+                            absl::StrCat( "facet ", facet_id, " of polyhedron ",
+                                polyhedron_id,
+                                " has no adjacencies but is not part of a "
+                                "model Surface." ) );
+                    }
+                }
+            }
+            return wrong_adjacencies;
         }
     };
 
