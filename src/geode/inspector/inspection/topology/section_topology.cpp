@@ -124,13 +124,20 @@ namespace geode
                                        cmv.string(), "]." ) );
                         continue;
                     }
-                    if( section_.component( cmv.component_id.id ).is_active()
-                        && section_.unique_vertex( cmv ) != uv_id )
+                    if( !section_.component( cmv.component_id.id ).is_active() )
                     {
-                        linked_to_nonbijective_result.add_issue(
-                            uv_id, absl::StrCat( "unique vertex ", uv_id,
-                                       " is linked to inexistant mesh vertex [",
-                                       cmv.string(), "]." ) );
+                        continue;
+                    }
+                    if( const auto linked_unique_vertex =
+                            section_.unique_vertex( cmv );
+                        linked_unique_vertex != uv_id )
+                    {
+                        linked_to_nonbijective_result.add_issue( uv_id,
+                            absl::StrCat( "unique vertex ", uv_id,
+                                " is linked to mesh vertex [", cmv.string(),
+                                "], but this mesh vertex is linked to "
+                                "unique vertex ",
+                                linked_unique_vertex, "." ) );
                     }
                 }
             }
