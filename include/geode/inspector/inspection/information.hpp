@@ -70,18 +70,32 @@ namespace geode
 
         [[nodiscard]] std::string string() const
         {
+            std::string message;
+            append_string( message );
+            return message;
+        }
+
+        void append_string( std::string& message ) const
+        {
             if( issues_.empty() )
             {
-                return absl::StrCat( "no issues with ", description_, "\n" );
+                absl::StrAppend(
+                    &message, "no issues with ", description_, "\n" );
+                return;
             }
-            auto message =
-                absl::StrCat( issues_.size(), " issues with ", description_ );
+            auto size = message.size() + description_.size() + 32;
+            for( const auto& issue : messages_ )
+            {
+                size += issue.size() + 2;
+            }
+            message.reserve( size );
+            absl::StrAppend(
+                &message, issues_.size(), " issues with ", description_ );
             for( const auto& issue : messages_ )
             {
                 absl::StrAppend( &message, "\n\t", issue );
             }
-            absl::StrAppend( &message, "\n" );
-            return message;
+            message.append( "\n" );
         }
 
         [[nodiscard]] const std::vector< IssueType >& issues() const
@@ -160,7 +174,8 @@ namespace geode
                 absl::StrCat( nb_issues(), " issues with ", description_ );
             for( const auto& issues : issues_map_ )
             {
-                absl::StrAppend( &message, "\n\t", issues.second.string() );
+                message.append( "\n\t" );
+                issues.second.append_string( message );
             }
             absl::StrAppend( &message, "\n" );
             return message;
