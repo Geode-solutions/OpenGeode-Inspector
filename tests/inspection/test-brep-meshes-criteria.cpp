@@ -72,12 +72,34 @@ void check_model_edges_without_unique_vertices()
         result.brep_non_manifold_edges.string() );
 }
 
+void check_single_edge_line_without_unique_vertices()
+{
+    geode::BRep brep;
+    geode::BRepBuilder builder{ brep };
+    const auto& surface = add_square_surface( brep, builder, 0 );
+    const auto& line = brep.line( builder.add_line() );
+    auto mesh_builder = builder.line_mesh_builder( line );
+    mesh_builder->create_point( geode::Point3D{ { 0, 0, 0 } } );
+    mesh_builder->create_point( geode::Point3D{ { 1, 1, 0 } } );
+    mesh_builder->create_edge( 0, 1 );
+    builder.add_line_surface_internal_relationship( line, surface );
+    builder.create_unique_vertices( 1 );
+    const geode::BRepComponentMeshesManifold inspector{ brep };
+    const auto result = inspector.inspect_brep_manifold();
+    geode::OpenGeodeInspectorInspectionException::test(
+        result.brep_non_manifold_edges.nb_issues() == 0,
+        "[Test] Single edge line without unique vertices should not be "
+        "checked: ",
+        result.brep_non_manifold_edges.string() );
+}
+
 int main()
 {
     try
     {
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_model_edges_without_unique_vertices();
+        check_single_edge_line_without_unique_vertices();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

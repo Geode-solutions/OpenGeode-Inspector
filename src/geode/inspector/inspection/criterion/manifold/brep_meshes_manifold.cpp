@@ -285,11 +285,12 @@ namespace geode
         [[nodiscard]] bool several_cmvs_on_one_vertex(
             absl::Span< const index_t > unique_vertices ) const
         {
-            std::vector< uuid > surfaces;
             for( const auto unique_vertex : unique_vertices )
             {
-                if( model().component_mesh_vertices( unique_vertex ).size()
-                    > 1 )
+                // Unlinked vertices are reported by the topology inspection
+                if( unique_vertex == NO_ID
+                    || model().component_mesh_vertices( unique_vertex ).size()
+                           > 1 )
                 {
                     return true;
                 }
