@@ -92,9 +92,17 @@ namespace geode
         {
             for( const auto& block : model().active_blocks() )
             {
-                const auto& mesh = enable_block_edges( block );
-                const geode::SolidMeshDegeneration3D inspector{ mesh };
-                auto small_edges = inspector.small_edges( threshold );
+                const auto& mesh = block.mesh();
+                auto small_edges = [&mesh, threshold] {
+                    const geode::SolidMeshDegeneration3D inspector{ mesh };
+                    return inspector.small_edges( threshold );
+                }();
+                // Keep the edges referenced by the issues
+                if( small_edges.nb_issues() != 0 && !mesh.are_edges_enabled() )
+                {
+                    mesh.enable_edges();
+                    enabled_edges_blocks_.emplace( block.id() );
+                }
                 small_edges.set_description( absl::StrCat( "Block ",
                     block.name().value_or( block.id().string() ), " (",
                     block.id().string(), ") small edges polyhedra" ) );
@@ -109,8 +117,7 @@ namespace geode
         {
             for( const auto& block : model().active_blocks() )
             {
-                const auto& mesh = enable_block_edges( block );
-                const geode::SolidMeshDegeneration3D inspector{ mesh };
+                const geode::SolidMeshDegeneration3D inspector{ block.mesh() };
                 auto small_polyhedra =
                     inspector.small_height_polyhedra( threshold );
                 small_polyhedra.set_description( absl::StrCat( "Block ",
@@ -136,18 +143,6 @@ namespace geode
         {
             add_solid_small_elements( degenerated_edges_map,
                 degenerated_polyhedra_map, GLOBAL_EPSILON );
-        }
-
-    private:
-        const SolidMesh3D& enable_block_edges( const Block3D& block ) const
-        {
-            const auto& mesh = block.mesh();
-            if( !mesh.are_edges_enabled() )
-            {
-                mesh.enable_edges();
-                enabled_edges_blocks_.emplace( block.id() );
-            }
-            return mesh;
         }
 
     private:

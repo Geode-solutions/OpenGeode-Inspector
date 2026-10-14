@@ -21,6 +21,8 @@
  *
  */
 
+#include <absl/algorithm/container.h>
+
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
 
@@ -28,6 +30,7 @@
 
 #include <geode/mesh/builder/solid_mesh_builder.hpp>
 #include <geode/mesh/builder/surface_mesh_builder.hpp>
+#include <geode/mesh/core/solid_edges.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
@@ -124,6 +127,13 @@ void check_block_small_edges()
             && issues_map.at( block.id() ).nb_issues() == 1,
         "[Test] Block small edge should be reported by "
         "inspect_edges_degeneration" );
+    // The reported edge index refers to the block mesh edges
+    const auto edge_id = issues_map.at( block.id() ).issues().front();
+    auto edge_vertices = block.mesh().edges().edge_vertices( edge_id );
+    absl::c_sort( edge_vertices );
+    geode::OpenGeodeInspectorInspectionException::test(
+        edge_vertices[0] == 0 && edge_vertices[1] == 1,
+        "[Test] Wrong block small edge" );
 }
 
 int main()

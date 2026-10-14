@@ -23,6 +23,9 @@
 
 #include <geode/inspector/inspection/criterion/internal/degeneration_impl.hpp>
 
+#include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_set.h>
+
 #include <geode/basic/uuid.hpp>
 
 #include <geode/mesh/core/solid_edges.hpp>
@@ -32,6 +35,49 @@
 
 #include <geode/geometry/point.hpp>
 #include <geode/geometry/vector.hpp>
+
+namespace
+{
+    // Calls the action on the vertices of each edge of each element, edges
+    // shared by several elements are visited several times. Stops when the
+    // action returns true.
+    template < geode::index_t dimension, typename Action >
+    bool for_each_element_edge(
+        const geode::SurfaceMesh< dimension >& mesh, const Action& action )
+    {
+        for( const auto polygon_id : geode::Range{ mesh.nb_polygons() } )
+        {
+            for( const auto edge_id :
+                geode::LRange{ mesh.nb_polygon_edges( polygon_id ) } )
+            {
+                if( action( mesh.polygon_edge_vertices(
+                        { polygon_id, edge_id } ) ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    template < typename Action >
+    bool for_each_element_edge(
+        const geode::SolidMesh3D& mesh, const Action& action )
+    {
+        for( const auto polyhedron_id : geode::Range{ mesh.nb_polyhedra() } )
+        {
+            for( const auto& edge_vertices :
+                mesh.polyhedron_edges_vertices( polyhedron_id ) )
+            {
+                if( action( edge_vertices ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+} // namespace
 
 namespace geode
 {
@@ -55,37 +101,62 @@ namespace geode
         template < class MeshType >
         bool DegenerationImpl< MeshType >::is_mesh_degenerated() const
         {
-            enable_edges_on_mesh();
-            for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
-            {
-                if( edge_is_degenerated( edge_index ) )
-                {
-                    return true;
-                }
-            }
-            return false;
+            return for_each_element_edge(
+                mesh_, [this]( const std::array< index_t, 2 >& edge_vertices ) {
+                    return edge_is_smaller_than_threshold(
+                        edge_vertices, GLOBAL_EPSILON );
+                } );
         }
 
         template < class MeshType >
         InspectionIssues< index_t > DegenerationImpl< MeshType >::small_edges(
             double threshold ) const
         {
-            enable_edges_on_mesh();
             InspectionIssues< index_t > degenerated_edges_index{
                 "degenerated edges"
             };
-            for( const auto edge_index : Range{ mesh_.edges().nb_edges() } )
+            // Edges are only built when some small edge is found, to convert
+            // its vertices into an edge index
+            absl::flat_hash_set< std::array< index_t, 2 > > small_edges;
+            for_each_element_edge(
+                mesh_, [this, threshold, &small_edges](
+                           std::array< index_t, 2 > edge_vertices ) {
+                    if( edge_is_smaller_than_threshold(
+                            edge_vertices, threshold ) )
+                    {
+                        if( edge_vertices[0] > edge_vertices[1] )
+                        {
+                            std::swap( edge_vertices[0], edge_vertices[1] );
+                        }
+                        small_edges.insert( edge_vertices );
+                    }
+                    return false;
+                } );
+            if( small_edges.empty() )
             {
-                if( edge_is_smaller_than_threshold( edge_index, threshold ) )
+                return degenerated_edges_index;
+            }
+            enable_edges_on_mesh();
+            std::vector< index_t > small_edge_indices;
+            small_edge_indices.reserve( small_edges.size() );
+            for( const auto& edge_vertices : small_edges )
+            {
+                if( const auto edge_index =
+                        mesh_.edges().edge_from_vertices( edge_vertices ) )
                 {
-                    const auto edge_vertices =
-                        mesh_.edges().edge_vertices( edge_index );
-                    degenerated_edges_index.add_issue( edge_index,
-                        absl::StrCat( "degenerated edge between vertices ",
-                            edge_vertices[0], " and ", edge_vertices[1],
-                            ", at position [",
-                            mesh_.point( edge_vertices[0] ).string(), "]" ) );
+                    small_edge_indices.push_back( edge_index.value() );
                 }
+            }
+            absl::c_sort( small_edge_indices );
+            for( const auto edge_index : small_edge_indices )
+            {
+                const auto& edge_vertices =
+                    mesh_.edges().edge_vertices( edge_index );
+                degenerated_edges_index.add_issue( edge_index,
+                    absl::StrCat( "degenerated edge between vertices ",
+                        edge_vertices[0], " and ", edge_vertices[1],
+                        ", at position [",
+                        mesh_.point( edge_vertices[0] ).string(), "]" ) );
             }
             return degenerated_edges_index;
         }
@@ -99,10 +170,9 @@ namespace geode
 
         template < class MeshType >
         bool DegenerationImpl< MeshType >::edge_is_smaller_than_threshold(
-            index_t edge_index, double threshold ) const
+            const std::array< index_t, 2 >& edge_vertices,
+            double threshold ) const
         {
-            const auto edge_vertices =
-                mesh_.edges().edge_vertices( edge_index );
             const Vector< MeshType::dim > edge{ mesh_.point( edge_vertices[0] ),
                 mesh_.point( edge_vertices[1] ) };
             return edge.length2() < threshold * threshold;
@@ -116,13 +186,6 @@ namespace geode
                 mesh_.enable_edges();
                 enabled_edges_ = true;
             }
-        }
-
-        template < class MeshType >
-        bool DegenerationImpl< MeshType >::edge_is_degenerated(
-            index_t edge_index ) const
-        {
-            return edge_is_smaller_than_threshold( edge_index, GLOBAL_EPSILON );
         }
 
         template < class MeshType >
