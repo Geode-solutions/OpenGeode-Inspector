@@ -1030,37 +1030,60 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto surface_tree_id :
-                Indices{ surfaces_model_tree_.uuids_ } )
+            std::vector< bool > embedded_lines(
+                lines_model_tree_.uuids_.size() );
+            for( const auto line_tree_id : Indices{ lines_model_tree_.uuids_ } )
             {
-                const auto& surface = brep.surface(
-                    surfaces_model_tree_.uuids_[surface_tree_id] );
-                const auto& surface_tree =
-                    surfaces_model_tree_.mesh_trees_[surface_tree_id];
-                for( const auto line_tree_id :
-                    Indices{ lines_model_tree_.uuids_ } )
+                embedded_lines[line_tree_id] =
+                    brep.nb_embedding_blocks(
+                        brep.line( lines_model_tree_.uuids_[line_tree_id] ) )
+                    != 0;
+            }
+            auto overlapping_components =
+                surfaces_model_tree_.components_tree_
+                    .compute_other_element_bbox_intersections(
+                        lines_model_tree_.components_tree_,
+                        ComponentOverlap{} );
+            absl::c_sort( overlapping_components );
+            using Task = async::task< IntersectionsResult >;
+            std::vector< Task > tasks;
+            tasks.reserve( overlapping_components.size() );
+            for( const auto& components : overlapping_components )
+            {
+                const auto surface_tree_id = components.first;
+                const auto line_tree_id = components.second;
+                if( !embedded_lines[line_tree_id] )
                 {
-                    const auto& line =
-                        brep.line( lines_model_tree_.uuids_[line_tree_id] );
-                    if( brep.nb_embedding_blocks( line ) == 0 )
-                    {
-                        continue;
-                    }
-                    const BRepLineSurfacesIntersection action{ brep,
-                        surface.id(), line.id() };
-                    const auto& line_tree =
-                        lines_model_tree_.mesh_trees_[line_tree_id];
-                    for( const auto& element_pair :
-                        surface_tree.compute_other_element_bbox_intersections(
-                            line_tree, action ) )
-                    {
-                        component_intersections.emplace_back(
-                            ComponentMeshElement{
-                                surface.component_id(), element_pair.first },
-                            ComponentMeshElement{
-                                line.component_id(), element_pair.second } );
-                    }
+                    continue;
                 }
+                tasks.emplace_back(
+                    async::spawn( [this, &brep, surface_tree_id, line_tree_id] {
+                        const auto& surface = brep.surface(
+                            surfaces_model_tree_.uuids_[surface_tree_id] );
+                        const auto& line =
+                            brep.line( lines_model_tree_.uuids_[line_tree_id] );
+                        const BRepLineSurfacesIntersection action{ brep,
+                            surface.id(), line.id() };
+                        IntersectionsResult result;
+                        for( const auto& element_pair :
+                            surfaces_model_tree_.mesh_trees_[surface_tree_id]
+                                .compute_other_element_bbox_intersections(
+                                    lines_model_tree_.mesh_trees_[line_tree_id],
+                                    action ) )
+                        {
+                            result.emplace_back(
+                                ComponentMeshElement{ surface.component_id(),
+                                    element_pair.first },
+                                ComponentMeshElement{ line.component_id(),
+                                    element_pair.second } );
+                        }
+                        return result;
+                    } ) );
+            }
+            for( auto& task : async::when_all( tasks ).get() )
+            {
+                absl::c_move(
+                    task.get(), std::back_inserter( component_intersections ) );
             }
             return component_intersections;
         }
