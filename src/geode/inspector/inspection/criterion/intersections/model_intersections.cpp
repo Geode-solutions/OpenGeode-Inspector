@@ -291,6 +291,34 @@ namespace
                 mesh.point( triangle_vertices[2] ) };
         }
 
+        // Point of a mesh2 vertex, taken from mesh1 when the vertex is common
+        // to both triangles: common vertices must be exactly the same point
+        // even if their coordinates slightly differ between the meshes.
+        [[nodiscard]] const geode::Point< Model::dim >& mesh2_point(
+            geode::index_t vertex2,
+            absl::Span< const std::array< geode::index_t, 2 > >
+                common_vertices ) const
+        {
+            for( const auto& common : common_vertices )
+            {
+                if( common[1] == vertex2 )
+                {
+                    return mesh1_.point( common[0] );
+                }
+            }
+            return mesh2_.point( vertex2 );
+        }
+
+        [[nodiscard]] geode::Triangle< Model::dim > mesh2_triangle(
+            const geode::PolygonVertices& triangle_vertices,
+            absl::Span< const std::array< geode::index_t, 2 > >
+                common_vertices ) const
+        {
+            return { mesh2_point( triangle_vertices[0], common_vertices ),
+                mesh2_point( triangle_vertices[1], common_vertices ),
+                mesh2_point( triangle_vertices[2], common_vertices ) };
+        }
+
     private:
         bool same_surface_;
         const geode::Surface< Model::dim >& surface1_;
@@ -428,7 +456,8 @@ namespace
                 return true;
             }
             const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
-            const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
+            const auto triangle2 =
+                mesh2_triangle( t2_vertices, common_vertices );
             return geode::point_triangle_position( t1_third_pt, triangle2 )
                        != geode::POSITION::outside
                    || geode::point_triangle_position( t2_third_pt, triangle1 )
@@ -449,9 +478,10 @@ namespace
                     t2_vertices[t2_edge_v == 2 ? 0 : t2_edge_v + 1]
                 };
                 const auto edge_edge_inter =
-                    geode::segment_segment_intersection_detection(
-                        t1_edge, { mesh2_.point( edge2_vertices[0] ),
-                                     mesh2_.point( edge2_vertices[1] ) } );
+                    geode::segment_segment_intersection_detection( t1_edge,
+                        { mesh2_point( edge2_vertices[0], common_vertices ),
+                            mesh2_point(
+                                edge2_vertices[1], common_vertices ) } );
                 if( edge_edge_inter.first == geode::POSITION::outside
                     || edge_edge_inter.first == geode::POSITION::parallel )
                 {
@@ -481,7 +511,8 @@ namespace
         // No edge crossing: one triangle may still lie inside the other
         // (possibly nested in its corner at the common vertex)
         return non_common_vertex_inside( mesh1_, t1_vertices,
-                   mesh_triangle( mesh2_, t2_vertices ), common_vertices, 0 )
+                   mesh2_triangle( t2_vertices, common_vertices ),
+                   common_vertices, 0 )
                || non_common_vertex_inside( mesh2_, t2_vertices,
                    mesh_triangle( mesh1_, t1_vertices ), common_vertices, 1 );
     }
@@ -535,7 +566,7 @@ namespace
             absl::Span< const std::array< geode::index_t, 2 > >
                 common_vertices ) const
     {
-        const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
+        const auto triangle2 = mesh2_triangle( t2_vertices, common_vertices );
         if( common_vertices.size() == 2 )
         {
             const auto& t1_third_pt = mesh1_.point(

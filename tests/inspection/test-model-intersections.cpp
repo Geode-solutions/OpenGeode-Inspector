@@ -311,6 +311,26 @@ void check_collinear_lines()
         nb_intersections( brep ), 1, "BRep line folding back on itself" );
 }
 
+void check_brep_common_vertex_with_different_coordinates()
+{
+    // Two triangles sharing unique vertex 0, whose coordinates slightly
+    // differ between both surfaces: they only touch at this vertex
+    const SurfaceDefinition< 3 > horizontal{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 1., 0., 0. } },
+            geode::Point3D{ { 0., 1., 0. } } },
+        { { 0, 1, 2 } }, { 0, 1, 2 }
+    };
+    const SurfaceDefinition< 3 > vertical{
+        { geode::Point3D{ { 1e-9, 1e-9, 0. } },
+            geode::Point3D{ { -1., -1., 1. } },
+            geode::Point3D{ { -1., -1., -1. } } },
+        { { 0, 1, 2 } }, { 0, 3, 4 }
+    };
+    const auto brep = build_brep( { horizontal, vertical }, {}, 5 );
+    check_nb_intersections( nb_intersections( brep ), 0,
+        "BRep common vertex with different coordinates" );
+}
+
 void check_brep_with_empty_meshes()
 {
     // Two crossing triangles plus a surface and a line without vertices
@@ -342,6 +362,7 @@ int main()
         check_section_nested_triangles();
         check_brep_vertices_without_unique_vertex();
         check_brep_with_empty_meshes();
+        check_brep_common_vertex_with_different_coordinates();
         check_collinear_lines();
         check_brep_line_in_surface_plane();
 
