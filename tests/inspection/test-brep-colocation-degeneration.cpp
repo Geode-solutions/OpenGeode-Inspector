@@ -22,6 +22,7 @@
  */
 
 #include <absl/algorithm/container.h>
+#include <absl/strings/match.h>
 
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
@@ -91,6 +92,20 @@ void check_colocation_without_unique_vertices()
     geode::OpenGeodeInspectorInspectionException::test(
         nb_colocated_groups( unlinked ) == 1,
         "[Test] Colocated vertices without unique vertex should be reported" );
+    const geode::BRepComponentMeshesColocation inspector{ unlinked };
+    const auto message = inspector.inspect_meshes_point_colocations().string();
+    std::string surface_id;
+    for( const auto& surface : unlinked.surfaces() )
+    {
+        surface_id = surface.id().string();
+    }
+    geode::OpenGeodeInspectorInspectionException::test(
+        absl::StrContains( message, absl::StrCat( "Surface ", surface_id, " (",
+                                        surface_id, ") colocated vertices" ) )
+            && absl::StrContains( message,
+                absl::StrCat( "Surface ", surface_id, " (", surface_id,
+                    ") has vertices  1 0 colocated at position [0 0 0]" ) ),
+        "[Test] Wrong colocation message: ", message );
 
     const auto same_unique_vertex = build_colocated_surface( { 0, 0, 1, 2 } );
     geode::OpenGeodeInspectorInspectionException::test(
