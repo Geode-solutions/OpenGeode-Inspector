@@ -23,6 +23,10 @@
 
 #include <geode/inspector/inspection/criterion/internal/colocation_impl.hpp>
 
+#include <atomic>
+
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 
 #include <geode/mesh/core/edged_curve.hpp>
@@ -30,6 +34,7 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/geometry/distance.hpp>
 #include <geode/geometry/point.hpp>
 
 namespace
@@ -128,10 +133,29 @@ namespace geode
         bool
             ColocationImpl< dimension, Mesh >::mesh_has_colocated_points() const
         {
-            return mesh_points_colocated_info< dimension, Mesh >(
-                       mesh_, GLOBAL_EPSILON )
-                       .nb_colocated_points()
-                   > 0;
+            const auto nnsearch = mesh_points_search< dimension >( mesh_ );
+            std::atomic< bool > has_colocated_points{ false };
+            async::parallel_for(
+                async::irange( index_t{ 0 }, nnsearch.nb_points() ),
+                [&nnsearch, &has_colocated_points]( index_t point_index ) {
+                    if( has_colocated_points )
+                    {
+                        return;
+                    }
+                    const auto& point = nnsearch.point( point_index );
+                    for( const auto neighbor : nnsearch.neighbors( point, 2 ) )
+                    {
+                        if( neighbor != point_index
+                            && point_point_distance(
+                                   point, nnsearch.point( neighbor ) )
+                                   <= GLOBAL_EPSILON )
+                        {
+                            has_colocated_points = true;
+                            return;
+                        }
+                    }
+                } );
+            return has_colocated_points;
         }
 
         template < index_t dimension, typename Mesh >
