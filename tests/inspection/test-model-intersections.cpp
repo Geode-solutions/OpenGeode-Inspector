@@ -189,6 +189,40 @@ void check_section_adjacent_surfaces_different_numbering()
         "Section adjacent surfaces with different numbering" );
 }
 
+void check_section_nested_triangles()
+{
+    // A small triangle strictly inside a big one, no common vertex
+    const SurfaceDefinition< 2 > big{ { geode::Point2D{ { 0., 0. } },
+                                          geode::Point2D{ { 10., 0. } },
+                                          geode::Point2D{ { 0., 10. } } },
+        { { 0, 1, 2 } }, { 0, 1, 2 } };
+    const SurfaceDefinition< 2 > inside{ { geode::Point2D{ { 1., 1. } },
+                                             geode::Point2D{ { 2., 1. } },
+                                             geode::Point2D{ { 1., 2. } } },
+        { { 0, 1, 2 } }, { 3, 4, 5 } };
+    const auto section = build_section( { big, inside }, {}, 6 );
+    check_nb_intersections(
+        nb_intersections( section ), 1, "Section triangle inside another" );
+
+    // A small triangle nested in the corner of the big one at vertex 0
+    const SurfaceDefinition< 2 > corner{ { geode::Point2D{ { 0., 0. } },
+                                             geode::Point2D{ { 3., 1. } },
+                                             geode::Point2D{ { 1., 3. } } },
+        { { 0, 1, 2 } }, { 0, 3, 4 } };
+    const auto section2 = build_section( { big, corner }, {}, 5 );
+    check_nb_intersections( nb_intersections( section2 ), 1,
+        "Section triangle nested in a corner" );
+
+    // Triangle outside the big one, only sharing vertex 0
+    const SurfaceDefinition< 2 > outside{ { geode::Point2D{ { 0., 0. } },
+                                              geode::Point2D{ { -3., -1. } },
+                                              geode::Point2D{ { -1., -3. } } },
+        { { 0, 1, 2 } }, { 0, 3, 4 } };
+    const auto section3 = build_section( { big, outside }, {}, 5 );
+    check_nb_intersections(
+        nb_intersections( section3 ), 0, "Section triangles sharing a vertex" );
+}
+
 void check_brep_vertices_without_unique_vertex()
 {
     // Two non-intersecting triangles with overlapping bounding boxes, no mesh
@@ -250,6 +284,7 @@ int main()
     {
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_section_adjacent_surfaces_different_numbering();
+        check_section_nested_triangles();
         check_brep_vertices_without_unique_vertex();
         check_brep_with_empty_meshes();
 

@@ -355,6 +355,30 @@ namespace
         };
     }
 
+    [[nodiscard]] bool non_common_vertex_inside(
+        const geode::SurfaceMesh2D& mesh,
+        const geode::PolygonVertices& triangle_vertices,
+        const geode::Triangle2D& other_triangle,
+        absl::Span< const std::array< geode::index_t, 2 > > common_vertices,
+        geode::local_index_t vertex_position )
+    {
+        for( const auto vertex_id : triangle_vertices )
+        {
+            if( absl::c_any_of( common_vertices,
+                    [vertex_id, vertex_position](
+                        const std::array< geode::index_t, 2 >& common ) {
+                        return common[vertex_position] == vertex_id;
+                    } ) )
+            {
+                continue;
+            }
+            return geode::point_triangle_position(
+                       mesh.point( vertex_id ), other_triangle )
+                   != geode::POSITION::outside;
+        }
+        return false;
+    }
+
     template <>
     [[nodiscard]] bool
         ModelSurfacesIntersectionBase< geode::Section >::triangles_intersect(
@@ -434,7 +458,12 @@ namespace
                 }
             }
         }
-        return false;
+        // No edge crossing: one triangle may still lie inside the other
+        // (possibly nested in its corner at the common vertex)
+        return non_common_vertex_inside( mesh1_, t1_vertices,
+                   mesh_triangle( mesh2_, t2_vertices ), common_vertices, 0 )
+               || non_common_vertex_inside( mesh2_, t2_vertices,
+                   mesh_triangle( mesh1_, t1_vertices ), common_vertices, 1 );
     }
 
     [[nodiscard]] bool triangle_intersects_other(
