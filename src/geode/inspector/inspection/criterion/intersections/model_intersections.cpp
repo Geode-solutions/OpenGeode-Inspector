@@ -590,11 +590,47 @@ namespace
     private:
         bool lines_intersect( geode::index_t p1_id, geode::index_t p2_id ) const
         {
+            const auto segment1 = mesh1_.segment( p1_id );
+            const auto segment2 = mesh2_.segment( p2_id );
             const auto [position1, position2] =
                 geode::segment_segment_intersection_detection(
-                    mesh1_.segment( p1_id ), mesh2_.segment( p2_id ) );
-            return position1 == geode::POSITION::inside
-                   || position2 == geode::POSITION::inside;
+                    segment1, segment2 );
+            if( position1 == geode::POSITION::inside
+                || position2 == geode::POSITION::inside )
+            {
+                return true;
+            }
+            return position1 == geode::POSITION::parallel
+                   && collinear_segments_overlap( segment1, segment2 );
+        }
+
+        // Collinear segments overlap if an end point is strictly inside the
+        // other segment, or if they share both end points
+        [[nodiscard]] static bool collinear_segments_overlap(
+            const geode::Segment< dimension >& segment1,
+            const geode::Segment< dimension >& segment2 )
+        {
+            geode::local_index_t nb_shared_vertices{ 0 };
+            for( const auto& [segment, other] :
+                { std::pair{ &segment1, &segment2 },
+                    std::pair{ &segment2, &segment1 } } )
+            {
+                for( const auto& vertex : segment->vertices() )
+                {
+                    const auto position =
+                        geode::point_segment_position( vertex.get(), *other );
+                    if( position == geode::POSITION::inside )
+                    {
+                        return true;
+                    }
+                    if( position == geode::POSITION::vertex0
+                        || position == geode::POSITION::vertex1 )
+                    {
+                        nb_shared_vertices++;
+                    }
+                }
+            }
+            return nb_shared_vertices == 4;
         }
 
     private:

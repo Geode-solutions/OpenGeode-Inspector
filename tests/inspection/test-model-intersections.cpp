@@ -280,6 +280,37 @@ void check_brep_line_in_surface_plane()
         "BRep line touching a surface vertex in its plane" );
 }
 
+void check_collinear_lines()
+{
+    // Two lines overlapping along the same direction
+    const LineDefinition< 2 > line1{ { geode::Point2D{ { 0., 0. } },
+                                         geode::Point2D{ { 2., 0. } } },
+        { { 0, 1 } }, {} };
+    const LineDefinition< 2 > line2{ { geode::Point2D{ { 1., 0. } },
+                                         geode::Point2D{ { 3., 0. } } },
+        { { 0, 1 } }, {} };
+    const auto section = build_section( {}, { line1, line2 }, 0 );
+    check_nb_intersections(
+        nb_intersections( section ), 1, "Section overlapping lines" );
+
+    // Two collinear lines only touching at an end point
+    const LineDefinition< 2 > line3{ { geode::Point2D{ { 2., 0. } },
+                                         geode::Point2D{ { 3., 0. } } },
+        { { 0, 1 } }, {} };
+    const auto section2 = build_section( {}, { line1, line3 }, 0 );
+    check_nb_intersections(
+        nb_intersections( section2 ), 0, "Section touching collinear lines" );
+
+    // A line folding back on itself in 3D
+    const LineDefinition< 3 > folded{ { geode::Point3D{ { 0., 0., 0. } },
+                                          geode::Point3D{ { 2., 2., 2. } },
+                                          geode::Point3D{ { 1., 1., 1. } } },
+        { { 0, 1 }, { 1, 2 } }, {} };
+    const auto brep = build_brep( {}, { folded }, 0 );
+    check_nb_intersections(
+        nb_intersections( brep ), 1, "BRep line folding back on itself" );
+}
+
 void check_brep_with_empty_meshes()
 {
     // Two crossing triangles plus a surface and a line without vertices
@@ -311,6 +342,7 @@ int main()
         check_section_nested_triangles();
         check_brep_vertices_without_unique_vertex();
         check_brep_with_empty_meshes();
+        check_collinear_lines();
         check_brep_line_in_surface_plane();
 
         geode::Logger::info( "TEST SUCCESS" );
