@@ -58,11 +58,11 @@ namespace
         }
     };
 
-    [[nodiscard]] absl::InlinedVector< geode::PolygonVertices, 1 >
+    [[nodiscard]] absl::InlinedVector< geode::PolygonVertices, 2 >
         polygon_fan_triangles(
             const geode::PolygonVertices& polygon, geode::local_index_t apex )
     {
-        absl::InlinedVector< geode::PolygonVertices, 1 > triangles;
+        absl::InlinedVector< geode::PolygonVertices, 2 > triangles;
         for( const auto edge : geode::LRange{ 1, polygon.size() - 1 } )
         {
             const auto next_apex = ( apex + edge ) % polygon.size();
