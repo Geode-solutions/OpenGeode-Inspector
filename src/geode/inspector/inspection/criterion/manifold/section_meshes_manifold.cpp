@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/section_meshes_manifold.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -83,10 +85,15 @@ namespace geode
         SectionComponentMeshesManifold::inspect_section_manifold() const
     {
         SectionMeshesManifoldInspectionResult result;
-        impl_->add_surfaces_meshes_non_manifold_vertices(
-            result.meshes_non_manifold_vertices );
-        impl_->add_surfaces_meshes_non_manifold_edges(
-            result.meshes_non_manifold_edges );
+        async::parallel_invoke(
+            [this, &result] {
+                impl_->add_surfaces_meshes_non_manifold_vertices(
+                    result.meshes_non_manifold_vertices );
+            },
+            [this, &result] {
+                impl_->add_surfaces_meshes_non_manifold_edges(
+                    result.meshes_non_manifold_edges );
+            } );
         return result;
     }
 } // namespace geode

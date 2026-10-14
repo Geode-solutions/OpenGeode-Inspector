@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/brep_meshes_manifold.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/algorithm.hpp>
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
@@ -311,14 +313,27 @@ namespace geode
         BRepComponentMeshesManifold::inspect_brep_manifold() const
     {
         BRepMeshesManifoldInspectionResult result;
-        impl_->add_component_meshes_non_manifold_vertices(
-            result.meshes_non_manifold_vertices );
-        impl_->add_component_meshes_non_manifold_edges(
-            result.meshes_non_manifold_edges );
-        impl_->add_component_meshes_non_manifold_facets(
-            result.meshes_non_manifold_facets );
-        impl_->add_model_non_manifold_edges( result.brep_non_manifold_edges );
-        impl_->add_model_non_manifold_facets( result.brep_non_manifold_facets );
+        async::parallel_invoke(
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_vertices(
+                    result.meshes_non_manifold_vertices );
+            },
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_edges(
+                    result.meshes_non_manifold_edges );
+            },
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_facets(
+                    result.meshes_non_manifold_facets );
+            },
+            [this, &result] {
+                impl_->add_model_non_manifold_edges(
+                    result.brep_non_manifold_edges );
+            },
+            [this, &result] {
+                impl_->add_model_non_manifold_facets(
+                    result.brep_non_manifold_facets );
+            } );
         return result;
     }
 } // namespace geode
