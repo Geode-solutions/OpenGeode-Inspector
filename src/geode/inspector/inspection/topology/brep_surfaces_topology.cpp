@@ -214,7 +214,7 @@ namespace geode
         const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         if( absl::c_count_if( surface_uuids,
-                [*this]( const uuid& surface_id ) {
+                [this]( const uuid& surface_id ) {
                     return brep_.surface( surface_id ).is_active();
                 } )
             < 2 )
