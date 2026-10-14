@@ -44,6 +44,14 @@ add_geode_test(
         OpenGeode::mesh
         ${PROJECT_NAME}::inspection
 )
+
+add_geode_test(
+    SOURCE "test-information.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        ${PROJECT_NAME}::inspection
+)
+
 add_geode_test(
     SOURCE "test-edgedcurve-colocation.cpp"
     DEPENDENCIES

@@ -119,7 +119,23 @@ namespace geode
             return description_;
         }
 
+        /*!
+         * Total number of issues, summed over every component of the map
+         */
         [[nodiscard]] index_t nb_issues() const
+        {
+            index_t nb{ 0 };
+            for( const auto& issues : issues_map_ )
+            {
+                nb += issues.second.nb_issues();
+            }
+            return nb;
+        }
+
+        /*!
+         * Number of components having at least one issue
+         */
+        [[nodiscard]] index_t nb_components_with_issues() const
         {
             return issues_map_.size();
         }
@@ -140,8 +156,8 @@ namespace geode
             {
                 return absl::StrCat( "no issues with ", description_, "\n" );
             }
-            auto message = absl::StrCat(
-                issues_map_.size(), " issues with ", description_ );
+            auto message =
+                absl::StrCat( nb_issues(), " issues with ", description_ );
             for( const auto& issues : issues_map_ )
             {
                 absl::StrAppend( &message, "\n\t", issues.second.string() );
