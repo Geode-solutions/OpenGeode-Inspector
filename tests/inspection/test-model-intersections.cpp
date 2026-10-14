@@ -222,6 +222,28 @@ void check_brep_vertices_without_unique_vertex()
         "BRep surface without unique vertices (self)" );
 }
 
+void check_brep_with_empty_meshes()
+{
+    // Two crossing triangles plus a surface and a line without vertices
+    const SurfaceDefinition< 3 > horizontal{
+        { geode::Point3D{ { 0., 0., 0. } }, geode::Point3D{ { 2., 0., 0. } },
+            geode::Point3D{ { 0., 2., 0. } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const SurfaceDefinition< 3 > vertical{
+        { geode::Point3D{ { 0.5, 0.5, -1. } },
+            geode::Point3D{ { 0.5, 0.5, 1. } },
+            geode::Point3D{ { 1., 0., 0.5 } } },
+        { { 0, 1, 2 } }, {}
+    };
+    const SurfaceDefinition< 3 > empty_surface{};
+    const LineDefinition< 3 > empty_line{};
+    const auto brep = build_brep(
+        { horizontal, empty_surface, vertical }, { empty_line }, 0 );
+    check_nb_intersections(
+        nb_intersections( brep ), 1, "BRep with empty meshes" );
+}
+
 int main()
 {
     try
@@ -229,6 +251,7 @@ int main()
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         check_section_adjacent_surfaces_different_numbering();
         check_brep_vertices_without_unique_vertex();
+        check_brep_with_empty_meshes();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

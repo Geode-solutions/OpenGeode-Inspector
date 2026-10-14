@@ -697,33 +697,22 @@ namespace geode
             intersecting_polygons() const
         {
             IntersectionsResult component_intersections;
-            for( const auto& surface : model_.active_surfaces() )
-            {
-                if( surface.mesh().nb_polygons() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the surface meshes has an empty mesh, cannot "
-                        "compute the AABBTree used for detecting the mesh "
-                        "intersections, no intersections will be "
-                        "computed." );
-                    return component_intersections;
-                }
-            }
             using Task = async::task< IntersectionsResult >;
             std::vector< Task > tasks;
-            for( const auto& surface : model_.active_surfaces() )
+            for( const auto tree_id : Indices{ surfaces_model_tree_.uuids_ } )
             {
-                tasks.emplace_back( async::spawn( [this, &surface] {
+                tasks.emplace_back( async::spawn( [this, tree_id] {
+                    const auto& surface_uuid =
+                        surfaces_model_tree_.uuids_[tree_id];
                     const Action surfaces_intersection_action{ model_,
-                        surface.id(), surface.id() };
+                        surface_uuid, surface_uuid };
                     const auto intersecting_elements =
-                        surfaces_model_tree_
-                            .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
-                                surface.id() )]
+                        surfaces_model_tree_.mesh_trees_[tree_id]
                             .compute_self_element_bbox_intersections(
                                 surfaces_intersection_action );
                     IntersectionsResult result;
-                    const auto surface_id = surface.component_id();
+                    const auto surface_id =
+                        model_.surface( surface_uuid ).component_id();
                     for( const auto& [polygon1, polygon2] :
                         intersecting_elements )
                     {
@@ -783,32 +772,22 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto& line : model_.active_lines() )
-            {
-                if( line.mesh().nb_edges() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the line meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
-                }
-            }
             using Task = async::task< IntersectionsResult >;
             std::vector< Task > tasks;
-            for( const auto& line : model_.active_lines() )
+            for( const auto tree_id : Indices{ lines_model_tree_.uuids_ } )
             {
-                tasks.emplace_back( async::spawn( [this, &line] {
+                tasks.emplace_back( async::spawn( [this, tree_id] {
+                    const auto& line_uuid = lines_model_tree_.uuids_[tree_id];
                     const LineLineIntersection lines_intersection_action{
-                        model_, line.id(), line.id()
+                        model_, line_uuid, line_uuid
                     };
                     const auto intersecting_elements =
-                        lines_model_tree_
-                            .mesh_trees_[lines_model_tree_.mesh_tree_ids_.at(
-                                line.id() )]
+                        lines_model_tree_.mesh_trees_[tree_id]
                             .compute_self_element_bbox_intersections(
                                 lines_intersection_action );
                     IntersectionsResult result;
-                    const auto line_id = line.component_id();
+                    const auto line_id =
+                        model_.line( line_uuid ).component_id();
                     for( const auto& [edge1, edge2] : intersecting_elements )
                     {
                         result.emplace_back(
@@ -867,33 +846,18 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto& surface : brep.active_surfaces() )
+            for( const auto surface_tree_id :
+                Indices{ surfaces_model_tree_.uuids_ } )
             {
-                if( surface.mesh().nb_polygons() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the surface meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
-                }
-            }
-            for( const auto& line : brep.active_lines() )
-            {
-                if( line.mesh().nb_edges() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the line meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
-                }
-            }
-            for( const auto& surface : brep.active_surfaces() )
-            {
+                const auto& surface = brep.surface(
+                    surfaces_model_tree_.uuids_[surface_tree_id] );
                 const auto& surface_tree =
-                    surfaces_model_tree_.mesh_trees_[surfaces_model_tree_
-                            .mesh_tree_ids_.at( surface.id() )];
-                for( const auto& line : brep.active_lines() )
+                    surfaces_model_tree_.mesh_trees_[surface_tree_id];
+                for( const auto line_tree_id :
+                    Indices{ lines_model_tree_.uuids_ } )
                 {
+                    const auto& line =
+                        brep.line( lines_model_tree_.uuids_[line_tree_id] );
                     if( brep.nb_embedding_blocks( line ) == 0 )
                     {
                         continue;
@@ -901,8 +865,7 @@ namespace geode
                     const BRepLineSurfacesIntersection action{ brep,
                         surface.id(), line.id() };
                     const auto& line_tree =
-                        lines_model_tree_.mesh_trees_[lines_model_tree_
-                                .mesh_tree_ids_.at( line.id() )];
+                        lines_model_tree_.mesh_trees_[line_tree_id];
                     for( const auto& element_pair :
                         surface_tree.compute_other_element_bbox_intersections(
                             line_tree, action ) )
