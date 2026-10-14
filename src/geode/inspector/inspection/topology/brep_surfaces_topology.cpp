@@ -26,6 +26,7 @@
 #include <optional>
 
 #include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/algorithm.hpp>
 
@@ -42,6 +43,101 @@
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/topology/internal/topology_helpers.hpp>
+
+namespace
+{
+    enum struct SURFACE_BLOCK_RELATION : char
+    {
+        inactive,
+        boundary,
+        internal,
+        none
+    };
+    using SurfaceBlocksRelations =
+        absl::flat_hash_map< geode::uuid, SURFACE_BLOCK_RELATION >;
+
+    SURFACE_BLOCK_RELATION surface_block_relation( const geode::BRep& brep,
+        const geode::Surface3D& surface,
+        const geode::Block3D& block,
+        SurfaceBlocksRelations& relations )
+    {
+        const auto [it, inserted] =
+            relations.try_emplace( block.id(), SURFACE_BLOCK_RELATION::none );
+        if( inserted )
+        {
+            if( !block.is_active() )
+            {
+                it->second = SURFACE_BLOCK_RELATION::inactive;
+            }
+            else if( brep.is_boundary( surface, block ) )
+            {
+                it->second = SURFACE_BLOCK_RELATION::boundary;
+            }
+            else if( brep.is_internal( surface, block ) )
+            {
+                it->second = SURFACE_BLOCK_RELATION::internal;
+            }
+        }
+        return it->second;
+    }
+
+    std::optional< std::string > polygon_has_wrong_component_facets_around(
+        const geode::BRep& brep,
+        const geode::Surface3D& surface,
+        geode::index_t facet_index,
+        const geode::PolygonVertices& polygon_unique_vertices,
+        SurfaceBlocksRelations& relations )
+    {
+        // Only the Block facets around the polygon are checked
+        const auto block_polygons =
+            geode::detail::block_component_mesh_polygons(
+                brep, polygon_unique_vertices );
+        for( const auto& [block_id, block_facets] : block_polygons )
+        {
+            const auto& block = brep.block( block_id );
+            const auto relation =
+                surface_block_relation( brep, surface, block, relations );
+            if( relation == SURFACE_BLOCK_RELATION::inactive )
+            {
+                continue;
+            }
+            if( relation == SURFACE_BLOCK_RELATION::boundary )
+            {
+                if( block_facets.size() != 1 )
+                {
+                    return absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
+                        surface.id().string(), ") is boundary of block ",
+                        block.name().value_or( block.id().string() ), " (",
+                        block_id.string(), "), but has ", block_facets.size(),
+                        " facets of this Block around it, it should be 1." );
+                }
+                continue;
+            }
+            if( relation == SURFACE_BLOCK_RELATION::internal )
+            {
+                if( block_facets.size() != 2 )
+                {
+                    return absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
+                        surface.id().string(), ") is internal to block ",
+                        block.name().value_or( block.id().string() ), " (",
+                        block_id.string(), "), but has ", block_facets.size(),
+                        " facets of this Block around it, it should be 2." );
+                }
+                continue;
+            }
+            return absl::StrCat( "Surface ",
+                surface.name().value_or( surface.id().string() ), " (",
+                surface.id().string(), ") has facet with id ", facet_index,
+                " in common with Block",
+                block.name().value_or( block.id().string() ), " (",
+                block_id.string(),
+                "), but is neither boundary of nor internal to it." );
+        }
+        return std::nullopt;
+    }
+} // namespace
 
 namespace geode
 {
@@ -364,49 +460,10 @@ namespace geode
         BRepSurfacesTopology::surface_facet_has_wrong_component_facets_around(
             const Surface3D& surface, const index_t facet_index ) const
     {
-        const auto cmp = component_mesh_polygons( brep_, surface, facet_index );
-        for( const auto& [block_id, block_facets] : cmp.block_polygons )
-        {
-            const auto& block = brep_.block( block_id );
-            if( !block.is_active() )
-            {
-                continue;
-            }
-            if( brep_.is_boundary( surface, block ) )
-            {
-                if( block_facets.size() != 1 )
-                {
-                    return absl::StrCat( "Surface ",
-                        surface.name().value_or( surface.id().string() ), " (",
-                        surface.id().string(), ") is boundary of block ",
-                        block.name().value_or( block.id().string() ), " (",
-                        block_id.string(), "), but has ", block_facets.size(),
-                        " facets of this Block around it, it should be 1." );
-                }
-                continue;
-            }
-            if( brep_.is_internal( surface, block ) )
-            {
-                if( block_facets.size() != 2 )
-                {
-                    return absl::StrCat( "Surface ",
-                        surface.name().value_or( surface.id().string() ), " (",
-                        surface.id().string(), ") is internal to block ",
-                        block.name().value_or( block.id().string() ), " (",
-                        block_id.string(), "), but has ", block_facets.size(),
-                        " facets of this Block around it, it should be 2." );
-                }
-                continue;
-            }
-            return absl::StrCat( "Surface ",
-                surface.name().value_or( surface.id().string() ), " (",
-                surface.id().string(), ") has facet with id ", facet_index,
-                " in common with Block",
-                block.name().value_or( block.id().string() ), " (",
-                block_id.string(),
-                "), but is neither boundary of nor internal to it." );
-        }
-        return std::nullopt;
+        SurfaceBlocksRelations relations;
+        return polygon_has_wrong_component_facets_around( brep_, surface,
+            facet_index, polygon_unique_vertices( brep_, surface, facet_index ),
+            relations );
     }
 
     BRepSurfacesTopologyInspectionResult
@@ -447,11 +504,26 @@ namespace geode
                     surface.name().value_or( surface.id().string() ), " (",
                     surface.id().string(), ")" )
             };
-            for( const auto facet_id : Range{ surface.mesh().nb_polygons() } )
+            const auto& mesh = surface.mesh();
+            std::vector< index_t > unique_vertices( mesh.nb_vertices() );
+            for( const auto v : Indices{ unique_vertices } )
             {
+                unique_vertices[v] =
+                    brep_.unique_vertex( { surface.component_id(), v } );
+            }
+            SurfaceBlocksRelations relations;
+            for( const auto facet_id : Range{ mesh.nb_polygons() } )
+            {
+                auto polygon_unique_vertices =
+                    mesh.polygon_vertices( facet_id );
+                for( auto& vertex : polygon_unique_vertices )
+                {
+                    vertex = unique_vertices[vertex];
+                }
                 if( const auto problem_message =
-                        surface_facet_has_wrong_component_facets_around(
-                            surface, facet_id ) )
+                        polygon_has_wrong_component_facets_around( brep_,
+                            surface, facet_id, polygon_unique_vertices,
+                            relations ) )
                 {
                     surface_facets_with_wrong_cme.add_issue(
                         facet_id, problem_message.value() );
