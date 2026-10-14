@@ -98,7 +98,7 @@ namespace geode
                 const auto enable_edges =
                     absl::c_contains( surfaces_to_enable, surface.id() );
                 surface_tasks.emplace_back(
-                    async::spawn( [&enable_edges, &threshold, &surface] {
+                    async::spawn( [enable_edges, &threshold, &surface] {
                         if( enable_edges )
                         {
                             surface.mesh().enable_edges();
