@@ -178,6 +178,12 @@ namespace geode
                                 vertices[edge_id == vertices.size() - 1
                                              ? 0
                                              : edge_id + 1] } );
+                        // Unlinked vertices are reported by the topology
+                        // inspection, they cannot be compared here
+                        if( vertex0 == NO_ID || vertex1 == NO_ID )
+                        {
+                            continue;
+                        }
                         const auto info = edges.try_emplace(
                             Edge{ std::array{ vertex0, vertex1 } },
                             std::vector{ surface.id() } );

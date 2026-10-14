@@ -144,6 +144,16 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-brep-meshes-criteria.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-solid-negative-elements.cpp"
     DEPENDENCIES
         OpenGeode::basic
