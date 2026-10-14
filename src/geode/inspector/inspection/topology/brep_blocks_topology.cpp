@@ -439,6 +439,14 @@ namespace
                 {
                     const auto unique_vertex = brep.unique_vertex(
                         { surface.component_id(), polygon_vertex } );
+                    if( unique_vertex == geode::NO_ID )
+                    {
+                        // Unlinked vertices cannot be merged with others
+                        polygon_vertex =
+                            polygonal_surface_builder->create_point(
+                                surface_mesh.point( polygon_vertex ) );
+                        continue;
+                    }
                     if( !unique_vertices_to_polygonal_surface_vertices
                             .has_mapping_input( unique_vertex ) )
                     {
