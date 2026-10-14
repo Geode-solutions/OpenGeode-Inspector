@@ -183,13 +183,17 @@ namespace
     public:
         ModelSurfacesIntersectionBase( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
             : ModelIntersectionBase< Model >{ model },
               same_surface_{ surface_id1 == surface_id2 },
               surface1_( model.surface( surface_id1 ) ),
               surface2_( model.surface( surface_id2 ) ),
               mesh1_( surface1_.mesh() ),
-              mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() )
+              mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() ),
+              unique_vertices1_( unique_vertices1 ),
+              unique_vertices2_( unique_vertices2 )
         {
         }
 
@@ -244,8 +248,7 @@ namespace
                 common_vertices;
             for( const auto v1_id : t1_vertices )
             {
-                const auto v1_unique_vertex = this->model().unique_vertex(
-                    { surface1_.component_id(), v1_id } );
+                const auto v1_unique_vertex = unique_vertices1_[v1_id];
                 for( const auto v2_id : t2_vertices )
                 {
                     if( same_surface_ && v1_id == v2_id )
@@ -254,9 +257,7 @@ namespace
                         break;
                     }
                     if( v1_unique_vertex != geode::NO_ID
-                        && v1_unique_vertex
-                               == this->model().unique_vertex(
-                                   { surface2_.component_id(), v2_id } ) )
+                        && v1_unique_vertex == unique_vertices2_[v2_id] )
                     {
                         common_vertices.push_back( { v1_id, v2_id } );
                         break;
@@ -325,6 +326,8 @@ namespace
         const geode::Surface< Model::dim >& surface2_;
         const geode::SurfaceMesh< Model::dim >& mesh1_;
         const geode::SurfaceMesh< Model::dim >& mesh2_;
+        absl::Span< const geode::index_t > unique_vertices1_;
+        absl::Span< const geode::index_t > unique_vertices2_;
     };
 
     template < typename Model >
@@ -334,9 +337,14 @@ namespace
     public:
         AllModelSurfacesIntersection( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< Model >(
-                  model, surface_id1, surface_id2 ),
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
+            : ModelSurfacesIntersectionBase< Model >( model,
+                  surface_id1,
+                  surface_id2,
+                  unique_vertices1,
+                  unique_vertices2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -362,9 +370,14 @@ namespace
     public:
         AllModelSurfacesAutoIntersection( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< Model >(
-                  model, surface_id1, surface_id2 ),
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
+            : ModelSurfacesIntersectionBase< Model >( model,
+                  surface_id1,
+                  surface_id2,
+                  unique_vertices1,
+                  unique_vertices2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -697,8 +710,24 @@ namespace geode
         Impl( const Model& model )
             : model_( model ),
               surfaces_model_tree_{ create_surface_meshes_aabb_trees( model ) },
-              lines_model_tree_{ create_line_meshes_aabb_trees( model ) }
+              lines_model_tree_{ create_line_meshes_aabb_trees( model ) },
+              surfaces_unique_vertices_( surfaces_model_tree_.uuids_.size() )
         {
+            async::parallel_for( async::irange( index_t{ 0 },
+                                     static_cast< index_t >(
+                                         surfaces_unique_vertices_.size() ) ),
+                [this]( index_t tree_id ) {
+                    const auto& surface =
+                        model_.surface( surfaces_model_tree_.uuids_[tree_id] );
+                    const auto surface_id = surface.component_id();
+                    auto& unique_vertices = surfaces_unique_vertices_[tree_id];
+                    unique_vertices.resize( surface.mesh().nb_vertices() );
+                    for( const auto v : Indices{ unique_vertices } )
+                    {
+                        unique_vertices[v] =
+                            model_.unique_vertex( { surface_id, v } );
+                    }
+                } );
         }
 
         [[nodiscard]] bool model_has_intersecting_surfaces() const
@@ -821,7 +850,9 @@ namespace geode
                     const auto& surface_uuid =
                         surfaces_model_tree_.uuids_[tree_id];
                     const Action surfaces_intersection_action{ model_,
-                        surface_uuid, surface_uuid };
+                        surface_uuid, surface_uuid,
+                        surfaces_unique_vertices_[tree_id],
+                        surfaces_unique_vertices_[tree_id] };
                     const auto intersecting_elements =
                         surfaces_model_tree_.mesh_trees_[tree_id]
                             .compute_self_element_bbox_intersections(
@@ -851,7 +882,9 @@ namespace geode
                     const auto surface_uuid2 =
                         surfaces_model_tree_.uuids_[components.second];
                     const Action surfaces_intersection_action{ model_,
-                        surface_uuid1, surface_uuid2 };
+                        surface_uuid1, surface_uuid2,
+                        surfaces_unique_vertices_[components.first],
+                        surfaces_unique_vertices_[components.second] };
                     const auto intersecting_elements =
                         surfaces_model_tree_.mesh_trees_[components.first]
                             .compute_other_element_bbox_intersections(
@@ -1001,6 +1034,8 @@ namespace geode
         const Model& model_;
         ModelMeshesAABBTree< Model::dim > surfaces_model_tree_;
         ModelMeshesAABBTree< Model::dim > lines_model_tree_;
+        // Unique vertex of each mesh vertex, per surface mesh tree
+        std::vector< std::vector< index_t > > surfaces_unique_vertices_;
     };
 
     template < typename Model >
