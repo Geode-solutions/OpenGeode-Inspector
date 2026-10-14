@@ -335,31 +335,40 @@ namespace geode
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            if( const auto problem_message =
-                    unique_vertex_has_multiple_corners( unique_vertex_id ) )
+            try
             {
-                result.unique_vertices_linked_to_multiple_corners.add_issue(
-                    unique_vertex_id, problem_message.value() );
+                if( const auto problem_message =
+                        unique_vertex_has_multiple_corners( unique_vertex_id ) )
+                {
+                    result.unique_vertices_linked_to_multiple_corners.add_issue(
+                        unique_vertex_id, problem_message.value() );
+                }
+                if( const auto problem_message =
+                        corner_is_multiply_embedded( unique_vertex_id ) )
+                {
+                    result.unique_vertices_linked_to_multiply_embedded_corner
+                        .add_issue( unique_vertex_id, problem_message.value() );
+                }
+                if( const auto problem_message =
+                        corner_is_not_internal_nor_boundary(
+                            unique_vertex_id ) )
+                {
+                    result
+                        .unique_vertices_linked_to_not_internal_nor_boundary_corner
+                        .add_issue( unique_vertex_id, problem_message.value() );
+                }
+                if( const auto problem_message =
+                        corner_is_part_of_line_but_not_boundary(
+                            unique_vertex_id ) )
+                {
+                    result.unique_vertices_linked_to_not_boundary_line_corner
+                        .add_issue( unique_vertex_id, problem_message.value() );
+                }
             }
-            if( const auto problem_message =
-                    corner_is_multiply_embedded( unique_vertex_id ) )
+            catch( const std::exception& )
             {
-                result.unique_vertices_linked_to_multiply_embedded_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_is_not_internal_nor_boundary( unique_vertex_id ) )
-            {
-                result
-                    .unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_is_part_of_line_but_not_boundary(
-                        unique_vertex_id ) )
-            {
-                result.unique_vertices_linked_to_not_boundary_line_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
+                // Wrong links to components are reported by the unique
+                // vertices inspection
             }
         }
         return result;
