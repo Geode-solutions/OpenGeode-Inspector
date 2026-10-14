@@ -360,7 +360,7 @@ namespace
         if( common_vertices.size() == 2 )
         {
             const auto& common_pt0 = mesh1_.point( common_vertices[0][0] );
-            const auto& common_pt1 = mesh1_.point( common_vertices[1][1] );
+            const auto& common_pt1 = mesh1_.point( common_vertices[1][0] );
             const auto& t1_third_pt = mesh1_.point(
                 third_point_index( t1_vertices, common_vertices, 0 ) );
             const auto& t2_third_pt = mesh2_.point(
