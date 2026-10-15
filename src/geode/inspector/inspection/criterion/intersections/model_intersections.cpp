@@ -416,6 +416,9 @@ namespace
         };
     }
 
+    // Only called when no edge of the triangle crosses the other triangle:
+    // its non common vertices are then either all inside or all outside
+    // the other triangle, so testing the first one is enough
     [[nodiscard]] bool non_common_vertex_inside(
         const geode::SurfaceMesh2D& mesh,
         const geode::PolygonVertices& triangle_vertices,

@@ -309,6 +309,17 @@ void check_collinear_lines()
     const auto brep = build_brep( {}, { folded }, 0 );
     check_nb_intersections(
         nb_intersections( brep ), 1, "BRep line folding back on itself" );
+
+    // A straight line made of several collinear edges: an edge is never
+    // compared with itself and consecutive edges share a single end point
+    const LineDefinition< 3 > straight{ { geode::Point3D{ { 0., 0., 0. } },
+                                            geode::Point3D{ { 1., 1., 1. } },
+                                            geode::Point3D{ { 2., 2., 2. } },
+                                            geode::Point3D{ { 3., 3., 3. } } },
+        { { 0, 1 }, { 1, 2 }, { 2, 3 } }, {} };
+    const auto brep2 = build_brep( {}, { straight }, 0 );
+    check_nb_intersections( nb_intersections( brep2 ), 0,
+        "BRep straight line with collinear edges" );
 }
 
 void check_brep_common_vertex_with_different_coordinates()
