@@ -538,41 +538,26 @@ namespace geode
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            try
-            {
-                if( const auto invalid_internal_topology =
-                        vertex_is_part_of_invalid_embedded_surface(
-                            unique_vertex_id ) )
-                {
-                    result
-                        .unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                        .add_issue( unique_vertex_id,
-                            invalid_internal_topology.value() );
-                }
-                if( const auto invalid_multiple_surfaces =
-                        vertex_is_part_of_invalid_multiple_surfaces(
-                            unique_vertex_id ) )
-                {
-                    result
-                        .unique_vertices_linked_to_several_and_invalid_surfaces
-                        .add_issue( unique_vertex_id,
-                            invalid_multiple_surfaces.value() );
-                }
-                if( const auto line_and_not_on_surface_border =
-                        vertex_is_part_of_line_and_not_on_surface_border(
-                            unique_vertex_id ) )
-                {
-                    result
-                        .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                        .add_issue( unique_vertex_id,
-                            line_and_not_on_surface_border.value() );
-                }
-            }
-            catch( const std::exception& )
-            {
-                // Wrong links to components are reported by the unique
-                // vertices inspection
-            }
+            internal::add_unique_vertex_issue(
+                result
+                    .unique_vertices_linked_to_a_surface_with_invalid_embbedings,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_embedded_surface(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_several_and_invalid_surfaces,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_multiple_surfaces(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result
+                    .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_line_and_not_on_surface_border(
+                        unique_vertex_id );
+                } );
         }
         return result;
     }

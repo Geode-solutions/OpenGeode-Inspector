@@ -994,53 +994,39 @@ namespace geode
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            try
-            {
-                if( const auto problem_message =
-                        unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
-                            unique_vertex_id ) )
-                {
-                    result
-                        .unique_vertices_part_of_two_blocks_and_no_boundary_surface
-                        .add_issue( unique_vertex_id, problem_message.value() );
-                }
-                if( const auto problem_message =
-                        unique_vertex_block_cmvs_count_is_incorrect(
-                            unique_vertex_id ) )
-                {
-                    result.unique_vertices_with_incorrect_block_cmvs_count
-                        .add_issue( unique_vertex_id, problem_message.value() );
-                }
-                if( const auto problem_message =
-                        vertex_is_part_of_invalid_single_surface(
-                            unique_vertex_id, not_boundary_surfaces ) )
-                {
-                    result
-                        .unique_vertices_linked_to_a_single_and_invalid_surface
-                        .add_issue( unique_vertex_id, problem_message.value() );
-                }
-                if( const auto problem_message =
-                        vertex_is_part_of_surface_with_wrong_relationships_to_block(
-                            unique_vertex_id, not_boundary_surfaces,
-                            dangling_surfaces ) )
-                {
-                    result
-                        .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
-                        .add_issue( unique_vertex_id, problem_message.value() );
-                }
-                if( const auto problem_message =
-                        vertex_is_part_of_invalid_multiple_surfaces(
-                            unique_vertex_id ) )
-                {
-                    result.unique_vertex_linked_to_multiple_invalid_surfaces
-                        .add_issue( unique_vertex_id, problem_message.value() );
-                }
-            }
-            catch( const std::exception& )
-            {
-                // Wrong links to components are reported by the unique
-                // vertices inspection
-            }
+            internal::add_unique_vertex_issue(
+                result
+                    .unique_vertices_part_of_two_blocks_and_no_boundary_surface,
+                unique_vertex_id, [&] {
+                    return unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_with_incorrect_block_cmvs_count,
+                unique_vertex_id, [&] {
+                    return unique_vertex_block_cmvs_count_is_incorrect(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_a_single_and_invalid_surface,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_single_surface(
+                        unique_vertex_id, not_boundary_surfaces );
+                } );
+            internal::add_unique_vertex_issue(
+                result
+                    .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_surface_with_wrong_relationships_to_block(
+                        unique_vertex_id, not_boundary_surfaces,
+                        dangling_surfaces );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertex_linked_to_multiple_invalid_surfaces,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_multiple_surfaces(
+                        unique_vertex_id );
+                } );
         }
         for( const auto& block : brep_.active_blocks() )
         {

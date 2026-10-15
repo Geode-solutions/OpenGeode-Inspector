@@ -21,6 +21,8 @@
  *
  */
 
+#include <tuple>
+
 #include <absl/strings/match.h>
 
 #include <geode/basic/assert.hpp>
@@ -45,6 +47,13 @@
 
 namespace
 {
+    class CorruptingBRepBuilder : public geode::BRepBuilder
+    {
+    public:
+        using geode::BRepBuilder::BRepBuilder;
+        using geode::CornersBuilder3D::delete_corner;
+    };
+
     bool has_message( const geode::InspectionIssues< geode::index_t >& issues,
         std::string_view text )
     {
@@ -121,11 +130,49 @@ namespace
             "[line in block] Wrong message: ", issues.string() );
     }
 
+    void test_checks_independent_of_failing_check()
+    {
+        geode::BRep brep;
+        CorruptingBRepBuilder builder{ brep };
+        builder.create_unique_vertices( 1 );
+        std::vector< geode::uuid > corner_ids;
+        for( const auto c : geode::LRange{ 3 } )
+        {
+            const auto& corner = brep.corner( builder.add_corner() );
+            builder.corner_mesh_builder( corner )->create_point(
+                geode::Point3D{ { static_cast< double >( c ), 0, 0 } } );
+            builder.set_unique_vertex( { corner.component_id(), 0 }, 0 );
+            corner_ids.push_back( corner.id() );
+        }
+        // The unique vertex keeps a link to the deleted corner: checks
+        // reaching this link throw
+        builder.delete_corner( brep.corner( corner_ids[2] ) );
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        geode::OpenGeodeInspectorInspectionException::test(
+            result.unique_vertices_linked_to_inexistant_cmv.nb_issues() == 1,
+            "[failing check] Link to deleted corner should be reported" );
+        geode::OpenGeodeInspectorInspectionException::test(
+            result.corners.unique_vertices_linked_to_multiple_corners
+                    .nb_issues()
+                == 1,
+            "[failing check] Multiple corners should be reported" );
+        // The multiply embedded check throws on the deleted corner, the
+        // following check must still be run
+        geode::OpenGeodeInspectorInspectionException::test(
+            result.corners
+                    .unique_vertices_linked_to_not_internal_nor_boundary_corner
+                    .nb_issues()
+                == 1,
+            "[failing check] Corner neither internal nor boundary should be "
+            "reported" );
+    }
+
     void test_empty_model_boundary()
     {
         geode::BRep brep;
         geode::BRepBuilder builder{ brep };
-        builder.add_model_boundary();
+        std::ignore = builder.add_model_boundary();
         const auto& corner = brep.corner( builder.add_corner() );
         builder.corner_mesh_builder( corner )->create_point(
             geode::Point3D{ { 0, 0, 0 } } );
@@ -150,6 +197,7 @@ int main()
         test_non_bijective_link_message();
         test_line_embedded_in_block_message();
         test_empty_model_boundary();
+        test_checks_independent_of_failing_check();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

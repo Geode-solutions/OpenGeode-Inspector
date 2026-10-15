@@ -78,7 +78,7 @@ namespace geode
             {
                 return brep_.unique_vertex( cmv );
             }
-            catch( const std::out_of_range& )
+            catch( const std::exception& )
             {
                 return std::nullopt;
             }
