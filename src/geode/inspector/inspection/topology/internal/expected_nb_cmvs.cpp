@@ -163,11 +163,13 @@ namespace
             }
             nb_line_boundary_to_several_internal_surfaces_cmvs++;
         }
-        geode::index_t predicted_nb_block_cmvs{ 1 + nb_internal_surface_cmvs };
+        // Signed: an invalid topology can give a negative prediction
+        std::int64_t predicted_nb_block_cmvs{ 1 + nb_internal_surface_cmvs };
         if( nb_boundary_surface_cmvs > 0 )
         {
             predicted_nb_block_cmvs +=
-                nb_boundary_surface_cmvs - 1 - nb_line_on_boundary_cmvs;
+                static_cast< std::int64_t >( nb_boundary_surface_cmvs ) - 1
+                - nb_line_on_boundary_cmvs;
         }
         const geode::index_t nb_line_cmvs_to_remove{
             nb_line_internal_to_internal_surface_cmvs + nb_free_line_cmvs
@@ -179,6 +181,11 @@ namespace
             predicted_nb_block_cmvs += unique_vertex_cmvs.corner_cmvs.size();
             predicted_nb_block_cmvs += nb_additional_corners_count / 2;
         }
+        const auto nb_block_cmvs_signed =
+            static_cast< std::int64_t >( nb_block_cmvs );
+        const auto predicted_nb_block_cmvs_index =
+            static_cast< geode::index_t >(
+                std::max( predicted_nb_block_cmvs, std::int64_t{ 0 } ) );
         if( nb_lines_on_several_boundaries % 2 == 1 )
         {
             /// On one side of a topological non-manifold => 2 cases possible,
@@ -193,14 +200,14 @@ namespace
                     .string(),
                 "] is on a topological non-manifold, which makes the correct "
                 "number of block cmvs unsure." ) );
-            if( nb_block_cmvs
+            if( nb_block_cmvs_signed
                 == predicted_nb_block_cmvs + nb_lines_on_several_boundaries )
             {
                 return { nb_block_cmvs, std::nullopt };
             }
         }
-        return { predicted_nb_block_cmvs,
-            nb_block_cmvs == predicted_nb_block_cmvs
+        return { predicted_nb_block_cmvs_index,
+            nb_block_cmvs_signed == predicted_nb_block_cmvs
                 ? std::nullopt
                 : std::make_optional( absl::StrCat( "unique vertex ",
                       unique_vertex_id, " at position [",

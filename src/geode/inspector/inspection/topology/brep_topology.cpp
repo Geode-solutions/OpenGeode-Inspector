@@ -69,6 +69,21 @@ namespace geode
     public:
         Impl( const BRep& brep ) : brep_( brep ) {}
 
+        // Unique vertex linked to the component mesh vertex, std::nullopt if
+        // the component is not registered in the unique vertices
+        std::optional< index_t > linked_unique_vertex_of(
+            const ComponentMeshVertex& cmv ) const
+        {
+            try
+            {
+                return brep_.unique_vertex( cmv );
+            }
+            catch( const std::exception& )
+            {
+                return std::nullopt;
+            }
+        }
+
         bool
             brep_unique_vertices_are_bijectively_linked_to_an_existing_component_vertex()
                 const
@@ -88,7 +103,7 @@ namespace geode
                         return false;
                     }
                     if( brep_.component( cmv.component_id.id ).is_active()
-                        && brep_.unique_vertex( cmv ) != uv_id )
+                        && linked_unique_vertex_of( cmv ) != uv_id )
                     {
                         return false;
                     }
@@ -127,13 +142,28 @@ namespace geode
                                        cmv.string(), "]." ) );
                         continue;
                     }
-                    if( brep_.component( cmv.component_id.id ).is_active()
-                        && brep_.unique_vertex( cmv ) != uv_id )
+                    if( !brep_.component( cmv.component_id.id ).is_active() )
                     {
-                        linked_to_nonbijective_result.add_issue(
+                        continue;
+                    }
+                    const auto linked_unique_vertex =
+                        linked_unique_vertex_of( cmv );
+                    if( !linked_unique_vertex )
+                    {
+                        linked_to_inexistant_result.add_issue(
                             uv_id, absl::StrCat( "unique vertex ", uv_id,
                                        " is linked to inexistant mesh vertex [",
                                        cmv.string(), "]." ) );
+                        continue;
+                    }
+                    if( linked_unique_vertex.value() != uv_id )
+                    {
+                        linked_to_nonbijective_result.add_issue( uv_id,
+                            absl::StrCat( "unique vertex ", uv_id,
+                                " is linked to mesh vertex [", cmv.string(),
+                                "], but this mesh vertex is linked to "
+                                "unique vertex ",
+                                linked_unique_vertex.value(), "." ) );
                     }
                 }
             }
@@ -158,15 +188,23 @@ namespace geode
             for( const auto unique_vertex_id :
                 Range{ brep_.nb_unique_vertices() } )
             {
-                if( !brep_topology_inspector.brep_corner_topology_is_valid(
-                        unique_vertex_id )
-                    || !brep_topology_inspector.brep_lines_topology_is_valid(
-                        unique_vertex_id )
-                    || !brep_topology_inspector.brep_surfaces_topology_is_valid(
-                        unique_vertex_id )
-                    || !brep_topology_inspector.brep_blocks_topology_is_valid(
-                        unique_vertex_id ) )
+                try
                 {
+                    if( !brep_topology_inspector.brep_corner_topology_is_valid(
+                            unique_vertex_id )
+                        || !brep_topology_inspector
+                            .brep_lines_topology_is_valid( unique_vertex_id )
+                        || !brep_topology_inspector
+                            .brep_surfaces_topology_is_valid( unique_vertex_id )
+                        || !brep_topology_inspector
+                            .brep_blocks_topology_is_valid( unique_vertex_id ) )
+                    {
+                        return false;
+                    }
+                }
+                catch( const std::exception& )
+                {
+                    // Wrong links to components
                     return false;
                 }
             }
@@ -177,29 +215,22 @@ namespace geode
             const BRepTopologyInspector& brep_topology_inspector ) const
         {
             BRepTopologyInspectionResult result;
-            try
-            {
-                async::parallel_invoke(
-                    [&result, &brep_topology_inspector] {
-                        result.corners =
-                            brep_topology_inspector.inspect_corners_topology();
-                    },
-                    [&result, &brep_topology_inspector] {
-                        result.lines =
-                            brep_topology_inspector.inspect_lines_topology();
-                    },
-                    [&result, &brep_topology_inspector] {
-                        result.surfaces =
-                            brep_topology_inspector.inspect_surfaces_topology();
-                    },
-                    [&result, &brep_topology_inspector] {
-                        result.blocks =
-                            brep_topology_inspector.inspect_blocks();
-                    } );
-            }
-            catch( OpenGeodeException& )
-            {
-            }
+            async::parallel_invoke(
+                [&result, &brep_topology_inspector] {
+                    result.corners =
+                        brep_topology_inspector.inspect_corners_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.lines =
+                        brep_topology_inspector.inspect_lines_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.surfaces =
+                        brep_topology_inspector.inspect_surfaces_topology();
+                },
+                [&result, &brep_topology_inspector] {
+                    result.blocks = brep_topology_inspector.inspect_blocks();
+                } );
             add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }
