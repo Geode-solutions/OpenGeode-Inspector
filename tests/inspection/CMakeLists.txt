@@ -44,6 +44,14 @@ add_geode_test(
         OpenGeode::mesh
         ${PROJECT_NAME}::inspection
 )
+
+add_geode_test(
+    SOURCE "test-information.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        ${PROJECT_NAME}::inspection
+)
+
 add_geode_test(
     SOURCE "test-edgedcurve-colocation.cpp"
     DEPENDENCIES
@@ -174,6 +182,16 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-brep-topology.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-section.cpp"
     DEPENDENCIES
         OpenGeode::basic
@@ -181,5 +199,15 @@ add_geode_test(
         OpenGeode::mesh
         OpenGeode::model
         OpenGeode-GeosciencesIO::model
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
+    SOURCE "test-section-topology.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
         ${PROJECT_NAME}::inspection
 )

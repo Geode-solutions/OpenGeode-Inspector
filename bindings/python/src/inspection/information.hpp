@@ -48,6 +48,8 @@ namespace geode
             .def( "set_description", &InspectionIssuesMap::set_description )
             .def( "description", &InspectionIssuesMap::description )
             .def( "nb_issues", &InspectionIssuesMap::nb_issues )
+            .def( "nb_components_with_issues",
+                &InspectionIssuesMap::nb_components_with_issues )
             .def( "issues_map", &InspectionIssuesMap::issues_map )
             .def( "string", &InspectionIssuesMap::string );
     }
