@@ -107,5 +107,29 @@ namespace geode
             }
             return result;
         }
+
+        // Adds the issue found by the check on the unique vertex, if any.
+        // Each check is protected on its own: if it throws because of wrong
+        // links between the unique vertex and the components (reported by the
+        // unique vertices inspection), the other checks still fill the result.
+        template < typename Check >
+        void add_unique_vertex_issue( InspectionIssues< index_t >& issues,
+            index_t unique_vertex_id,
+            const Check& check )
+        {
+            try
+            {
+                if( const auto problem_message = check() )
+                {
+                    issues.add_issue(
+                        unique_vertex_id, problem_message.value() );
+                }
+            }
+            catch( const std::exception& )
+            {
+                // Wrong links to components are reported by the unique
+                // vertices inspection
+            }
+        }
     } // namespace internal
 } // namespace geode

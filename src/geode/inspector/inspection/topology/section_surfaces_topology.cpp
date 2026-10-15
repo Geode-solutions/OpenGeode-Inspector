@@ -238,24 +238,20 @@ namespace geode
         for( const auto unique_vertex_id :
             Range{ section_.nb_unique_vertices() } )
         {
-            if( const auto invalid_internal_topology =
-                    vertex_is_part_of_invalid_embedded_surface(
-                        unique_vertex_id ) )
-            {
+            internal::add_unique_vertex_issue(
                 result
-                    .unique_vertices_linked_to_a_surface_with_invalid_embbedings
-                    .add_issue(
-                        unique_vertex_id, invalid_internal_topology.value() );
-            }
-            if( const auto line_and_not_on_surface_border =
-                    vertex_is_part_of_line_and_not_on_surface_border(
-                        unique_vertex_id ) )
-            {
+                    .unique_vertices_linked_to_a_surface_with_invalid_embbedings,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_embedded_surface(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
                 result
-                    .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border
-                    .add_issue( unique_vertex_id,
-                        line_and_not_on_surface_border.value() );
-            }
+                    .unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_line_and_not_on_surface_border(
+                        unique_vertex_id );
+                } );
         }
         return result;
     }
