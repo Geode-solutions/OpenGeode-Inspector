@@ -116,6 +116,16 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-model-intersections.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        OpenGeode::model
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-surface-curve-intersections.cpp"
     DEPENDENCIES
         OpenGeode::basic

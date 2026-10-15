@@ -338,8 +338,8 @@ void check_model_a1( bool string )
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_component_meshes_issues == 13494, "model_A1 has ",
-        nb_component_meshes_issues, " meshes problems instead of 13494." );
+        nb_component_meshes_issues == 14748, "model_A1 has ",
+        nb_component_meshes_issues, " meshes problems instead of 14748." );
 }
 
 void check_model_a1_valid( bool string )
@@ -361,8 +361,8 @@ void check_model_a1_valid( bool string )
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_component_meshes_issues == 13494, "model_A1_valid has ",
-        nb_component_meshes_issues, " meshes problems instead of 13494." );
+        nb_component_meshes_issues == 14748, "model_A1_valid has ",
+        nb_component_meshes_issues, " meshes problems instead of 14748." );
 }
 
 void check_model_mss( bool string )
