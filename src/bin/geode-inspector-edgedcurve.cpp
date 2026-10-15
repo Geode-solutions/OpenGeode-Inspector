@@ -56,11 +56,9 @@ int main( int argc, char* argv[] )
 {
     try
     {
-        absl::SetProgramUsageMessage(
-            absl::StrCat( "EdgedCurve inspector from Geode-solutions.\n",
-                "Sample usage:\n", argv[0], " --input my_edgedcurve.og_edc3d\n",
-                "Default behavior test all available criteria, to disable one "
-                "use --noXXX, e.g. --nocolocation" ) );
+        absl::SetProgramUsageMessage( absl::StrCat(
+            "EdgedCurve inspector from Geode-solutions.\n", "Sample usage:\n",
+            argv[0], " --input my_edgedcurve.og_edc3d\n" ) );
         absl::ParseCommandLine( argc, argv );
 
         geode::OpenGeodeIOMeshLibrary::initialize();
