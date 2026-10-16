@@ -37,10 +37,10 @@ namespace
 
     template < geode::index_t dimension >
     [[nodiscard]] absl::linked_hash_map< Edge,
-        std::pair< geode::local_index_t, bool > >
+        std::pair< geode::index_t, bool > >
         edge_to_polygons_around( const geode::SurfaceMesh< dimension >& mesh )
     {
-        absl::linked_hash_map< Edge, std::pair< geode::local_index_t, bool > >
+        absl::linked_hash_map< Edge, std::pair< geode::index_t, bool > >
             polygons_around_edges;
         for( const auto polygon_id : geode::Range{ mesh.nb_polygons() } )
         {
@@ -53,8 +53,7 @@ namespace
                 };
                 if( !polygons_around_edges
                         .try_emplace( polygon_edge_vertex_cycle,
-                            std::pair< geode::local_index_t, bool >{
-                                1, false } )
+                            std::pair< geode::index_t, bool >{ 1, false } )
                         .second )
                 {
                     polygons_around_edges[polygon_edge_vertex_cycle].first += 1;

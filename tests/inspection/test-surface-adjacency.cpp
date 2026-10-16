@@ -294,6 +294,27 @@ void check_non_adjacency_inversed_triangle3D()
         "to an inversed triangle.." );
 }
 
+void check_adjacency_out_of_range()
+{
+    auto surface = geode::TriangulatedSurface2D::create();
+    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
+    builder->create_point( geode::Point2D{ { 0., 0. } } );
+    builder->create_point( geode::Point2D{ { 1., 0. } } );
+    builder->create_point( geode::Point2D{ { 0., 1. } } );
+    builder->create_triangle( { 0, 1, 2 } );
+    // Stale adjacency to a polygon which does not exist
+    builder->set_polygon_adjacent( { 0, 0 }, 1000000 );
+
+    const geode::SurfaceMeshAdjacency2D adjacency_inspector{ *surface };
+    geode::OpenGeodeInspectorInspectionException::test(
+        adjacency_inspector.mesh_has_wrong_adjacencies(),
+        "Surface with out of range adjacency should have wrong adjacencies." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        adjacency_inspector.polygon_edges_with_wrong_adjacency().nb_issues()
+            == 1,
+        "Surface with out of range adjacency should have one wrong edge." );
+}
+
 int main()
 {
     try
@@ -307,6 +328,8 @@ int main()
         check_non_adjacency_no_bijection3D();
         check_non_adjacency_wrong_edge3D();
         check_non_adjacency_inversed_triangle3D();
+
+        check_adjacency_out_of_range();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

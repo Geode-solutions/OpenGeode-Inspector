@@ -137,6 +137,57 @@ void check_edge_non_manifold2D()
         "Surface edges are shown non manifold whereas they are." );
 }
 
+void check_vertex_broken_adjacency()
+{
+    auto surface = geode::TriangulatedSurface2D::create();
+    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
+    builder->create_point( geode::Point2D{ { 0., 0. } } );
+    builder->create_point( geode::Point2D{ { 1., 0. } } );
+    builder->create_point( geode::Point2D{ { 0., 1. } } );
+    builder->create_point( geode::Point2D{ { 5., 0. } } );
+    builder->create_point( geode::Point2D{ { 6., 0. } } );
+    builder->create_point( geode::Point2D{ { 5., 1. } } );
+    builder->create_triangle( { 0, 1, 2 } );
+    builder->create_triangle( { 3, 4, 5 } );
+    // Adjacency between triangles without common vertices
+    builder->set_polygon_adjacent( { 0, 0 }, 1 );
+    builder->set_polygon_adjacent( { 1, 0 }, 0 );
+
+    const geode::SurfaceMeshVertexManifold2D manifold_inspector{ *surface };
+    geode::OpenGeodeInspectorInspectionException::test(
+        !manifold_inspector.mesh_vertices_are_manifold(),
+        "[Test] Surface with broken adjacency is shown as manifold." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        manifold_inspector.non_manifold_vertices().nb_issues() != 0,
+        "[Test] Surface with broken adjacency should have vertices which "
+        "could not be checked." );
+}
+
+void check_edge_with_many_polygons()
+{
+    // 257 triangles around edge (0, 1)
+    auto surface = geode::TriangulatedSurface2D::create();
+    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
+    builder->create_point( geode::Point2D{ { 0., 0. } } );
+    builder->create_point( geode::Point2D{ { 1., 0. } } );
+    constexpr geode::index_t NB_TRIANGLES{ 257 };
+    for( const auto t : geode::Range{ NB_TRIANGLES } )
+    {
+        const auto vertex = builder->create_point(
+            geode::Point2D{ { 0.5, 1. + static_cast< double >( t ) } } );
+        builder->create_triangle( { 0, 1, vertex } );
+    }
+    const geode::SurfaceMeshEdgeManifold2D manifold_inspector{ *surface };
+    geode::OpenGeodeInspectorInspectionException::test(
+        !manifold_inspector.mesh_edges_are_manifold(),
+        "[Test] Surface with an edge shared by ", NB_TRIANGLES,
+        " triangles is shown as manifold." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        manifold_inspector.non_manifold_edges().nb_issues() == 1,
+        "[Test] Surface with an edge shared by ", NB_TRIANGLES,
+        " triangles should have one non manifold edge." );
+}
+
 int main()
 {
     try
@@ -146,6 +197,8 @@ int main()
         check_vertex_non_manifold2D();
         check_edge_manifold2D();
         check_edge_non_manifold2D();
+        check_edge_with_many_polygons();
+        check_vertex_broken_adjacency();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

@@ -24,6 +24,9 @@
 #include <geode/inspector/inspection/criterion/manifold/solid_vertex_manifold.hpp>
 
 #include <absl/algorithm/container.h>
+#include <absl/container/inlined_vector.h>
+
+#include <async++.h>
 
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -34,8 +37,8 @@
 namespace
 {
     bool polyhedra_around_vertex_are_the_same(
-        const geode::PolyhedraAroundVertex& pav1,
-        const geode::PolyhedraAroundVertex& pav2 )
+        absl::Span< const geode::PolyhedronVertex > pav1,
+        absl::Span< const geode::PolyhedronVertex > pav2 )
     {
         if( pav1.size() != pav2.size() )
         {
@@ -70,6 +73,81 @@ namespace
         }
         return polyhedra_around_vertices_list;
     }
+
+    // Propagates around the vertex from its first polyhedron through the
+    // adjacencies of the facets containing it, like
+    // SolidMesh::polyhedra_around_vertex but without its cache: the vertex is
+    // manifold if every polyhedron containing it is reached.
+    template < geode::index_t dimension >
+    bool vertex_is_manifold( const geode::SolidMesh< dimension >& mesh,
+        geode::index_t vertex_id,
+        absl::Span< const geode::PolyhedronVertex > polyhedron_vertices )
+    {
+        if( polyhedron_vertices.empty() )
+        {
+            return true;
+        }
+        absl::InlinedVector< geode::PolyhedronVertex, 32 > reached;
+        absl::InlinedVector< geode::index_t, 32 > visited;
+        absl::InlinedVector< geode::PolyhedronVertex, 32 > to_visit;
+        to_visit.push_back( polyhedron_vertices.front() );
+        visited.push_back( polyhedron_vertices.front().polyhedron_id );
+        while( !to_visit.empty() )
+        {
+            const auto polyhedron_vertex = to_visit.back();
+            to_visit.pop_back();
+            reached.push_back( polyhedron_vertex );
+            if( reached.size() > polyhedron_vertices.size() )
+            {
+                return false;
+            }
+            for( const auto& polyhedron_facet :
+                mesh.polyhedron_vertex_facets( polyhedron_vertex ) )
+            {
+                const auto adjacent =
+                    mesh.polyhedron_adjacent( polyhedron_facet );
+                if( !adjacent )
+                {
+                    continue;
+                }
+                const auto adjacent_id = adjacent.value();
+                if( adjacent_id >= mesh.nb_polyhedra() )
+                {
+                    return false;
+                }
+                if( absl::c_contains( visited, adjacent_id ) )
+                {
+                    continue;
+                }
+                visited.push_back( adjacent_id );
+                if( const auto vertex_in_adjacent =
+                        mesh.vertex_in_polyhedron( adjacent_id, vertex_id ) )
+                {
+                    to_visit.emplace_back(
+                        adjacent_id, vertex_in_adjacent.value() );
+                }
+            }
+        }
+        return polyhedra_around_vertex_are_the_same(
+            polyhedron_vertices, reached );
+    }
+
+    template < geode::index_t dimension >
+    std::vector< char > non_manifold_vertices_flags(
+        const geode::SolidMesh< dimension >& mesh )
+    {
+        const auto polyhedra_around_vertices_list =
+            polyhedra_around_vertices( mesh );
+        std::vector< char > non_manifold( mesh.nb_vertices(), false );
+        async::parallel_for(
+            async::irange( geode::index_t{ 0 }, mesh.nb_vertices() ),
+            [&mesh, &polyhedra_around_vertices_list, &non_manifold](
+                geode::index_t vertex_id ) {
+                non_manifold[vertex_id] = !vertex_is_manifold( mesh, vertex_id,
+                    polyhedra_around_vertices_list[vertex_id] );
+            } );
+        return non_manifold;
+    }
 } // namespace
 
 namespace geode
@@ -82,32 +160,18 @@ namespace geode
 
         bool mesh_vertices_are_manifold() const
         {
-            const auto polyhedra_around_vertices_list =
-                polyhedra_around_vertices( mesh_ );
-            for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
-            {
-                if( !polyhedra_around_vertex_are_the_same(
-                        polyhedra_around_vertices_list[vertex_id],
-                        mesh_.polyhedra_around_vertex( vertex_id ) ) )
-                {
-                    return false;
-                }
-            }
-            return true;
+            return !absl::c_contains( non_manifold_vertices_flags( mesh_ ), 1 );
         }
 
         InspectionIssues< index_t > non_manifold_vertices() const
         {
-            const auto polyhedra_around_vertices_list =
-                polyhedra_around_vertices( mesh_ );
+            const auto non_manifold = non_manifold_vertices_flags( mesh_ );
             InspectionIssues< geode::index_t > non_manifold_vertices{
                 "non manifold vertices"
             };
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
-                if( !polyhedra_around_vertex_are_the_same(
-                        polyhedra_around_vertices_list[vertex_id],
-                        mesh_.polyhedra_around_vertex( vertex_id ) ) )
+                if( non_manifold[vertex_id] )
                 {
                     non_manifold_vertices.add_issue( vertex_id,
                         absl::StrCat( "vertex ", vertex_id, ", at position [",

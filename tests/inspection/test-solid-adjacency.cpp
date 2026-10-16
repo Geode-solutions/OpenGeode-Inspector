@@ -30,6 +30,7 @@
 #include <geode/mesh/core/detail/vertex_cycle.hpp>
 #include <geode/mesh/core/tetrahedral_solid.hpp>
 
+#include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
 #include <geode/inspector/inspection/solid_inspector.hpp>
 
 void check_adjacency()
@@ -166,6 +167,29 @@ void check_non_adjacency_inversed_tetrahedron()
         "an inversed tetrahedron." );
 }
 
+void check_adjacency_out_of_range()
+{
+    auto solid = geode::TetrahedralSolid3D::create();
+    auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
+    builder->create_vertices( 4 );
+    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
+    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
+    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
+    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
+    builder->create_tetrahedron( { 0, 1, 2, 3 } );
+    // Stale adjacency to a polyhedron which does not exist
+    builder->set_polyhedron_adjacent( { 0, 0 }, 1000000 );
+
+    const geode::SolidMeshAdjacency3D adjacency_inspector{ *solid };
+    geode::OpenGeodeInspectorInspectionException::test(
+        adjacency_inspector.mesh_has_wrong_adjacencies(),
+        "Solid with out of range adjacency should have wrong adjacencies." );
+    geode::OpenGeodeInspectorInspectionException::test(
+        adjacency_inspector.polyhedron_facets_with_wrong_adjacency().nb_issues()
+            == 1,
+        "Solid with out of range adjacency should have one wrong facet." );
+}
+
 int main()
 {
     try
@@ -176,6 +200,8 @@ int main()
         check_non_adjacency_no_bijection();
         check_non_adjacency_wrong_facet();
         check_non_adjacency_inversed_tetrahedron();
+
+        check_adjacency_out_of_range();
 
         geode::Logger::info( "TEST SUCCESS" );
         return 0;

@@ -23,8 +23,11 @@
 
 #include <geode/inspector/inspection/criterion/manifold/solid_edge_manifold.hpp>
 
+#include <absl/algorithm/container.h>
 #include <absl/container/flat_hash_map.h>
-#include <absl/container/flat_hash_set.h>
+#include <absl/container/inlined_vector.h>
+
+#include <async++.h>
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
@@ -55,28 +58,72 @@ namespace
         return true;
     }
 
-    template < geode::index_t dimension >
-    absl::flat_hash_map< Edge, std::vector< geode::index_t > >
-        edges_to_polyhedra_around( const geode::SolidMesh< dimension >& mesh )
+    struct EdgePolyhedra
     {
-        absl::flat_hash_map< Edge, std::vector< geode::index_t > >
-            polyhedra_around_edges;
+        // Vertices of the edge as first found in a polyhedron
+        std::array< geode::index_t, 2 > vertices;
+        absl::InlinedVector< geode::index_t, 8 > polyhedra;
+    };
+
+    // Unique edges in order of first appearance, with their polyhedra
+    template < geode::index_t dimension >
+    std::vector< EdgePolyhedra > edges_to_polyhedra_around(
+        const geode::SolidMesh< dimension >& mesh )
+    {
+        std::vector< EdgePolyhedra > edges;
+        absl::flat_hash_map< Edge, geode::index_t > edge_ids;
+        edge_ids.reserve( 2 * mesh.nb_polyhedra() );
         for( const auto polyhedron_id : geode::Range{ mesh.nb_polyhedra() } )
         {
-            for( const auto polyhedron_edge_vertices :
+            for( const auto& polyhedron_edge_vertices :
                 mesh.polyhedron_edges_vertices( polyhedron_id ) )
             {
-                const Edge polyhedron_edge{ polyhedron_edge_vertices };
-                if( !polyhedra_around_edges
-                        .try_emplace( polyhedron_edge, 1, polyhedron_id )
-                        .second )
+                const auto [it, inserted] = edge_ids.try_emplace(
+                    Edge{ polyhedron_edge_vertices }, edges.size() );
+                if( inserted )
                 {
-                    polyhedra_around_edges[polyhedron_edge].push_back(
-                        polyhedron_id );
+                    edges.push_back( { polyhedron_edge_vertices, {} } );
                 }
+                edges[it->second].polyhedra.push_back( polyhedron_id );
             }
         }
-        return polyhedra_around_edges;
+        return edges;
+    }
+
+    enum struct EDGE_STATUS : char
+    {
+        manifold,
+        non_manifold,
+        broken_adjacencies
+    };
+
+    template < geode::index_t dimension >
+    std::vector< EDGE_STATUS > edges_status(
+        const geode::SolidMesh< dimension >& mesh,
+        absl::Span< const EdgePolyhedra > edges )
+    {
+        std::vector< EDGE_STATUS > status( edges.size() );
+        async::parallel_for(
+            async::irange( geode::index_t{ 0 },
+                static_cast< geode::index_t >( edges.size() ) ),
+            [&mesh, &edges, &status]( geode::index_t edge_id ) {
+                const auto& edge = edges[edge_id];
+                try
+                {
+                    status[edge_id] =
+                        polyhedra_around_edge_are_the_same(
+                            mesh.polyhedra_around_edge(
+                                edge.vertices, edge.polyhedra.front() ),
+                            edge.polyhedra )
+                            ? EDGE_STATUS::manifold
+                            : EDGE_STATUS::non_manifold;
+                }
+                catch( const geode::OpenGeodeException& )
+                {
+                    status[edge_id] = EDGE_STATUS::broken_adjacencies;
+                }
+            } );
+        return status;
     }
 } // namespace
 
@@ -86,35 +133,15 @@ namespace geode
     class SolidMeshEdgeManifold< dimension >::Impl
     {
     public:
-        Impl( const SolidMesh< dimension >& mesh )
-            : mesh_( mesh ),
-              polyhedra_around_edges_( edges_to_polyhedra_around( mesh ) )
-        {
-        }
+        Impl( const SolidMesh< dimension >& mesh ) : mesh_( mesh ) {}
 
         bool mesh_edges_are_manifold() const
         {
-            absl::flat_hash_set< Edge > checked_edges;
-            for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
-            {
-                for( const auto polyhedron_edge_vertices :
-                    mesh_.polyhedron_edges_vertices( polyhedron_id ) )
-                {
-                    Edge polyhedron_edge{ polyhedron_edge_vertices };
-                    if( !checked_edges.insert( polyhedron_edge ).second )
-                    {
-                        continue;
-                    }
-                    const auto polyhedra_around = mesh_.polyhedra_around_edge(
-                        polyhedron_edge_vertices, polyhedron_id );
-                    if( !polyhedra_around_edge_are_the_same( polyhedra_around,
-                            polyhedra_around_edges_.at( polyhedron_edge ) ) )
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
+            const auto edges = edges_to_polyhedra_around( mesh_ );
+            return absl::c_all_of(
+                edges_status( mesh_, edges ), []( EDGE_STATUS status ) {
+                    return status == EDGE_STATUS::manifold;
+                } );
         }
 
         InspectionIssues< std::array< index_t, 2 > > non_manifold_edges() const
@@ -122,42 +149,24 @@ namespace geode
             InspectionIssues< std::array< index_t, 2 > > non_manifold_edges{
                 "Non manifold edges"
             };
-            absl::flat_hash_set< Edge > checked_edges;
-            for( const auto polyhedron_id : Range{ mesh_.nb_polyhedra() } )
+            const auto edges = edges_to_polyhedra_around( mesh_ );
+            const auto status = edges_status( mesh_, edges );
+            for( const auto edge_id : Indices{ edges } )
             {
-                for( const auto polyhedron_edge_vertices :
-                    mesh_.polyhedron_edges_vertices( polyhedron_id ) )
+                const auto& vertices = edges[edge_id].vertices;
+                if( status[edge_id] == EDGE_STATUS::non_manifold )
                 {
-                    Edge polyhedron_edge{ polyhedron_edge_vertices };
-                    if( !checked_edges.insert( polyhedron_edge ).second )
-                    {
-                        continue;
-                    }
-                    try
-                    {
-                        if( !polyhedra_around_edge_are_the_same(
-                                mesh_.polyhedra_around_edge(
-                                    polyhedron_edge_vertices, polyhedron_id ),
-                                polyhedra_around_edges_.at(
-                                    polyhedron_edge ) ) )
-                        {
-                            non_manifold_edges.add_issue(
-                                polyhedron_edge_vertices,
-                                absl::StrCat(
-                                    "Non manifold edge between vertices ",
-                                    polyhedron_edge_vertices[0], " and ",
-                                    polyhedron_edge_vertices[1] ) );
-                        }
-                    }
-                    catch( const OpenGeodeException& )
-                    {
-                        non_manifold_edges.add_issue( polyhedron_edge_vertices,
-                            absl::StrCat( "Could not check manifold on edge "
-                                          "between vertices with index ",
-                                polyhedron_edge_vertices[0], " and index ",
-                                polyhedron_edge_vertices[1],
-                                "; Check issues with solid adjacencies." ) );
-                    }
+                    non_manifold_edges.add_issue( vertices,
+                        absl::StrCat( "Non manifold edge between vertices ",
+                            vertices[0], " and ", vertices[1] ) );
+                }
+                else if( status[edge_id] == EDGE_STATUS::broken_adjacencies )
+                {
+                    non_manifold_edges.add_issue( vertices,
+                        absl::StrCat( "Could not check manifold on edge "
+                                      "between vertices with index ",
+                            vertices[0], " and index ", vertices[1],
+                            "; Check issues with solid adjacencies." ) );
                 }
             }
             return non_manifold_edges;
@@ -165,8 +174,6 @@ namespace geode
 
     private:
         const SolidMesh< dimension >& mesh_;
-        absl::flat_hash_map< Edge, std::vector< geode::index_t > >
-            polyhedra_around_edges_;
     };
 
     template < index_t dimension >

@@ -23,8 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/solid_facet_manifold.hpp>
 
-#include <absl/container/flat_hash_set.h>
-#include <absl/container/linked_hash_map.h>
+#include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_map.h>
 
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
@@ -36,28 +36,52 @@ namespace
 {
     using Facet = geode::detail::VertexCycle< geode::PolyhedronFacetVertices >;
 
-    template < geode::index_t dimension >
-    [[nodiscard]] absl::linked_hash_map< Facet, geode::index_t >
-        facets_to_nb_adjacent_polyhedra(
-            const geode::SolidMesh< dimension >& mesh )
+    struct FacetCount
     {
-        absl::linked_hash_map< Facet, geode::index_t >
-            nb_polyhedra_adjacent_to_facets;
+        geode::index_t first_occurrence;
+        geode::index_t nb_polyhedra;
+    };
+
+    // Facets shared by more than two polyhedra, in order of first appearance
+    template < geode::index_t dimension >
+    [[nodiscard]] std::vector< Facet > non_manifold_facets_list(
+        const geode::SolidMesh< dimension >& mesh )
+    {
+        absl::flat_hash_map< Facet, FacetCount > facet_counts;
+        facet_counts.reserve( 3 * mesh.nb_polyhedra() );
+        geode::index_t occurrence{ 0 };
         for( const auto polyhedron_id : geode::Range{ mesh.nb_polyhedra() } )
         {
             for( const auto facet_id :
                 geode::LRange{ mesh.nb_polyhedron_facets( polyhedron_id ) } )
             {
-                const Facet facet{ mesh.polyhedron_facet_vertices(
-                    { polyhedron_id, facet_id } ) };
-                if( !nb_polyhedra_adjacent_to_facets.try_emplace( facet, 1 )
-                        .second )
+                auto [it, inserted] = facet_counts.try_emplace(
+                    Facet{ mesh.polyhedron_facet_vertices(
+                        { polyhedron_id, facet_id } ) },
+                    FacetCount{ occurrence, 1 } );
+                if( !inserted )
                 {
-                    nb_polyhedra_adjacent_to_facets[facet] += 1;
+                    it->second.nb_polyhedra++;
                 }
+                occurrence++;
             }
         }
-        return nb_polyhedra_adjacent_to_facets;
+        std::vector< std::pair< geode::index_t, const Facet* > > non_manifold;
+        for( const auto& [facet, count] : facet_counts )
+        {
+            if( count.nb_polyhedra > 2 )
+            {
+                non_manifold.emplace_back( count.first_occurrence, &facet );
+            }
+        }
+        absl::c_sort( non_manifold );
+        std::vector< Facet > result;
+        result.reserve( non_manifold.size() );
+        for( const auto& facet : non_manifold )
+        {
+            result.push_back( *facet.second );
+        }
+        return result;
     }
 } // namespace
 
@@ -71,42 +95,24 @@ namespace geode
 
         [[nodiscard]] bool mesh_facets_are_manifold() const
         {
-            const auto nb_polyhedra_adjacent_to_facets =
-                facets_to_nb_adjacent_polyhedra( mesh_ );
-            for( const auto& nb_adjacent_polyhedra :
-                nb_polyhedra_adjacent_to_facets )
-            {
-                if( nb_adjacent_polyhedra.second > 2 )
-                {
-                    return false;
-                }
-            }
-            return true;
+            return non_manifold_facets_list( mesh_ ).empty();
         }
 
         [[nodiscard]] InspectionIssues< PolyhedronFacetVertices >
             non_manifold_facets() const
         {
-            const auto nb_polyhedra_adjacent_to_facets =
-                facets_to_nb_adjacent_polyhedra( mesh_ );
             InspectionIssues< PolyhedronFacetVertices > non_manifold_facets{
                 "non manifold facets"
             };
-            for( const auto& nb_adjacent_polyhedra :
-                nb_polyhedra_adjacent_to_facets )
+            for( const auto& facet : non_manifold_facets_list( mesh_ ) )
             {
-                if( nb_adjacent_polyhedra.second > 2 )
+                std::string message{ "facet made of vertices with index " };
+                for( const auto vertex_id : facet.vertices() )
                 {
-                    std::string message{ "facet made of vertices with index " };
-                    for( const auto vertex_id :
-                        nb_adjacent_polyhedra.first.vertices() )
-                    {
-                        absl::StrAppend( &message, vertex_id, ", " );
-                    }
-                    absl::StrAppend( &message, "is not manifold." );
-                    non_manifold_facets.add_issue(
-                        nb_adjacent_polyhedra.first.vertices(), message );
+                    absl::StrAppend( &message, vertex_id, ", " );
                 }
+                absl::StrAppend( &message, "is not manifold." );
+                non_manifold_facets.add_issue( facet.vertices(), message );
             }
             return non_manifold_facets;
         }

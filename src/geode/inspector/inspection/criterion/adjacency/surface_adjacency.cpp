@@ -87,6 +87,10 @@ namespace geode
             const auto adjacent_polygon =
                 mesh_.polygon_adjacent( polygon_edge );
             const auto polygon_adj_id = adjacent_polygon.value();
+            if( polygon_adj_id >= mesh_.nb_polygons() )
+            {
+                return false;
+            }
             const auto v0 = mesh_.polygon_edge_vertex( polygon_edge, 0 );
             const auto v1 = mesh_.polygon_edge_vertex( polygon_edge, 1 );
             for( const auto edge_id :

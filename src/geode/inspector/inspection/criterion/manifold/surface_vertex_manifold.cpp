@@ -24,6 +24,9 @@
 #include <geode/inspector/inspection/criterion/manifold/surface_vertex_manifold.hpp>
 
 #include <absl/algorithm/container.h>
+#include <absl/container/inlined_vector.h>
+
+#include <async++.h>
 
 #include <geode/basic/pimpl_impl.hpp>
 
@@ -34,8 +37,8 @@
 namespace
 {
     bool polygons_around_vertex_are_the_same(
-        const geode::PolygonsAroundVertex& pav1,
-        const geode::PolygonsAroundVertex& pav2 )
+        absl::Span< const geode::PolygonVertex > pav1,
+        absl::Span< const geode::PolygonVertex > pav2 )
     {
         if( pav1.size() != pav2.size() )
         {
@@ -69,6 +72,143 @@ namespace
         }
         return polygons_list;
     }
+
+    enum struct VERTEX_STATUS : char
+    {
+        manifold,
+        non_manifold,
+        broken_adjacencies
+    };
+
+    // Same walk as SurfaceMesh::polygons_around_vertex, without its cache.
+    // Returns std::nullopt on broken adjacencies.
+    template < geode::index_t dimension >
+    std::optional< std::optional< geode::PolygonVertex > >
+        next_polygon_vertex_around( const geode::SurfaceMesh< dimension >& mesh,
+            const geode::PolygonVertex& polygon_vertex,
+            bool& vertex_is_next )
+    {
+        const auto exit_vertex =
+            vertex_is_next ? polygon_vertex
+                           : mesh.previous_polygon_vertex( polygon_vertex );
+        const geode::PolygonEdge exit_edge{ exit_vertex };
+        const auto adjacent = mesh.polygon_adjacent( exit_edge );
+        if( !adjacent )
+        {
+            return std::optional< geode::PolygonVertex >{};
+        }
+        if( adjacent.value() >= mesh.nb_polygons() )
+        {
+            return std::nullopt;
+        }
+        const auto adjacent_edge = mesh.polygon_adjacent_edge( exit_edge );
+        if( !adjacent_edge )
+        {
+            return std::nullopt;
+        }
+        if( mesh.polygon_edge_vertex( exit_edge, 0 )
+                == mesh.polygon_edge_vertex( adjacent_edge.value(), 0 )
+            && mesh.polygon_edge_vertex( exit_edge, 1 )
+                   == mesh.polygon_edge_vertex( adjacent_edge.value(), 1 ) )
+        {
+            vertex_is_next = !vertex_is_next;
+        }
+        return std::optional< geode::PolygonVertex >{
+            vertex_is_next ? mesh.next_polygon_vertex(
+                                 geode::PolygonVertex{ adjacent_edge.value() } )
+                           : geode::PolygonVertex{ adjacent_edge.value() }
+        };
+    }
+
+    template < geode::index_t dimension >
+    VERTEX_STATUS vertex_status( const geode::SurfaceMesh< dimension >& mesh,
+        absl::Span< const geode::PolygonVertex > polygon_vertices )
+    {
+        if( polygon_vertices.empty() )
+        {
+            return VERTEX_STATUS::manifold;
+        }
+        const auto& first = polygon_vertices.front();
+        absl::InlinedVector< geode::PolygonVertex, 16 > reached{ first };
+        try
+        {
+            bool vertex_is_next{ false };
+            auto current = first;
+            bool closed{ false };
+            while( true )
+            {
+                const auto next =
+                    next_polygon_vertex_around( mesh, current, vertex_is_next );
+                if( !next )
+                {
+                    return VERTEX_STATUS::broken_adjacencies;
+                }
+                if( !next.value() )
+                {
+                    break;
+                }
+                if( next.value() == first )
+                {
+                    closed = true;
+                    break;
+                }
+                reached.push_back( next.value().value() );
+                if( reached.size() > polygon_vertices.size() )
+                {
+                    return VERTEX_STATUS::non_manifold;
+                }
+                current = next.value().value();
+            }
+            if( !closed )
+            {
+                vertex_is_next = true;
+                current = first;
+                while( true )
+                {
+                    const auto next = next_polygon_vertex_around(
+                        mesh, current, vertex_is_next );
+                    if( !next )
+                    {
+                        return VERTEX_STATUS::broken_adjacencies;
+                    }
+                    if( !next.value() )
+                    {
+                        break;
+                    }
+                    reached.push_back( next.value().value() );
+                    if( reached.size() > polygon_vertices.size() )
+                    {
+                        return VERTEX_STATUS::non_manifold;
+                    }
+                    current = next.value().value();
+                }
+            }
+        }
+        catch( const geode::OpenGeodeException& )
+        {
+            return VERTEX_STATUS::broken_adjacencies;
+        }
+        return polygons_around_vertex_are_the_same( polygon_vertices, reached )
+                   ? VERTEX_STATUS::manifold
+                   : VERTEX_STATUS::non_manifold;
+    }
+
+    template < geode::index_t dimension >
+    std::vector< VERTEX_STATUS > vertices_status(
+        const geode::SurfaceMesh< dimension >& mesh )
+    {
+        const auto polygons_around_vertices_list =
+            polygons_around_vertices( mesh );
+        std::vector< VERTEX_STATUS > status( mesh.nb_vertices() );
+        async::parallel_for(
+            async::irange( geode::index_t{ 0 }, mesh.nb_vertices() ),
+            [&mesh, &polygons_around_vertices_list, &status](
+                geode::index_t vertex_id ) {
+                status[vertex_id] = vertex_status(
+                    mesh, polygons_around_vertices_list[vertex_id] );
+            } );
+        return status;
+    }
 } // namespace
 
 namespace geode
@@ -81,51 +221,34 @@ namespace geode
 
         bool mesh_vertices_are_manifold() const
         {
-            const auto polygons_around_vertices_list =
-                polygons_around_vertices( mesh_ );
-            for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
-            {
-                try
-                {
-                    if( !polygons_around_vertex_are_the_same(
-                            polygons_around_vertices_list[vertex_id],
-                            mesh_.polygons_around_vertex( vertex_id ) ) )
-                    {
-                        return false;
-                    }
-                }
-                catch( const geode::OpenGeodeException& )
-                {
-                    continue;
-                }
-            }
-            return true;
+            return absl::c_all_of(
+                vertices_status( mesh_ ), []( VERTEX_STATUS status ) {
+                    return status == VERTEX_STATUS::manifold;
+                } );
         }
 
         InspectionIssues< index_t > non_manifold_vertices() const
         {
-            const auto polygons_around_vertices_list =
-                polygons_around_vertices( mesh_ );
+            const auto status = vertices_status( mesh_ );
             InspectionIssues< geode::index_t > non_manifold_vertices{
                 "non manifold vertices"
             };
             for( const auto vertex_id : geode::Range{ mesh_.nb_vertices() } )
             {
-                try
+                if( status[vertex_id] == VERTEX_STATUS::non_manifold )
                 {
-                    if( !polygons_around_vertex_are_the_same(
-                            polygons_around_vertices_list[vertex_id],
-                            mesh_.polygons_around_vertex( vertex_id ) ) )
-                    {
-                        non_manifold_vertices.add_issue( vertex_id,
-                            absl::StrCat( "vertex ", vertex_id,
-                                ", at position [",
-                                mesh_.point( vertex_id ).string(), "]" ) );
-                    }
+                    non_manifold_vertices.add_issue( vertex_id,
+                        absl::StrCat( "vertex ", vertex_id, ", at position [",
+                            mesh_.point( vertex_id ).string(), "]" ) );
                 }
-                catch( const geode::OpenGeodeException& )
+                else if( status[vertex_id]
+                         == VERTEX_STATUS::broken_adjacencies )
                 {
-                    continue;
+                    non_manifold_vertices.add_issue( vertex_id,
+                        absl::StrCat( "vertex ", vertex_id, ", at position [",
+                            mesh_.point( vertex_id ).string(),
+                            "] could not be checked; check issues with "
+                            "surface adjacencies" ) );
                 }
             }
             return non_manifold_vertices;

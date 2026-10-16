@@ -23,6 +23,12 @@
 
 #include <geode/inspector/inspection/criterion/manifold/brep_meshes_manifold.hpp>
 
+#include <absl/algorithm/container.h>
+#include <absl/container/flat_hash_map.h>
+#include <absl/container/inlined_vector.h>
+
+#include <async++.h>
+
 #include <geode/basic/algorithm.hpp>
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
@@ -132,7 +138,7 @@ namespace geode
                     block.name().value_or( block.id().string() ), " (",
                     block.id().string(), ") non manifold edges" ) );
                 components_non_manifold_edges.add_issues_to_map(
-                    block.id(), non_manifold_edges );
+                    block.id(), std::move( non_manifold_edges ) );
             }
         }
 
@@ -148,7 +154,7 @@ namespace geode
                     block.name().value_or( block.id().string() ), " (",
                     block.id().string(), ") non manifold facets" ) );
                 components_non_manifold_facets.add_issues_to_map(
-                    block.id(), non_manifold_facets );
+                    block.id(), std::move( non_manifold_facets ) );
             }
         }
 
@@ -156,14 +162,26 @@ namespace geode
             InspectionIssues< BRepNonManifoldEdge >& issues ) const
         {
             using Edge = detail::VertexCycle< std::array< index_t, 2 > >;
-            absl::linked_hash_map< Edge, std::vector< uuid > > edges;
+            struct EdgeSurfaces
+            {
+                index_t first_occurrence;
+                absl::InlinedVector< uuid, 2 > surfaces;
+            };
+            absl::flat_hash_map< Edge, EdgeSurfaces > edges_map;
+            index_t occurrence{ 0 };
             for( const auto& surface : model().active_surfaces() )
             {
                 const auto& mesh = surface.mesh();
+                std::vector< index_t > unique_vertices( mesh.nb_vertices() );
+                for( const auto v : Indices{ unique_vertices } )
+                {
+                    unique_vertices[v] =
+                        model().unique_vertex( { surface.component_id(), v } );
+                }
                 for( const auto polygon_id : Range{ mesh.nb_polygons() } )
                 {
-                    const auto vertices = mesh.polygon_vertices( polygon_id );
-                    for( const auto edge_id : LIndices{ vertices } )
+                    for( const auto edge_id :
+                        LRange{ mesh.nb_polygon_edges( polygon_id ) } )
                     {
                         const auto adj =
                             mesh.polygon_adjacent( { polygon_id, edge_id } );
@@ -171,34 +189,43 @@ namespace geode
                         {
                             continue;
                         }
-                        const auto vertex0 = model().unique_vertex(
-                            { surface.component_id(), vertices[edge_id] } );
-                        const auto vertex1 =
-                            model().unique_vertex( { surface.component_id(),
-                                vertices[edge_id == vertices.size() - 1
-                                             ? 0
-                                             : edge_id + 1] } );
-                        const auto info = edges.try_emplace(
-                            Edge{ std::array{ vertex0, vertex1 } },
-                            std::vector{ surface.id() } );
-                        if( !info.second )
+                        const auto edge_vertices = mesh.polygon_edge_vertices(
+                            { polygon_id, edge_id } );
+                        const auto vertex0 = unique_vertices[edge_vertices[0]];
+                        const auto vertex1 = unique_vertices[edge_vertices[1]];
+                        // Unlinked vertices are reported by the topology
+                        // inspection, they cannot be compared here
+                        if( vertex0 == NO_ID || vertex1 == NO_ID )
                         {
-                            info.first->second.push_back( surface.id() );
+                            continue;
                         }
+                        auto [it, inserted] = edges_map.try_emplace(
+                            Edge{ std::array{ vertex0, vertex1 } },
+                            EdgeSurfaces{ occurrence, {} } );
+                        it->second.surfaces.push_back( surface.id() );
+                        occurrence++;
                     }
                 }
             }
+            std::vector< std::pair< Edge, EdgeSurfaces > > edges;
+            for( auto& edge : edges_map )
+            {
+                if( edge.second.surfaces.size() > 1 )
+                {
+                    edges.emplace_back( edge.first, std::move( edge.second ) );
+                }
+            }
+            absl::c_sort( edges, []( const auto& lhs, const auto& rhs ) {
+                return lhs.second.first_occurrence
+                       < rhs.second.first_occurrence;
+            } );
             for( auto& edge : edges )
             {
-                if( edge.second.size() <= 1 )
-                {
-                    continue;
-                }
                 std::string message = absl::StrCat(
                     "Model edge between unique vertices ",
                     edge.first.vertices()[0], " and ", edge.first.vertices()[1],
                     " is not manifold: it is on several Surfaces: " );
-                for( const auto surface_uuid : edge.second )
+                for( const auto& surface_uuid : edge.second.surfaces )
                 {
                     absl::StrAppend( &message,
                         model()
@@ -208,8 +235,9 @@ namespace geode
                         " (", surface_uuid.string(), "), " );
                 }
                 absl::StrAppend( &message, "but not on their border" );
-                issues.add_issue(
-                    BRepNonManifoldEdge{ edge.first.vertices(), edge.second },
+                issues.add_issue( BRepNonManifoldEdge{ edge.first.vertices(),
+                                      { edge.second.surfaces.begin(),
+                                          edge.second.surfaces.end() } },
                     message );
             }
             for( const auto& line : model().active_lines() )
@@ -279,11 +307,12 @@ namespace geode
         [[nodiscard]] bool several_cmvs_on_one_vertex(
             absl::Span< const index_t > unique_vertices ) const
         {
-            std::vector< uuid > surfaces;
             for( const auto unique_vertex : unique_vertices )
             {
-                if( model().component_mesh_vertices( unique_vertex ).size()
-                    > 1 )
+                // Unlinked vertices are reported by the topology inspection
+                if( unique_vertex == NO_ID
+                    || model().component_mesh_vertices( unique_vertex ).size()
+                           > 1 )
                 {
                     return true;
                 }
@@ -304,14 +333,27 @@ namespace geode
         BRepComponentMeshesManifold::inspect_brep_manifold() const
     {
         BRepMeshesManifoldInspectionResult result;
-        impl_->add_component_meshes_non_manifold_vertices(
-            result.meshes_non_manifold_vertices );
-        impl_->add_component_meshes_non_manifold_edges(
-            result.meshes_non_manifold_edges );
-        impl_->add_component_meshes_non_manifold_facets(
-            result.meshes_non_manifold_facets );
-        impl_->add_model_non_manifold_edges( result.brep_non_manifold_edges );
-        impl_->add_model_non_manifold_facets( result.brep_non_manifold_facets );
+        async::parallel_invoke(
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_vertices(
+                    result.meshes_non_manifold_vertices );
+            },
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_edges(
+                    result.meshes_non_manifold_edges );
+            },
+            [this, &result] {
+                impl_->add_component_meshes_non_manifold_facets(
+                    result.meshes_non_manifold_facets );
+            },
+            [this, &result] {
+                impl_->add_model_non_manifold_edges(
+                    result.brep_non_manifold_edges );
+            },
+            [this, &result] {
+                impl_->add_model_non_manifold_facets(
+                    result.brep_non_manifold_facets );
+            } );
         return result;
     }
 } // namespace geode

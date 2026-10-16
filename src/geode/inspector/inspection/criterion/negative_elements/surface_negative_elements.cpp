@@ -48,8 +48,7 @@ namespace geode
             {
                 for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
-                    if( polygon_area_sign( mesh_.polygon( polygon_id ) )
-                        == SIGN::negative )
+                    if( polygon_is_negative( polygon_id ) )
                     {
                         return true;
                     }
@@ -67,8 +66,7 @@ namespace geode
             {
                 for( const auto polygon_id : Range{ mesh_.nb_polygons() } )
                 {
-                    if( polygon_area_sign( mesh_.polygon( polygon_id ) )
-                        == SIGN::negative )
+                    if( polygon_is_negative( polygon_id ) )
                     {
                         wrong_polygons.add_issue( polygon_id,
                             absl::StrCat( "negative polygon ", polygon_id ) );
@@ -76,6 +74,26 @@ namespace geode
                 }
             }
             return wrong_polygons;
+        }
+
+    private:
+        bool polygon_is_negative( index_t polygon_id ) const
+        {
+            if constexpr( dimension == 2 )
+            {
+                if( mesh_.nb_polygon_vertices( polygon_id ) == 3 )
+                {
+                    const auto vertices = mesh_.polygon_vertices( polygon_id );
+                    return triangle_area_sign(
+                               Triangle2D{ mesh_.point( vertices[0] ),
+                                   mesh_.point( vertices[1] ),
+                                   mesh_.point( vertices[2] ) } )
+                           == SIGN::negative;
+                }
+                return polygon_area_sign( mesh_.polygon( polygon_id ) )
+                       == SIGN::negative;
+            }
+            return false;
         }
 
     private:
