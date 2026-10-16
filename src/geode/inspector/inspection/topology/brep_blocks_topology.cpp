@@ -255,19 +255,35 @@ namespace
             {
                 continue;
             }
-            const auto polygon_barycenter =
-                surface_mesh.polygon_barycenter( 0 );
-            bool is_dangling{ true };
-            for( const auto& block : brep.blocks() )
+            // Ray tracing may fail on ambiguous rays: try a few polygons, a
+            // surface which cannot be located is not reported as dangling
+            constexpr geode::index_t MAX_TRIALS{ 5 };
+            std::optional< bool > is_dangling;
+            for( const auto polygon_id : geode::Range{
+                     std::min( surface_mesh.nb_polygons(), MAX_TRIALS ) } )
             {
-                if( ray_tracing.is_point_inside_block(
-                        polygon_barycenter, block ) )
+                try
                 {
-                    is_dangling = false;
+                    const auto polygon_barycenter =
+                        surface_mesh.polygon_barycenter( polygon_id );
+                    is_dangling = true;
+                    for( const auto& block : brep.active_blocks() )
+                    {
+                        if( ray_tracing.is_point_inside_block(
+                                polygon_barycenter, block ) )
+                        {
+                            is_dangling = false;
+                            break;
+                        }
+                    }
                     break;
                 }
+                catch( const geode::OpenGeodeException& )
+                {
+                    is_dangling.reset();
+                }
             }
-            if( is_dangling )
+            if( is_dangling.value_or( false ) )
             {
                 dangling_surfaces.push_back( surface_id );
             }
@@ -297,6 +313,10 @@ namespace
         const geode::BRep& brep, std::queue< geode::uuid >& to_process )
     {
         std::vector< geode::uuid > processed;
+        if( to_process.empty() )
+        {
+            return processed;
+        }
         const auto first_surface_uuid = to_process.front();
         to_process.pop();
         processed.emplace_back( first_surface_uuid );
@@ -419,6 +439,14 @@ namespace
                 {
                     const auto unique_vertex = brep.unique_vertex(
                         { surface.component_id(), polygon_vertex } );
+                    if( unique_vertex == geode::NO_ID )
+                    {
+                        // Unlinked vertices cannot be merged with others
+                        polygon_vertex =
+                            polygonal_surface_builder->create_point(
+                                surface_mesh.point( polygon_vertex ) );
+                        continue;
+                    }
                     if( !unique_vertices_to_polygonal_surface_vertices
                             .has_mapping_input( unique_vertex ) )
                     {
@@ -504,6 +532,11 @@ namespace
     bool brep_boundaries_are_closed( const geode::BRep& brep )
     {
         auto to_process = queue_with_model_boundaries( brep );
+        if( to_process.empty() )
+        {
+            // No boundary surface to check
+            return true;
+        }
         auto compute_closed_linked_surfaces =
             closed_linked_surfaces( brep, to_process );
         return to_process.empty();
@@ -961,44 +994,39 @@ namespace geode
         }
         for( const auto unique_vertex_id : Range{ brep_.nb_unique_vertices() } )
         {
-            if( const auto problem_message =
-                    unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
-                        unique_vertex_id ) )
-            {
+            internal::add_unique_vertex_issue(
                 result
-                    .unique_vertices_part_of_two_blocks_and_no_boundary_surface
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    unique_vertex_block_cmvs_count_is_incorrect(
-                        unique_vertex_id ) )
-            {
-                result.unique_vertices_with_incorrect_block_cmvs_count
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    vertex_is_part_of_invalid_single_surface(
-                        unique_vertex_id, not_boundary_surfaces ) )
-            {
-                result.unique_vertices_linked_to_a_single_and_invalid_surface
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    vertex_is_part_of_surface_with_wrong_relationships_to_block(
+                    .unique_vertices_part_of_two_blocks_and_no_boundary_surface,
+                unique_vertex_id, [&] {
+                    return unique_vertex_is_part_of_two_blocks_and_no_boundary_surface(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_with_incorrect_block_cmvs_count,
+                unique_vertex_id, [&] {
+                    return unique_vertex_block_cmvs_count_is_incorrect(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_a_single_and_invalid_surface,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_single_surface(
+                        unique_vertex_id, not_boundary_surfaces );
+                } );
+            internal::add_unique_vertex_issue(
+                result
+                    .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_surface_with_wrong_relationships_to_block(
                         unique_vertex_id, not_boundary_surfaces,
-                        dangling_surfaces ) )
-            {
-                result
-                    .unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    vertex_is_part_of_invalid_multiple_surfaces(
-                        unique_vertex_id ) )
-            {
-                result.unique_vertex_linked_to_multiple_invalid_surfaces
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
+                        dangling_surfaces );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertex_linked_to_multiple_invalid_surfaces,
+                unique_vertex_id, [&] {
+                    return vertex_is_part_of_invalid_multiple_surfaces(
+                        unique_vertex_id );
+                } );
         }
         for( const auto& block : brep_.active_blocks() )
         {
