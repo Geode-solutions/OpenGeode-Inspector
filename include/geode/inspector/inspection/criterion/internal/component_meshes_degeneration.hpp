@@ -73,9 +73,6 @@ namespace geode
             [[nodiscard]] const Model& model() const;
 
         private:
-            std::vector< uuid > surfaces_on_which_enable_edges() const;
-
-        private:
             const Model& model_;
             mutable absl::flat_hash_set< uuid > enabled_edges_surfaces_;
         };

@@ -48,9 +48,8 @@ namespace geode
 
         private:
             [[nodiscard]] bool edge_is_smaller_than_threshold(
-                index_t edge_index, double threshold ) const;
-
-            [[nodiscard]] bool edge_is_degenerated( index_t edge_index ) const;
+                const std::array< index_t, 2 >& edge_vertices,
+                double threshold ) const;
 
             void enable_edges_on_mesh() const;
 

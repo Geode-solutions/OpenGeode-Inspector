@@ -23,6 +23,10 @@
 
 #include <geode/inspector/inspection/criterion/internal/colocation_impl.hpp>
 
+#include <atomic>
+
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 
 #include <geode/mesh/core/edged_curve.hpp>
@@ -30,14 +34,13 @@
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
+#include <geode/geometry/distance.hpp>
 #include <geode/geometry/point.hpp>
 
 namespace
 {
     template < geode::index_t dimension, typename Mesh >
-    typename geode::NNSearch< dimension >::ColocatedInfo
-        mesh_points_colocated_info(
-            const Mesh& mesh, double colocation_distance )
+    geode::NNSearch< dimension > mesh_points_search( const Mesh& mesh )
     {
         std::vector< geode::Point< dimension > > mesh_points(
             mesh.nb_vertices() );
@@ -45,8 +48,16 @@ namespace
         {
             mesh_points[point_index] = mesh.point( point_index );
         }
-        const geode::NNSearch< dimension > nnsearch{ mesh_points };
-        return nnsearch.colocated_index_mapping( colocation_distance );
+        return geode::NNSearch< dimension >{ std::move( mesh_points ) };
+    }
+
+    template < geode::index_t dimension, typename Mesh >
+    typename geode::NNSearch< dimension >::ColocatedInfo
+        mesh_points_colocated_info(
+            const Mesh& mesh, double colocation_distance )
+    {
+        return mesh_points_search< dimension >( mesh ).colocated_index_mapping(
+            colocation_distance );
     }
 
     template < geode::index_t dimension, typename Mesh >
@@ -56,22 +67,35 @@ namespace
         const auto mesh_colocation_info =
             mesh_points_colocated_info< dimension, Mesh >(
                 mesh, colocation_distance );
-        std::vector< std::vector< geode::index_t > > colocated_points_indices(
-            mesh_colocation_info.nb_unique_points() );
-        for( const auto point_index :
-            geode::Indices{ mesh_colocation_info.colocated_mapping } )
+        // Groups are only built for unique points having several input
+        // points, ordered by unique point
+        const auto& mapping = mesh_colocation_info.colocated_mapping;
+        std::vector< geode::index_t > nb_points_per_unique(
+            mesh_colocation_info.nb_unique_points(), 0 );
+        for( const auto unique_point : mapping )
         {
-            colocated_points_indices[mesh_colocation_info
-                                         .colocated_mapping[point_index]]
-                .push_back( point_index );
+            nb_points_per_unique[unique_point]++;
         }
-        const auto colocated_points_groups_end = std::remove_if(
-            colocated_points_indices.begin(), colocated_points_indices.end(),
-            []( const std::vector< geode::index_t >& colocated_points_group ) {
-                return colocated_points_group.size() < 2;
-            } );
-        colocated_points_indices.erase(
-            colocated_points_groups_end, colocated_points_indices.end() );
+        std::vector< geode::index_t > group_of_unique(
+            nb_points_per_unique.size(), geode::NO_ID );
+        geode::index_t nb_groups{ 0 };
+        for( const auto unique_point : geode::Indices{ nb_points_per_unique } )
+        {
+            if( nb_points_per_unique[unique_point] > 1 )
+            {
+                group_of_unique[unique_point] = nb_groups++;
+            }
+        }
+        std::vector< std::vector< geode::index_t > > colocated_points_indices(
+            nb_groups );
+        for( const auto point_index : geode::Indices{ mapping } )
+        {
+            const auto group = group_of_unique[mapping[point_index]];
+            if( group != geode::NO_ID )
+            {
+                colocated_points_indices[group].push_back( point_index );
+            }
+        }
 
         geode::InspectionIssues< std::vector< geode::index_t > >
             groups_of_colocated_points{ "groups of colocated points" };
@@ -83,7 +107,7 @@ namespace
                 absl::StrAppend( &point_group_string, " ", point_index );
             }
             groups_of_colocated_points.add_issue( colocated_points_group,
-                absl::StrCat( "vertices ", point_group_string,
+                absl::StrCat( "vertices", point_group_string,
                     " are colocated at the position [",
                     mesh_colocation_info
                         .unique_points[mesh_colocation_info
@@ -109,10 +133,29 @@ namespace geode
         bool
             ColocationImpl< dimension, Mesh >::mesh_has_colocated_points() const
         {
-            return mesh_points_colocated_info< dimension, Mesh >(
-                       mesh_, GLOBAL_EPSILON )
-                       .nb_colocated_points()
-                   > 0;
+            const auto nnsearch = mesh_points_search< dimension >( mesh_ );
+            std::atomic< bool > has_colocated_points{ false };
+            async::parallel_for(
+                async::irange( index_t{ 0 }, nnsearch.nb_points() ),
+                [&nnsearch, &has_colocated_points]( index_t point_index ) {
+                    if( has_colocated_points )
+                    {
+                        return;
+                    }
+                    const auto& point = nnsearch.point( point_index );
+                    for( const auto neighbor : nnsearch.neighbors( point, 2 ) )
+                    {
+                        if( neighbor != point_index
+                            && point_point_distance(
+                                   point, nnsearch.point( neighbor ) )
+                                   <= GLOBAL_EPSILON )
+                        {
+                            has_colocated_points = true;
+                            return;
+                        }
+                    }
+                } );
+            return has_colocated_points;
         }
 
         template < index_t dimension, typename Mesh >
