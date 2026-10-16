@@ -120,7 +120,7 @@ namespace
                 absl::StrAppend( &point_group_string, " ", point_index );
             }
             issues->add_issue( colocated_points_group,
-                absl::StrCat( label, " has vertices ", point_group_string,
+                absl::StrCat( label, " has vertices", point_group_string,
                     " colocated at position [",
                     mesh.point( colocated_points_group[0] ).string(), "]" ) );
         }

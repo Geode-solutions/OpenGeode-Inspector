@@ -204,7 +204,7 @@ namespace geode
                     absl::StrAppend( &point_group_string, " ", model_uv_index );
                 }
                 vertices_issues.add_issue( fixed_point_group,
-                    absl::StrCat( "unique vertices ", point_group_string,
+                    absl::StrCat( "unique vertices", point_group_string,
                         " are colocated at the position [",
                         pointset.point( point_group[0] ).string(), "]" ) );
             }

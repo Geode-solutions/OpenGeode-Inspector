@@ -104,7 +104,7 @@ void check_colocation_without_unique_vertices()
                                         surface_id, ") colocated vertices" ) )
             && absl::StrContains( message,
                 absl::StrCat( "Surface ", surface_id, " (", surface_id,
-                    ") has vertices  1 0 colocated at position [0 0 0]" ) ),
+                    ") has vertices 1 0 colocated at position [0 0 0]" ) ),
         "[Test] Wrong colocation message: ", message );
 
     const auto same_unique_vertex = build_colocated_surface( { 0, 0, 1, 2 } );

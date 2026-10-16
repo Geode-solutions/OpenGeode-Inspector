@@ -107,7 +107,7 @@ namespace
                 absl::StrAppend( &point_group_string, " ", point_index );
             }
             groups_of_colocated_points.add_issue( colocated_points_group,
-                absl::StrCat( "vertices ", point_group_string,
+                absl::StrCat( "vertices", point_group_string,
                     " are colocated at the position [",
                     mesh_colocation_info
                         .unique_points[mesh_colocation_info

@@ -28,7 +28,6 @@
 #include <geode/basic/uuid.hpp>
 
 #include <geode/geometry/point.hpp>
-#include <geode/geometry/vector.hpp>
 
 #include <geode/mesh/core/edged_curve.hpp>
 
@@ -59,11 +58,7 @@ namespace geode
             };
             for( const auto edge_id : Range{ mesh_.nb_edges() } )
             {
-                const auto& edge_vertices = mesh_.edge_vertices( edge_id );
-                if( Vector< dimension >{ mesh_.point( edge_vertices[0] ),
-                        mesh_.point( edge_vertices[1] ) }
-                        .length2()
-                    <= threshold * threshold )
+                if( mesh_.edge_length( edge_id ) <= threshold )
                 {
                     degenerated_edges_index.add_issue( edge_id,
                         absl::StrCat( "degenerated edge ", edge_id,
