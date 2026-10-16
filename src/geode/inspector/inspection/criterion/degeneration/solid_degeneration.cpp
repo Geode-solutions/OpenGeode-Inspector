@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/degeneration/solid_degeneration.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
@@ -70,15 +72,20 @@ namespace geode
             InspectionIssues< index_t > wrong_polyhedra{
                 "Degenerated Polyhedra."
             };
-            for( const auto polyhedron_id :
-                Range{ this->mesh().nb_polyhedra() } )
+            const auto nb_elements = this->mesh().nb_polyhedra();
+            std::vector< char > is_small( nb_elements, false );
+            async::parallel_for( async::irange( index_t{ 0 }, nb_elements ),
+                [this, threshold, &is_small]( index_t element_id ) {
+                    is_small[element_id] =
+                        this->mesh().polyhedron_minimum_height( element_id )
+                        <= threshold;
+                } );
+            for( const auto element_id : Range{ nb_elements } )
             {
-                if( this->mesh().polyhedron_minimum_height( polyhedron_id )
-                    <= threshold )
+                if( is_small[element_id] )
                 {
-                    wrong_polyhedra.add_issue(
-                        polyhedron_id, absl::StrCat( "degenerated polyhedra ",
-                                           polyhedron_id ) );
+                    wrong_polyhedra.add_issue( element_id,
+                        absl::StrCat( "degenerated polyhedra ", element_id ) );
                 }
             }
             return wrong_polyhedra;

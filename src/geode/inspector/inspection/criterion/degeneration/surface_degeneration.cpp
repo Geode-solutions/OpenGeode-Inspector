@@ -23,6 +23,8 @@
 
 #include <geode/inspector/inspection/criterion/degeneration/surface_degeneration.hpp>
 
+#include <async++.h>
+
 #include <geode/basic/logger.hpp>
 #include <geode/basic/pimpl_impl.hpp>
 #include <geode/basic/uuid.hpp>
@@ -69,13 +71,20 @@ namespace geode
             InspectionIssues< index_t > wrong_polygons{
                 "Degenerated Polygons."
             };
-            for( const auto polygon_id : Range{ this->mesh().nb_polygons() } )
+            const auto nb_elements = this->mesh().nb_polygons();
+            std::vector< char > is_small( nb_elements, false );
+            async::parallel_for( async::irange( index_t{ 0 }, nb_elements ),
+                [this, threshold, &is_small]( index_t element_id ) {
+                    is_small[element_id] =
+                        this->mesh().polygon_minimum_height( element_id )
+                        <= threshold;
+                } );
+            for( const auto element_id : Range{ nb_elements } )
             {
-                if( this->mesh().polygon_minimum_height( polygon_id )
-                    <= threshold )
+                if( is_small[element_id] )
                 {
-                    wrong_polygons.add_issue( polygon_id,
-                        absl::StrCat( "degenerated polygons ", polygon_id ) );
+                    wrong_polygons.add_issue( element_id,
+                        absl::StrCat( "degenerated polygons ", element_id ) );
                 }
             }
             return wrong_polygons;

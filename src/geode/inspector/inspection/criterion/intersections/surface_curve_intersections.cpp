@@ -109,15 +109,6 @@ namespace
     {
         const auto triangle = surface_.triangle( triangle_id );
         const auto segment = curve_.segment( edge_id );
-        for( const auto ev : geode::LRange{ 2 } )
-        {
-            if( geode::point_triangle_position(
-                    segment.vertices()[ev].get(), triangle )
-                == geode::POSITION::inside )
-            {
-                return true;
-            }
-        }
         const auto result =
             geode::segment_triangle_intersection_detection( segment, triangle );
         if( result.first == geode::POSITION::outside

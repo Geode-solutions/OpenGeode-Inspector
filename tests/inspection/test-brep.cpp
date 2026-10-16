@@ -80,8 +80,11 @@ geode::index_t lines_topological_validity(
         result
             .unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner
             .nb_issues();
-    nb_issues +=
-        result.line_edges_with_wrong_component_edges_around.nb_issues();
+    for( const auto& issue :
+        result.line_edges_with_wrong_component_edges_around.issues_map() )
+    {
+        nb_issues += issue.second.nb_issues();
+    }
     geode::Logger::info( "BRep Lines Topology check: ", nb_issues, " issues." );
     if( string )
     {
@@ -108,8 +111,11 @@ geode::index_t surfaces_topological_validity(
     nb_issues +=
         result.unique_vertices_linked_to_a_surface_with_invalid_embbedings
             .nb_issues();
-    nb_issues +=
-        result.surface_polygons_with_wrong_component_facets_around.nb_issues();
+    for( const auto& issue : result
+             .surface_polygons_with_wrong_component_facets_around.issues_map() )
+    {
+        nb_issues += issue.second.nb_issues();
+    }
     geode::Logger::info(
         "BRep Surfaces Topology check: ", nb_issues, " issues." );
     if( string )
@@ -326,14 +332,14 @@ void check_model_a1( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 5191, "model_A1 has ", nb_topological_issues,
-        " topological problems instead of 5191." );
+        nb_topological_issues == 6182, "model_A1 has ", nb_topological_issues,
+        " topological problems instead of 6182." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_component_meshes_issues == 13494, "model_A1 has ",
-        nb_component_meshes_issues, " meshes problems instead of 13494." );
+        nb_component_meshes_issues == 14748, "model_A1 has ",
+        nb_component_meshes_issues, " meshes problems instead of 14748." );
 }
 
 void check_model_a1_valid( bool string )
@@ -349,14 +355,14 @@ void check_model_a1_valid( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 5191, "model_A1_valid has ",
-        nb_topological_issues, " topological problems instead of 5191." );
+        nb_topological_issues == 6182, "model_A1_valid has ",
+        nb_topological_issues, " topological problems instead of 6182." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_component_meshes_issues == 13494, "model_A1_valid has ",
-        nb_component_meshes_issues, " meshes problems instead of 13494." );
+        nb_component_meshes_issues == 14748, "model_A1_valid has ",
+        nb_component_meshes_issues, " meshes problems instead of 14748." );
 }
 
 void check_model_mss( bool string )
@@ -372,8 +378,8 @@ void check_model_mss( bool string )
     const auto nb_topological_issues =
         launch_topological_validity_checks( result.topology, string );
     geode::OpenGeodeInspectorInspectionException::test(
-        nb_topological_issues == 50, "mss has ", nb_topological_issues,
-        " topological problems instead of 50." );
+        nb_topological_issues == 65, "mss has ", nb_topological_issues,
+        " topological problems instead of 65." );
 
     const auto nb_component_meshes_issues =
         launch_component_meshes_validity_checks( result.meshes, string );

@@ -70,18 +70,32 @@ namespace geode
 
         [[nodiscard]] std::string string() const
         {
+            std::string message;
+            append_string( message );
+            return message;
+        }
+
+        void append_string( std::string& message ) const
+        {
             if( issues_.empty() )
             {
-                return absl::StrCat( "no issues with ", description_, "\n" );
+                absl::StrAppend(
+                    &message, "no issues with ", description_, "\n" );
+                return;
             }
-            auto message =
-                absl::StrCat( issues_.size(), " issues with ", description_ );
+            auto size = message.size() + description_.size() + 32;
+            for( const auto& issue : messages_ )
+            {
+                size += issue.size() + 2;
+            }
+            message.reserve( size );
+            absl::StrAppend(
+                &message, issues_.size(), " issues with ", description_ );
             for( const auto& issue : messages_ )
             {
                 absl::StrAppend( &message, "\n\t", issue );
             }
-            absl::StrAppend( &message, "\n" );
-            return message;
+            message.append( "\n" );
         }
 
         [[nodiscard]] const std::vector< IssueType >& issues() const
@@ -119,7 +133,23 @@ namespace geode
             return description_;
         }
 
+        /*!
+         * Total number of issues, summed over every component of the map
+         */
         [[nodiscard]] index_t nb_issues() const
+        {
+            index_t nb{ 0 };
+            for( const auto& issues : issues_map_ )
+            {
+                nb += issues.second.nb_issues();
+            }
+            return nb;
+        }
+
+        /*!
+         * Number of components having at least one issue
+         */
+        [[nodiscard]] index_t nb_components_with_issues() const
         {
             return issues_map_.size();
         }
@@ -140,11 +170,12 @@ namespace geode
             {
                 return absl::StrCat( "no issues with ", description_, "\n" );
             }
-            auto message = absl::StrCat(
-                issues_map_.size(), " issues with ", description_ );
+            auto message =
+                absl::StrCat( nb_issues(), " issues with ", description_ );
             for( const auto& issues : issues_map_ )
             {
-                absl::StrAppend( &message, "\n\t", issues.second.string() );
+                message.append( "\n\t" );
+                issues.second.append_string( message );
             }
             absl::StrAppend( &message, "\n" );
             return message;

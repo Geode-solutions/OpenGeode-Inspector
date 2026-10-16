@@ -303,32 +303,30 @@ namespace geode
         for( const auto unique_vertex_id :
             Range{ section_.nb_unique_vertices() } )
         {
-            if( const auto problem_message =
-                    unique_vertex_has_multiple_corners( unique_vertex_id ) )
-            {
-                result.unique_vertices_linked_to_multiple_corners.add_issue(
-                    unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_has_multiple_embeddings( unique_vertex_id ) )
-            {
-                result.unique_vertices_linked_to_multiple_internals_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_is_not_internal_nor_boundary( unique_vertex_id ) )
-            {
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_multiple_corners,
+                unique_vertex_id, [&] {
+                    return unique_vertex_has_multiple_corners(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_multiple_internals_corner,
+                unique_vertex_id, [&] {
+                    return corner_has_multiple_embeddings( unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
                 result
-                    .unique_vertices_linked_to_not_internal_nor_boundary_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
-            if( const auto problem_message =
-                    corner_is_part_of_line_but_not_boundary(
-                        unique_vertex_id ) )
-            {
-                result.unique_vertices_linked_to_not_boundary_line_corner
-                    .add_issue( unique_vertex_id, problem_message.value() );
-            }
+                    .unique_vertices_linked_to_not_internal_nor_boundary_corner,
+                unique_vertex_id, [&] {
+                    return corner_is_not_internal_nor_boundary(
+                        unique_vertex_id );
+                } );
+            internal::add_unique_vertex_issue(
+                result.unique_vertices_linked_to_not_boundary_line_corner,
+                unique_vertex_id, [&] {
+                    return corner_is_part_of_line_but_not_boundary(
+                        unique_vertex_id );
+                } );
         }
         return result;
     }

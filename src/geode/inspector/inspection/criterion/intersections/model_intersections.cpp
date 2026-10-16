@@ -58,11 +58,11 @@ namespace
         }
     };
 
-    [[nodiscard]] absl::InlinedVector< geode::PolygonVertices, 1 >
+    [[nodiscard]] absl::InlinedVector< geode::PolygonVertices, 2 >
         polygon_fan_triangles(
             const geode::PolygonVertices& polygon, geode::local_index_t apex )
     {
-        absl::InlinedVector< geode::PolygonVertices, 1 > triangles;
+        absl::InlinedVector< geode::PolygonVertices, 2 > triangles;
         for( const auto edge : geode::LRange{ 1, polygon.size() - 1 } )
         {
             const auto next_apex = ( apex + edge ) % polygon.size();
@@ -72,6 +72,25 @@ namespace
                 polygon[apex], polygon[next_apex], polygon[next_next_apex] } );
         }
         return triangles;
+    }
+
+    // The segment lies in the triangle plane and overlaps it: it is an
+    // intersection unless the contact is reduced to triangle vertices
+    [[nodiscard]] bool segment_in_triangle_plane_intersects(
+        const geode::Segment3D& segment, const geode::Triangle3D& triangle )
+    {
+        for( const auto& vertex : segment.vertices() )
+        {
+            const auto position =
+                geode::point_triangle_position( vertex.get(), triangle );
+            if( position != geode::POSITION::vertex0
+                && position != geode::POSITION::vertex1
+                && position != geode::POSITION::vertex2 )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     class BRepLineSurfacesIntersection
@@ -115,18 +134,19 @@ namespace
                         == geode::POSITION::inside
                     || segment_triangle_intersection.second
                            == geode::POSITION::inside
-                    || segment_triangle_intersection.first
-                           == geode::POSITION::edge0
-                    || segment_triangle_intersection.first
-                           == geode::POSITION::edge1
                     || segment_triangle_intersection.second
                            == geode::POSITION::edge0
                     || segment_triangle_intersection.second
                            == geode::POSITION::edge1
                     || segment_triangle_intersection.second
-                           == geode::POSITION::edge2
-                    || segment_triangle_intersection.first
                            == geode::POSITION::edge2 )
+                {
+                    return true;
+                }
+                if( segment_triangle_intersection.first
+                        == geode::POSITION::parallel
+                    && segment_in_triangle_plane_intersects(
+                        line_segment, triangle ) )
                 {
                     return true;
                 }
@@ -163,13 +183,17 @@ namespace
     public:
         ModelSurfacesIntersectionBase( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
             : ModelIntersectionBase< Model >{ model },
               same_surface_{ surface_id1 == surface_id2 },
               surface1_( model.surface( surface_id1 ) ),
               surface2_( model.surface( surface_id2 ) ),
               mesh1_( surface1_.mesh() ),
-              mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() )
+              mesh2_( same_surface_ ? mesh1_ : surface2_.mesh() ),
+              unique_vertices1_( unique_vertices1 ),
+              unique_vertices2_( unique_vertices2 )
         {
         }
 
@@ -224,13 +248,16 @@ namespace
                 common_vertices;
             for( const auto v1_id : t1_vertices )
             {
-                const auto v1_unique_vertex = this->model().unique_vertex(
-                    { surface1_.component_id(), v1_id } );
+                const auto v1_unique_vertex = unique_vertices1_[v1_id];
                 for( const auto v2_id : t2_vertices )
                 {
-                    if( v1_unique_vertex
-                        == this->model().unique_vertex(
-                            { surface2_.component_id(), v2_id } ) )
+                    if( same_surface_ && v1_id == v2_id )
+                    {
+                        common_vertices.push_back( { v1_id, v2_id } );
+                        break;
+                    }
+                    if( v1_unique_vertex != geode::NO_ID
+                        && v1_unique_vertex == unique_vertices2_[v2_id] )
                     {
                         common_vertices.push_back( { v1_id, v2_id } );
                         break;
@@ -265,12 +292,42 @@ namespace
                 mesh.point( triangle_vertices[2] ) };
         }
 
+        // Point of a mesh2 vertex, taken from mesh1 when the vertex is common
+        // to both triangles: common vertices must be exactly the same point
+        // even if their coordinates slightly differ between the meshes.
+        [[nodiscard]] const geode::Point< Model::dim >& mesh2_point(
+            geode::index_t vertex2,
+            absl::Span< const std::array< geode::index_t, 2 > >
+                common_vertices ) const
+        {
+            for( const auto& common : common_vertices )
+            {
+                if( common[1] == vertex2 )
+                {
+                    return mesh1_.point( common[0] );
+                }
+            }
+            return mesh2_.point( vertex2 );
+        }
+
+        [[nodiscard]] geode::Triangle< Model::dim > mesh2_triangle(
+            const geode::PolygonVertices& triangle_vertices,
+            absl::Span< const std::array< geode::index_t, 2 > >
+                common_vertices ) const
+        {
+            return { mesh2_point( triangle_vertices[0], common_vertices ),
+                mesh2_point( triangle_vertices[1], common_vertices ),
+                mesh2_point( triangle_vertices[2], common_vertices ) };
+        }
+
     private:
         bool same_surface_;
         const geode::Surface< Model::dim >& surface1_;
         const geode::Surface< Model::dim >& surface2_;
         const geode::SurfaceMesh< Model::dim >& mesh1_;
         const geode::SurfaceMesh< Model::dim >& mesh2_;
+        absl::Span< const geode::index_t > unique_vertices1_;
+        absl::Span< const geode::index_t > unique_vertices2_;
     };
 
     template < typename Model >
@@ -280,9 +337,14 @@ namespace
     public:
         AllModelSurfacesIntersection( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< Model >(
-                  model, surface_id1, surface_id2 ),
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
+            : ModelSurfacesIntersectionBase< Model >( model,
+                  surface_id1,
+                  surface_id2,
+                  unique_vertices1,
+                  unique_vertices2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -308,9 +370,14 @@ namespace
     public:
         AllModelSurfacesAutoIntersection( const Model& model,
             const geode::uuid& surface_id1,
-            const geode::uuid& surface_id2 )
-            : ModelSurfacesIntersectionBase< Model >(
-                  model, surface_id1, surface_id2 ),
+            const geode::uuid& surface_id2,
+            absl::Span< const geode::index_t > unique_vertices1,
+            absl::Span< const geode::index_t > unique_vertices2 )
+            : ModelSurfacesIntersectionBase< Model >( model,
+                  surface_id1,
+                  surface_id2,
+                  unique_vertices1,
+                  unique_vertices2 ),
               same_surface_{ surface_id1 == surface_id2 }
         {
         }
@@ -349,6 +416,33 @@ namespace
         };
     }
 
+    // Only called when no edge of the triangle crosses the other triangle:
+    // its non common vertices are then either all inside or all outside
+    // the other triangle, so testing the first one is enough
+    [[nodiscard]] bool non_common_vertex_inside(
+        const geode::SurfaceMesh2D& mesh,
+        const geode::PolygonVertices& triangle_vertices,
+        const geode::Triangle2D& other_triangle,
+        absl::Span< const std::array< geode::index_t, 2 > > common_vertices,
+        geode::local_index_t vertex_position )
+    {
+        for( const auto vertex_id : triangle_vertices )
+        {
+            if( absl::c_any_of( common_vertices,
+                    [vertex_id, vertex_position](
+                        const std::array< geode::index_t, 2 >& common ) {
+                        return common[vertex_position] == vertex_id;
+                    } ) )
+            {
+                continue;
+            }
+            return geode::point_triangle_position(
+                       mesh.point( vertex_id ), other_triangle )
+                   != geode::POSITION::outside;
+        }
+        return false;
+    }
+
     template <>
     [[nodiscard]] bool
         ModelSurfacesIntersectionBase< geode::Section >::triangles_intersect(
@@ -360,7 +454,7 @@ namespace
         if( common_vertices.size() == 2 )
         {
             const auto& common_pt0 = mesh1_.point( common_vertices[0][0] );
-            const auto& common_pt1 = mesh1_.point( common_vertices[1][1] );
+            const auto& common_pt1 = mesh1_.point( common_vertices[1][0] );
             const auto& t1_third_pt = mesh1_.point(
                 third_point_index( t1_vertices, common_vertices, 0 ) );
             const auto& t2_third_pt = mesh2_.point(
@@ -378,7 +472,8 @@ namespace
                 return true;
             }
             const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
-            const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
+            const auto triangle2 =
+                mesh2_triangle( t2_vertices, common_vertices );
             return geode::point_triangle_position( t1_third_pt, triangle2 )
                        != geode::POSITION::outside
                    || geode::point_triangle_position( t2_third_pt, triangle1 )
@@ -399,9 +494,10 @@ namespace
                     t2_vertices[t2_edge_v == 2 ? 0 : t2_edge_v + 1]
                 };
                 const auto edge_edge_inter =
-                    geode::segment_segment_intersection_detection(
-                        t1_edge, { mesh2_.point( edge2_vertices[0] ),
-                                     mesh2_.point( edge2_vertices[1] ) } );
+                    geode::segment_segment_intersection_detection( t1_edge,
+                        { mesh2_point( edge2_vertices[0], common_vertices ),
+                            mesh2_point(
+                                edge2_vertices[1], common_vertices ) } );
                 if( edge_edge_inter.first == geode::POSITION::outside
                     || edge_edge_inter.first == geode::POSITION::parallel )
                 {
@@ -428,7 +524,13 @@ namespace
                 }
             }
         }
-        return false;
+        // No edge crossing: one triangle may still lie inside the other
+        // (possibly nested in its corner at the common vertex)
+        return non_common_vertex_inside( mesh1_, t1_vertices,
+                   mesh2_triangle( t2_vertices, common_vertices ),
+                   common_vertices, 0 )
+               || non_common_vertex_inside( mesh2_, t2_vertices,
+                   mesh_triangle( mesh1_, t1_vertices ), common_vertices, 1 );
     }
 
     [[nodiscard]] bool triangle_intersects_other(
@@ -472,6 +574,28 @@ namespace
         return false;
     }
 
+    // True if the triangle vertices, except the common ones lying on the
+    // other triangle plane, are all strictly on the same side of this plane:
+    // both triangles can then only touch at their common vertex (if any).
+    [[nodiscard]] bool strictly_on_one_side( const geode::Triangle3D& triangle,
+        const geode::Triangle3D& other,
+        geode::index_t nb_common_vertices )
+    {
+        std::array< geode::SIDE, 3 > sides;
+        for( const auto v : geode::LRange{ 3 } )
+        {
+            sides[v] = geode::point_side_to_triangle(
+                triangle.vertices()[v].get(), other );
+        }
+        const auto nb_zeros = absl::c_count( sides, geode::SIDE::zero );
+        if( nb_zeros > nb_common_vertices )
+        {
+            return false;
+        }
+        const auto nb_positives = absl::c_count( sides, geode::SIDE::positive );
+        return nb_positives == 3 - nb_zeros || nb_positives == 0;
+    }
+
     template <>
     [[nodiscard]] bool
         ModelSurfacesIntersectionBase< geode::BRep >::triangles_intersect(
@@ -480,7 +604,7 @@ namespace
             absl::Span< const std::array< geode::index_t, 2 > >
                 common_vertices ) const
     {
-        const auto triangle2 = mesh_triangle( mesh2_, t2_vertices );
+        const auto triangle2 = mesh2_triangle( t2_vertices, common_vertices );
         if( common_vertices.size() == 2 )
         {
             const auto& t1_third_pt = mesh1_.point(
@@ -498,6 +622,12 @@ namespace
                           == geode::POSITION::parallel;
         }
         const auto triangle1 = mesh_triangle( mesh1_, t1_vertices );
+        if( strictly_on_one_side( triangle1, triangle2, common_vertices.size() )
+            || strictly_on_one_side(
+                triangle2, triangle1, common_vertices.size() ) )
+        {
+            return false;
+        }
         return triangle_intersects_other( triangle1, triangle2, t1_vertices,
                    t2_vertices, common_vertices, 1 )
                || triangle_intersects_other( triangle2, triangle1, t2_vertices,
@@ -535,11 +665,47 @@ namespace
     private:
         bool lines_intersect( geode::index_t p1_id, geode::index_t p2_id ) const
         {
+            const auto segment1 = mesh1_.segment( p1_id );
+            const auto segment2 = mesh2_.segment( p2_id );
             const auto [position1, position2] =
                 geode::segment_segment_intersection_detection(
-                    mesh1_.segment( p1_id ), mesh2_.segment( p2_id ) );
-            return position1 == geode::POSITION::inside
-                   || position2 == geode::POSITION::inside;
+                    segment1, segment2 );
+            if( position1 == geode::POSITION::inside
+                || position2 == geode::POSITION::inside )
+            {
+                return true;
+            }
+            return position1 == geode::POSITION::parallel
+                   && collinear_segments_overlap( segment1, segment2 );
+        }
+
+        // Collinear segments overlap if an end point is strictly inside the
+        // other segment, or if they share both end points
+        [[nodiscard]] static bool collinear_segments_overlap(
+            const geode::Segment< dimension >& segment1,
+            const geode::Segment< dimension >& segment2 )
+        {
+            geode::local_index_t nb_shared_vertices{ 0 };
+            for( const auto& [segment, other] :
+                { std::pair{ &segment1, &segment2 },
+                    std::pair{ &segment2, &segment1 } } )
+            {
+                for( const auto& vertex : segment->vertices() )
+                {
+                    const auto position =
+                        geode::point_segment_position( vertex.get(), *other );
+                    if( position == geode::POSITION::inside )
+                    {
+                        return true;
+                    }
+                    if( position == geode::POSITION::vertex0
+                        || position == geode::POSITION::vertex1 )
+                    {
+                        nb_shared_vertices++;
+                    }
+                }
+            }
+            return nb_shared_vertices == 4;
         }
 
     private:
@@ -575,8 +741,24 @@ namespace geode
         Impl( const Model& model )
             : model_( model ),
               surfaces_model_tree_{ create_surface_meshes_aabb_trees( model ) },
-              lines_model_tree_{ create_line_meshes_aabb_trees( model ) }
+              lines_model_tree_{ create_line_meshes_aabb_trees( model ) },
+              surfaces_unique_vertices_( surfaces_model_tree_.uuids_.size() )
         {
+            async::parallel_for( async::irange( index_t{ 0 },
+                                     static_cast< index_t >(
+                                         surfaces_unique_vertices_.size() ) ),
+                [this]( index_t tree_id ) {
+                    const auto& surface =
+                        model_.surface( surfaces_model_tree_.uuids_[tree_id] );
+                    const auto surface_id = surface.component_id();
+                    auto& unique_vertices = surfaces_unique_vertices_[tree_id];
+                    unique_vertices.resize( surface.mesh().nb_vertices() );
+                    for( const auto v : Indices{ unique_vertices } )
+                    {
+                        unique_vertices[v] =
+                            model_.unique_vertex( { surface_id, v } );
+                    }
+                } );
         }
 
         [[nodiscard]] bool model_has_intersecting_surfaces() const
@@ -691,33 +873,24 @@ namespace geode
             intersecting_polygons() const
         {
             IntersectionsResult component_intersections;
-            for( const auto& surface : model_.active_surfaces() )
-            {
-                if( surface.mesh().nb_polygons() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the surface meshes has an empty mesh, cannot "
-                        "compute the AABBTree used for detecting the mesh "
-                        "intersections, no intersections will be "
-                        "computed." );
-                    return component_intersections;
-                }
-            }
             using Task = async::task< IntersectionsResult >;
             std::vector< Task > tasks;
-            for( const auto& surface : model_.active_surfaces() )
+            for( const auto tree_id : Indices{ surfaces_model_tree_.uuids_ } )
             {
-                tasks.emplace_back( async::spawn( [this, &surface] {
+                tasks.emplace_back( async::spawn( [this, tree_id] {
+                    const auto& surface_uuid =
+                        surfaces_model_tree_.uuids_[tree_id];
                     const Action surfaces_intersection_action{ model_,
-                        surface.id(), surface.id() };
+                        surface_uuid, surface_uuid,
+                        surfaces_unique_vertices_[tree_id],
+                        surfaces_unique_vertices_[tree_id] };
                     const auto intersecting_elements =
-                        surfaces_model_tree_
-                            .mesh_trees_[surfaces_model_tree_.mesh_tree_ids_.at(
-                                surface.id() )]
+                        surfaces_model_tree_.mesh_trees_[tree_id]
                             .compute_self_element_bbox_intersections(
                                 surfaces_intersection_action );
                     IntersectionsResult result;
-                    const auto surface_id = surface.component_id();
+                    const auto surface_id =
+                        model_.surface( surface_uuid ).component_id();
                     for( const auto& [polygon1, polygon2] :
                         intersecting_elements )
                     {
@@ -728,39 +901,48 @@ namespace geode
                     return result;
                 } ) );
             }
-            const auto surfaces_overlap =
-                surfaces_model_tree_.components_tree_
-                    .compute_self_element_bbox_intersections(
-                        ComponentOverlap{} );
-            for( const auto& components : surfaces_overlap )
+            // Self intersections only: polygons of different surfaces are
+            // never tested
+            std::vector< std::pair< index_t, index_t > > surfaces_overlap;
+            if constexpr( !std::is_same_v< Action,
+                              AllModelSurfacesAutoIntersection< Model > > )
             {
-                tasks.emplace_back( async::spawn( [this, &components] {
-                    const auto surface_uuid1 =
-                        surfaces_model_tree_.uuids_[components.first];
-                    const auto surface_uuid2 =
-                        surfaces_model_tree_.uuids_[components.second];
-                    const Action surfaces_intersection_action{ model_,
-                        surface_uuid1, surface_uuid2 };
-                    const auto intersecting_elements =
-                        surfaces_model_tree_.mesh_trees_[components.first]
-                            .compute_other_element_bbox_intersections(
-                                surfaces_model_tree_
-                                    .mesh_trees_[components.second],
-                                surfaces_intersection_action );
-                    IntersectionsResult result;
-                    const auto component_id1 =
-                        model_.surface( surface_uuid1 ).component_id();
-                    const auto component_id2 =
-                        model_.surface( surface_uuid2 ).component_id();
-                    for( const auto& [polygon1, polygon2] :
-                        intersecting_elements )
-                    {
-                        result.emplace_back(
-                            ComponentMeshElement{ component_id1, polygon1 },
-                            ComponentMeshElement{ component_id2, polygon2 } );
-                    }
-                    return result;
-                } ) );
+                surfaces_overlap = surfaces_model_tree_.components_tree_
+                                       .compute_self_element_bbox_intersections(
+                                           ComponentOverlap{} );
+                for( const auto& components : surfaces_overlap )
+                {
+                    tasks.emplace_back( async::spawn( [this, &components] {
+                        const auto surface_uuid1 =
+                            surfaces_model_tree_.uuids_[components.first];
+                        const auto surface_uuid2 =
+                            surfaces_model_tree_.uuids_[components.second];
+                        const Action surfaces_intersection_action{ model_,
+                            surface_uuid1, surface_uuid2,
+                            surfaces_unique_vertices_[components.first],
+                            surfaces_unique_vertices_[components.second] };
+                        const auto intersecting_elements =
+                            surfaces_model_tree_.mesh_trees_[components.first]
+                                .compute_other_element_bbox_intersections(
+                                    surfaces_model_tree_
+                                        .mesh_trees_[components.second],
+                                    surfaces_intersection_action );
+                        IntersectionsResult result;
+                        const auto component_id1 =
+                            model_.surface( surface_uuid1 ).component_id();
+                        const auto component_id2 =
+                            model_.surface( surface_uuid2 ).component_id();
+                        for( const auto& [polygon1, polygon2] :
+                            intersecting_elements )
+                        {
+                            result.emplace_back(
+                                ComponentMeshElement{ component_id1, polygon1 },
+                                ComponentMeshElement{
+                                    component_id2, polygon2 } );
+                        }
+                        return result;
+                    } ) );
+                }
             }
             for( auto& task : async::when_all( tasks ).get() )
             {
@@ -777,32 +959,22 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto& line : model_.active_lines() )
-            {
-                if( line.mesh().nb_edges() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the line meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
-                }
-            }
             using Task = async::task< IntersectionsResult >;
             std::vector< Task > tasks;
-            for( const auto& line : model_.active_lines() )
+            for( const auto tree_id : Indices{ lines_model_tree_.uuids_ } )
             {
-                tasks.emplace_back( async::spawn( [this, &line] {
+                tasks.emplace_back( async::spawn( [this, tree_id] {
+                    const auto& line_uuid = lines_model_tree_.uuids_[tree_id];
                     const LineLineIntersection lines_intersection_action{
-                        model_, line.id(), line.id()
+                        model_, line_uuid, line_uuid
                     };
                     const auto intersecting_elements =
-                        lines_model_tree_
-                            .mesh_trees_[lines_model_tree_.mesh_tree_ids_.at(
-                                line.id() )]
+                        lines_model_tree_.mesh_trees_[tree_id]
                             .compute_self_element_bbox_intersections(
                                 lines_intersection_action );
                     IntersectionsResult result;
-                    const auto line_id = line.component_id();
+                    const auto line_id =
+                        model_.line( line_uuid ).component_id();
                     for( const auto& [edge1, edge2] : intersecting_elements )
                     {
                         result.emplace_back(
@@ -861,53 +1033,60 @@ namespace geode
             std::vector<
                 std::pair< ComponentMeshElement, ComponentMeshElement > >
                 component_intersections;
-            for( const auto& surface : brep.active_surfaces() )
+            std::vector< bool > embedded_lines(
+                lines_model_tree_.uuids_.size() );
+            for( const auto line_tree_id : Indices{ lines_model_tree_.uuids_ } )
             {
-                if( surface.mesh().nb_polygons() == 0 )
-                {
-                    geode::Logger::warning(
-                        "One of the surface meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
-                }
+                embedded_lines[line_tree_id] =
+                    brep.nb_embedding_blocks(
+                        brep.line( lines_model_tree_.uuids_[line_tree_id] ) )
+                    != 0;
             }
-            for( const auto& line : brep.active_lines() )
+            auto overlapping_components =
+                surfaces_model_tree_.components_tree_
+                    .compute_other_element_bbox_intersections(
+                        lines_model_tree_.components_tree_,
+                        ComponentOverlap{} );
+            absl::c_sort( overlapping_components );
+            using Task = async::task< IntersectionsResult >;
+            std::vector< Task > tasks;
+            tasks.reserve( overlapping_components.size() );
+            for( const auto& components : overlapping_components )
             {
-                if( line.mesh().nb_edges() == 0 )
+                const auto surface_tree_id = components.first;
+                const auto line_tree_id = components.second;
+                if( !embedded_lines[line_tree_id] )
                 {
-                    geode::Logger::warning(
-                        "One of the line meshes has an empty mesh, "
-                        "skipping line-surface intersection detection." );
-                    return component_intersections;
+                    continue;
                 }
+                tasks.emplace_back(
+                    async::spawn( [this, &brep, surface_tree_id, line_tree_id] {
+                        const auto& surface = brep.surface(
+                            surfaces_model_tree_.uuids_[surface_tree_id] );
+                        const auto& line =
+                            brep.line( lines_model_tree_.uuids_[line_tree_id] );
+                        const BRepLineSurfacesIntersection action{ brep,
+                            surface.id(), line.id() };
+                        IntersectionsResult result;
+                        for( const auto& element_pair :
+                            surfaces_model_tree_.mesh_trees_[surface_tree_id]
+                                .compute_other_element_bbox_intersections(
+                                    lines_model_tree_.mesh_trees_[line_tree_id],
+                                    action ) )
+                        {
+                            result.emplace_back(
+                                ComponentMeshElement{ surface.component_id(),
+                                    element_pair.first },
+                                ComponentMeshElement{ line.component_id(),
+                                    element_pair.second } );
+                        }
+                        return result;
+                    } ) );
             }
-            for( const auto& surface : brep.active_surfaces() )
+            for( auto& task : async::when_all( tasks ).get() )
             {
-                const auto& surface_tree =
-                    surfaces_model_tree_.mesh_trees_[surfaces_model_tree_
-                            .mesh_tree_ids_.at( surface.id() )];
-                for( const auto& line : brep.active_lines() )
-                {
-                    if( brep.nb_embedding_blocks( line ) == 0 )
-                    {
-                        continue;
-                    }
-                    const BRepLineSurfacesIntersection action{ brep,
-                        surface.id(), line.id() };
-                    const auto& line_tree =
-                        lines_model_tree_.mesh_trees_[lines_model_tree_
-                                .mesh_tree_ids_.at( line.id() )];
-                    for( const auto& element_pair :
-                        surface_tree.compute_other_element_bbox_intersections(
-                            line_tree, action ) )
-                    {
-                        component_intersections.emplace_back(
-                            ComponentMeshElement{
-                                surface.component_id(), element_pair.first },
-                            ComponentMeshElement{
-                                line.component_id(), element_pair.second } );
-                    }
-                }
+                absl::c_move(
+                    task.get(), std::back_inserter( component_intersections ) );
             }
             return component_intersections;
         }
@@ -916,6 +1095,8 @@ namespace geode
         const Model& model_;
         ModelMeshesAABBTree< Model::dim > surfaces_model_tree_;
         ModelMeshesAABBTree< Model::dim > lines_model_tree_;
+        // Unique vertex of each mesh vertex, per surface mesh tree
+        std::vector< std::vector< index_t > > surfaces_unique_vertices_;
     };
 
     template < typename Model >

@@ -88,39 +88,45 @@ namespace geode
                 components_small_edges.add_issues_to_map(
                     line_id, std::move( issues ) );
             }
-            std::vector<
-                async::task< std::pair< uuid, InspectionIssues< index_t > > > >
+            std::vector< async::task<
+                std::tuple< uuid, InspectionIssues< index_t >, bool > > >
                 surface_tasks;
             surface_tasks.reserve( model_.nb_active_surfaces() );
-            const auto surfaces_to_enable = surfaces_on_which_enable_edges();
             for( const auto& surface : model_.active_surfaces() )
             {
-                const auto enable_edges =
-                    absl::c_contains( surfaces_to_enable, surface.id() );
-                surface_tasks.emplace_back(
-                    async::spawn( [&enable_edges, &threshold, &surface] {
-                        if( enable_edges )
-                        {
-                            surface.mesh().enable_edges();
-                        }
+                surface_tasks.emplace_back( async::spawn( [&threshold,
+                                                              &surface] {
+                    const auto& mesh = surface.mesh();
+                    std::tuple< uuid, InspectionIssues< index_t >, bool >
+                        result;
+                    auto& [surface_id, issues, edges_enabled] = result;
+                    surface_id = surface.id();
+                    {
                         const geode::SurfaceMeshDegeneration< Model::dim >
-                            inspector{ surface.mesh() };
-                        std::pair< uuid, InspectionIssues< index_t > > result;
-                        auto& [surface_id, issues] = result;
-                        surface_id = surface.id();
+                            inspector{ mesh };
                         issues = inspector.small_edges( threshold );
-                        issues.set_description( absl::StrCat( "Surface ",
-                            surface.name().value_or( surface.id().string() ),
-                            " (", surface.id().string(),
-                            ") small facet edges" ) );
-                        return result;
-                    } ) );
+                    }
+                    // Keep the edges referenced by the issues
+                    if( issues.nb_issues() != 0 && !mesh.are_edges_enabled() )
+                    {
+                        mesh.enable_edges();
+                        edges_enabled = true;
+                    }
+                    issues.set_description( absl::StrCat( "Surface ",
+                        surface.name().value_or( surface.id().string() ), " (",
+                        surface.id().string(), ") small facet edges" ) );
+                    return result;
+                } ) );
             }
             for( auto& task :
                 async::when_all( surface_tasks.begin(), surface_tasks.end() )
                     .get() )
             {
-                auto [surface_id, issues] = task.get();
+                auto [surface_id, issues, edges_enabled] = task.get();
+                if( edges_enabled )
+                {
+                    enabled_edges_surfaces_.emplace( surface_id );
+                }
                 components_small_edges.add_issues_to_map(
                     surface_id, std::move( issues ) );
             }
@@ -179,24 +185,6 @@ namespace geode
         const Model& ComponentMeshesDegeneration< Model >::model() const
         {
             return model_;
-        }
-
-        template < typename Model >
-        std::vector< uuid > ComponentMeshesDegeneration<
-            Model >::surfaces_on_which_enable_edges() const
-        {
-            std::vector< uuid > result;
-            for( const auto& surface : model_.active_surfaces() )
-            {
-                const auto& mesh = surface.mesh();
-                if( !mesh.are_edges_enabled()
-                    && !enabled_edges_surfaces_.contains( surface.id() ) )
-                {
-                    result.emplace_back( surface.id() );
-                    enabled_edges_surfaces_.emplace( surface.id() );
-                }
-            }
-            return result;
         }
 
         template class opengeode_inspector_inspection_api

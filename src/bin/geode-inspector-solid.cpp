@@ -63,9 +63,7 @@ int main( int argc, char* argv[] )
     {
         absl::SetProgramUsageMessage(
             absl::StrCat( "Solid inspector from Geode-solutions.\n",
-                "Sample usage:\n", argv[0], " --input my_solid.og_tsf3d\n",
-                "Default behavior test all available criteria, to disable one "
-                "use --noXXX, e.g. --noadjacency" ) );
+                "Sample usage:\n", argv[0], " --input my_solid.og_tsf3d\n" ) );
         absl::ParseCommandLine( argc, argv );
 
         geode::OpenGeodeIOMeshLibrary::initialize();
