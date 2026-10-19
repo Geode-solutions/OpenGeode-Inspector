@@ -45,6 +45,8 @@ namespace geode
             .def_readwrite( "meshes_non_manifolds",
                 &SectionMeshesInspectionResult::meshes_non_manifolds )
             .def( "string", &SectionMeshesInspectionResult::string )
+            .def( "__str__", &SectionMeshesInspectionResult::string )
+            .def( "__repr__", &SectionMeshesInspectionResult::string )
             .def( "inspection_type",
                 &SectionMeshesInspectionResult::inspection_type );
 

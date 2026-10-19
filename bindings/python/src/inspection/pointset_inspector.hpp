@@ -56,6 +56,8 @@ namespace geode
             .def_readwrite( "colocated_points_groups",
                 &PointSetInspectionResult::colocated_points_groups )
             .def( "string", &PointSetInspectionResult::string )
+            .def( "__str__", &PointSetInspectionResult::string )
+            .def( "__repr__", &PointSetInspectionResult::string )
             .def(
                 "inspection_type", &PointSetInspectionResult::inspection_type );
 

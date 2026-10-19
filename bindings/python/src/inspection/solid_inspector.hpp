@@ -72,6 +72,8 @@ namespace geode
             .def_readwrite( "non_manifold_facets",
                 &SolidInspectionResult::non_manifold_facets )
             .def( "string", &SolidInspectionResult::string )
+            .def( "__str__", &SolidInspectionResult::string )
+            .def( "__repr__", &SolidInspectionResult::string )
             .def( "inspection_type", &SolidInspectionResult::inspection_type );
         do_define_solid_inspector< 3 >( module );
     }

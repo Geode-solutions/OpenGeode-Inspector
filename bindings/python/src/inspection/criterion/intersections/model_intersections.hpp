@@ -47,6 +47,8 @@ namespace geode
             .def_readwrite( "elements_intersections",
                 &ElementsIntersectionsInspectionResult::elements_intersections )
             .def( "string", &ElementsIntersectionsInspectionResult::string )
+            .def( "__str__", &ElementsIntersectionsInspectionResult::string )
+            .def( "__repr__", &ElementsIntersectionsInspectionResult::string )
             .def( "inspection_type",
                 &ElementsIntersectionsInspectionResult::inspection_type );
 

@@ -40,6 +40,8 @@ def check_a1():
     result = validity.is_brep_valid(model_brep)
     if result.nb_issues()!=8:
         raise ValueError( "[Test] model model_A1 should have 8 issues." )
+    if str(result) != result.string() or repr(result) != result.string():
+        raise ValueError("[Test] str/repr should return the validity report")
 
 
 def check_a1_valid():

@@ -54,6 +54,8 @@ namespace geode
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_boundary_line_corner )
             .def( "string", &BRepCornersTopologyInspectionResult::string )
+            .def( "__str__", &BRepCornersTopologyInspectionResult::string )
+            .def( "__repr__", &BRepCornersTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepCornersTopologyInspectionResult::inspection_type );
 
@@ -85,6 +87,8 @@ namespace geode
                 &BRepLinesTopologyInspectionResult::
                     line_edges_with_wrong_component_edges_around )
             .def( "string", &BRepLinesTopologyInspectionResult::string )
+            .def( "__str__", &BRepLinesTopologyInspectionResult::string )
+            .def( "__repr__", &BRepLinesTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepLinesTopologyInspectionResult::inspection_type );
 
@@ -113,6 +117,8 @@ namespace geode
                 &BRepSurfacesTopologyInspectionResult::
                     surface_polygons_with_wrong_component_facets_around )
             .def( "string", &BRepSurfacesTopologyInspectionResult::string )
+            .def( "__str__", &BRepSurfacesTopologyInspectionResult::string )
+            .def( "__repr__", &BRepSurfacesTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepSurfacesTopologyInspectionResult::inspection_type );
 
@@ -152,6 +158,8 @@ namespace geode
                 &BRepBlocksTopologyInspectionResult::
                     model_boundaries_dont_form_a_closed_surface )
             .def( "string", &BRepBlocksTopologyInspectionResult::string )
+            .def( "__str__", &BRepBlocksTopologyInspectionResult::string )
+            .def( "__repr__", &BRepBlocksTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepBlocksTopologyInspectionResult::inspection_type );
 
@@ -167,6 +175,8 @@ namespace geode
                 &BRepTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component )
             .def( "string", &BRepTopologyInspectionResult::string )
+            .def( "__str__", &BRepTopologyInspectionResult::string )
+            .def( "__repr__", &BRepTopologyInspectionResult::string )
             .def( "inspection_type",
                 &BRepTopologyInspectionResult::inspection_type );
 

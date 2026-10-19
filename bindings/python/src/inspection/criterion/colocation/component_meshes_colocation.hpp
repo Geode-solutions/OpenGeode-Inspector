@@ -46,6 +46,8 @@ namespace geode
             .def_readwrite( "colocated_points_groups",
                 &MeshesColocationInspectionResult::colocated_points_groups )
             .def( "string", &MeshesColocationInspectionResult::string )
+            .def( "__str__", &MeshesColocationInspectionResult::string )
+            .def( "__repr__", &MeshesColocationInspectionResult::string )
             .def( "inspection_type",
                 &MeshesColocationInspectionResult::inspection_type );
 

@@ -39,6 +39,8 @@ namespace geode
             .def_readwrite( "degenerated_polyhedra",
                 &BRepMeshesDegenerationInspectionResult::degenerated_polyhedra )
             .def( "string", &BRepMeshesDegenerationInspectionResult::string )
+            .def( "__str__", &BRepMeshesDegenerationInspectionResult::string )
+            .def( "__repr__", &BRepMeshesDegenerationInspectionResult::string )
             .def( "inspection_type",
                 &BRepMeshesDegenerationInspectionResult::inspection_type );
 

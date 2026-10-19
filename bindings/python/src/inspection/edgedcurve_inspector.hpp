@@ -61,6 +61,8 @@ namespace geode
             .def_readwrite( "degenerated_edges",
                 &EdgedCurveInspectionResult::degenerated_edges )
             .def( "string", &EdgedCurveInspectionResult::string )
+            .def( "__str__", &EdgedCurveInspectionResult::string )
+            .def( "__repr__", &EdgedCurveInspectionResult::string )
             .def( "inspection_type",
                 &EdgedCurveInspectionResult::inspection_type );
 

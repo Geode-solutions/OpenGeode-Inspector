@@ -37,6 +37,8 @@ namespace geode
             .def_readwrite( "meshes", &SectionInspectionResult::meshes )
             .def_readwrite( "topology", &SectionInspectionResult::topology )
             .def( "string", &SectionInspectionResult::string )
+            .def( "__str__", &SectionInspectionResult::string )
+            .def( "__repr__", &SectionInspectionResult::string )
             .def(
                 "inspection_type", &SectionInspectionResult::inspection_type );
 
