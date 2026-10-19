@@ -40,8 +40,8 @@ namespace geode
             .def( "string", &SectionMeshesDegenerationInspectionResult::string )
             .def(
                 "__str__", &SectionMeshesDegenerationInspectionResult::string )
-            .def(
-                "__repr__", &SectionMeshesDegenerationInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionMeshesDegenerationInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesDegenerationInspectionResult::inspection_type );
 

@@ -62,7 +62,7 @@ namespace geode
                 &EdgedCurveInspectionResult::degenerated_edges )
             .def( "string", &EdgedCurveInspectionResult::string )
             .def( "__str__", &EdgedCurveInspectionResult::string )
-            .def( "__repr__", &EdgedCurveInspectionResult::string )
+            .def( "__repr__", &issues_repr< EdgedCurveInspectionResult > )
             .def( "inspection_type",
                 &EdgedCurveInspectionResult::inspection_type );
 

@@ -57,7 +57,7 @@ namespace geode
                 &PointSetInspectionResult::colocated_points_groups )
             .def( "string", &PointSetInspectionResult::string )
             .def( "__str__", &PointSetInspectionResult::string )
-            .def( "__repr__", &PointSetInspectionResult::string )
+            .def( "__repr__", &issues_repr< PointSetInspectionResult > )
             .def(
                 "inspection_type", &PointSetInspectionResult::inspection_type );
 

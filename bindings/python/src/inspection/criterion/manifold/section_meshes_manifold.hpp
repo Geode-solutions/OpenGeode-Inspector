@@ -40,7 +40,8 @@ namespace geode
                     meshes_non_manifold_edges )
             .def( "string", &SectionMeshesManifoldInspectionResult::string )
             .def( "__str__", &SectionMeshesManifoldInspectionResult::string )
-            .def( "__repr__", &SectionMeshesManifoldInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionMeshesManifoldInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesManifoldInspectionResult::inspection_type );
 

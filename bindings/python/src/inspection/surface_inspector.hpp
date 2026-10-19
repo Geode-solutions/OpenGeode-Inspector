@@ -75,7 +75,7 @@ namespace geode
                 &SurfaceInspectionResult::intersecting_elements )
             .def( "string", &SurfaceInspectionResult::string )
             .def( "__str__", &SurfaceInspectionResult::string )
-            .def( "__repr__", &SurfaceInspectionResult::string )
+            .def( "__repr__", &issues_repr< SurfaceInspectionResult > )
             .def(
                 "inspection_type", &SurfaceInspectionResult::inspection_type );
 

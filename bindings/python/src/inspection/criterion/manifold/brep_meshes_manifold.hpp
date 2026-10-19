@@ -55,7 +55,8 @@ namespace geode
                 &BRepMeshesManifoldInspectionResult::brep_non_manifold_edges )
             .def( "string", &BRepMeshesManifoldInspectionResult::string )
             .def( "__str__", &BRepMeshesManifoldInspectionResult::string )
-            .def( "__repr__", &BRepMeshesManifoldInspectionResult::string )
+            .def(
+                "__repr__", &issues_repr< BRepMeshesManifoldInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesManifoldInspectionResult::inspection_type );
 

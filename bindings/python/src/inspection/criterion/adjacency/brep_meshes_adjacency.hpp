@@ -40,7 +40,8 @@ namespace geode
                     blocks_facets_with_wrong_adjacencies )
             .def( "string", &BRepMeshesAdjacencyInspectionResult::string )
             .def( "__str__", &BRepMeshesAdjacencyInspectionResult::string )
-            .def( "__repr__", &BRepMeshesAdjacencyInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< BRepMeshesAdjacencyInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesAdjacencyInspectionResult::inspection_type );
 

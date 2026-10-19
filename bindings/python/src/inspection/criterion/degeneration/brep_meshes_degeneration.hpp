@@ -40,7 +40,8 @@ namespace geode
                 &BRepMeshesDegenerationInspectionResult::degenerated_polyhedra )
             .def( "string", &BRepMeshesDegenerationInspectionResult::string )
             .def( "__str__", &BRepMeshesDegenerationInspectionResult::string )
-            .def( "__repr__", &BRepMeshesDegenerationInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< BRepMeshesDegenerationInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesDegenerationInspectionResult::inspection_type );
 

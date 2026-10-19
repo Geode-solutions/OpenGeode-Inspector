@@ -37,7 +37,8 @@ namespace geode
                     surfaces_edges_with_wrong_adjacencies )
             .def( "string", &SectionMeshesAdjacencyInspectionResult::string )
             .def( "__str__", &SectionMeshesAdjacencyInspectionResult::string )
-            .def( "__repr__", &SectionMeshesAdjacencyInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionMeshesAdjacencyInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesAdjacencyInspectionResult::inspection_type );
 

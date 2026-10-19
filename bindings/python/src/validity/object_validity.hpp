@@ -35,7 +35,7 @@ namespace geode
             .def( "nb_issues", &ObjectValidity::nb_issues )
             .def( "string", &ObjectValidity::string )
             .def( "__str__", &ObjectValidity::string )
-            .def( "__repr__", &ObjectValidity::string )
+            .def( "__repr__", &issues_repr< ObjectValidity > )
             .def_readwrite( "invalidities", &ObjectValidity::invalidities );
     }
 } // namespace geode

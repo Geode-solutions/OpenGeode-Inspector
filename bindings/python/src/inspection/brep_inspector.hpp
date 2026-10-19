@@ -37,7 +37,7 @@ namespace geode
             .def( "nb_issues", &BRepInspectionResult::nb_issues )
             .def( "string", &BRepInspectionResult::string )
             .def( "__str__", &BRepInspectionResult::string )
-            .def( "__repr__", &BRepInspectionResult::string )
+            .def( "__repr__", &issues_repr< BRepInspectionResult > )
             .def( "inspection_type", &BRepInspectionResult::inspection_type );
 
         pybind11::class_< BRepInspector, BRepMeshesInspector,

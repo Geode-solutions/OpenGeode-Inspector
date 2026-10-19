@@ -232,6 +232,10 @@ def check_a1(verbose):
         raise ValueError(
             "[Test] model model_A1_valid should have 14748 component meshes issues (pairs of component meshes triangles intersecting)."
         )
+    if str(result) != result.string():
+        raise ValueError("[Test] str should return the inspection report")
+    if repr(result) != "<BRepInspectionResult: " + str(result.nb_issues()) + " issues>":
+        raise ValueError("[Test] repr should summarize the inspection report")
 
 
 def inspect_model_A1(model_brep, verbose):

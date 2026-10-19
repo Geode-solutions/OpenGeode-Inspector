@@ -47,7 +47,7 @@ namespace geode
                 &MeshesColocationInspectionResult::colocated_points_groups )
             .def( "string", &MeshesColocationInspectionResult::string )
             .def( "__str__", &MeshesColocationInspectionResult::string )
-            .def( "__repr__", &MeshesColocationInspectionResult::string )
+            .def( "__repr__", &issues_repr< MeshesColocationInspectionResult > )
             .def( "inspection_type",
                 &MeshesColocationInspectionResult::inspection_type );
 
