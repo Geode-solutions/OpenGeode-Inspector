@@ -40,6 +40,8 @@ namespace geode
                 &UniqueVerticesInspectionResult::
                     unique_vertices_linked_to_different_points )
             .def( "string", &UniqueVerticesInspectionResult::string )
+            .def( "__str__", &UniqueVerticesInspectionResult::string )
+            .def( "__repr__", &issues_repr< UniqueVerticesInspectionResult > )
             .def( "inspection_type",
                 &UniqueVerticesInspectionResult::inspection_type );
 

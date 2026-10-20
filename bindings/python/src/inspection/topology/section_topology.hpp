@@ -53,6 +53,9 @@ namespace geode
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_boundary_line_corner )
             .def( "string", &SectionCornersTopologyInspectionResult::string )
+            .def( "__str__", &SectionCornersTopologyInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionCornersTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionCornersTopologyInspectionResult::inspection_type );
 
@@ -81,6 +84,9 @@ namespace geode
                 &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
             .def( "string", &SectionLinesTopologyInspectionResult::string )
+            .def( "__str__", &SectionLinesTopologyInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionLinesTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionLinesTopologyInspectionResult::inspection_type );
 
@@ -101,6 +107,9 @@ namespace geode
                 &SectionSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
             .def( "string", &SectionSurfacesTopologyInspectionResult::string )
+            .def( "__str__", &SectionSurfacesTopologyInspectionResult::string )
+            .def( "__repr__",
+                &issues_repr< SectionSurfacesTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionSurfacesTopologyInspectionResult::inspection_type );
 
@@ -116,6 +125,8 @@ namespace geode
                 &SectionTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component )
             .def( "string", &SectionTopologyInspectionResult::string )
+            .def( "__str__", &SectionTopologyInspectionResult::string )
+            .def( "__repr__", &issues_repr< SectionTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionTopologyInspectionResult::inspection_type );
 

@@ -25,6 +25,8 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
+#include "../issues_repr.hpp"
+
 #include "brep_validity.hpp"
 #include "edgedcurve_validity.hpp"
 #include "object_validity.hpp"

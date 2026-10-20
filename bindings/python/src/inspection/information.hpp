@@ -40,7 +40,9 @@ namespace geode
             .def( "description", &InspectionIssues::description )
             .def( "nb_issues", &InspectionIssues::nb_issues )
             .def( "issues", &InspectionIssues::issues )
-            .def( "string", &InspectionIssues::string );
+            .def( "string", &InspectionIssues::string )
+            .def( "__str__", &InspectionIssues::string )
+            .def( "__repr__", &issues_repr< InspectionIssues > );
 
         using InspectionIssuesMap = geode::InspectionIssuesMap< ProblemType >;
         const auto map_name = absl::StrCat( "InspectionIssuesMap", typestr );
@@ -51,7 +53,9 @@ namespace geode
             .def( "nb_components_with_issues",
                 &InspectionIssuesMap::nb_components_with_issues )
             .def( "issues_map", &InspectionIssuesMap::issues_map )
-            .def( "string", &InspectionIssuesMap::string );
+            .def( "string", &InspectionIssuesMap::string )
+            .def( "__str__", &InspectionIssuesMap::string )
+            .def( "__repr__", &issues_repr< InspectionIssuesMap > );
     }
 
     inline void define_information( pybind11::module& module )
