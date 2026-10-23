@@ -56,6 +56,7 @@ namespace geode
     index_t BRepLinesTopologyInspectionResult::nb_issues() const
     {
         return lines_not_meshed.nb_issues()
+               + lines_not_embedded_nor_incident.nb_issues()
                + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                      .nb_issues()
                + lines_not_linked_to_a_unique_vertex.nb_issues()
@@ -73,6 +74,11 @@ namespace geode
         if( lines_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, lines_not_meshed.string() );
+        }
+        if( lines_not_embedded_nor_incident.nb_issues() != 0 )
+        {
+            absl::StrAppend(
+                &message, lines_not_embedded_nor_incident.string() );
         }
         if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                 .nb_issues()
@@ -578,6 +584,15 @@ namespace geode
                     absl::StrCat( "Line ",
                         line.name().value_or( line.id().string() ), " (",
                         line.id().string(), ") is not meshed" ) );
+            }
+            if( brep_.nb_embeddings( line.id() ) == 0
+                && brep_.nb_incidences( line.id() ) == 0 )
+            {
+                result.lines_not_embedded_nor_incident.add_issue(
+                    line.id(), absl::StrCat( "Line ",
+                                   line.name().value_or( line.id().string() ),
+                                   " (", line.id().string(),
+                                   ") is neither embedded nor incident" ) );
             }
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(

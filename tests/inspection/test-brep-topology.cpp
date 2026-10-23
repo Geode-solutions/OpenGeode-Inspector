@@ -130,6 +130,35 @@ namespace
             "[line in block] Wrong message: ", issues.string() );
     }
 
+    void test_free_line_message()
+    {
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        const auto& line = brep.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( geode::Point3D{ { 0, 0, 0 } } );
+        line_builder->create_point( geode::Point3D{ { 1, 0, 0 } } );
+        line_builder->create_point( geode::Point3D{ { 2, 0, 0 } } );
+        line_builder->create_edge( 0, 1 );
+        line_builder->create_edge( 1, 2 );
+        builder.create_unique_vertices( 3 );
+        for( const auto vertex : geode::LRange{ 3 } )
+        {
+            builder.set_unique_vertex(
+                { line.component_id(), vertex }, vertex );
+        }
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        const auto& issues = result.lines.lines_not_embedded_nor_incident;
+        geode::OpenGeodeInspectorInspectionException::test(
+            issues.nb_issues() == 1,
+            "[free line] Wrong number of not embedded nor incident issues: ",
+            issues.string() );
+        geode::OpenGeodeInspectorInspectionException::test(
+            issues.issues().front() == line.id(),
+            "[free line] Wrong reported Line: ", issues.string() );
+    }
+
     void test_checks_independent_of_failing_check()
     {
         geode::BRep brep;
@@ -196,6 +225,7 @@ int main()
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         test_non_bijective_link_message();
         test_line_embedded_in_block_message();
+        test_free_line_message();
         test_empty_model_boundary();
         test_checks_independent_of_failing_check();
         geode::Logger::info( "TEST SUCCESS" );

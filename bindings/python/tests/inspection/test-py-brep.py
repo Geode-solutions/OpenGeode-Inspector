@@ -52,6 +52,7 @@ def lines_topological_validity(result, verbose):
     for issue in result.lines_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.lines_not_meshed.nb_issues()
+    nb_issues += result.lines_not_embedded_nor_incident.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_a_line_with_invalid_embeddings.nb_issues()
     )
