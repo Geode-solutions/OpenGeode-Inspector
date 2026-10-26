@@ -65,6 +65,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "lines_not_meshed",
                 &BRepLinesTopologyInspectionResult::lines_not_meshed )
+            .def_readwrite( "lines_not_embedded_nor_incident",
+                &BRepLinesTopologyInspectionResult::
+                    lines_not_embedded_nor_incident )
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )

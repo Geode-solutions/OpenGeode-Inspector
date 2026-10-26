@@ -205,6 +205,11 @@ namespace
             invalidities.invalidities.push_back(
                 lines_topo.lines_not_meshed.string() );
         }
+        if( lines_topo.lines_not_embedded_nor_incident.nb_issues() != 0 )
+        {
+            invalidities.invalidities.push_back(
+                lines_topo.lines_not_embedded_nor_incident.string() );
+        }
         if( lines_topo
                 .unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                 .nb_issues()

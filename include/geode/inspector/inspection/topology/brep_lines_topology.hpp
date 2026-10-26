@@ -45,6 +45,9 @@ namespace geode
         InspectionIssues< uuid > lines_not_meshed{
             "Lines without mesh (uuids listed)"
         };
+        InspectionIssues< uuid > lines_not_embedded_nor_incident{
+            "Lines neither embedded nor incident (uuids listed)"
+        };
         InspectionIssues< index_t >
             unique_vertices_linked_to_line_with_wrong_relationship_to_surface{
                 "unique vertices linked to a Line with an incorrect "
