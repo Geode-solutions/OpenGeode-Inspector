@@ -27,6 +27,7 @@
 
 #include <absl/algorithm/container.h>
 #include <absl/container/flat_hash_map.h>
+#include <absl/strings/str_join.h>
 
 #include <geode/basic/algorithm.hpp>
 
@@ -137,6 +138,30 @@ namespace
         }
         return std::nullopt;
     }
+
+    std::optional< std::string > surface_multiply_embedded_message(
+        const geode::BRep& brep, const geode::Surface3D& surface )
+    {
+        std::vector< std::string > block_labels;
+        for( const auto& block : brep.embedding_blocks( surface ) )
+        {
+            if( !block.is_active() )
+            {
+                continue;
+            }
+            block_labels.push_back( absl::StrCat( "Block ",
+                block.name().value_or( block.id().string() ), " (",
+                block.id().string(), ")" ) );
+        }
+        if( block_labels.size() < 2 )
+        {
+            return std::nullopt;
+        }
+        return absl::StrCat( "Surface ",
+            surface.name().value_or( surface.id().string() ), " (",
+            surface.id().string(), ") is embedded in several Blocks: ",
+            absl::StrJoin( block_labels, ", " ) );
+    }
 } // namespace
 
 namespace geode
@@ -144,6 +169,7 @@ namespace geode
     index_t BRepSurfacesTopologyInspectionResult::nb_issues() const
     {
         return surfaces_not_meshed.nb_issues()
+               + surfaces_multiply_embedded.nb_issues()
                + surfaces_not_linked_to_a_unique_vertex.nb_issues()
                + unique_vertices_linked_to_a_surface_with_invalid_embbedings
                      .nb_issues()
@@ -159,6 +185,10 @@ namespace geode
         if( surfaces_not_meshed.nb_issues() != 0 )
         {
             absl::StrAppend( &message, surfaces_not_meshed.string() );
+        }
+        if( surfaces_multiply_embedded.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, surfaces_multiply_embedded.string() );
         }
         if( surfaces_not_linked_to_a_unique_vertex.nb_issues() != 0 )
         {
@@ -479,6 +509,12 @@ namespace geode
                     absl::StrCat( "Surface ",
                         surface.name().value_or( surface.id().string() ), " (",
                         surface.id().string(), ") is not meshed" ) );
+            }
+            if( const auto message =
+                    surface_multiply_embedded_message( brep_, surface ) )
+            {
+                result.surfaces_multiply_embedded.add_issue(
+                    surface.id(), message.value() );
             }
 
             auto surface_result = internal::

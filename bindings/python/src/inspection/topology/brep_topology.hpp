@@ -68,6 +68,8 @@ namespace geode
             .def_readwrite( "lines_not_embedded_nor_incident",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_embedded_nor_incident )
+            .def_readwrite( "lines_multiply_embedded",
+                &BRepLinesTopologyInspectionResult::lines_multiply_embedded )
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )
@@ -102,6 +104,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_not_meshed",
                 &BRepSurfacesTopologyInspectionResult::surfaces_not_meshed )
+            .def_readwrite( "surfaces_multiply_embedded",
+                &BRepSurfacesTopologyInspectionResult::
+                    surfaces_multiply_embedded )
             .def_readwrite( "surfaces_not_linked_to_a_unique_vertex",
                 &BRepSurfacesTopologyInspectionResult::
                     surfaces_not_linked_to_a_unique_vertex )

@@ -26,6 +26,7 @@
 #include <optional>
 
 #include <absl/algorithm/container.h>
+#include <absl/strings/str_join.h>
 
 #include <geode/mesh/core/edged_curve.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
@@ -49,6 +50,34 @@ namespace
         return absl::StrCat( embedding.type.get(), " ",
             name ? name.value() : id, " (", id, ")" );
     }
+
+    std::optional< std::string > line_multiply_embedded_message(
+        const geode::BRep& brep, const geode::Line3D& line )
+    {
+        std::vector< std::string > embedding_labels;
+        bool embedded_in_block{ false };
+        for( const auto& embedding : brep.embeddings( line.id() ) )
+        {
+            if( !brep.component( embedding.id ).is_active() )
+            {
+                continue;
+            }
+            if( embedding.type == geode::Block3D::component_type_static() )
+            {
+                embedded_in_block = true;
+            }
+            embedding_labels.push_back( embedding_label( brep, embedding ) );
+        }
+        if( embedding_labels.size() < 2 || !embedded_in_block )
+        {
+            return std::nullopt;
+        }
+        return absl::StrCat( "Line ",
+            line.name().value_or( line.id().string() ), " (",
+            line.id().string(),
+            ") is embedded in several components including a Block: ",
+            absl::StrJoin( embedding_labels, ", " ) );
+    }
 } // namespace
 
 namespace geode
@@ -57,6 +86,7 @@ namespace geode
     {
         return lines_not_meshed.nb_issues()
                + lines_not_embedded_nor_incident.nb_issues()
+               + lines_multiply_embedded.nb_issues()
                + unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                      .nb_issues()
                + lines_not_linked_to_a_unique_vertex.nb_issues()
@@ -79,6 +109,10 @@ namespace geode
         {
             absl::StrAppend(
                 &message, lines_not_embedded_nor_incident.string() );
+        }
+        if( lines_multiply_embedded.nb_issues() != 0 )
+        {
+            absl::StrAppend( &message, lines_multiply_embedded.string() );
         }
         if( unique_vertices_linked_to_line_with_wrong_relationship_to_surface
                 .nb_issues()
@@ -593,6 +627,12 @@ namespace geode
                                    line.name().value_or( line.id().string() ),
                                    " (", line.id().string(),
                                    ") is neither embedded nor incident" ) );
+            }
+            if( const auto message =
+                    line_multiply_embedded_message( brep_, line ) )
+            {
+                result.lines_multiply_embedded.add_issue(
+                    line.id(), message.value() );
             }
             auto line_result = internal::
                 model_component_vertices_not_associated_to_unique_vertices(
