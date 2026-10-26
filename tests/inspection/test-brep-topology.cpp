@@ -195,6 +195,33 @@ namespace
             issues.string() );
     }
 
+    void test_multiply_embedded_surface()
+    {
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        const auto& block0 = brep.block( builder.add_block() );
+        const auto& block1 = brep.block( builder.add_block() );
+        const auto& surface_in_blocks = brep.surface( builder.add_surface() );
+        const auto& surface_in_block = brep.surface( builder.add_surface() );
+        builder.add_surface_block_internal_relationship(
+            surface_in_blocks, block0 );
+        builder.add_surface_block_internal_relationship(
+            surface_in_blocks, block1 );
+        builder.add_surface_block_internal_relationship(
+            surface_in_block, block0 );
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        const auto& issues = result.surfaces.surfaces_multiply_embedded;
+        geode::OpenGeodeInspectorInspectionException::test(
+            issues.nb_issues() == 1,
+            "[multiply embedded surface] Wrong number of issues: ",
+            issues.string() );
+        geode::OpenGeodeInspectorInspectionException::test(
+            issues.issues().front() == surface_in_blocks.id(),
+            "[multiply embedded surface] Wrong reported Surface: ",
+            issues.string() );
+    }
+
     void test_checks_independent_of_failing_check()
     {
         geode::BRep brep;
@@ -263,6 +290,7 @@ int main()
         test_line_embedded_in_block_message();
         test_free_line_message();
         test_multiply_embedded_line();
+        test_multiply_embedded_surface();
         test_empty_model_boundary();
         test_checks_independent_of_failing_check();
         geode::Logger::info( "TEST SUCCESS" );

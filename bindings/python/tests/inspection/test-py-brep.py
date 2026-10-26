@@ -76,6 +76,7 @@ def surfaces_topological_validity(result, verbose):
     for issue in result.surfaces_not_linked_to_a_unique_vertex.issues_map():
         nb_issues += issue[1].nb_issues()
     nb_issues += result.surfaces_not_meshed.nb_issues()
+    nb_issues += result.surfaces_multiply_embedded.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border.nb_issues()
     )

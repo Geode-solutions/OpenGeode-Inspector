@@ -272,6 +272,11 @@ namespace
             invalidities.invalidities.push_back(
                 surfaces_topo.surfaces_not_meshed.string() );
         }
+        if( surfaces_topo.surfaces_multiply_embedded.nb_issues() != 0 )
+        {
+            invalidities.invalidities.push_back(
+                surfaces_topo.surfaces_multiply_embedded.string() );
+        }
         if( surfaces_topo.surfaces_not_linked_to_a_unique_vertex.nb_issues()
             != 0 )
         {

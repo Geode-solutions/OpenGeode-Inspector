@@ -104,6 +104,9 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_not_meshed",
                 &BRepSurfacesTopologyInspectionResult::surfaces_not_meshed )
+            .def_readwrite( "surfaces_multiply_embedded",
+                &BRepSurfacesTopologyInspectionResult::
+                    surfaces_multiply_embedded )
             .def_readwrite( "surfaces_not_linked_to_a_unique_vertex",
                 &BRepSurfacesTopologyInspectionResult::
                     surfaces_not_linked_to_a_unique_vertex )

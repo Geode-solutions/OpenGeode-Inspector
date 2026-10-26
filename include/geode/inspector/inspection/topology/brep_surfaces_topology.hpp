@@ -44,6 +44,9 @@ namespace geode
         InspectionIssues< uuid > surfaces_not_meshed{
             "Surface without mesh (uuids listed)"
         };
+        InspectionIssues< uuid > surfaces_multiply_embedded{
+            "Surfaces embedded in several Blocks (uuids listed)"
+        };
         InspectionIssuesMap< index_t > surfaces_not_linked_to_a_unique_vertex{
             "Surfaces containing mesh vertices not linked to unique vertices"
         };
