@@ -68,6 +68,8 @@ namespace geode
             .def_readwrite( "lines_not_embedded_nor_incident",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_embedded_nor_incident )
+            .def_readwrite( "lines_multiply_embedded",
+                &BRepLinesTopologyInspectionResult::lines_multiply_embedded )
             .def_readwrite( "lines_not_linked_to_a_unique_vertex",
                 &BRepLinesTopologyInspectionResult::
                     lines_not_linked_to_a_unique_vertex )
