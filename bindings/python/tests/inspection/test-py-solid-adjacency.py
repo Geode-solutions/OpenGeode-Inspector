@@ -19,13 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-import sys
-import platform
-
-if not sys.version_info >= (3, 8, 0) and platform.system() == "Windows":
-    for path in [x.strip() for x in os.environ["PATH"].split(";") if not x]:
-        os.add_dll_directory(path)
+import geode_test_env
 
 import opengeode as geode
 import opengeode_inspector_py_inspection as inspector
