@@ -570,8 +570,7 @@ namespace
         const std::array< geode::index_t, 2 >& vertices )
     {
         const auto first = brep.unique_vertex( { component_id, vertices[0] } );
-        const auto second =
-            brep.unique_vertex( { component_id, vertices[1] } );
+        const auto second = brep.unique_vertex( { component_id, vertices[1] } );
         return { std::min( first, second ), std::max( first, second ) };
     }
 

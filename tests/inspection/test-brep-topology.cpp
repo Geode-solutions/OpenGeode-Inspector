@@ -295,8 +295,8 @@ namespace
                 {
                     for( const auto x_value : { 0., 1., 2. } )
                     {
-                        std::ignore = corner( geode::Point3D{
-                            { x_value, y_value, z_value } } );
+                        std::ignore = corner(
+                            geode::Point3D{ { x_value, y_value, z_value } } );
                     }
                 }
             }
@@ -329,8 +329,8 @@ namespace
             for( const auto local_vertex : geode::Indices{ polygon } )
             {
                 mesh_builder->create_point( points_[polygon[local_vertex]] );
-                builder_.set_unique_vertex( { surface.component_id(),
-                                                local_vertex },
+                builder_.set_unique_vertex(
+                    { surface.component_id(), local_vertex },
                     polygon[local_vertex] );
                 builder_.add_line_surface_boundary_relationship(
                     line( polygon[local_vertex],
@@ -373,29 +373,27 @@ namespace
             for( const geode::index_t min_x : { 0, 1 } )
             {
                 const auto max_x = min_x + 1;
-                for( const auto& polygon : {
-                         std::array{ vertex( min_x, 0, 0 ),
-                             vertex( min_x, 1, 0 ), vertex( max_x, 1, 0 ),
-                             vertex( max_x, 0, 0 ) },
-                         std::array{ vertex( min_x, 0, 1 ),
-                             vertex( max_x, 0, 1 ), vertex( max_x, 1, 1 ),
-                             vertex( min_x, 1, 1 ) },
-                         std::array{ vertex( min_x, 0, 0 ),
-                             vertex( max_x, 0, 0 ), vertex( max_x, 0, 1 ),
-                             vertex( min_x, 0, 1 ) },
-                         std::array{ vertex( min_x, 1, 0 ),
-                             vertex( min_x, 1, 1 ), vertex( max_x, 1, 1 ),
-                             vertex( max_x, 1, 0 ) } } )
+                for( const auto& polygon :
+                    { std::array{ vertex( min_x, 0, 0 ), vertex( min_x, 1, 0 ),
+                          vertex( max_x, 1, 0 ), vertex( max_x, 0, 0 ) },
+                        std::array{ vertex( min_x, 0, 1 ),
+                            vertex( max_x, 0, 1 ), vertex( max_x, 1, 1 ),
+                            vertex( min_x, 1, 1 ) },
+                        std::array{ vertex( min_x, 0, 0 ),
+                            vertex( max_x, 0, 0 ), vertex( max_x, 0, 1 ),
+                            vertex( min_x, 0, 1 ) },
+                        std::array{ vertex( min_x, 1, 0 ),
+                            vertex( min_x, 1, 1 ), vertex( max_x, 1, 1 ),
+                            vertex( max_x, 1, 0 ) } } )
                 {
                     surfaces.push_back( surface( polygon ).id() );
                 }
             }
             for( const geode::index_t side_x : { 0, 2 } )
             {
-                surfaces.push_back(
-                    surface( std::array{ vertex( side_x, 0, 0 ),
-                                 vertex( side_x, 0, 1 ), vertex( side_x, 1, 1 ),
-                                 vertex( side_x, 1, 0 ) } )
+                surfaces.push_back( surface(
+                    std::array{ vertex( side_x, 0, 0 ), vertex( side_x, 0, 1 ),
+                        vertex( side_x, 1, 1 ), vertex( side_x, 1, 0 ) } )
                         .id() );
             }
             return surfaces;
@@ -519,8 +517,7 @@ namespace
                 }
                 builder.add_surface_block_boundary_relationship(
                     separated.surface( outer[8 + side] ), block );
-                builder.add_surface_block_boundary_relationship(
-                    fault, block );
+                builder.add_surface_block_boundary_relationship( fault, block );
             }
         }
         geode::OpenGeodeInspectorInspectionException::test(
@@ -544,12 +541,12 @@ namespace
         geode::BRep merged_two_surfaces;
         {
             TwoCubesBuilder cubes{ merged_two_surfaces };
-            const auto& lower = cubes.surface(
-                std::array{ cubes.vertex( 1, 0, 0 ), cubes.vertex( 1, 1, 1 ),
-                    cubes.vertex( 1, 1, 0 ) } );
-            const auto& upper = cubes.surface(
-                std::array{ cubes.vertex( 1, 0, 0 ), cubes.vertex( 1, 0, 1 ),
-                    cubes.vertex( 1, 1, 1 ) } );
+            const auto& lower =
+                cubes.surface( std::array{ cubes.vertex( 1, 0, 0 ),
+                    cubes.vertex( 1, 1, 1 ), cubes.vertex( 1, 1, 0 ) } );
+            const auto& upper =
+                cubes.surface( std::array{ cubes.vertex( 1, 0, 0 ),
+                    cubes.vertex( 1, 0, 1 ), cubes.vertex( 1, 1, 1 ) } );
             std::ignore =
                 cubes.merged_block( std::array{ lower.id(), upper.id() } );
         }
@@ -561,8 +558,7 @@ namespace
         geode::BRep fault_tip;
         {
             TwoCubesBuilder cubes{ fault_tip };
-            const auto tip =
-                cubes.corner( geode::Point3D{ { 1, 0.5, 0.5 } } );
+            const auto tip = cubes.corner( geode::Point3D{ { 1, 0.5, 0.5 } } );
             const auto& fault = cubes.surface( std::array{
                 cubes.vertex( 1, 0, 0 ), tip, cubes.vertex( 1, 1, 0 ) } );
             std::ignore = cubes.merged_block( std::array{ fault.id() } );
@@ -575,16 +571,15 @@ namespace
         geode::BRep closed;
         {
             TwoCubesBuilder cubes{ closed };
-            const std::array tetrahedron{
-                cubes.corner( geode::Point3D{ { 0.2, 0.2, 0.2 } } ),
+            const std::array tetrahedron{ cubes.corner( geode::Point3D{
+                                              { 0.2, 0.2, 0.2 } } ),
                 cubes.corner( geode::Point3D{ { 0.8, 0.2, 0.2 } } ),
                 cubes.corner( geode::Point3D{ { 0.2, 0.8, 0.2 } } ),
-                cubes.corner( geode::Point3D{ { 0.2, 0.2, 0.8 } } )
-            };
+                cubes.corner( geode::Point3D{ { 0.2, 0.2, 0.8 } } ) };
             std::vector< geode::uuid > sides;
-            for( const auto& facet : { std::array{ 1, 3, 2 },
-                     std::array{ 0, 2, 3 }, std::array{ 3, 1, 0 },
-                     std::array{ 0, 1, 2 } } )
+            for( const auto& facet :
+                { std::array{ 1, 3, 2 }, std::array{ 0, 2, 3 },
+                    std::array{ 3, 1, 0 }, std::array{ 0, 1, 2 } } )
             {
                 sides.push_back( cubes
                         .surface( std::array{ tetrahedron[facet[0]],
