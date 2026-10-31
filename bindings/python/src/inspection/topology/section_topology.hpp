@@ -124,6 +124,13 @@ namespace geode
             .def_readwrite( "unique_vertices_not_linked_to_any_component",
                 &SectionTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component )
+            .def_readwrite( "unique_vertices_linked_to_inexistant_cmv",
+                &SectionTopologyInspectionResult::
+                    unique_vertices_linked_to_inexistant_cmv )
+            .def_readwrite( "unique_vertices_nonbijectively_linked_to_cmv",
+                &SectionTopologyInspectionResult::
+                    unique_vertices_nonbijectively_linked_to_cmv )
+            .def( "nb_issues", &SectionTopologyInspectionResult::nb_issues )
             .def( "string", &SectionTopologyInspectionResult::string )
             .def( "__str__", &SectionTopologyInspectionResult::string )
             .def( "__repr__", &issues_repr< SectionTopologyInspectionResult > )
