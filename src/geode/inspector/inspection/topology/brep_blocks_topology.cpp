@@ -26,7 +26,9 @@
 #include <optional>
 #include <queue>
 
+#include <absl/container/flat_hash_map.h>
 #include <absl/container/flat_hash_set.h>
+#include <absl/container/inlined_vector.h>
 
 #include <geode/basic/algorithm.hpp>
 #include <geode/basic/attribute_manager.hpp>
@@ -38,10 +40,12 @@
 
 #include <geode/mesh/builder/graph_builder.hpp>
 #include <geode/mesh/builder/polygonal_surface_builder.hpp>
+#include <geode/mesh/core/edged_curve.hpp>
 #include <geode/mesh/core/graph.hpp>
 #include <geode/mesh/core/polygonal_surface.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_edges.hpp>
+#include <geode/mesh/core/surface_mesh.hpp>
 #include <geode/mesh/helpers/aabb_surface_helpers.hpp>
 
 #include <geode/model/helpers/ray_tracing.hpp>
@@ -541,6 +545,271 @@ namespace
             closed_linked_surfaces( brep, to_process );
         return to_process.empty();
     }
+
+    absl::flat_hash_set< geode::uuid > block_boundary_lines(
+        const geode::BRep& brep, const geode::Block3D& block )
+    {
+        absl::flat_hash_set< geode::uuid > lines;
+        for( const auto& surface : brep.boundaries( block ) )
+        {
+            for( const auto& line : brep.boundaries( surface ) )
+            {
+                lines.insert( line.id() );
+            }
+            for( const auto& line : brep.internal_lines( surface ) )
+            {
+                lines.insert( line.id() );
+            }
+        }
+        return lines;
+    }
+
+    std::pair< geode::index_t, geode::index_t > sorted_unique_vertices(
+        const geode::BRep& brep,
+        const geode::ComponentID& component_id,
+        const std::array< geode::index_t, 2 >& vertices )
+    {
+        const auto first = brep.unique_vertex( { component_id, vertices[0] } );
+        const auto second = brep.unique_vertex( { component_id, vertices[1] } );
+        return { std::min( first, second ), std::max( first, second ) };
+    }
+
+    bool surface_has_border_outside_its_lines(
+        const geode::BRep& brep, const geode::Surface3D& surface )
+    {
+        const auto& mesh = surface.mesh();
+        if( mesh.nb_polygons() == 0 )
+        {
+            return true;
+        }
+        absl::flat_hash_set< std::pair< geode::index_t, geode::index_t > >
+            line_edges;
+        const auto add_line_edges = [&brep, &line_edges](
+                                        const geode::Line3D& line ) {
+            const auto& line_mesh = line.mesh();
+            for( const auto edge : geode::Range{ line_mesh.nb_edges() } )
+            {
+                line_edges.insert( sorted_unique_vertices( brep,
+                    line.component_id(), line_mesh.edge_vertices( edge ) ) );
+            }
+        };
+        for( const auto& line : brep.boundaries( surface ) )
+        {
+            add_line_edges( line );
+        }
+        for( const auto& line : brep.internal_lines( surface ) )
+        {
+            add_line_edges( line );
+        }
+        for( const auto polygon : geode::Range{ mesh.nb_polygons() } )
+        {
+            for( const auto edge :
+                geode::LRange{ mesh.nb_polygon_edges( polygon ) } )
+            {
+                const geode::PolygonEdge polygon_edge{ polygon, edge };
+                if( !mesh.is_edge_on_border( polygon_edge ) )
+                {
+                    continue;
+                }
+                const auto edge_unique_vertices =
+                    sorted_unique_vertices( brep, surface.component_id(),
+                        mesh.polygon_edge_vertices( polygon_edge ) );
+                if( edge_unique_vertices.second == geode::NO_ID
+                    || !line_edges.contains( edge_unique_vertices ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    std::vector< geode::uuid > internal_surfaces_without_free_border(
+        const geode::BRep& brep,
+        const geode::Block3D& block,
+        const absl::flat_hash_set< geode::uuid >& block_lines )
+    {
+        std::vector< geode::uuid > surfaces;
+        for( const auto& surface : brep.internal_surfaces( block ) )
+        {
+            if( surface.is_active()
+                && !surface_has_border_outside_its_lines( brep, surface ) )
+            {
+                surfaces.push_back( surface.id() );
+            }
+        }
+        while( true )
+        {
+            absl::flat_hash_map< geode::uuid, geode::index_t >
+                nb_surfaces_around_line;
+            for( const auto& surface_id : surfaces )
+            {
+                for( const auto& line :
+                    brep.boundaries( brep.surface( surface_id ) ) )
+                {
+                    nb_surfaces_around_line[line.id()]++;
+                }
+            }
+            const auto has_free_line = [&]( const geode::uuid& surface_id ) {
+                for( const auto& line :
+                    brep.boundaries( brep.surface( surface_id ) ) )
+                {
+                    if( !block_lines.contains( line.id() )
+                        && nb_surfaces_around_line.at( line.id() ) == 1 )
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            const auto nb_surfaces = surfaces.size();
+            surfaces.erase( std::remove_if( surfaces.begin(), surfaces.end(),
+                                has_free_line ),
+                surfaces.end() );
+            if( surfaces.size() == nb_surfaces )
+            {
+                return surfaces;
+            }
+        }
+    }
+
+    geode::index_t nb_block_boundary_parts( const geode::BRep& brep,
+        const geode::Block3D& block,
+        const absl::flat_hash_set< geode::uuid >& cut_lines )
+    {
+        absl::flat_hash_set< geode::uuid > boundary_surfaces;
+        for( const auto& surface : brep.boundaries( block ) )
+        {
+            if( surface.is_active() )
+            {
+                boundary_surfaces.insert( surface.id() );
+            }
+        }
+        absl::flat_hash_set< geode::uuid > visited;
+        geode::index_t nb_parts{ 0 };
+        for( const auto& surface_id : boundary_surfaces )
+        {
+            if( !visited.insert( surface_id ).second )
+            {
+                continue;
+            }
+            nb_parts++;
+            std::queue< geode::uuid > to_visit;
+            to_visit.push( surface_id );
+            while( !to_visit.empty() )
+            {
+                const auto& surface = brep.surface( to_visit.front() );
+                to_visit.pop();
+                for( const auto& line : brep.boundaries( surface ) )
+                {
+                    if( cut_lines.contains( line.id() ) )
+                    {
+                        continue;
+                    }
+                    absl::InlinedVector< geode::uuid, 2 > line_surfaces;
+                    for( const auto& other_surface : brep.incidences( line ) )
+                    {
+                        if( boundary_surfaces.contains( other_surface.id() ) )
+                        {
+                            line_surfaces.push_back( other_surface.id() );
+                        }
+                    }
+                    if( line_surfaces.size() != 2 )
+                    {
+                        continue;
+                    }
+                    for( const auto& line_surface_id : line_surfaces )
+                    {
+                        if( visited.insert( line_surface_id ).second )
+                        {
+                            to_visit.push( line_surface_id );
+                        }
+                    }
+                }
+            }
+        }
+        return nb_parts;
+    }
+
+    bool surfaces_have_closed_part( const geode::BRep& brep,
+        absl::Span< const geode::uuid > surfaces,
+        const absl::flat_hash_set< geode::uuid >& block_lines )
+    {
+        const absl::flat_hash_set< geode::uuid > surface_set{ surfaces.begin(),
+            surfaces.end() };
+        absl::flat_hash_set< geode::uuid > visited;
+        for( const auto& surface_id : surfaces )
+        {
+            if( !visited.insert( surface_id ).second )
+            {
+                continue;
+            }
+            bool touches_block_boundary{ false };
+            std::queue< geode::uuid > to_visit;
+            to_visit.push( surface_id );
+            while( !to_visit.empty() )
+            {
+                const auto& surface = brep.surface( to_visit.front() );
+                to_visit.pop();
+                for( const auto& line : brep.boundaries( surface ) )
+                {
+                    if( block_lines.contains( line.id() ) )
+                    {
+                        touches_block_boundary = true;
+                        continue;
+                    }
+                    for( const auto& other_surface : brep.incidences( line ) )
+                    {
+                        if( surface_set.contains( other_surface.id() )
+                            && visited.insert( other_surface.id() ).second )
+                        {
+                            to_visit.push( other_surface.id() );
+                        }
+                    }
+                }
+            }
+            if( !touches_block_boundary )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::vector< geode::uuid > internal_surfaces_splitting_block(
+        const geode::BRep& brep, const geode::Block3D& block )
+    {
+        if( brep.nb_internal_surfaces( block ) == 0 )
+        {
+            return {};
+        }
+        const auto block_lines = block_boundary_lines( brep, block );
+        const auto surfaces =
+            internal_surfaces_without_free_border( brep, block, block_lines );
+        if( surfaces.empty() )
+        {
+            return {};
+        }
+        absl::flat_hash_set< geode::uuid > cut_lines;
+        for( const auto& surface_id : surfaces )
+        {
+            for( const auto& line :
+                brep.boundaries( brep.surface( surface_id ) ) )
+            {
+                if( block_lines.contains( line.id() ) )
+                {
+                    cut_lines.insert( line.id() );
+                }
+            }
+        }
+        if( nb_block_boundary_parts( brep, block, cut_lines )
+                > nb_block_boundary_parts( brep, block, {} )
+            || surfaces_have_closed_part( brep, surfaces, block_lines ) )
+        {
+            return surfaces;
+        }
+        return {};
+    }
 } // namespace
 
 namespace geode
@@ -551,6 +820,7 @@ namespace geode
                + wrong_block_boundary_surface.nb_issues()
                + blocks_not_linked_to_a_unique_vertex.nb_issues()
                + blocks_with_not_closed_boundary_surfaces.nb_issues()
+               + blocks_split_by_internal_surfaces.nb_issues()
                + model_boundaries_dont_form_a_closed_surface.nb_issues()
                + unique_vertices_part_of_two_blocks_and_no_boundary_surface
                      .nb_issues()
@@ -582,6 +852,11 @@ namespace geode
         {
             absl::StrAppend(
                 &message, blocks_with_not_closed_boundary_surfaces.string() );
+        }
+        if( blocks_split_by_internal_surfaces.nb_issues() != 0 )
+        {
+            absl::StrAppend(
+                &message, blocks_split_by_internal_surfaces.string() );
         }
         if( model_boundaries_dont_form_a_closed_surface.nb_issues() != 0 )
         {
@@ -1039,6 +1314,26 @@ namespace geode
                         block.id().string(),
                         ") boundaries are not closed or form several closed "
                         "volumes." ) );
+            }
+            const auto splitting_surfaces =
+                internal_surfaces_splitting_block( brep_, block );
+            if( !splitting_surfaces.empty() )
+            {
+                std::string message = absl::StrCat( "Block ",
+                    block.name().value_or( block.id().string() ), " (",
+                    block.id().string(),
+                    ") is split into several volumes by its internal "
+                    "Surfaces" );
+                for( const auto& surface_id : splitting_surfaces )
+                {
+                    absl::StrAppend( &message, " ",
+                        brep_.surface( surface_id )
+                            .name()
+                            .value_or( surface_id.string() ),
+                        " (", surface_id.string(), ")" );
+                }
+                result.blocks_split_by_internal_surfaces.add_issue(
+                    block.id(), absl::StrCat( message, "." ) );
             }
             for( const auto& surface : brep_.boundaries( block ) )
             {
