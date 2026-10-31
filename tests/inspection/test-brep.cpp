@@ -144,6 +144,7 @@ geode::index_t blocks_topological_validity(
     nb_issues += result.unique_vertices_linked_to_a_single_and_invalid_surface
                      .nb_issues();
     nb_issues += result.blocks_with_not_closed_boundary_surfaces.nb_issues();
+    nb_issues += result.blocks_split_by_internal_surfaces.nb_issues();
     nb_issues += result.model_boundaries_dont_form_a_closed_surface.nb_issues();
     nb_issues +=
         result.unique_vertex_linked_to_multiple_invalid_surfaces.nb_issues();
