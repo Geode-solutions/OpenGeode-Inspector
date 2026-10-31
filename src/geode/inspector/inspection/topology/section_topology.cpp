@@ -212,6 +212,15 @@ namespace geode
             const SectionTopologyInspector& section_topology_inspector ) const
         {
             SectionTopologyInspectionResult result;
+            add_unique_vertices_with_wrong_cmv_link( result );
+            if( has_link_beyond_component_mesh() )
+            {
+                Logger::warning( "[SectionTopologyInspector] Unique vertices "
+                                 "are linked to vertices beyond their "
+                                 "component mesh, component topology "
+                                 "inspections are skipped" );
+                return result;
+            }
             async::parallel_invoke(
                 [&result, &section_topology_inspector] {
                     result.corners =
@@ -225,44 +234,53 @@ namespace geode
                     result.surfaces =
                         section_topology_inspector.inspect_surfaces();
                 } );
-            add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }
 
     private:
-        bool cmv_exists_in_section( const ComponentMeshVertex& cmv ) const
+        std::optional< index_t > component_nb_vertices(
+            const ComponentID& component_id ) const
         {
-            if( cmv.component_id.type == Corner2D::component_type_static() )
+            if( component_id.type == Corner2D::component_type_static()
+                && section_.has_corner( component_id.id ) )
             {
-                if( section_.has_corner( cmv.component_id.id )
-                    && cmv.vertex < section_.corner( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
-                {
-                    return true;
-                }
+                return section_.corner( component_id.id ).mesh().nb_vertices();
             }
-            if( cmv.component_id.type == Line2D::component_type_static() )
+            if( component_id.type == Line2D::component_type_static()
+                && section_.has_line( component_id.id ) )
             {
-                if( section_.has_line( cmv.component_id.id )
-                    && cmv.vertex < section_.line( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
-                {
-                    return true;
-                }
+                return section_.line( component_id.id ).mesh().nb_vertices();
             }
-            if( cmv.component_id.type == Surface2D::component_type_static() )
+            if( component_id.type == Surface2D::component_type_static()
+                && section_.has_surface( component_id.id ) )
             {
-                if( section_.has_surface( cmv.component_id.id )
-                    && cmv.vertex < section_.surface( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
+                return section_.surface( component_id.id ).mesh().nb_vertices();
+            }
+            return std::nullopt;
+        }
+
+        bool has_link_beyond_component_mesh() const
+        {
+            for( const auto uv_id : Range{ section_.nb_unique_vertices() } )
+            {
+                for( const auto& cmv :
+                    section_.component_mesh_vertices( uv_id ) )
                 {
-                    return true;
+                    const auto nb_vertices =
+                        component_nb_vertices( cmv.component_id );
+                    if( nb_vertices && cmv.vertex >= nb_vertices.value() )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        bool cmv_exists_in_section( const ComponentMeshVertex& cmv ) const
+        {
+            const auto nb_vertices = component_nb_vertices( cmv.component_id );
+            return nb_vertices && cmv.vertex < nb_vertices.value();
         }
 
         bool section_meshed_components_are_linked_to_unique_vertices(

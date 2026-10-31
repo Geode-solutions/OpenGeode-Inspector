@@ -313,6 +313,45 @@ def check_model_D(verbose):
     inspect_model_D(model_brep, verbose)
 
 
+def check_link_beyond_component_mesh():
+    brep = opengeode.BRep()
+    builder = opengeode.BRepBuilder(brep)
+    points = [
+        opengeode.Point3D([0, 0, 0]),
+        opengeode.Point3D([1, 0, 0]),
+        opengeode.Point3D([0, 1, 0]),
+        opengeode.Point3D([0, 0, 1]),
+    ]
+    block = brep.block(builder.add_block())
+    block_builder = builder.block_mesh_builder(block)
+    builder.create_unique_vertices(4)
+    for v, point in enumerate(points):
+        corner = brep.corner(builder.add_corner())
+        builder.corner_mesh_builder(corner).create_point(point)
+        builder.set_unique_vertex(
+            opengeode.ComponentMeshVertex(corner.component_id(), 0), v
+        )
+        block_builder.create_point(point)
+        builder.set_unique_vertex(
+            opengeode.ComponentMeshVertex(block.component_id(), v), v
+        )
+    block_builder.create_polyhedron(
+        [0, 1, 2, 3], [[1, 3, 2], [0, 2, 3], [3, 1, 0], [0, 1, 2]]
+    )
+    block_builder.delete_polyhedra([True])
+    block_builder.delete_isolated_vertices()
+    result = inspector.BRepTopologyInspector(brep).inspect_brep_topology()
+    if result.unique_vertices_linked_to_inexistant_cmv.nb_issues() != 4:
+        raise ValueError(
+            "[Test] Links to deleted Block vertices should be reported: "
+            + result.string()
+        )
+    if result.unique_vertices_nonbijectively_linked_to_cmv.nb_issues() != 0:
+        raise ValueError("[Test] There should be no non bijective links")
+    if result.nb_issues() < 4:
+        raise ValueError("[Test] nb_issues should count the unique vertex issues")
+
+
 if __name__ == "__main__":
     inspector.OpenGeodeInspectorInspectionLibrary.initialize()
     verbose = False
@@ -320,3 +359,4 @@ if __name__ == "__main__":
     check_a1_valid(verbose)
     check_model_mss(verbose)
     check_model_D(verbose)
+    check_link_beyond_component_mesh()
