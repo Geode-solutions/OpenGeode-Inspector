@@ -611,6 +611,46 @@ namespace
             "[split block] Block containing a closed internal Surface "
             "should be reported" );
     }
+
+    void test_link_beyond_component_mesh()
+    {
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        const std::array< geode::Point3D, 4 > points{
+            geode::Point3D{ { 0, 0, 0 } }, geode::Point3D{ { 1, 0, 0 } },
+            geode::Point3D{ { 0, 1, 0 } }, geode::Point3D{ { 0, 0, 1 } }
+        };
+        const auto& block = brep.block( builder.add_block() );
+        auto block_builder = builder.block_mesh_builder( block );
+        builder.create_unique_vertices( 4 );
+        for( const auto v : geode::LRange{ 4 } )
+        {
+            const auto& corner = brep.corner( builder.add_corner() );
+            builder.corner_mesh_builder( corner )->create_point( points[v] );
+            builder.set_unique_vertex( { corner.component_id(), 0 }, v );
+            block_builder->create_point( points[v] );
+            builder.set_unique_vertex( { block.component_id(), v }, v );
+        }
+        block_builder->create_polyhedron( { 0, 1, 2, 3 },
+            { { 1, 3, 2 }, { 0, 2, 3 }, { 3, 1, 0 }, { 0, 1, 2 } } );
+        const auto& line = brep.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( points[0] );
+        line_builder->create_point( points[1] );
+        line_builder->create_edge( 0, 1 );
+        builder.set_unique_vertex( { line.component_id(), 0 }, 0 );
+        builder.set_unique_vertex( { line.component_id(), 1 }, 1 );
+        builder.add_line_block_internal_relationship( line, block );
+        std::ignore = block_builder->delete_polyhedra( { true } );
+        std::ignore = block_builder->delete_isolated_vertices();
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        geode::OpenGeodeInspectorInspectionException::test(
+            result.unique_vertices_linked_to_inexistant_cmv.nb_issues() == 4,
+            "[link beyond mesh] Links to deleted Block vertices should be "
+            "reported: ",
+            result.string() );
+    }
 } // namespace
 
 int main()
@@ -627,6 +667,7 @@ int main()
         test_checks_independent_of_failing_check();
         test_block_split_by_internal_surface();
         test_block_split_by_internal_surface_without_lines();
+        test_link_beyond_component_mesh();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

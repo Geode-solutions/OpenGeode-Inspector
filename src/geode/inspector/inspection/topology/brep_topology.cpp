@@ -215,6 +215,15 @@ namespace geode
             const BRepTopologyInspector& brep_topology_inspector ) const
         {
             BRepTopologyInspectionResult result;
+            add_unique_vertices_with_wrong_cmv_link( result );
+            if( has_link_beyond_component_mesh() )
+            {
+                Logger::warning( "[BRepTopologyInspector] Unique vertices "
+                                 "are linked to vertices beyond their "
+                                 "component mesh, component topology "
+                                 "inspections are skipped" );
+                return result;
+            }
             async::parallel_invoke(
                 [&result, &brep_topology_inspector] {
                     result.corners =
@@ -231,54 +240,57 @@ namespace geode
                 [&result, &brep_topology_inspector] {
                     result.blocks = brep_topology_inspector.inspect_blocks();
                 } );
-            add_unique_vertices_with_wrong_cmv_link( result );
             return result;
         }
 
     private:
-        bool cmv_exists_in_brep( const ComponentMeshVertex& cmv ) const
+        std::optional< index_t > component_nb_vertices(
+            const ComponentID& component_id ) const
         {
-            if( cmv.component_id.type == Corner3D::component_type_static() )
+            if( component_id.type == Corner3D::component_type_static()
+                && brep_.has_corner( component_id.id ) )
             {
-                if( brep_.has_corner( cmv.component_id.id )
-                    && cmv.vertex < brep_.corner( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
-                {
-                    return true;
-                }
+                return brep_.corner( component_id.id ).mesh().nb_vertices();
             }
-            if( cmv.component_id.type == Line3D::component_type_static() )
+            if( component_id.type == Line3D::component_type_static()
+                && brep_.has_line( component_id.id ) )
             {
-                if( brep_.has_line( cmv.component_id.id )
-                    && cmv.vertex < brep_.line( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
-                {
-                    return true;
-                }
+                return brep_.line( component_id.id ).mesh().nb_vertices();
             }
-            if( cmv.component_id.type == Surface3D::component_type_static() )
+            if( component_id.type == Surface3D::component_type_static()
+                && brep_.has_surface( component_id.id ) )
             {
-                if( brep_.has_surface( cmv.component_id.id )
-                    && cmv.vertex < brep_.surface( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
-                {
-                    return true;
-                }
+                return brep_.surface( component_id.id ).mesh().nb_vertices();
             }
-            if( cmv.component_id.type == Block3D::component_type_static() )
+            if( component_id.type == Block3D::component_type_static()
+                && brep_.has_block( component_id.id ) )
             {
-                if( brep_.has_block( cmv.component_id.id )
-                    && cmv.vertex < brep_.block( cmv.component_id.id )
-                               .mesh()
-                               .nb_vertices() )
+                return brep_.block( component_id.id ).mesh().nb_vertices();
+            }
+            return std::nullopt;
+        }
+
+        bool has_link_beyond_component_mesh() const
+        {
+            for( const auto uv_id : Range{ brep_.nb_unique_vertices() } )
+            {
+                for( const auto& cmv : brep_.component_mesh_vertices( uv_id ) )
                 {
-                    return true;
+                    const auto nb_vertices =
+                        component_nb_vertices( cmv.component_id );
+                    if( nb_vertices && cmv.vertex >= nb_vertices.value() )
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        bool cmv_exists_in_brep( const ComponentMeshVertex& cmv ) const
+        {
+            const auto nb_vertices = component_nb_vertices( cmv.component_id );
+            return nb_vertices && cmv.vertex < nb_vertices.value();
         }
 
         bool brep_meshed_components_are_linked_to_unique_vertices(

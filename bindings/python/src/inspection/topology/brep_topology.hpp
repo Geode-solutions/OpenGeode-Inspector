@@ -189,6 +189,13 @@ namespace geode
             .def_readwrite( "unique_vertices_not_linked_to_any_component",
                 &BRepTopologyInspectionResult::
                     unique_vertices_not_linked_to_any_component )
+            .def_readwrite( "unique_vertices_linked_to_inexistant_cmv",
+                &BRepTopologyInspectionResult::
+                    unique_vertices_linked_to_inexistant_cmv )
+            .def_readwrite( "unique_vertices_nonbijectively_linked_to_cmv",
+                &BRepTopologyInspectionResult::
+                    unique_vertices_nonbijectively_linked_to_cmv )
+            .def( "nb_issues", &BRepTopologyInspectionResult::nb_issues )
             .def( "string", &BRepTopologyInspectionResult::string )
             .def( "__str__", &BRepTopologyInspectionResult::string )
             .def( "__repr__", &issues_repr< BRepTopologyInspectionResult > )
