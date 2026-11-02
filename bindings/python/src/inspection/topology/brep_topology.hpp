@@ -165,6 +165,9 @@ namespace geode
             .def_readwrite( "blocks_with_not_closed_boundary_surfaces",
                 &BRepBlocksTopologyInspectionResult::
                     blocks_with_not_closed_boundary_surfaces )
+            .def_readwrite( "blocks_split_by_internal_surfaces",
+                &BRepBlocksTopologyInspectionResult::
+                    blocks_split_by_internal_surfaces )
             .def_readwrite( "model_boundaries_dont_form_a_closed_surface",
                 &BRepBlocksTopologyInspectionResult::
                     model_boundaries_dont_form_a_closed_surface )

@@ -103,6 +103,7 @@ def blocks_topological_validity(result, verbose):
         result.unique_vertices_linked_to_a_single_and_invalid_surface.nb_issues()
     )
     nb_issues += result.blocks_with_not_closed_boundary_surfaces.nb_issues()
+    nb_issues += result.blocks_split_by_internal_surfaces.nb_issues()
     nb_issues += (
         result.unique_vertices_linked_to_surface_with_wrong_relationship_to_blocks.nb_issues()
     )

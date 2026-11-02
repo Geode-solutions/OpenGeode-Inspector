@@ -59,6 +59,9 @@ namespace geode
         InspectionIssues< uuid > blocks_with_not_closed_boundary_surfaces{
             "Blocks with non-closed boundary Surfaces"
         };
+        InspectionIssues< uuid > blocks_split_by_internal_surfaces{
+            "Blocks split into several volumes by internal Surfaces"
+        };
         InspectionIssues< index_t > model_boundaries_dont_form_a_closed_surface{
             "ModelBoundaries do not form a valid closed surface"
         };
