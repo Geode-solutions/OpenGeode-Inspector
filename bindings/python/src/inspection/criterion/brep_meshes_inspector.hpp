@@ -44,6 +44,7 @@ namespace geode
                 &BRepMeshesInspectionResult::meshes_intersections )
             .def_readwrite( "meshes_non_manifolds",
                 &BRepMeshesInspectionResult::meshes_non_manifolds )
+            .def( "nb_issues", &BRepMeshesInspectionResult::nb_issues )
             .def( "string", &BRepMeshesInspectionResult::string )
             .def( "__str__", &BRepMeshesInspectionResult::string )
             .def( "__repr__", &issues_repr< BRepMeshesInspectionResult > )

@@ -52,6 +52,8 @@ namespace geode
                 "unique_vertices_linked_to_not_boundary_line_corner",
                 &SectionCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_boundary_line_corner )
+            .def( "nb_issues",
+                &SectionCornersTopologyInspectionResult::nb_issues )
             .def( "string", &SectionCornersTopologyInspectionResult::string )
             .def( "__str__", &SectionCornersTopologyInspectionResult::string )
             .def( "__repr__",
@@ -83,6 +85,8 @@ namespace geode
                             "linked_to_a_corner",
                 &SectionLinesTopologyInspectionResult::
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
+            .def(
+                "nb_issues", &SectionLinesTopologyInspectionResult::nb_issues )
             .def( "string", &SectionLinesTopologyInspectionResult::string )
             .def( "__str__", &SectionLinesTopologyInspectionResult::string )
             .def( "__repr__",
@@ -106,6 +110,8 @@ namespace geode
                             "surface_border",
                 &SectionSurfacesTopologyInspectionResult::
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
+            .def( "nb_issues",
+                &SectionSurfacesTopologyInspectionResult::nb_issues )
             .def( "string", &SectionSurfacesTopologyInspectionResult::string )
             .def( "__str__", &SectionSurfacesTopologyInspectionResult::string )
             .def( "__repr__",

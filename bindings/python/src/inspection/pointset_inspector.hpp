@@ -55,6 +55,7 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_points_groups",
                 &PointSetInspectionResult::colocated_points_groups )
+            .def( "nb_issues", &PointSetInspectionResult::nb_issues )
             .def( "string", &PointSetInspectionResult::string )
             .def( "__str__", &PointSetInspectionResult::string )
             .def( "__repr__", &issues_repr< PointSetInspectionResult > )

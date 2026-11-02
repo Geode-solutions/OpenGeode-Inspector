@@ -45,6 +45,7 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_points_groups",
                 &MeshesColocationInspectionResult::colocated_points_groups )
+            .def( "nb_issues", &MeshesColocationInspectionResult::nb_issues )
             .def( "string", &MeshesColocationInspectionResult::string )
             .def( "__str__", &MeshesColocationInspectionResult::string )
             .def( "__repr__", &issues_repr< MeshesColocationInspectionResult > )

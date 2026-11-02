@@ -25,7 +25,7 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
-#include "../issues_repr.hpp"
+#include <geode/inspector/inspection/python/issues_repr.hpp>
 
 #include "brep_validity.hpp"
 #include "edgedcurve_validity.hpp"

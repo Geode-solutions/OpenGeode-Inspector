@@ -37,6 +37,8 @@ namespace geode
             .def_readwrite( "degenerated_polygons",
                 &SectionMeshesDegenerationInspectionResult::
                     degenerated_polygons )
+            .def( "nb_issues",
+                &SectionMeshesDegenerationInspectionResult::nb_issues )
             .def( "string", &SectionMeshesDegenerationInspectionResult::string )
             .def(
                 "__str__", &SectionMeshesDegenerationInspectionResult::string )

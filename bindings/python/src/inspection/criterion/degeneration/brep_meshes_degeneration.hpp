@@ -38,6 +38,8 @@ namespace geode
                 &BRepMeshesDegenerationInspectionResult::degenerated_polygons )
             .def_readwrite( "degenerated_polyhedra",
                 &BRepMeshesDegenerationInspectionResult::degenerated_polyhedra )
+            .def( "nb_issues",
+                &BRepMeshesDegenerationInspectionResult::nb_issues )
             .def( "string", &BRepMeshesDegenerationInspectionResult::string )
             .def( "__str__", &BRepMeshesDegenerationInspectionResult::string )
             .def( "__repr__",
