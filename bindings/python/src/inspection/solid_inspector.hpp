@@ -71,6 +71,7 @@ namespace geode
                 &SolidInspectionResult::non_manifold_edges )
             .def_readwrite( "non_manifold_facets",
                 &SolidInspectionResult::non_manifold_facets )
+            .def( "nb_issues", &SolidInspectionResult::nb_issues )
             .def( "string", &SolidInspectionResult::string )
             .def( "__str__", &SolidInspectionResult::string )
             .def( "__repr__", &issues_repr< SolidInspectionResult > )

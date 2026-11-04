@@ -189,6 +189,11 @@ def check_section(verbose):
         raise ValueError(
             "[Test] There should be no mesh issues with vertical_lines.og_sctn"
         )
+    for issues in (result, result.topology, result.meshes):
+        if issues.nb_issues() != 0:
+            raise ValueError(
+                f"[Test] {repr(issues)} should have no issues with vertical_lines.og_sctn"
+            )
 
 
 if __name__ == "__main__":

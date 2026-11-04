@@ -38,6 +38,7 @@ namespace geode
             .def_readwrite( "blocks_facets_with_wrong_adjacencies",
                 &BRepMeshesAdjacencyInspectionResult::
                     blocks_facets_with_wrong_adjacencies )
+            .def( "nb_issues", &BRepMeshesAdjacencyInspectionResult::nb_issues )
             .def( "string", &BRepMeshesAdjacencyInspectionResult::string )
             .def( "__str__", &BRepMeshesAdjacencyInspectionResult::string )
             .def( "__repr__",

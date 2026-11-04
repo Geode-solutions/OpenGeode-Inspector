@@ -73,6 +73,7 @@ namespace geode
                 &SurfaceInspectionResult::non_manifold_vertices )
             .def_readwrite( "intersecting_elements",
                 &SurfaceInspectionResult::intersecting_elements )
+            .def( "nb_issues", &SurfaceInspectionResult::nb_issues )
             .def( "string", &SurfaceInspectionResult::string )
             .def( "__str__", &SurfaceInspectionResult::string )
             .def( "__repr__", &issues_repr< SurfaceInspectionResult > )

@@ -35,6 +35,8 @@ namespace geode
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
                 &SectionMeshesAdjacencyInspectionResult::
                     surfaces_edges_with_wrong_adjacencies )
+            .def( "nb_issues",
+                &SectionMeshesAdjacencyInspectionResult::nb_issues )
             .def( "string", &SectionMeshesAdjacencyInspectionResult::string )
             .def( "__str__", &SectionMeshesAdjacencyInspectionResult::string )
             .def( "__repr__",

@@ -36,6 +36,7 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "meshes", &SectionInspectionResult::meshes )
             .def_readwrite( "topology", &SectionInspectionResult::topology )
+            .def( "nb_issues", &SectionInspectionResult::nb_issues )
             .def( "string", &SectionInspectionResult::string )
             .def( "__str__", &SectionInspectionResult::string )
             .def( "__repr__", &issues_repr< SectionInspectionResult > )

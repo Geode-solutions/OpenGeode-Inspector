@@ -60,6 +60,7 @@ namespace geode
                 &EdgedCurveInspectionResult::colocated_points_groups )
             .def_readwrite( "degenerated_edges",
                 &EdgedCurveInspectionResult::degenerated_edges )
+            .def( "nb_issues", &EdgedCurveInspectionResult::nb_issues )
             .def( "string", &EdgedCurveInspectionResult::string )
             .def( "__str__", &EdgedCurveInspectionResult::string )
             .def( "__repr__", &issues_repr< EdgedCurveInspectionResult > )

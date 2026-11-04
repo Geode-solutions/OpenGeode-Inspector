@@ -38,6 +38,8 @@ namespace geode
             .def_readwrite( "meshes_non_manifold_edges",
                 &SectionMeshesManifoldInspectionResult::
                     meshes_non_manifold_edges )
+            .def(
+                "nb_issues", &SectionMeshesManifoldInspectionResult::nb_issues )
             .def( "string", &SectionMeshesManifoldInspectionResult::string )
             .def( "__str__", &SectionMeshesManifoldInspectionResult::string )
             .def( "__repr__",

@@ -53,6 +53,7 @@ namespace geode
                     meshes_non_manifold_facets )
             .def_readwrite( "brep_non_manifold_edges",
                 &BRepMeshesManifoldInspectionResult::brep_non_manifold_edges )
+            .def( "nb_issues", &BRepMeshesManifoldInspectionResult::nb_issues )
             .def( "string", &BRepMeshesManifoldInspectionResult::string )
             .def( "__str__", &BRepMeshesManifoldInspectionResult::string )
             .def(

@@ -46,6 +46,8 @@ namespace geode
             .def( pybind11::init<>() )
             .def_readwrite( "elements_intersections",
                 &ElementsIntersectionsInspectionResult::elements_intersections )
+            .def(
+                "nb_issues", &ElementsIntersectionsInspectionResult::nb_issues )
             .def( "string", &ElementsIntersectionsInspectionResult::string )
             .def( "__str__", &ElementsIntersectionsInspectionResult::string )
             .def( "__repr__",
