@@ -290,7 +290,10 @@ def launch_topological_validity_checks(brep_inspector):
 if __name__ == "__main__":
     test_dir = os.path.dirname(__file__)
     data_dir = os.path.abspath(os.path.join(test_dir, "../tests/data"))
-    brep = opengeode.load_brep(data_dir + "/model_A1_valid.og_brep")
+    brep = opengeode.load_one(
+        opengeode.load_brep(data_dir + "/model_A1_valid.og_brep"),
+        data_dir + "/model_A1_valid.og_brep",
+    )
     brep_inspector = inspector.BRepTopologyInspector(brep)
     if brep_inspector.brep_topology_is_valid():
         print("Model topology is valid.")

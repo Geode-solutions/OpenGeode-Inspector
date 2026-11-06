@@ -72,25 +72,42 @@ int main( int argc, char* argv[] )
 
         if( geode::TriangulatedSurfaceInputFactory3D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 3 >( filename ) );
+            for( const auto& mesh :
+                geode::load_triangulated_surface< 3 >( filename ) )
+            {
+                inspect_surface( *mesh );
+            }
         }
         else if( geode::PolygonalSurfaceInputFactory3D::has_creator( ext ) )
         {
-            inspect_surface( *geode::load_polygonal_surface< 3 >( filename ) );
+            for( const auto& mesh :
+                geode::load_polygonal_surface< 3 >( filename ) )
+            {
+                inspect_surface( *mesh );
+            }
         }
         else if( geode::TriangulatedSurfaceInputFactory2D::has_creator( ext ) )
         {
-            inspect_surface(
-                *geode::load_triangulated_surface< 2 >( filename ) );
+            for( const auto& mesh :
+                geode::load_triangulated_surface< 2 >( filename ) )
+            {
+                inspect_surface( *mesh );
+            }
         }
         else if( geode::PolygonalSurfaceInputFactory2D::has_creator( ext ) )
         {
-            inspect_surface( *geode::load_polygonal_surface< 2 >( filename ) );
+            for( const auto& mesh :
+                geode::load_polygonal_surface< 2 >( filename ) )
+            {
+                inspect_surface( *mesh );
+            }
         }
         else if( geode::RegularGridInputFactory2D::has_creator( ext ) )
         {
-            inspect_surface( *geode::load_regular_grid< 2 >( filename ) );
+            for( const auto& mesh : geode::load_regular_grid< 2 >( filename ) )
+            {
+                inspect_surface( *mesh );
+            }
         }
         else
         {

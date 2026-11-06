@@ -69,11 +69,17 @@ int main( int argc, char* argv[] )
 
         if( geode::EdgedCurveInputFactory3D::has_creator( ext ) )
         {
-            inspect_edged_curve( *geode::load_edged_curve< 3 >( filename ) );
+            for( const auto& mesh : geode::load_edged_curve< 3 >( filename ) )
+            {
+                inspect_edged_curve( *mesh );
+            }
         }
         else if( geode::EdgedCurveInputFactory2D::has_creator( ext ) )
         {
-            inspect_edged_curve( *geode::load_edged_curve< 2 >( filename ) );
+            for( const auto& mesh : geode::load_edged_curve< 2 >( filename ) )
+            {
+                inspect_edged_curve( *mesh );
+            }
         }
         else
         {
