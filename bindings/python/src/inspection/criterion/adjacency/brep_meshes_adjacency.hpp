@@ -29,8 +29,9 @@ namespace geode
 {
     void define_brep_meshes_adjacency( pybind11::module& module )
     {
-        pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
-            module, "BRepMeshesAdjacencyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
+                module, "BRepMeshesAdjacencyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
                 &BRepMeshesAdjacencyInspectionResult::
@@ -39,10 +40,6 @@ namespace geode
                 &BRepMeshesAdjacencyInspectionResult::
                     blocks_facets_with_wrong_adjacencies )
             .def( "nb_issues", &BRepMeshesAdjacencyInspectionResult::nb_issues )
-            .def( "string", &BRepMeshesAdjacencyInspectionResult::string )
-            .def( "__str__", &BRepMeshesAdjacencyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< BRepMeshesAdjacencyInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesAdjacencyInspectionResult::inspection_type );
 

@@ -29,18 +29,15 @@ namespace geode
 {
     void define_section_meshes_adjacency( pybind11::module& module )
     {
-        pybind11::class_< SectionMeshesAdjacencyInspectionResult >(
-            module, "SectionMeshesAdjacencyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionMeshesAdjacencyInspectionResult >(
+                module, "SectionMeshesAdjacencyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
                 &SectionMeshesAdjacencyInspectionResult::
                     surfaces_edges_with_wrong_adjacencies )
             .def( "nb_issues",
                 &SectionMeshesAdjacencyInspectionResult::nb_issues )
-            .def( "string", &SectionMeshesAdjacencyInspectionResult::string )
-            .def( "__str__", &SectionMeshesAdjacencyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionMeshesAdjacencyInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesAdjacencyInspectionResult::inspection_type );
 

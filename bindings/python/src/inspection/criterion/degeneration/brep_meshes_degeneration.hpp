@@ -29,8 +29,9 @@ namespace geode
 {
     void define_brep_meshes_degeneration( pybind11::module& module )
     {
-        pybind11::class_< BRepMeshesDegenerationInspectionResult >(
-            module, "BRepMeshesDegenerationInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepMeshesDegenerationInspectionResult >(
+                module, "BRepMeshesDegenerationInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "degenerated_edges",
                 &BRepMeshesDegenerationInspectionResult::degenerated_edges )
@@ -40,10 +41,6 @@ namespace geode
                 &BRepMeshesDegenerationInspectionResult::degenerated_polyhedra )
             .def( "nb_issues",
                 &BRepMeshesDegenerationInspectionResult::nb_issues )
-            .def( "string", &BRepMeshesDegenerationInspectionResult::string )
-            .def( "__str__", &BRepMeshesDegenerationInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< BRepMeshesDegenerationInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesDegenerationInspectionResult::inspection_type );
 

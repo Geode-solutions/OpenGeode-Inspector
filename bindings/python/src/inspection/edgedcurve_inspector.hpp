@@ -53,17 +53,15 @@ namespace geode
 
     void define_edged_curve_inspector( pybind11::module& module )
     {
-        pybind11::class_< EdgedCurveInspectionResult >(
-            module, "EdgedCurveInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< EdgedCurveInspectionResult >(
+                module, "EdgedCurveInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_points_groups",
                 &EdgedCurveInspectionResult::colocated_points_groups )
             .def_readwrite( "degenerated_edges",
                 &EdgedCurveInspectionResult::degenerated_edges )
             .def( "nb_issues", &EdgedCurveInspectionResult::nb_issues )
-            .def( "string", &EdgedCurveInspectionResult::string )
-            .def( "__str__", &EdgedCurveInspectionResult::string )
-            .def( "__repr__", &issues_repr< EdgedCurveInspectionResult > )
             .def( "inspection_type",
                 &EdgedCurveInspectionResult::inspection_type );
 

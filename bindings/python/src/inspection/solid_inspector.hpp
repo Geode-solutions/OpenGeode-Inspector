@@ -54,8 +54,9 @@ namespace geode
 
     void define_solid_inspector( pybind11::module& module )
     {
-        pybind11::class_< SolidInspectionResult >(
-            module, "SolidInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SolidInspectionResult >(
+                module, "SolidInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "polyhedron_facets_with_wrong_adjacency",
                 &SolidInspectionResult::polyhedron_facets_with_wrong_adjacency )
@@ -72,9 +73,6 @@ namespace geode
             .def_readwrite( "non_manifold_facets",
                 &SolidInspectionResult::non_manifold_facets )
             .def( "nb_issues", &SolidInspectionResult::nb_issues )
-            .def( "string", &SolidInspectionResult::string )
-            .def( "__str__", &SolidInspectionResult::string )
-            .def( "__repr__", &issues_repr< SolidInspectionResult > )
             .def( "inspection_type", &SolidInspectionResult::inspection_type );
         do_define_solid_inspector< 3 >( module );
     }
