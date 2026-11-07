@@ -31,11 +31,9 @@ namespace geode
 {
     inline void define_object_validity( pybind11::module& module )
     {
-        pybind11::class_< ObjectValidity >( module, "ObjectValidity" )
+        define_issues_string_representation(
+            pybind11::class_< ObjectValidity >( module, "ObjectValidity" ) )
             .def( "nb_issues", &ObjectValidity::nb_issues )
-            .def( "string", &ObjectValidity::string )
-            .def( "__str__", &ObjectValidity::string )
-            .def( "__repr__", &issues_repr< ObjectValidity > )
             .def_readwrite( "invalidities", &ObjectValidity::invalidities );
     }
 } // namespace geode

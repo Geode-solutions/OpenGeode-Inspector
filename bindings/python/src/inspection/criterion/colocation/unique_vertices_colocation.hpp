@@ -30,8 +30,9 @@ namespace geode
 {
     void define_models_uv_colocation( pybind11::module& module )
     {
-        pybind11::class_< UniqueVerticesInspectionResult >(
-            module, "UniqueVerticesInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< UniqueVerticesInspectionResult >(
+                module, "UniqueVerticesInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_unique_vertices_groups",
                 &UniqueVerticesInspectionResult::
@@ -40,9 +41,6 @@ namespace geode
                 &UniqueVerticesInspectionResult::
                     unique_vertices_linked_to_different_points )
             .def( "nb_issues", &UniqueVerticesInspectionResult::nb_issues )
-            .def( "string", &UniqueVerticesInspectionResult::string )
-            .def( "__str__", &UniqueVerticesInspectionResult::string )
-            .def( "__repr__", &issues_repr< UniqueVerticesInspectionResult > )
             .def( "inspection_type",
                 &UniqueVerticesInspectionResult::inspection_type );
 

@@ -31,15 +31,13 @@ namespace geode
 {
     void define_section_inspector( pybind11::module& module )
     {
-        pybind11::class_< SectionInspectionResult >(
-            module, "SectionInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionInspectionResult >(
+                module, "SectionInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes", &SectionInspectionResult::meshes )
             .def_readwrite( "topology", &SectionInspectionResult::topology )
             .def( "nb_issues", &SectionInspectionResult::nb_issues )
-            .def( "string", &SectionInspectionResult::string )
-            .def( "__str__", &SectionInspectionResult::string )
-            .def( "__repr__", &issues_repr< SectionInspectionResult > )
             .def(
                 "inspection_type", &SectionInspectionResult::inspection_type );
 

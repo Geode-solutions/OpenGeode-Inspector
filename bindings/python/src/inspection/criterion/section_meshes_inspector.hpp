@@ -29,8 +29,9 @@ namespace geode
 {
     void define_section_meshes_inspector( pybind11::module& module )
     {
-        pybind11::class_< SectionMeshesInspectionResult >(
-            module, "SectionMeshesInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionMeshesInspectionResult >(
+                module, "SectionMeshesInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "unique_vertices_colocation",
                 &SectionMeshesInspectionResult::unique_vertices_colocation )
@@ -45,9 +46,6 @@ namespace geode
             .def_readwrite( "meshes_non_manifolds",
                 &SectionMeshesInspectionResult::meshes_non_manifolds )
             .def( "nb_issues", &SectionMeshesInspectionResult::nb_issues )
-            .def( "string", &SectionMeshesInspectionResult::string )
-            .def( "__str__", &SectionMeshesInspectionResult::string )
-            .def( "__repr__", &issues_repr< SectionMeshesInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesInspectionResult::inspection_type );
 

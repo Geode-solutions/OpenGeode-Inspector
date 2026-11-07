@@ -30,8 +30,9 @@ namespace geode
 
     void define_brep_topology_inspector( pybind11::module& module )
     {
-        pybind11::class_< BRepCornersTopologyInspectionResult >(
-            module, "BRepCornersTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepCornersTopologyInspectionResult >(
+                module, "BRepCornersTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "corners_not_meshed",
                 &BRepCornersTopologyInspectionResult::corners_not_meshed )
@@ -54,15 +55,12 @@ namespace geode
                 &BRepCornersTopologyInspectionResult::
                     unique_vertices_linked_to_not_boundary_line_corner )
             .def( "nb_issues", &BRepCornersTopologyInspectionResult::nb_issues )
-            .def( "string", &BRepCornersTopologyInspectionResult::string )
-            .def( "__str__", &BRepCornersTopologyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< BRepCornersTopologyInspectionResult > )
             .def( "inspection_type",
                 &BRepCornersTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< BRepLinesTopologyInspectionResult >(
-            module, "BRepLinesTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepLinesTopologyInspectionResult >(
+                module, "BRepLinesTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "lines_not_meshed",
                 &BRepLinesTopologyInspectionResult::lines_not_meshed )
@@ -94,15 +92,12 @@ namespace geode
                 &BRepLinesTopologyInspectionResult::
                     line_edges_with_wrong_component_edges_around )
             .def( "nb_issues", &BRepLinesTopologyInspectionResult::nb_issues )
-            .def( "string", &BRepLinesTopologyInspectionResult::string )
-            .def( "__str__", &BRepLinesTopologyInspectionResult::string )
-            .def(
-                "__repr__", &issues_repr< BRepLinesTopologyInspectionResult > )
             .def( "inspection_type",
                 &BRepLinesTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< BRepSurfacesTopologyInspectionResult >(
-            module, "BRepSurfacesTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepSurfacesTopologyInspectionResult >(
+                module, "BRepSurfacesTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_not_meshed",
                 &BRepSurfacesTopologyInspectionResult::surfaces_not_meshed )
@@ -130,15 +125,12 @@ namespace geode
                     surface_polygons_with_wrong_component_facets_around )
             .def(
                 "nb_issues", &BRepSurfacesTopologyInspectionResult::nb_issues )
-            .def( "string", &BRepSurfacesTopologyInspectionResult::string )
-            .def( "__str__", &BRepSurfacesTopologyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< BRepSurfacesTopologyInspectionResult > )
             .def( "inspection_type",
                 &BRepSurfacesTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< BRepBlocksTopologyInspectionResult >(
-            module, "BRepBlocksTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepBlocksTopologyInspectionResult >(
+                module, "BRepBlocksTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "some_blocks_not_meshed",
                 &BRepBlocksTopologyInspectionResult::some_blocks_not_meshed )
@@ -176,15 +168,12 @@ namespace geode
                 &BRepBlocksTopologyInspectionResult::
                     model_boundaries_dont_form_a_closed_surface )
             .def( "nb_issues", &BRepBlocksTopologyInspectionResult::nb_issues )
-            .def( "string", &BRepBlocksTopologyInspectionResult::string )
-            .def( "__str__", &BRepBlocksTopologyInspectionResult::string )
-            .def(
-                "__repr__", &issues_repr< BRepBlocksTopologyInspectionResult > )
             .def( "inspection_type",
                 &BRepBlocksTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< BRepTopologyInspectionResult >(
-            module, "BRepTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepTopologyInspectionResult >(
+                module, "BRepTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "corners", &BRepTopologyInspectionResult::corners )
             .def_readwrite( "lines", &BRepTopologyInspectionResult::lines )
@@ -201,9 +190,6 @@ namespace geode
                 &BRepTopologyInspectionResult::
                     unique_vertices_nonbijectively_linked_to_cmv )
             .def( "nb_issues", &BRepTopologyInspectionResult::nb_issues )
-            .def( "string", &BRepTopologyInspectionResult::string )
-            .def( "__str__", &BRepTopologyInspectionResult::string )
-            .def( "__repr__", &issues_repr< BRepTopologyInspectionResult > )
             .def( "inspection_type",
                 &BRepTopologyInspectionResult::inspection_type );
 

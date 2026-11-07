@@ -29,15 +29,13 @@ namespace geode
 {
     void define_brep_inspector( pybind11::module& module )
     {
-        pybind11::class_< BRepInspectionResult >(
-            module, "BRepInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepInspectionResult >(
+                module, "BRepInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes", &BRepInspectionResult::meshes )
             .def_readwrite( "topology", &BRepInspectionResult::topology )
             .def( "nb_issues", &BRepInspectionResult::nb_issues )
-            .def( "string", &BRepInspectionResult::string )
-            .def( "__str__", &BRepInspectionResult::string )
-            .def( "__repr__", &issues_repr< BRepInspectionResult > )
             .def( "inspection_type", &BRepInspectionResult::inspection_type );
 
         pybind11::class_< BRepInspector, BRepMeshesInspector,

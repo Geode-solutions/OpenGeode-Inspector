@@ -40,8 +40,9 @@ namespace geode
         do_define_information< BRepNonManifoldEdge >(
             module, "BRepNonManifoldEdge" );
 
-        pybind11::class_< BRepMeshesManifoldInspectionResult >(
-            module, "BRepMeshesManifoldInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepMeshesManifoldInspectionResult >(
+                module, "BRepMeshesManifoldInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes_non_manifold_vertices",
                 &BRepMeshesManifoldInspectionResult::
@@ -54,10 +55,6 @@ namespace geode
             .def_readwrite( "brep_non_manifold_edges",
                 &BRepMeshesManifoldInspectionResult::brep_non_manifold_edges )
             .def( "nb_issues", &BRepMeshesManifoldInspectionResult::nb_issues )
-            .def( "string", &BRepMeshesManifoldInspectionResult::string )
-            .def( "__str__", &BRepMeshesManifoldInspectionResult::string )
-            .def(
-                "__repr__", &issues_repr< BRepMeshesManifoldInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesManifoldInspectionResult::inspection_type );
 

@@ -42,4 +42,14 @@ namespace geode
                 .cast< std::string >(),
             ": ", result.nb_issues(), " issues>" );
     }
+
+    template < typename Class, typename... Options >
+    pybind11::class_< Class, Options... > define_issues_string_representation(
+        pybind11::class_< Class, Options... > python_class )
+    {
+        python_class.def( "string", &Class::string )
+            .def( "__str__", &Class::string )
+            .def( "__repr__", &issues_repr< Class > );
+        return python_class;
+    }
 } // namespace geode
