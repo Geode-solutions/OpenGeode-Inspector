@@ -101,6 +101,7 @@ namespace geode
          * If the vertex is part of only one line, the line is either
          * internal to a surface, internal to a block, or a boundary of
          * multiple surfaces.
+         * If the vertex is an end of a line, it is also a corner.
          * If the vertex is part of multiple lines, it is also a corner.
          */
         [[nodiscard]] bool brep_lines_topology_is_valid(

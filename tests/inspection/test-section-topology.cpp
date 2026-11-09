@@ -21,6 +21,7 @@
  *
  */
 
+#include <array>
 #include <tuple>
 
 #include <absl/strings/match.h>
@@ -122,6 +123,73 @@ namespace
             "reported: ",
             result.string() );
     }
+
+    bool reports_line_end_without_corner( const geode::Section& section )
+    {
+        const geode::SectionTopologyInspector inspector{ section };
+        const auto result = inspector.inspect_section_topology();
+        return has_message(
+            result.lines.unique_vertices_linked_to_a_single_and_invalid_line,
+            "is an end of Line" );
+    }
+
+    void test_internal_line_end_without_corner()
+    {
+        constexpr geode::index_t NB_BORDER_VERTICES{ 4 };
+        constexpr geode::index_t LINE_START{ 0 };
+        constexpr geode::index_t LINE_END{ 4 };
+        const std::array< geode::Point2D, NB_BORDER_VERTICES + 1 > points{
+            geode::Point2D{ { 0, 0 } }, geode::Point2D{ { 1, 0 } },
+            geode::Point2D{ { 1, 1 } }, geode::Point2D{ { 0, 1 } },
+            geode::Point2D{ { 0.5, 0.5 } }
+        };
+        geode::Section section;
+        geode::SectionBuilder builder{ section };
+        builder.create_unique_vertices( points.size() );
+        const auto& surface = section.surface( builder.add_surface() );
+        auto surface_builder = builder.surface_mesh_builder( surface );
+        for( const auto vertex : geode::Indices{ points } )
+        {
+            surface_builder->create_point( points[vertex] );
+            builder.set_unique_vertex(
+                { surface.component_id(), vertex }, vertex );
+        }
+        for( const auto vertex : geode::Range{ NB_BORDER_VERTICES } )
+        {
+            surface_builder->create_polygon(
+                { vertex, ( vertex + 1 ) % NB_BORDER_VERTICES, LINE_END } );
+        }
+        surface_builder->compute_polygon_adjacencies();
+        const auto& line = section.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( points[LINE_START] );
+        line_builder->create_point( points[LINE_END] );
+        line_builder->create_edge( 0, 1 );
+        builder.set_unique_vertex( { line.component_id(), 0 }, LINE_START );
+        builder.set_unique_vertex( { line.component_id(), 1 }, LINE_END );
+        builder.add_line_surface_internal_relationship( line, surface );
+        const auto& start_corner = section.corner( builder.add_corner() );
+        builder.corner_mesh_builder( start_corner )
+            ->create_point( points[LINE_START] );
+        builder.set_unique_vertex(
+            { start_corner.component_id(), 0 }, LINE_START );
+        builder.add_corner_line_boundary_relationship( start_corner, line );
+        geode::OpenGeodeInspectorInspectionException::test(
+            reports_line_end_without_corner( section ),
+            "[line end without corner] The free end of the internal Line "
+            "should be reported" );
+
+        const auto& end_corner = section.corner( builder.add_corner() );
+        builder.corner_mesh_builder( end_corner )
+            ->create_point( points[LINE_END] );
+        builder.set_unique_vertex( { end_corner.component_id(), 0 }, LINE_END );
+        builder.add_corner_line_boundary_relationship( end_corner, line );
+        builder.add_corner_surface_internal_relationship( end_corner, surface );
+        geode::OpenGeodeInspectorInspectionException::test(
+            !reports_line_end_without_corner( section ),
+            "[line end without corner] A Line end on a Corner should not be "
+            "reported" );
+    }
 } // namespace
 
 int main()
@@ -131,6 +199,7 @@ int main()
         geode::OpenGeodeInspectorInspectionLibrary::initialize();
         test_non_bijective_link_message();
         test_link_beyond_component_mesh();
+        test_internal_line_end_without_corner();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

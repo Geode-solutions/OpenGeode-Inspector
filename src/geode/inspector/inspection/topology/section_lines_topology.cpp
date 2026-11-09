@@ -259,6 +259,11 @@ namespace geode
         {
             return std::nullopt;
         }
+        if( auto message = internal::line_end_not_a_corner_message(
+                section_, unique_vertex_index ) )
+        {
+            return message;
+        }
         const auto& line_id = line_uuids[0];
         const auto surface_uuids = internal::components_uuids(
             section_, unique_vertex_index, Surface2D::component_type_static() );

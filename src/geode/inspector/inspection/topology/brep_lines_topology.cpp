@@ -280,6 +280,11 @@ namespace geode
         {
             return std::nullopt;
         }
+        if( auto message = internal::line_end_not_a_corner_message(
+                brep_, unique_vertex_index ) )
+        {
+            return message;
+        }
         const auto surface_uuids = internal::components_uuids(
             brep_, unique_vertex_index, Surface3D::component_type_static() );
         const auto block_uuids = internal::components_uuids(
