@@ -190,6 +190,137 @@ namespace
             "[line end without corner] A Line end on a Corner should not be "
             "reported" );
     }
+
+    constexpr geode::index_t NB_TRIANGLE_VERTICES{ 3 };
+
+    geode::Point2D triangle_point( geode::index_t unique_vertex )
+    {
+        const std::array< geode::Point2D, NB_TRIANGLE_VERTICES > points{
+            geode::Point2D{ { 0, 0 } }, geode::Point2D{ { 1, 0 } },
+            geode::Point2D{ { 0, 1 } }
+        };
+        return points[unique_vertex];
+    }
+
+    const geode::Line2D& create_line( const geode::Section& section,
+        geode::SectionBuilder& builder,
+        absl::Span< const geode::index_t > path )
+    {
+        const auto& line = section.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        for( const auto vertex : geode::Indices{ path } )
+        {
+            line_builder->create_point( triangle_point( path[vertex] ) );
+            builder.set_unique_vertex(
+                { line.component_id(), vertex }, path[vertex] );
+            if( vertex != 0 )
+            {
+                line_builder->create_edge( vertex - 1, vertex );
+            }
+        }
+        return line;
+    }
+
+    void add_boundary_corner( const geode::Section& section,
+        geode::SectionBuilder& builder,
+        const geode::Line2D& line,
+        geode::index_t unique_vertex )
+    {
+        const auto& corner = section.corner( builder.add_corner() );
+        builder.corner_mesh_builder( corner )->create_point(
+            triangle_point( unique_vertex ) );
+        builder.set_unique_vertex(
+            { corner.component_id(), 0 }, unique_vertex );
+        builder.add_corner_line_boundary_relationship( corner, line );
+    }
+
+    geode::InspectionIssues< geode::index_t > corner_line_issues(
+        const geode::Section& section )
+    {
+        const geode::SectionTopologyInspector inspector{ section };
+        return inspector.inspect_section_topology()
+            .corners.unique_vertices_linked_to_not_boundary_line_corner;
+    }
+
+    void test_corner_line_vertices_count()
+    {
+        {
+            geode::Section section;
+            geode::SectionBuilder builder{ section };
+            builder.create_unique_vertices( NB_TRIANGLE_VERTICES );
+            const auto& line = create_line( section, builder, { 0, 1, 2 } );
+            add_boundary_corner( section, builder, line, 0 );
+            add_boundary_corner( section, builder, line, 2 );
+            const auto issues = corner_line_issues( section );
+            geode::OpenGeodeInspectorInspectionException::test(
+                issues.nb_issues() == 0,
+                "[corner line vertices] An open Line with one vertex on each "
+                "boundary Corner should not be reported: ",
+                issues.string() );
+        }
+        {
+            geode::Section section;
+            geode::SectionBuilder builder{ section };
+            builder.create_unique_vertices( NB_TRIANGLE_VERTICES );
+            const auto& line = create_line( section, builder, { 0, 1, 2, 0 } );
+            add_boundary_corner( section, builder, line, 0 );
+            const auto issues = corner_line_issues( section );
+            geode::OpenGeodeInspectorInspectionException::test(
+                issues.nb_issues() == 0,
+                "[corner line vertices] A closed Line with both ends on its "
+                "Corner should not be reported: ",
+                issues.string() );
+        }
+        {
+            geode::Section section;
+            geode::SectionBuilder builder{ section };
+            builder.create_unique_vertices( NB_TRIANGLE_VERTICES );
+            const auto& line = create_line( section, builder, { 0, 1, 2 } );
+            builder.line_mesh_builder( line )->create_edge( 2, 0 );
+            add_boundary_corner( section, builder, line, 0 );
+            const auto issues = corner_line_issues( section );
+            geode::OpenGeodeInspectorInspectionException::test(
+                issues.nb_issues() == 0,
+                "[corner line vertices] A closed Line meshed as a loop should "
+                "not be reported: ",
+                issues.string() );
+        }
+        {
+            geode::Section section;
+            geode::SectionBuilder builder{ section };
+            builder.create_unique_vertices( NB_TRIANGLE_VERTICES );
+            const auto& line = create_line( section, builder, { 0, 1, 2, 0 } );
+            add_boundary_corner( section, builder, line, 0 );
+            add_boundary_corner( section, builder, line, 1 );
+            const auto issues = corner_line_issues( section );
+            geode::OpenGeodeInspectorInspectionException::test(
+                issues.nb_issues() == 1
+                    && has_message( issues,
+                        "an open Line, so Line should have 1 cmv on this "
+                        "unique vertex, but has 2" ),
+                "[corner line vertices] An open Line with both ends on the "
+                "same Corner should be reported: ",
+                issues.string() );
+        }
+        {
+            geode::Section section;
+            geode::SectionBuilder builder{ section };
+            builder.create_unique_vertices( NB_TRIANGLE_VERTICES );
+            const auto& line = create_line( section, builder, { 0, 1 } );
+            add_boundary_corner( section, builder, line, 0 );
+            add_boundary_corner( section, builder, line, 1 );
+            add_boundary_corner( section, builder, line, 2 );
+            const auto issues = corner_line_issues( section );
+            geode::OpenGeodeInspectorInspectionException::test(
+                issues.nb_issues() == 1
+                    && has_message( issues,
+                        "an open Line, so Line should have 1 cmv on this "
+                        "unique vertex, but has 0" ),
+                "[corner line vertices] A Corner boundary of a Line that does "
+                "not reach it should be reported: ",
+                issues.string() );
+        }
+    }
 } // namespace
 
 int main()
@@ -200,6 +331,7 @@ int main()
         test_non_bijective_link_message();
         test_link_beyond_component_mesh();
         test_internal_line_end_without_corner();
+        test_corner_line_vertices_count();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

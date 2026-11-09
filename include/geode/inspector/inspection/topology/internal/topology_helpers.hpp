@@ -36,6 +36,10 @@
 
 namespace geode
 {
+    FORWARD_DECLARATION_DIMENSION_CLASS( Corner );
+    FORWARD_DECLARATION_DIMENSION_CLASS( Line );
+    ALIAS_2D_AND_3D( Corner );
+    ALIAS_2D_AND_3D( Line );
     class BRep;
     class Section;
     struct uuid;
@@ -60,6 +64,20 @@ namespace geode
         [[nodiscard]] std::optional< std::string >
             line_end_not_a_corner_message(
                 const Section& section, index_t unique_vertex_index );
+
+        [[nodiscard]] std::optional< std::string >
+            wrong_nb_boundary_corner_line_cmvs_message( const BRep& brep,
+                index_t unique_vertex_index,
+                const Corner3D& corner,
+                const Line3D& line,
+                index_t nb_line_cmvs );
+
+        [[nodiscard]] std::optional< std::string >
+            wrong_nb_boundary_corner_line_cmvs_message( const Section& section,
+                index_t unique_vertex_index,
+                const Corner2D& corner,
+                const Line2D& line,
+                index_t nb_line_cmvs );
 
         template < typename Model >
         [[nodiscard]] std::vector< uuid > components_uuids( const Model& model,

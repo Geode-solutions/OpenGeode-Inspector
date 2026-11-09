@@ -246,6 +246,13 @@ namespace geode
             }
             const auto& corner = brep_.corner( cmv.component_id.id );
             absl::linked_hash_map< uuid, index_t > line_to_nb_cmvs;
+            for( const auto& incident_line : brep_.incidences( corner ) )
+            {
+                if( incident_line.is_active() )
+                {
+                    line_to_nb_cmvs.try_emplace( incident_line.id(), 0 );
+                }
+            }
             for( const auto& cmv_line :
                 brep_.component_mesh_vertices( unique_vertex_index ) )
             {
@@ -263,18 +270,11 @@ namespace geode
                 const auto& line = brep_.line( line_id );
                 if( brep_.is_boundary( corner, line ) )
                 {
-                    if( nb_cmvs != 1 && nb_cmvs != 2 )
+                    if( auto message = internal::
+                            wrong_nb_boundary_corner_line_cmvs_message( brep_,
+                                unique_vertex_index, corner, line, nb_cmvs ) )
                     {
-                        return absl::StrCat( "unique vertex with index ",
-                            unique_vertex_index, " is associated with Corner ",
-                            corner.name().value_or( corner.id().string() ),
-                            " (", corner.id().string(),
-                            "), which is boundary to Line ",
-                            line.name().value_or( line_id.string() ), " (",
-                            line_id.string(),
-                            "), so Line should have 1 or 2 cmv on this unique "
-                            "vertex, but has ",
-                            nb_cmvs, " vertices on it instead." );
+                        return message;
                     }
                     continue;
                 }

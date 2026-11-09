@@ -73,6 +73,31 @@ namespace
             " is an end of Line ", line.name().value_or( line.id().string() ),
             " (", line.id().string(), "), but is not a Corner." );
     }
+
+    template < typename Model >
+    std::optional< std::string > wrong_nb_boundary_corner_line_cmvs(
+        const Model& model,
+        geode::index_t unique_vertex_index,
+        const geode::Corner< Model::dim >& corner,
+        const geode::Line< Model::dim >& line,
+        geode::index_t nb_line_cmvs )
+    {
+        const auto line_is_closed = model.is_closed( line );
+        if( nb_line_cmvs == 1 || ( line_is_closed && nb_line_cmvs == 2 ) )
+        {
+            return std::nullopt;
+        }
+        return absl::StrCat( "unique vertex with index ", unique_vertex_index,
+            " is associated with Corner ",
+            corner.name().value_or( corner.id().string() ), " (",
+            corner.id().string(), "), which is boundary to Line ",
+            line.name().value_or( line.id().string() ), " (",
+            line.id().string(), "), ",
+            line_is_closed ? "a closed Line, so Line should have 1 or 2 cmvs"
+                           : "an open Line, so Line should have 1 cmv",
+            " on this unique vertex, but has ", nb_line_cmvs,
+            " vertices on it instead." );
+    }
 } // namespace
 
 namespace geode
@@ -113,6 +138,28 @@ namespace geode
             const Section& section, index_t unique_vertex_index )
         {
             return line_end_not_a_corner( section, unique_vertex_index );
+        }
+
+        std::optional< std::string > wrong_nb_boundary_corner_line_cmvs_message(
+            const BRep& brep,
+            index_t unique_vertex_index,
+            const Corner3D& corner,
+            const Line3D& line,
+            index_t nb_line_cmvs )
+        {
+            return wrong_nb_boundary_corner_line_cmvs(
+                brep, unique_vertex_index, corner, line, nb_line_cmvs );
+        }
+
+        std::optional< std::string > wrong_nb_boundary_corner_line_cmvs_message(
+            const Section& section,
+            index_t unique_vertex_index,
+            const Corner2D& corner,
+            const Line2D& line,
+            index_t nb_line_cmvs )
+        {
+            return wrong_nb_boundary_corner_line_cmvs(
+                section, unique_vertex_index, corner, line, nb_line_cmvs );
         }
     } // namespace internal
 } // namespace geode
