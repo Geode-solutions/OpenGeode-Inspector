@@ -90,6 +90,7 @@ namespace geode
          * no more than 2 surfaces, and the line is either internal to a
          * surface (and the vertex is in one and only one surface) or a
          * boundary of all the surfaces the vertex is in.
+         * If the vertex is an end of a line, it is also a corner.
          * If the vertex is part of multiple lines, it is also a corner.
          */
         [[nodiscard]] bool section_lines_topology_is_valid(

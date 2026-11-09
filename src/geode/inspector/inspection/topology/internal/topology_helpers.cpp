@@ -23,14 +23,57 @@
 
 #include <geode/inspector/inspection/topology/internal/topology_helpers.hpp>
 
+#include <absl/strings/str_cat.h>
+
+#include <geode/mesh/core/edged_curve.hpp>
 #include <geode/mesh/core/point_set.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/model/mixin/core/block.hpp>
+#include <geode/model/mixin/core/corner.hpp>
+#include <geode/model/mixin/core/line.hpp>
 #include <geode/model/mixin/core/surface.hpp>
 #include <geode/model/representation/core/brep.hpp>
 #include <geode/model/representation/core/section.hpp>
+
+namespace
+{
+    template < typename Model >
+    std::optional< std::string > line_end_not_a_corner(
+        const Model& model, geode::index_t unique_vertex_index )
+    {
+        std::optional< geode::uuid > ending_line_id;
+        for( const auto& cmv :
+            model.component_mesh_vertices( unique_vertex_index ) )
+        {
+            if( cmv.component_id.type
+                == geode::Corner< Model::dim >::component_type_static() )
+            {
+                return std::nullopt;
+            }
+            if( cmv.component_id.type
+                != geode::Line< Model::dim >::component_type_static() )
+            {
+                continue;
+            }
+            const auto& line = model.line( cmv.component_id.id );
+            if( line.is_active()
+                && line.mesh().edges_around_vertex( cmv.vertex ).size() == 1 )
+            {
+                ending_line_id = line.id();
+            }
+        }
+        if( !ending_line_id )
+        {
+            return std::nullopt;
+        }
+        const auto& line = model.line( ending_line_id.value() );
+        return absl::StrCat( "unique vertex ", unique_vertex_index,
+            " is an end of Line ", line.name().value_or( line.id().string() ),
+            " (", line.id().string(), "), but is not a Corner." );
+    }
+} // namespace
 
 namespace geode
 {
@@ -58,6 +101,18 @@ namespace geode
                 }
             }
             return true;
+        }
+
+        std::optional< std::string > line_end_not_a_corner_message(
+            const BRep& brep, index_t unique_vertex_index )
+        {
+            return line_end_not_a_corner( brep, unique_vertex_index );
+        }
+
+        std::optional< std::string > line_end_not_a_corner_message(
+            const Section& section, index_t unique_vertex_index )
+        {
+            return line_end_not_a_corner( section, unique_vertex_index );
         }
     } // namespace internal
 } // namespace geode
