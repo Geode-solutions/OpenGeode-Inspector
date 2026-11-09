@@ -259,7 +259,9 @@ geode::index_t launch_component_meshes_validity_checks(
 
 void check_section( bool string )
 {
-    const auto model_section = geode::load_section(
+    const auto model_section = geode::load_one(
+        geode::load_section(
+            absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) ),
         absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) );
     geode::SectionInspector section_inspector{ model_section };
     auto result = section_inspector.inspect_section();
@@ -282,8 +284,9 @@ void check_section( bool string )
 
 void check_section_test()
 {
-    const auto model_section =
-        geode::load_section( absl::StrCat( geode::DATA_PATH, "test.shp" ) );
+    const auto model_section = geode::load_one(
+        geode::load_section( absl::StrCat( geode::DATA_PATH, "test.shp" ) ),
+        absl::StrCat( geode::DATA_PATH, "test.shp" ) );
     geode::SectionInspector section_inspector{ model_section };
     auto result = section_inspector.inspect_section();
 

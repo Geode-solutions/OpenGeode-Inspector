@@ -60,7 +60,10 @@ int main( int argc, char* argv[] )
         geode::OpenGeodeIOModelLibrary::initialize();
         const auto filename = absl::GetFlag( FLAGS_input );
 
-        inspect_brep( geode::load_brep( filename ) );
+        for( const auto& model : geode::load_brep( filename ) )
+        {
+            inspect_brep( model );
+        }
 
         return 0;
     }

@@ -84,15 +84,21 @@ int main( int argc, char* argv[] )
         if( geode::TriangulatedSurfaceInputFactory3D::has_creator( ext_surf ) )
         {
             inspect_surface_curve(
-                *geode::load_triangulated_surface< 3 >( filename_surf ),
-                *geode::load_edged_curve< 3 >( filename_curv ) );
+                *geode::load_one(
+                    geode::load_triangulated_surface< 3 >( filename_surf ),
+                    filename_surf ),
+                *geode::load_one( geode::load_edged_curve< 3 >( filename_curv ),
+                    filename_curv ) );
         }
         else if( geode::TriangulatedSurfaceInputFactory2D::has_creator(
                      ext_surf ) )
         {
             inspect_surface_curve(
-                *geode::load_triangulated_surface< 2 >( filename_surf ),
-                *geode::load_edged_curve< 2 >( filename_curv ) );
+                *geode::load_one(
+                    geode::load_triangulated_surface< 2 >( filename_surf ),
+                    filename_surf ),
+                *geode::load_one( geode::load_edged_curve< 2 >( filename_curv ),
+                    filename_curv ) );
         }
         else
         {
