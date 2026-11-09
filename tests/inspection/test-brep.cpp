@@ -465,8 +465,9 @@ void check_segmented_cube()
 
 void check_surface_without_unique_vertices()
 {
-    const auto model_brep = geode::load_brep( absl::StrCat(
-        geode::DATA_PATH, "surfaces_without_unique_vertex_id.og_brep" ) );
+    const auto path = absl::StrCat(
+        geode::DATA_PATH, "surfaces_without_unique_vertex_id.og_brep" );
+    const auto model_brep = geode::load_one( geode::load_brep( path ), path );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
     const auto& surfaces_issues =
