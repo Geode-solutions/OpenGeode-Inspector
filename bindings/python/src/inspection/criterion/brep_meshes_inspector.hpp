@@ -29,8 +29,9 @@ namespace geode
 {
     void define_brep_meshes_inspector( pybind11::module& module )
     {
-        pybind11::class_< BRepMeshesInspectionResult >(
-            module, "BRepMeshesInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< BRepMeshesInspectionResult >(
+                module, "BRepMeshesInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "unique_vertices_colocation",
                 &BRepMeshesInspectionResult::unique_vertices_colocation )
@@ -45,9 +46,6 @@ namespace geode
             .def_readwrite( "meshes_non_manifolds",
                 &BRepMeshesInspectionResult::meshes_non_manifolds )
             .def( "nb_issues", &BRepMeshesInspectionResult::nb_issues )
-            .def( "string", &BRepMeshesInspectionResult::string )
-            .def( "__str__", &BRepMeshesInspectionResult::string )
-            .def( "__repr__", &issues_repr< BRepMeshesInspectionResult > )
             .def( "inspection_type",
                 &BRepMeshesInspectionResult::inspection_type );
 

@@ -29,8 +29,9 @@ namespace geode
 {
     void define_section_meshes_degeneration( pybind11::module& module )
     {
-        pybind11::class_< SectionMeshesDegenerationInspectionResult >(
-            module, "SectionMeshesDegenerationInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionMeshesDegenerationInspectionResult >(
+                module, "SectionMeshesDegenerationInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "degenerated_edges",
                 &SectionMeshesDegenerationInspectionResult::degenerated_edges )
@@ -39,11 +40,6 @@ namespace geode
                     degenerated_polygons )
             .def( "nb_issues",
                 &SectionMeshesDegenerationInspectionResult::nb_issues )
-            .def( "string", &SectionMeshesDegenerationInspectionResult::string )
-            .def(
-                "__str__", &SectionMeshesDegenerationInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionMeshesDegenerationInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesDegenerationInspectionResult::inspection_type );
 

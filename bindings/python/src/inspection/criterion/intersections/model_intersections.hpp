@@ -41,17 +41,14 @@ namespace geode
 {
     void define_model_intersections( pybind11::module& module )
     {
-        pybind11::class_< ElementsIntersectionsInspectionResult >(
-            module, "ElementsIntersectionsInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< ElementsIntersectionsInspectionResult >(
+                module, "ElementsIntersectionsInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "elements_intersections",
                 &ElementsIntersectionsInspectionResult::elements_intersections )
             .def(
                 "nb_issues", &ElementsIntersectionsInspectionResult::nb_issues )
-            .def( "string", &ElementsIntersectionsInspectionResult::string )
-            .def( "__str__", &ElementsIntersectionsInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< ElementsIntersectionsInspectionResult > )
             .def( "inspection_type",
                 &ElementsIntersectionsInspectionResult::inspection_type );
 

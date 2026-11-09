@@ -29,8 +29,9 @@ namespace geode
 {
     void define_section_meshes_manifold( pybind11::module& module )
     {
-        pybind11::class_< SectionMeshesManifoldInspectionResult >(
-            module, "SectionMeshesManifoldInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionMeshesManifoldInspectionResult >(
+                module, "SectionMeshesManifoldInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "meshes_non_manifold_vertices",
                 &SectionMeshesManifoldInspectionResult::
@@ -40,10 +41,6 @@ namespace geode
                     meshes_non_manifold_edges )
             .def(
                 "nb_issues", &SectionMeshesManifoldInspectionResult::nb_issues )
-            .def( "string", &SectionMeshesManifoldInspectionResult::string )
-            .def( "__str__", &SectionMeshesManifoldInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionMeshesManifoldInspectionResult > )
             .def( "inspection_type",
                 &SectionMeshesManifoldInspectionResult::inspection_type );
 

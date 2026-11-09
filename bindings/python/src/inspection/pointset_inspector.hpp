@@ -50,15 +50,13 @@ namespace geode
 
     void define_point_set_inspector( pybind11::module& module )
     {
-        pybind11::class_< PointSetInspectionResult >(
-            module, "PointSetInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< PointSetInspectionResult >(
+                module, "PointSetInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_points_groups",
                 &PointSetInspectionResult::colocated_points_groups )
             .def( "nb_issues", &PointSetInspectionResult::nb_issues )
-            .def( "string", &PointSetInspectionResult::string )
-            .def( "__str__", &PointSetInspectionResult::string )
-            .def( "__repr__", &issues_repr< PointSetInspectionResult > )
             .def(
                 "inspection_type", &PointSetInspectionResult::inspection_type );
 

@@ -463,6 +463,24 @@ void check_segmented_cube()
         launch_component_meshes_validity_checks( result.meshes, false );
 }
 
+void check_surface_without_unique_vertices()
+{
+    const auto model_brep = geode::load_brep( absl::StrCat(
+        geode::DATA_PATH, "surfaces_without_unique_vertex_id.og_brep" ) );
+    const geode::BRepInspector brep_inspector{ model_brep };
+    const auto result = brep_inspector.inspect_brep();
+    const auto& surfaces_issues =
+        result.topology.surfaces.surfaces_not_linked_to_a_unique_vertex;
+    geode::OpenGeodeInspectorInspectionException::test(
+        surfaces_issues.nb_issues() == 3,
+        "[surface without unique vertices] Wrong number of Surface vertices "
+        "not linked to a unique vertex: ",
+        surfaces_issues.string() );
+    geode::OpenGeodeInspectorInspectionException::test(
+        !brep_inspector.brep_topology_is_valid(),
+        "[surface without unique vertices] Topology should be invalid" );
+}
+
 int main()
 {
     try
@@ -475,6 +493,7 @@ int main()
         check_model_D( false );
         check_wrong_bsurfaces_model();
         check_segmented_cube();
+        check_surface_without_unique_vertices();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

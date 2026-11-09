@@ -56,8 +56,9 @@ namespace geode
 
     void define_surface_inspector( pybind11::module& module )
     {
-        pybind11::class_< SurfaceInspectionResult >(
-            module, "SurfaceInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SurfaceInspectionResult >(
+                module, "SurfaceInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "polygon_edges_with_wrong_adjacency",
                 &SurfaceInspectionResult::polygon_edges_with_wrong_adjacency )
@@ -74,9 +75,6 @@ namespace geode
             .def_readwrite( "intersecting_elements",
                 &SurfaceInspectionResult::intersecting_elements )
             .def( "nb_issues", &SurfaceInspectionResult::nb_issues )
-            .def( "string", &SurfaceInspectionResult::string )
-            .def( "__str__", &SurfaceInspectionResult::string )
-            .def( "__repr__", &issues_repr< SurfaceInspectionResult > )
             .def(
                 "inspection_type", &SurfaceInspectionResult::inspection_type );
 

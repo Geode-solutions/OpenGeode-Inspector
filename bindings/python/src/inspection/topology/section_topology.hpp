@@ -29,8 +29,9 @@ namespace geode
 {
     void define_section_topology_inspector( pybind11::module& module )
     {
-        pybind11::class_< SectionCornersTopologyInspectionResult >(
-            module, "SectionCornersTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionCornersTopologyInspectionResult >(
+                module, "SectionCornersTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "corners_not_meshed",
                 &SectionCornersTopologyInspectionResult::corners_not_meshed )
@@ -54,15 +55,12 @@ namespace geode
                     unique_vertices_linked_to_not_boundary_line_corner )
             .def( "nb_issues",
                 &SectionCornersTopologyInspectionResult::nb_issues )
-            .def( "string", &SectionCornersTopologyInspectionResult::string )
-            .def( "__str__", &SectionCornersTopologyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionCornersTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionCornersTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< SectionLinesTopologyInspectionResult >(
-            module, "SectionLinesTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionLinesTopologyInspectionResult >(
+                module, "SectionLinesTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "lines_not_meshed",
                 &SectionLinesTopologyInspectionResult::lines_not_meshed )
@@ -87,15 +85,12 @@ namespace geode
                     unique_vertices_linked_to_several_lines_but_not_linked_to_a_corner )
             .def(
                 "nb_issues", &SectionLinesTopologyInspectionResult::nb_issues )
-            .def( "string", &SectionLinesTopologyInspectionResult::string )
-            .def( "__str__", &SectionLinesTopologyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionLinesTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionLinesTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< SectionSurfacesTopologyInspectionResult >(
-            module, "SectionSurfacesTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionSurfacesTopologyInspectionResult >(
+                module, "SectionSurfacesTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "surfaces_not_meshed",
                 &SectionSurfacesTopologyInspectionResult::surfaces_not_meshed )
@@ -112,15 +107,12 @@ namespace geode
                     unique_vertices_linked_to_a_line_but_is_not_on_a_surface_border )
             .def( "nb_issues",
                 &SectionSurfacesTopologyInspectionResult::nb_issues )
-            .def( "string", &SectionSurfacesTopologyInspectionResult::string )
-            .def( "__str__", &SectionSurfacesTopologyInspectionResult::string )
-            .def( "__repr__",
-                &issues_repr< SectionSurfacesTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionSurfacesTopologyInspectionResult::inspection_type );
 
-        pybind11::class_< SectionTopologyInspectionResult >(
-            module, "SectionTopologyInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< SectionTopologyInspectionResult >(
+                module, "SectionTopologyInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite(
                 "corners", &SectionTopologyInspectionResult::corners )
@@ -137,9 +129,6 @@ namespace geode
                 &SectionTopologyInspectionResult::
                     unique_vertices_nonbijectively_linked_to_cmv )
             .def( "nb_issues", &SectionTopologyInspectionResult::nb_issues )
-            .def( "string", &SectionTopologyInspectionResult::string )
-            .def( "__str__", &SectionTopologyInspectionResult::string )
-            .def( "__repr__", &issues_repr< SectionTopologyInspectionResult > )
             .def( "inspection_type",
                 &SectionTopologyInspectionResult::inspection_type );
 

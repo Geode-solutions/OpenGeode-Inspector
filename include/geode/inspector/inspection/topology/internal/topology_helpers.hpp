@@ -23,6 +23,9 @@
 
 #pragma once
 
+#include <optional>
+#include <string>
+
 #include <absl/types/span.h>
 
 #include <geode/basic/algorithm.hpp>
@@ -49,6 +52,14 @@ namespace geode
 
         [[nodiscard]] bool section_surfaces_are_meshed(
             const Section& section );
+
+        [[nodiscard]] std::optional< std::string >
+            line_end_not_a_corner_message(
+                const BRep& brep, index_t unique_vertex_index );
+
+        [[nodiscard]] std::optional< std::string >
+            line_end_not_a_corner_message(
+                const Section& section, index_t unique_vertex_index );
 
         template < typename Model >
         [[nodiscard]] std::vector< uuid > components_uuids( const Model& model,

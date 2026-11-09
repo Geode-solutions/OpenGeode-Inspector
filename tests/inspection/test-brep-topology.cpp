@@ -21,6 +21,7 @@
  *
  */
 
+#include <array>
 #include <tuple>
 
 #include <absl/algorithm/container.h>
@@ -651,6 +652,152 @@ namespace
             "reported: ",
             result.string() );
     }
+
+    void test_internal_line_ending_on_boundary_surface()
+    {
+        constexpr geode::index_t NB_VERTICES{ 5 };
+        constexpr geode::index_t NB_SURFACE_VERTICES{ 4 };
+        constexpr geode::index_t ON_SURFACE{ 3 };
+        constexpr geode::index_t INSIDE_BLOCK{ 4 };
+        const std::array< geode::Point3D, NB_VERTICES > points{
+            geode::Point3D{ { 0, 0, 0 } }, geode::Point3D{ { 2, 0, 0 } },
+            geode::Point3D{ { 0, 2, 0 } }, geode::Point3D{ { 0.5, 0.5, 0 } },
+            geode::Point3D{ { 0.5, 0.5, 1 } }
+        };
+        const std::array< std::array< geode::index_t, 2 >, 3 > base_edges{
+            { { 0, 1 }, { 1, 2 }, { 2, 0 } }
+        };
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        builder.create_unique_vertices( NB_VERTICES );
+        const auto& block = brep.block( builder.add_block() );
+        auto block_builder = builder.block_mesh_builder( block );
+        for( const auto vertex : geode::Range{ NB_VERTICES } )
+        {
+            block_builder->create_point( points[vertex] );
+            builder.set_unique_vertex(
+                { block.component_id(), vertex }, vertex );
+        }
+        for( const auto& edge : base_edges )
+        {
+            block_builder->create_polyhedron(
+                { ON_SURFACE, edge[0], edge[1], INSIDE_BLOCK },
+                { { 1, 3, 2 }, { 0, 2, 3 }, { 3, 1, 0 }, { 0, 1, 2 } } );
+        }
+        block_builder->compute_polyhedron_adjacencies();
+        const auto& surface = brep.surface( builder.add_surface() );
+        auto surface_builder = builder.surface_mesh_builder( surface );
+        for( const auto vertex : geode::Range{ NB_SURFACE_VERTICES } )
+        {
+            surface_builder->create_point( points[vertex] );
+            builder.set_unique_vertex(
+                { surface.component_id(), vertex }, vertex );
+        }
+        for( const auto& edge : base_edges )
+        {
+            surface_builder->create_polygon( { ON_SURFACE, edge[0], edge[1] } );
+        }
+        surface_builder->compute_polygon_adjacencies();
+        builder.add_surface_block_boundary_relationship( surface, block );
+        const auto& line = brep.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( points[ON_SURFACE] );
+        line_builder->create_point( points[INSIDE_BLOCK] );
+        line_builder->create_edge( 0, 1 );
+        builder.set_unique_vertex( { line.component_id(), 0 }, ON_SURFACE );
+        builder.set_unique_vertex( { line.component_id(), 1 }, INSIDE_BLOCK );
+        builder.add_line_block_internal_relationship( line, block );
+        const auto& surface_corner = brep.corner( builder.add_corner() );
+        builder.corner_mesh_builder( surface_corner )
+            ->create_point( points[ON_SURFACE] );
+        builder.set_unique_vertex(
+            { surface_corner.component_id(), 0 }, ON_SURFACE );
+        builder.add_corner_line_boundary_relationship( surface_corner, line );
+        builder.add_corner_surface_internal_relationship(
+            surface_corner, surface );
+        const auto& block_corner = brep.corner( builder.add_corner() );
+        builder.corner_mesh_builder( block_corner )
+            ->create_point( points[INSIDE_BLOCK] );
+        builder.set_unique_vertex(
+            { block_corner.component_id(), 0 }, INSIDE_BLOCK );
+        builder.add_corner_line_boundary_relationship( block_corner, line );
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        const auto& wrong_counts =
+            result.blocks.unique_vertices_with_incorrect_block_cmvs_count;
+        geode::OpenGeodeInspectorInspectionException::test(
+            wrong_counts.nb_issues() == 0,
+            "[line ending on boundary Surface] The end of a Line internal to "
+            "the Block on a boundary Surface should have 1 Block vertex: ",
+            wrong_counts.string() );
+    }
+
+    bool reports_line_end_without_corner( const geode::BRep& brep )
+    {
+        const geode::BRepTopologyInspector inspector{ brep };
+        const auto result = inspector.inspect_brep_topology();
+        return has_message(
+            result.lines.unique_vertices_linked_to_a_single_and_invalid_line,
+            "is an end of Line" );
+    }
+
+    void test_internal_line_end_without_corner()
+    {
+        constexpr geode::index_t NB_BORDER_VERTICES{ 4 };
+        constexpr geode::index_t LINE_START{ 0 };
+        constexpr geode::index_t LINE_END{ 4 };
+        const std::array< geode::Point3D, NB_BORDER_VERTICES + 1 > points{
+            geode::Point3D{ { 0, 0, 0 } }, geode::Point3D{ { 1, 0, 0 } },
+            geode::Point3D{ { 1, 1, 0 } }, geode::Point3D{ { 0, 1, 0 } },
+            geode::Point3D{ { 0.5, 0.5, 0 } }
+        };
+        geode::BRep brep;
+        geode::BRepBuilder builder{ brep };
+        builder.create_unique_vertices( points.size() );
+        const auto& surface = brep.surface( builder.add_surface() );
+        auto surface_builder = builder.surface_mesh_builder( surface );
+        for( const auto vertex : geode::Indices{ points } )
+        {
+            surface_builder->create_point( points[vertex] );
+            builder.set_unique_vertex(
+                { surface.component_id(), vertex }, vertex );
+        }
+        for( const auto vertex : geode::Range{ NB_BORDER_VERTICES } )
+        {
+            surface_builder->create_polygon(
+                { vertex, ( vertex + 1 ) % NB_BORDER_VERTICES, LINE_END } );
+        }
+        surface_builder->compute_polygon_adjacencies();
+        const auto& line = brep.line( builder.add_line() );
+        auto line_builder = builder.line_mesh_builder( line );
+        line_builder->create_point( points[LINE_START] );
+        line_builder->create_point( points[LINE_END] );
+        line_builder->create_edge( 0, 1 );
+        builder.set_unique_vertex( { line.component_id(), 0 }, LINE_START );
+        builder.set_unique_vertex( { line.component_id(), 1 }, LINE_END );
+        builder.add_line_surface_internal_relationship( line, surface );
+        const auto& start_corner = brep.corner( builder.add_corner() );
+        builder.corner_mesh_builder( start_corner )
+            ->create_point( points[LINE_START] );
+        builder.set_unique_vertex(
+            { start_corner.component_id(), 0 }, LINE_START );
+        builder.add_corner_line_boundary_relationship( start_corner, line );
+        geode::OpenGeodeInspectorInspectionException::test(
+            reports_line_end_without_corner( brep ),
+            "[line end without corner] The free end of the internal Line "
+            "should be reported" );
+
+        const auto& end_corner = brep.corner( builder.add_corner() );
+        builder.corner_mesh_builder( end_corner )
+            ->create_point( points[LINE_END] );
+        builder.set_unique_vertex( { end_corner.component_id(), 0 }, LINE_END );
+        builder.add_corner_line_boundary_relationship( end_corner, line );
+        builder.add_corner_surface_internal_relationship( end_corner, surface );
+        geode::OpenGeodeInspectorInspectionException::test(
+            !reports_line_end_without_corner( brep ),
+            "[line end without corner] A Line end on a Corner should not be "
+            "reported" );
+    }
 } // namespace
 
 int main()
@@ -668,6 +815,8 @@ int main()
         test_block_split_by_internal_surface();
         test_block_split_by_internal_surface_without_lines();
         test_link_beyond_component_mesh();
+        test_internal_line_ending_on_boundary_surface();
+        test_internal_line_end_without_corner();
         geode::Logger::info( "TEST SUCCESS" );
         return 0;
     }

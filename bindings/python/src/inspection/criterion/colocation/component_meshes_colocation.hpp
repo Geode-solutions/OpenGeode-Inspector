@@ -40,15 +40,13 @@ namespace geode
 {
     void define_models_meshes_colocation( pybind11::module& module )
     {
-        pybind11::class_< MeshesColocationInspectionResult >(
-            module, "MeshesColocationInspectionResult" )
+        define_issues_string_representation(
+            pybind11::class_< MeshesColocationInspectionResult >(
+                module, "MeshesColocationInspectionResult" ) )
             .def( pybind11::init<>() )
             .def_readwrite( "colocated_points_groups",
                 &MeshesColocationInspectionResult::colocated_points_groups )
             .def( "nb_issues", &MeshesColocationInspectionResult::nb_issues )
-            .def( "string", &MeshesColocationInspectionResult::string )
-            .def( "__str__", &MeshesColocationInspectionResult::string )
-            .def( "__repr__", &issues_repr< MeshesColocationInspectionResult > )
             .def( "inspection_type",
                 &MeshesColocationInspectionResult::inspection_type );
 
