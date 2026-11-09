@@ -37,7 +37,8 @@ namespace geode
         const auto name = absl::StrCat( "EdgedCurveInspector", dimension, "D" );
         pybind11::class_< EdgedCurveInspector,
             EdgedCurveColocation< dimension >,
-            EdgedCurveDegeneration< dimension > >( module, name.c_str() )
+            EdgedCurveDegeneration< dimension >,
+            EdgedCurveIsolation< dimension > >( module, name.c_str() )
             .def( pybind11::init< const EdgedCurve& >() )
             .def( "inspect_edged_curve",
                 &EdgedCurveInspector::inspect_edged_curve );
@@ -61,6 +62,8 @@ namespace geode
                 &EdgedCurveInspectionResult::colocated_points_groups )
             .def_readwrite( "degenerated_edges",
                 &EdgedCurveInspectionResult::degenerated_edges )
+            .def_readwrite( "isolated_vertices",
+                &EdgedCurveInspectionResult::isolated_vertices )
             .def( "nb_issues", &EdgedCurveInspectionResult::nb_issues )
             .def( "inspection_type",
                 &EdgedCurveInspectionResult::inspection_type );

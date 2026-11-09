@@ -77,6 +77,11 @@ namespace geode
             invalidities.invalidities.emplace_back(
                 inspection_result.negative_polyhedra.string() );
         }
+        if( inspection_result.isolated_vertices.nb_issues() != 0 )
+        {
+            invalidities.invalidities.emplace_back(
+                inspection_result.isolated_vertices.string() );
+        }
         return invalidities;
     }
 

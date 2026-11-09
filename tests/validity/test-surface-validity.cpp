@@ -49,8 +49,9 @@ void check_invalidity()
     auto object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 1,
-        "SurfaceMesh should have 1 invalidity due to colocation, not ",
+        object_validity.nb_issues() == 2,
+        "SurfaceMesh should have 2 invalidities due to colocation and "
+        "isolated vertices, not ",
         object_validity.nb_issues() );
 
     builder->create_triangle( { 0, 2, 3 } );
@@ -59,9 +60,9 @@ void check_invalidity()
     object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 2,
-        "SurfaceMesh should have 2 object_validity due to colocation and "
-        "non manifold vertices , not ",
+        object_validity.nb_issues() == 3,
+        "SurfaceMesh should have 3 object_validity due to colocation, "
+        "non manifold vertices and isolated vertices, not ",
         object_validity.nb_issues(), "." );
 
     builder->create_triangle( { 2, 5, 3 } );
@@ -69,10 +70,10 @@ void check_invalidity()
     object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 5,
-        "SurfaceMesh should have 5 object_validity due to colocation, "
-        "degenerated "
-        "edges and polygons, and non manifold edges and vertices, not ",
+        object_validity.nb_issues() == 6,
+        "SurfaceMesh should have 6 object_validity due to colocation, "
+        "degenerated edges and polygons, non manifold edges and vertices, "
+        "and isolated vertices, not ",
         object_validity.nb_issues(), "." );
 
     builder->set_polygon_adjacent( { 0, 1 }, 2 );
@@ -83,9 +84,9 @@ void check_invalidity()
     object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 3,
-        "SurfaceMesh should have 3 object_validity due to colocation, "
-        "degenerated edges and polygons, not ",
+        object_validity.nb_issues() == 4,
+        "SurfaceMesh should have 4 object_validity due to colocation, "
+        "degenerated edges and polygons, and isolated vertices, not ",
         object_validity.nb_issues(), "." );
 
     builder->create_point( geode::Point3D{ { 1., -1., -1. } } );
@@ -94,11 +95,10 @@ void check_invalidity()
     object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 6,
-        "SurfaceMesh should have 6 object_validity due to colocation, "
-        "degenerated "
-        "edges and polygons, non manifold edges and vertices, and "
-        "intersections, not ",
+        object_validity.nb_issues() == 7,
+        "SurfaceMesh should have 7 object_validity due to colocation, "
+        "degenerated edges and polygons, non manifold edges and vertices, "
+        "intersections, and isolated vertices, not ",
         object_validity.nb_issues(), "." );
 
     builder->set_polygon_adjacent( { 1, 0 }, 3 );
@@ -107,9 +107,10 @@ void check_invalidity()
     object_validity = geode::is_surface_valid( *surface );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 5,
-        "SurfaceMesh should have 5 object_validity due to adjacencies, "
-        "colocation, degenerated edges and polygons, and intersections, not ",
+        object_validity.nb_issues() == 6,
+        "SurfaceMesh should have 6 object_validity due to adjacencies, "
+        "colocation, degenerated edges and polygons, intersections, and "
+        "isolated vertices, not ",
         object_validity.nb_issues(), "." );
 }
 

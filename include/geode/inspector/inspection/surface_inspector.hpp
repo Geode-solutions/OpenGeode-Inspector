@@ -28,6 +28,7 @@
 #include <geode/inspector/inspection/criterion/colocation/surface_colocation.hpp>
 #include <geode/inspector/inspection/criterion/degeneration/surface_degeneration.hpp>
 #include <geode/inspector/inspection/criterion/intersections/surface_intersections.hpp>
+#include <geode/inspector/inspection/criterion/isolation/surface_isolation.hpp>
 #include <geode/inspector/inspection/criterion/manifold/surface_edge_manifold.hpp>
 #include <geode/inspector/inspection/criterion/manifold/surface_vertex_manifold.hpp>
 #include <geode/inspector/inspection/criterion/negative_elements/surface_negative_elements.hpp>
@@ -61,6 +62,9 @@ namespace geode
         InspectionIssues< index_t > negative_polygons{
             "Negative polygons not tested"
         };
+        InspectionIssues< index_t > isolated_vertices{
+            "Isolation of vertices not tested"
+        };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -77,6 +81,7 @@ namespace geode
      * @extends SurfaceMeshVertexManifold
      * @extends SurfaceMeshIntersections
      * @extends SurfaceMeshNegativeElements
+     * @extends SurfaceMeshIsolation
      */
     template < index_t dimension >
     class SurfaceMeshInspector : public AddInspectors< SurfaceMesh< dimension >,
@@ -86,7 +91,8 @@ namespace geode
                                      SurfaceMeshEdgeManifold< dimension >,
                                      SurfaceMeshVertexManifold< dimension >,
                                      SurfaceMeshIntersections< dimension >,
-                                     SurfaceMeshNegativeElements< dimension > >
+                                     SurfaceMeshNegativeElements< dimension >,
+                                     SurfaceMeshIsolation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SurfaceMeshInspector );
 

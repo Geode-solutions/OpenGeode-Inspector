@@ -48,8 +48,9 @@ void check_invalidity()
     auto object_validity = geode::is_solid_valid( *solid );
     geode::Logger::info( "ObjectValidity: \n", object_validity.string() );
     geode::OpenGeodeInspectorValidityException::test(
-        object_validity.nb_issues() == 1,
-        "SolidMesh should have 1 invalidity due to colocation, not ",
+        object_validity.nb_issues() == 2,
+        "SolidMesh should have 2 invalidities due to colocation and isolated "
+        "vertices, not ",
         object_validity.nb_issues() );
 
     builder->create_tetrahedron( { 0, 1, 2, 3 } );

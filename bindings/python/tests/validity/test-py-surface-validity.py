@@ -39,23 +39,23 @@ def check_validity():
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 1:
-        raise ValueError( "SurfaceMesh should have 1 invalidity due to colocation, not "+str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 2:
+        raise ValueError( "SurfaceMesh should have 2 invalidities due to colocation and isolated vertices, not "+str(object_validity.nb_issues()) )
 
     builder.create_triangle( [ 0, 2, 3 ] )
     builder.create_triangle( [ 2, 4, 5 ] )
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 2:
-        raise ValueError( "SurfaceMesh should have 2 object_validity due to colocation and non manifold vertices , not "+str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 3:
+        raise ValueError( "SurfaceMesh should have 3 object_validity due to colocation, non manifold vertices and isolated vertices, not "+str(object_validity.nb_issues()) )
 
     builder.create_triangle( [ 2, 5, 3 ] )
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 5:
-        raise ValueError( "SurfaceMesh should have 5 object_validity due to colocation, degenerated edges and polygons, and non manifold edges and vertices, not "+str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 6:
+        raise ValueError( "SurfaceMesh should have 6 object_validity due to colocation, degenerated edges and polygons, non manifold edges and vertices, and isolated vertices, not "+str(object_validity.nb_issues()) )
 
     builder.set_polygon_adjacent( geode.PolygonEdge( 0, 1 ), 2 )
     builder.set_polygon_adjacent( geode.PolygonEdge( 2, 2 ), 0 )
@@ -64,24 +64,24 @@ def check_validity():
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 3:
-        raise ValueError( "SurfaceMesh should have 3 object_validity due to colocation, degenerated edges and polygons, not "+str(object_validity.nb_issues()))
+    if not object_validity.nb_issues() == 4:
+        raise ValueError( "SurfaceMesh should have 4 object_validity due to colocation, degenerated edges and polygons, and isolated vertices, not "+str(object_validity.nb_issues()))
 
     builder.create_point( geode.Point3D( [ 1., -1., -1. ] ) )
     builder.create_triangle( [ 2, 4, 7 ] )
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 6:
-        raise ValueError( "SurfaceMesh should have 6 object_validity due to colocation, degenerated edges and polygons, non manifold edges and vertices, and intersections, not "+str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 7:
+        raise ValueError( "SurfaceMesh should have 7 object_validity due to colocation, degenerated edges and polygons, non manifold edges and vertices, intersections, and isolated vertices, not "+str(object_validity.nb_issues()) )
 
     builder.set_polygon_adjacent( geode.PolygonEdge( 1, 0 ), 3 )
     builder.set_polygon_adjacent( geode.PolygonEdge( 3, 0 ), 1 )
 
     object_validity = validity.is_surface_valid3D( surface )
     print( "ObjectValidity: \n"+ object_validity.string() )
-    if not object_validity.nb_issues() == 5:
-        raise ValueError( "SurfaceMesh should have 5 object_validity due to adjacencies, colocation, degenerated edges and polygons, and intersections, not "+str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 6:
+        raise ValueError( "SurfaceMesh should have 6 object_validity due to adjacencies, colocation, degenerated edges and polygons, intersections, and isolated vertices, not "+str(object_validity.nb_issues()) )
 
 
 if __name__ == "__main__":

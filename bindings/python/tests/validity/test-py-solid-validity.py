@@ -39,8 +39,8 @@ def check_validity():
 
     object_validity = validity.is_solid_valid3D( solid )
     print( "ObjectValidity: \n" + object_validity.string() )
-    if not object_validity.nb_issues() == 1:
-        raise ValueError( "SolidMesh should have 1 invalidity due to colocation, not " +str(object_validity.nb_issues()) )
+    if not object_validity.nb_issues() == 2:
+        raise ValueError( "SolidMesh should have 2 invalidities due to colocation and isolated vertices, not " +str(object_validity.nb_issues()) )
 
     builder.create_tetrahedron( [ 0, 1, 2, 3 ] )
     builder.create_tetrahedron( [ 5, 4, 6, 3 ] )
