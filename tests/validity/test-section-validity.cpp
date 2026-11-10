@@ -34,7 +34,9 @@
 
 void check_section()
 {
-    const auto model_section = geode::load_section(
+    const auto model_section = geode::load_one(
+        geode::load_section(
+            absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) ),
         absl::StrCat( geode::DATA_PATH, "vertical_lines.og_sctn" ) );
     const auto invalidities = geode::is_section_valid( model_section );
 

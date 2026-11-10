@@ -69,11 +69,17 @@ int main( int argc, char* argv[] )
 
         if( geode::PointSetInputFactory3D::has_creator( ext ) )
         {
-            inspect_point_set( *geode::load_point_set< 3 >( filename ) );
+            for( const auto& mesh : geode::load_point_set< 3 >( filename ) )
+            {
+                inspect_point_set( *mesh );
+            }
         }
         else if( geode::PointSetInputFactory2D::has_creator( ext ) )
         {
-            inspect_point_set( *geode::load_point_set< 2 >( filename ) );
+            for( const auto& mesh : geode::load_point_set< 2 >( filename ) )
+            {
+                inspect_point_set( *mesh );
+            }
         }
         else
         {

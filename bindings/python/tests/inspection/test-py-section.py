@@ -172,7 +172,10 @@ def data_dir():
 
 
 def check_section(verbose):
-    model_section = opengeode.load_section(data_dir() + "/vertical_lines.og_sctn")
+    model_section = opengeode.load_one(
+        opengeode.load_section(data_dir() + "/vertical_lines.og_sctn"),
+        data_dir() + "/vertical_lines.og_sctn",
+    )
     result = inspector.inspect_section(model_section)
     section_inspector = inspector.SectionInspector(model_section)
     if section_inspector.section_topology_is_valid():

@@ -74,19 +74,33 @@ int main( int argc, char* argv[] )
 
         if( geode::TetrahedralSolidInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_tetrahedral_solid< 3 >( filename ) );
+            for( const auto& mesh :
+                geode::load_tetrahedral_solid< 3 >( filename ) )
+            {
+                inspect_solid( *mesh );
+            }
         }
         else if( geode::PolyhedralSolidInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_polyhedral_solid< 3 >( filename ) );
+            for( const auto& mesh :
+                geode::load_polyhedral_solid< 3 >( filename ) )
+            {
+                inspect_solid( *mesh );
+            }
         }
         else if( geode::HybridSolidInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_hybrid_solid< 3 >( filename ) );
+            for( const auto& mesh : geode::load_hybrid_solid< 3 >( filename ) )
+            {
+                inspect_solid( *mesh );
+            }
         }
         else if( geode::RegularGridInputFactory3D::has_creator( ext ) )
         {
-            inspect_solid( *geode::load_regular_grid< 3 >( filename ) );
+            for( const auto& mesh : geode::load_regular_grid< 3 >( filename ) )
+            {
+                inspect_solid( *mesh );
+            }
         }
         else
         {
