@@ -23,6 +23,8 @@
 
 #include <optional>
 
+#include <absl/container/linked_hash_map.h>
+
 #include <geode/inspector/inspection/topology/internal/topology_helpers.hpp>
 #include <geode/inspector/inspection/topology/section_corners_topology.hpp>
 
@@ -132,19 +134,10 @@ namespace geode
             {
                 return false;
             }
-            for( const auto& line :
-                section_.component_mesh_vertices( unique_vertex_index ) )
-            {
-                if( line.component_id.type != Line2D::component_type_static() )
-                {
-                    continue;
-                }
-                if( !section_.Relationships::is_boundary(
-                        corner_uuid, line.component_id.id ) )
-                {
-                    return false;
-                }
-            }
+        }
+        if( corner_is_part_of_line_but_not_boundary( unique_vertex_index ) )
+        {
+            return false;
         }
         return true;
     }
@@ -247,6 +240,15 @@ namespace geode
                 continue;
             }
             const auto& corner_uuid = cmv.component_id.id;
+            const auto& corner = section_.corner( corner_uuid );
+            absl::linked_hash_map< uuid, index_t > line_to_nb_cmvs;
+            for( const auto& incident_line : section_.incidences( corner ) )
+            {
+                if( incident_line.is_active() )
+                {
+                    line_to_nb_cmvs.try_emplace( incident_line.id(), 0 );
+                }
+            }
             for( const auto& line :
                 section_.component_mesh_vertices( unique_vertex_index ) )
             {
@@ -259,15 +261,28 @@ namespace geode
                 {
                     return absl::StrCat( "unique vertex ", unique_vertex_index,
                         " is associated with Corner ",
-                        section_.corner( corner_uuid )
-                            .name()
-                            .value_or( corner_uuid.string() ),
-                        " (", corner_uuid.string(), "), part of Line ",
+                        corner.name().value_or( corner_uuid.string() ), " (",
+                        corner_uuid.string(), "), part of Line ",
                         section_.line( line.component_id.id )
                             .name()
                             .value_or( line.component_id.id.string() ),
                         " (", line.component_id.id.string(),
                         "), but is not a boundary of the Line." );
+                }
+                if( section_.line( line.component_id.id ).is_active() )
+                {
+                    line_to_nb_cmvs.try_emplace( line.component_id.id, 0 )
+                        .first->second++;
+                }
+            }
+            for( const auto& [line_id, nb_cmvs] : line_to_nb_cmvs )
+            {
+                if( auto message =
+                        internal::wrong_nb_boundary_corner_line_cmvs_message(
+                            section_, unique_vertex_index, corner,
+                            section_.line( line_id ), nb_cmvs ) )
+                {
+                    return message;
                 }
             }
         }
