@@ -213,7 +213,10 @@ def data_dir():
 
 
 def check_a1(verbose):
-    model_brep = opengeode.load_brep(data_dir() + "/model_A1.og_brep")
+    model_brep = opengeode.load_one(
+        opengeode.load_brep(data_dir() + "/model_A1.og_brep"),
+        data_dir() + "/model_A1.og_brep",
+    )
     result = inspector.inspect_brep(model_brep)
     brep_inspector = inspector.BRepInspector(model_brep)
     if brep_inspector.brep_topology_is_valid():
@@ -260,7 +263,10 @@ def inspect_model_A1(model_brep, verbose):
 
 
 def check_a1_valid(verbose):
-    model_brep = opengeode.load_brep(data_dir() + "/model_A1_valid.og_brep")
+    model_brep = opengeode.load_one(
+        opengeode.load_brep(data_dir() + "/model_A1_valid.og_brep"),
+        data_dir() + "/model_A1_valid.og_brep",
+    )
     inspect_model_A1(model_brep, verbose)
 
 
@@ -285,7 +291,10 @@ def inspect_model_mss(model_brep, verbose):
 
 
 def check_model_mss(verbose):
-    model_brep = opengeode.load_brep(data_dir() + "/mss.og_brep")
+    model_brep = opengeode.load_one(
+        opengeode.load_brep(data_dir() + "/mss.og_brep"),
+        data_dir() + "/mss.og_brep",
+    )
     inspect_model_mss(model_brep, verbose)
 
 
@@ -310,7 +319,10 @@ def inspect_model_D(model_brep, verbose):
 
 
 def check_model_D(verbose):
-    model_brep = opengeode.load_brep(data_dir() + "/model_D.og_brep")
+    model_brep = opengeode.load_one(
+        opengeode.load_brep(data_dir() + "/model_D.og_brep"),
+        data_dir() + "/model_D.og_brep",
+    )
     inspect_model_D(model_brep, verbose)
 
 

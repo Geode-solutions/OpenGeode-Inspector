@@ -33,7 +33,9 @@
 
 void check_model_a1()
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug( "model_A1 invalidities: \n", invalidities.string()
@@ -45,7 +47,9 @@ void check_model_a1()
 
 void check_model_a1_valid()
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug(
@@ -57,8 +61,9 @@ void check_model_a1_valid()
 
 void check_model_mss()
 {
-    const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
+    const auto model_brep = geode::load_one(
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) ),
+        absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug( "model mss invalidities: \n", invalidities.string()
     // );
@@ -69,8 +74,9 @@ void check_model_mss()
 
 void check_model_D()
 {
-    const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
+    const auto model_brep = geode::load_one(
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) ),
+        absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug( "model_D invalidities: \n", invalidities.string()
     // );
@@ -81,8 +87,11 @@ void check_model_D()
 
 void check_wrong_bsurfaces_model()
 {
-    const auto model_brep = geode::load_brep( absl::StrCat(
-        geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
+    const auto model_brep =
+        geode::load_one( geode::load_brep( absl::StrCat( geode::DATA_PATH,
+                             "wrong_boundary_surface_model.og_brep" ) ),
+            absl::StrCat(
+                geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug( "wrong_boundary_surface_model invalidities: \n",
     //     invalidities.string() );
@@ -93,7 +102,9 @@ void check_wrong_bsurfaces_model()
 
 void check_segmented_cube()
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) );
     const auto invalidities = geode::is_brep_valid( model_brep );
     // geode::Logger::debug(

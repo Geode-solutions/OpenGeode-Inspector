@@ -322,7 +322,9 @@ geode::index_t launch_component_meshes_validity_checks(
 
 void check_model_a1( bool string )
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "model_A1.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
@@ -345,7 +347,9 @@ void check_model_a1( bool string )
 
 void check_model_a1_valid( bool string )
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "model_A1_valid.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
@@ -368,8 +372,9 @@ void check_model_a1_valid( bool string )
 
 void check_model_mss( bool string )
 {
-    const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
+    const auto model_brep = geode::load_one(
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) ),
+        absl::StrCat( geode::DATA_PATH, "mss.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
@@ -391,8 +396,9 @@ void check_model_mss( bool string )
 
 void check_model_D( bool string )
 {
-    const auto model_brep =
-        geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
+    const auto model_brep = geode::load_one(
+        geode::load_brep( absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) ),
+        absl::StrCat( geode::DATA_PATH, "model_D.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
 
@@ -412,8 +418,11 @@ void check_model_D( bool string )
 
 void check_wrong_bsurfaces_model()
 {
-    const auto model_brep = geode::load_brep( absl::StrCat(
-        geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
+    const auto model_brep =
+        geode::load_one( geode::load_brep( absl::StrCat( geode::DATA_PATH,
+                             "wrong_boundary_surface_model.og_brep" ) ),
+            absl::StrCat(
+                geode::DATA_PATH, "wrong_boundary_surface_model.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
     geode::OpenGeodeInspectorInspectionException::test(
@@ -440,7 +449,9 @@ void check_wrong_bsurfaces_model()
 
 void check_segmented_cube()
 {
-    const auto model_brep = geode::load_brep(
+    const auto model_brep = geode::load_one(
+        geode::load_brep(
+            absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) ),
         absl::StrCat( geode::DATA_PATH, "cube_segmented.og_brep" ) );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
@@ -454,8 +465,9 @@ void check_segmented_cube()
 
 void check_surface_without_unique_vertices()
 {
-    const auto model_brep = geode::load_brep( absl::StrCat(
-        geode::DATA_PATH, "surfaces_without_unique_vertex_id.og_brep" ) );
+    const auto path = absl::StrCat(
+        geode::DATA_PATH, "surfaces_without_unique_vertex_id.og_brep" );
+    const auto model_brep = geode::load_one( geode::load_brep( path ), path );
     const geode::BRepInspector brep_inspector{ model_brep };
     const auto result = brep_inspector.inspect_brep();
     const auto& surfaces_issues =

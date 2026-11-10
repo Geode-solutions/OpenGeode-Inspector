@@ -32,7 +32,10 @@ def data_dir():
 
 
 def check_section():
-    model_section = geode.load_section(data_dir() + "/vertical_lines.og_sctn")
+    model_section = geode.load_one(
+        geode.load_section(data_dir() + "/vertical_lines.og_sctn"),
+        data_dir() + "/vertical_lines.og_sctn",
+    )
     result = validity.is_section_valid(model_section)
     if result.nb_issues()!=0:
         raise ValueError( "[Test] Section vertical_lines should have 0 issues." )
