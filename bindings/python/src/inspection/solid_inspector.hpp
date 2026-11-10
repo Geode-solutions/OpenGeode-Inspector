@@ -39,7 +39,8 @@ namespace geode
             SolidMeshDegeneration< dimension >,
             SolidMeshVertexManifold< dimension >,
             SolidMeshEdgeManifold< dimension >,
-            SolidMeshFacetManifold< dimension > >( module, name.c_str() )
+            SolidMeshFacetManifold< dimension >,
+            SolidMeshIsolation< dimension > >( module, name.c_str() )
             .def( pybind11::init< const SolidMesh& >() )
             .def( "inspect_solid", &SolidMeshInspector::inspect_solid );
 
@@ -72,6 +73,8 @@ namespace geode
                 &SolidInspectionResult::non_manifold_edges )
             .def_readwrite( "non_manifold_facets",
                 &SolidInspectionResult::non_manifold_facets )
+            .def_readwrite(
+                "isolated_vertices", &SolidInspectionResult::isolated_vertices )
             .def( "nb_issues", &SolidInspectionResult::nb_issues )
             .def( "inspection_type", &SolidInspectionResult::inspection_type );
         do_define_solid_inspector< 3 >( module );

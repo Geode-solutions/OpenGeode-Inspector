@@ -26,6 +26,7 @@
 #include <geode/inspector/inspection/common.hpp>
 #include <geode/inspector/inspection/criterion/colocation/edgedcurve_colocation.hpp>
 #include <geode/inspector/inspection/criterion/degeneration/edgedcurve_degeneration.hpp>
+#include <geode/inspector/inspection/criterion/isolation/edgedcurve_isolation.hpp>
 #include <geode/inspector/inspection/mixin/add_inspectors.hpp>
 
 namespace geode
@@ -37,6 +38,9 @@ namespace geode
         };
         InspectionIssues< index_t > degenerated_edges{
             "Degeneration of edges not tested"
+        };
+        InspectionIssues< index_t > isolated_vertices{
+            "Isolation of vertices not tested"
         };
 
         [[nodiscard]] index_t nb_issues() const;
@@ -50,11 +54,13 @@ namespace geode
      * Class for inspecting an EdgedCurve
      * @extends EdgedCurveColocation
      * @extends EdgedCurveDegeneration
+     * @extends EdgedCurveIsolation
      */
     template < index_t dimension >
     class EdgedCurveInspector : public AddInspectors< EdgedCurve< dimension >,
                                     EdgedCurveColocation< dimension >,
-                                    EdgedCurveDegeneration< dimension > >
+                                    EdgedCurveDegeneration< dimension >,
+                                    EdgedCurveIsolation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( EdgedCurveInspector );
 

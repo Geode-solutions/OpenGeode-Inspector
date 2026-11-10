@@ -43,6 +43,12 @@
  )
  
  add_geode_python_test(
+     SOURCE "test-py-edgedcurve-isolation.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_inspection
+ )
+ 
+ add_geode_python_test(
      SOURCE "test-py-pointset-colocation.py"
      DEPENDENCIES 
          ${PROJECT_NAME}::py_inspection
@@ -61,6 +67,12 @@
  )
  
  add_geode_python_test(
+     SOURCE "test-py-solid-isolation.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_inspection
+ )
+ 
+ add_geode_python_test(
      SOURCE "test-py-surface-adjacency.py"
      DEPENDENCIES 
          ${PROJECT_NAME}::py_inspection
@@ -74,6 +86,12 @@
  
  add_geode_python_test(
      SOURCE "test-py-surface-degeneration.py"
+     DEPENDENCIES 
+         ${PROJECT_NAME}::py_inspection
+ )
+ 
+ add_geode_python_test(
+     SOURCE "test-py-surface-isolation.py"
      DEPENDENCIES 
          ${PROJECT_NAME}::py_inspection
  )

@@ -41,7 +41,8 @@ namespace geode
             SurfaceMeshDegeneration< dimension >,
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension >,
-            SurfaceMeshIntersections< dimension > >( module, name.c_str() )
+            SurfaceMeshIntersections< dimension >,
+            SurfaceMeshIsolation< dimension > >( module, name.c_str() )
             .def( pybind11::init< const SurfaceMesh& >() )
             .def( "inspect_surface", &SurfaceMeshInspector::inspect_surface );
 
@@ -74,6 +75,8 @@ namespace geode
                 &SurfaceInspectionResult::non_manifold_vertices )
             .def_readwrite( "intersecting_elements",
                 &SurfaceInspectionResult::intersecting_elements )
+            .def_readwrite( "isolated_vertices",
+                &SurfaceInspectionResult::isolated_vertices )
             .def( "nb_issues", &SurfaceInspectionResult::nb_issues )
             .def(
                 "inspection_type", &SurfaceInspectionResult::inspection_type );

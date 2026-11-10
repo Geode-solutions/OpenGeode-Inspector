@@ -27,6 +27,7 @@
 #include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
 #include <geode/inspector/inspection/criterion/colocation/solid_colocation.hpp>
 #include <geode/inspector/inspection/criterion/degeneration/solid_degeneration.hpp>
+#include <geode/inspector/inspection/criterion/isolation/solid_isolation.hpp>
 #include <geode/inspector/inspection/criterion/manifold/solid_edge_manifold.hpp>
 #include <geode/inspector/inspection/criterion/manifold/solid_facet_manifold.hpp>
 #include <geode/inspector/inspection/criterion/manifold/solid_vertex_manifold.hpp>
@@ -62,6 +63,9 @@ namespace geode
         InspectionIssues< index_t > negative_polyhedra{
             "Negative polyhedra not tested"
         };
+        InspectionIssues< index_t > isolated_vertices{
+            "Isolation of vertices not tested"
+        };
 
         [[nodiscard]] index_t nb_issues() const;
 
@@ -79,6 +83,7 @@ namespace geode
      * @extends SolidMeshEdgeManifold
      * @extends SolidMeshFacetManifold
      * @extends SolidMeshNegativeElements
+     * @extends SolidMeshIsolation
      */
     template < index_t dimension >
     class opengeode_inspector_inspection_api SolidMeshInspector
@@ -89,7 +94,8 @@ namespace geode
               SolidMeshVertexManifold< dimension >,
               SolidMeshEdgeManifold< dimension >,
               SolidMeshFacetManifold< dimension >,
-              SolidMeshNegativeElements< dimension > >
+              SolidMeshNegativeElements< dimension >,
+              SolidMeshIsolation< dimension > >
     {
         OPENGEODE_DISABLE_COPY( SolidMeshInspector );
         OPENGEODE_TEMPLATE_ASSERT_3D( dimension );

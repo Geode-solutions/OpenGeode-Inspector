@@ -32,13 +32,13 @@ namespace geode
     index_t EdgedCurveInspectionResult::nb_issues() const
     {
         return colocated_points_groups.nb_issues()
-               + degenerated_edges.nb_issues();
+               + degenerated_edges.nb_issues() + isolated_vertices.nb_issues();
     }
 
     std::string EdgedCurveInspectionResult::string() const
     {
-        return absl::StrCat(
-            colocated_points_groups.string(), degenerated_edges.string() );
+        return absl::StrCat( colocated_points_groups.string(),
+            degenerated_edges.string(), isolated_vertices.string() );
     }
 
     std::string EdgedCurveInspectionResult::inspection_type() const
@@ -51,7 +51,8 @@ namespace geode
         const EdgedCurve< dimension >& mesh )
         : AddInspectors< EdgedCurve< dimension >,
               EdgedCurveColocation< dimension >,
-              EdgedCurveDegeneration< dimension > >{ mesh }
+              EdgedCurveDegeneration< dimension >,
+              EdgedCurveIsolation< dimension > >{ mesh }
     {
     }
 
@@ -67,6 +68,9 @@ namespace geode
             },
             [&result, this] {
                 result.degenerated_edges = this->degenerated_edges();
+            },
+            [&result, this] {
+                result.isolated_vertices = this->isolated_vertices();
             } );
         return result;
     }

@@ -66,12 +66,14 @@ The available checks for each mesh type are:
 - EdgedCurve:
   - Colocation of vertices
   - Degeneration of edges
+  - Isolation of vertices
 - SurfaceMesh:
   - Adjacency of polygons
   - Colocation of vertices
   - Degeneration of edges
   - Degeneration of polygons
   - Intersection of triangles (for triangulated surfaces)
+  - Isolation of vertices
   - Manifold of vertices
   - Manifold of edges
 - SolidMesh:
@@ -79,6 +81,7 @@ The available checks for each mesh type are:
   - Colocation of vertices
   - Degeneration of edges
   - Degeneration of polyhedra
+  - Isolation of vertices
   - Manifold of vertices
   - Manifold of edges
   - Manifold of facets

@@ -49,6 +49,10 @@
 #include "criterion/intersections/surface_curve_intersections.hpp"
 #include "criterion/intersections/surface_intersections.hpp"
 
+#include "criterion/isolation/edgedcurve_isolation.hpp"
+#include "criterion/isolation/solid_isolation.hpp"
+#include "criterion/isolation/surface_isolation.hpp"
+
 #include "criterion/manifold/brep_meshes_manifold.hpp"
 #include "criterion/manifold/section_meshes_manifold.hpp"
 #include "criterion/manifold/solid_edge_manifold.hpp"
@@ -121,6 +125,9 @@ PYBIND11_MODULE( opengeode_inspector_py_inspection, module )
     geode::define_surface_intersections( module );
     geode::define_surface_curve_intersections( module );
     geode::define_model_intersections( module );
+    geode::define_edged_curve_isolation( module );
+    geode::define_surface_isolation( module );
+    geode::define_solid_isolation( module );
     geode::define_surface_edge_manifold( module );
     geode::define_surface_vertex_manifold( module );
     geode::define_solid_edge_manifold( module );

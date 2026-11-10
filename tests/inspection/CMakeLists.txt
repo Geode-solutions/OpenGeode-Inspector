@@ -99,6 +99,15 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-edgedcurve-isolation.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-surface-degeneration.cpp"
     DEPENDENCIES
         OpenGeode::basic
@@ -154,6 +163,15 @@ add_geode_test(
 )
 
 add_geode_test(
+    SOURCE "test-surface-isolation.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
     SOURCE "test-surface-negative-elements.cpp"
     DEPENDENCIES
         OpenGeode::basic
@@ -164,6 +182,15 @@ add_geode_test(
 
 add_geode_test(
     SOURCE "test-solid-manifold.cpp"
+    DEPENDENCIES
+        OpenGeode::basic
+        OpenGeode::geometry
+        OpenGeode::mesh
+        ${PROJECT_NAME}::inspection
+)
+
+add_geode_test(
+    SOURCE "test-solid-isolation.cpp"
     DEPENDENCIES
         OpenGeode::basic
         OpenGeode::geometry

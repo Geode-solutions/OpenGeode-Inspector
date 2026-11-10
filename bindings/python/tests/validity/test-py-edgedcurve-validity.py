@@ -39,8 +39,8 @@ def check_validity():
 
     first_object_validity = validity.is_edged_curve_valid3D( curve )
     print( "ObjectValidity: \n" + first_object_validity.string() )
-    if not first_object_validity.nb_issues() == 1:
-        raise ValueError( "EdgedCurve should have 1 invalidity due to colocation, not "+ str(first_object_validity.nb_issues()) )
+    if not first_object_validity.nb_issues() == 2:
+        raise ValueError( "EdgedCurve should have 2 invalidities due to colocation and isolated vertices, not "+ str(first_object_validity.nb_issues()) )
 
     builder.create_edge_with_vertices( 0, 1 )
     builder.create_edge_with_vertices( 1, 2 )

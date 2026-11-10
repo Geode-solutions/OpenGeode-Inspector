@@ -38,7 +38,7 @@ namespace geode
                + non_manifold_vertices.nb_issues()
                + non_manifold_edges.nb_issues()
                + non_manifold_facets.nb_issues()
-               + negative_polyhedra.nb_issues();
+               + negative_polyhedra.nb_issues() + isolated_vertices.nb_issues();
     }
 
     std::string SolidInspectionResult::string() const
@@ -47,7 +47,7 @@ namespace geode
             colocated_points_groups.string(), degenerated_edges.string(),
             degenerated_polyhedra.string(), non_manifold_vertices.string(),
             non_manifold_edges.string(), non_manifold_facets.string(),
-            negative_polyhedra.string() );
+            negative_polyhedra.string(), isolated_vertices.string() );
     }
 
     std::string SolidInspectionResult::inspection_type() const
@@ -65,7 +65,8 @@ namespace geode
               SolidMeshVertexManifold< dimension >,
               SolidMeshEdgeManifold< dimension >,
               SolidMeshFacetManifold< dimension >,
-              SolidMeshNegativeElements< dimension > >{ mesh }
+              SolidMeshNegativeElements< dimension >,
+              SolidMeshIsolation< dimension > >{ mesh }
     {
     }
 
@@ -99,6 +100,9 @@ namespace geode
             },
             [&result, this] {
                 result.negative_polyhedra = this->negative_polyhedra();
+            },
+            [&result, this] {
+                result.isolated_vertices = this->isolated_vertices();
             } );
         return result;
     }

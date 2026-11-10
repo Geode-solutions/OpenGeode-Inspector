@@ -48,8 +48,9 @@ void check_invalidity()
 
     const auto first_object_validity = geode::is_edged_curve_valid( *curve );
     geode::OpenGeodeInspectorValidityException::test(
-        first_object_validity.nb_issues() == 1,
-        "EdgedCurve should have 1 invalidity due to colocation, not ",
+        first_object_validity.nb_issues() == 2,
+        "EdgedCurve should have 2 invalidities due to colocation and "
+        "isolated vertices, not ",
         first_object_validity.nb_issues() );
     geode::Logger::info( "ObjectValidity: \n", first_object_validity.string() );
 
