@@ -21,12 +21,15 @@
  *
  */
 
+#include <geode/tests_config.hpp>
+
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
 
 #include <geode/geometry/point.hpp>
 #include <geode/mesh/builder/triangulated_surface_builder.hpp>
 #include <geode/mesh/core/triangulated_surface.hpp>
+#include <geode/mesh/io/triangulated_surface_input.hpp>
 
 #include <geode/inspector/inspection/criterion/adjacency/surface_adjacency.hpp>
 
@@ -296,14 +299,12 @@ void check_non_adjacency_inversed_triangle3D()
 
 void check_adjacency_out_of_range()
 {
-    auto surface = geode::TriangulatedSurface2D::create();
-    auto builder = geode::TriangulatedSurfaceBuilder2D::create( *surface );
-    builder->create_point( geode::Point2D{ { 0., 0. } } );
-    builder->create_point( geode::Point2D{ { 1., 0. } } );
-    builder->create_point( geode::Point2D{ { 0., 1. } } );
-    builder->create_triangle( { 0, 1, 2 } );
-    // Stale adjacency to a polygon which does not exist
-    builder->set_polygon_adjacent( { 0, 0 }, 1000000 );
+    // Corrupted file: one triangle with a stale adjacency to polygon 1000000.
+    // It cannot be built with the builder, which asserts on such adjacency.
+    const auto filename =
+        absl::StrCat( geode::DATA_PATH, "out_of_range_adjacency.og_tsf2d" );
+    const auto surface = geode::load_one(
+        geode::load_triangulated_surface< 2 >( filename ), filename );
 
     const geode::SurfaceMeshAdjacency2D adjacency_inspector{ *surface };
     geode::OpenGeodeInspectorInspectionException::test(
