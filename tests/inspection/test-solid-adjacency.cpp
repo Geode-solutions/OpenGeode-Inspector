@@ -21,6 +21,8 @@
  *
  */
 
+#include <geode/tests_config.hpp>
+
 #include <geode/basic/assert.hpp>
 #include <geode/basic/logger.hpp>
 
@@ -29,6 +31,7 @@
 #include <geode/mesh/builder/tetrahedral_solid_builder.hpp>
 #include <geode/mesh/core/detail/vertex_cycle.hpp>
 #include <geode/mesh/core/tetrahedral_solid.hpp>
+#include <geode/mesh/io/tetrahedral_solid_input.hpp>
 
 #include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
 #include <geode/inspector/inspection/solid_inspector.hpp>
@@ -169,16 +172,13 @@ void check_non_adjacency_inversed_tetrahedron()
 
 void check_adjacency_out_of_range()
 {
-    auto solid = geode::TetrahedralSolid3D::create();
-    auto builder = geode::TetrahedralSolidBuilder3D::create( *solid );
-    builder->create_vertices( 4 );
-    builder->set_point( 0, geode::Point3D{ { 0., 0., 2. } } );
-    builder->set_point( 1, geode::Point3D{ { 3., .5, 0. } } );
-    builder->set_point( 2, geode::Point3D{ { .5, 3., .5 } } );
-    builder->set_point( 3, geode::Point3D{ { 2., 1.5, 3. } } );
-    builder->create_tetrahedron( { 0, 1, 2, 3 } );
-    // Stale adjacency to a polyhedron which does not exist
-    builder->set_polyhedron_adjacent( { 0, 0 }, 1000000 );
+    // Corrupted file: one tetrahedron with a stale adjacency to polyhedron
+    // 1000000. It cannot be built with the builder, which asserts on such
+    // adjacency.
+    const auto filename =
+        absl::StrCat( geode::DATA_PATH, "out_of_range_adjacency.og_tso3d" );
+    const auto solid = geode::load_one(
+        geode::load_tetrahedral_solid< 3 >( filename ), filename );
 
     const geode::SolidMeshAdjacency3D adjacency_inspector{ *solid };
     geode::OpenGeodeInspectorInspectionException::test(
