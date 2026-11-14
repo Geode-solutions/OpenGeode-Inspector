@@ -24,7 +24,7 @@
 
 #include <geode/inspector/inspection/criterion/negative_elements/section_meshes_negative_elements.hpp>
 
-#include "../../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

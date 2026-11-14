@@ -26,7 +26,7 @@
 
 #include <geode/inspector/inspection/criterion/manifold/solid_edge_manifold.hpp>
 
-#include "../../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

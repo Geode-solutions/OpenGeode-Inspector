@@ -24,7 +24,7 @@
 
 #include <geode/inspector/inspection/criterion/section_meshes_inspector.hpp>
 
-#include "../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

@@ -20,3 +20,12 @@
 
 add_subdirectory(inspection)
 add_subdirectory(validity)
+
+# Helpers shared by the bindings, installed for the bindings of the downstream
+# projects: #include <geode/inspector/bindings/python/inspection_helpers.hpp>
+# (the include directory of the OpenGeode-Inspector targets)
+install(
+    FILES "${PROJECT_SOURCE_DIR}/include/geode/inspector/bindings/python/inspection_helpers.hpp"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/geode/inspector/bindings/python"
+    COMPONENT public
+)

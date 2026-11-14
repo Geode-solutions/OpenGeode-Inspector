@@ -27,7 +27,7 @@
 
 #include <geode/inspector/inspection/pointset_inspector.hpp>
 
-#include "../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

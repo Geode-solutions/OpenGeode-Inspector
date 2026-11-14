@@ -28,7 +28,7 @@
 #include <geode/inspector/validity/edgedcurve_validity.hpp>
 #include <geode/inspector/validity/object_validity.hpp>
 
-#include "../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

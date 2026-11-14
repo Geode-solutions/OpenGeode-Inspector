@@ -24,7 +24,7 @@
 
 #include <geode/inspector/inspection/criterion/adjacency/brep_meshes_adjacency.hpp>
 
-#include "../../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

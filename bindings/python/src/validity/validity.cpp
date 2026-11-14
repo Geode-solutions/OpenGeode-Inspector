@@ -27,7 +27,7 @@
 
 #include <geode/bindings/python/common.hpp>
 
-#include "../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 #include "brep_validity.hpp"
 #include "edgedcurve_validity.hpp"

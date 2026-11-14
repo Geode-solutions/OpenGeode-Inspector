@@ -59,3 +59,29 @@ add_geode_python_test(
         "${PROJECT_SOURCE_DIR}/tests/data"
     DEPENDENCIES ${py_inspection_dependencies}
 )
+
+# Compile flags of a downstream binding (pybind11, OpenGeode mesh and model)
+# for the test compiling the installed helpers: the transitive include
+# directories and definitions, without the sources of the bindings
+find_package(pybind11 REQUIRED)
+add_library(geode_installed_helpers_flags INTERFACE)
+target_link_libraries(geode_installed_helpers_flags
+    INTERFACE pybind11::module OpenGeode::mesh OpenGeode::model
+)
+set(helpers_flags "${PROJECT_BINARY_DIR}/installed_helpers_flags.cmake")
+file(GENERATE OUTPUT "${helpers_flags}" CONTENT
+"set(CHECK_INCLUDES \"$<TARGET_PROPERTY:geode_installed_helpers_flags,INTERFACE_INCLUDE_DIRECTORIES>\")
+set(CHECK_DEFINITIONS \"$<TARGET_PROPERTY:geode_installed_helpers_flags,INTERFACE_COMPILE_DEFINITIONS>\")
+set(CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+set(CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\")
+set(CMAKE_BUILD_TYPE Release)
+")
+add_geode_python_test(
+    SOURCE "test-py-installed-helpers.py"
+    ARGUMENTS
+        "${CMAKE_COMMAND}"
+        "${PROJECT_BINARY_DIR}/bindings/python/src/cmake_install.cmake"
+        "${PROJECT_SOURCE_DIR}/include/geode/inspector/bindings/python"
+        "${helpers_flags}"
+        "${CMAKE_GENERATOR}"
+)

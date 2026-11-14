@@ -24,8 +24,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/brep_meshes_manifold.hpp>
 
-#include "../../../inspection_helpers.hpp"
 #include "../../information.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

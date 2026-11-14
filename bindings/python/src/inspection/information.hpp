@@ -31,7 +31,7 @@
 
 #include <geode/inspector/inspection/information.hpp>
 
-#include "../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

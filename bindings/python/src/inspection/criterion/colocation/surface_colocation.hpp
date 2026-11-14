@@ -26,7 +26,7 @@
 
 #include <geode/inspector/inspection/criterion/colocation/surface_colocation.hpp>
 
-#include "../../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

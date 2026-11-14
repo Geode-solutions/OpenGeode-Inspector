@@ -25,7 +25,7 @@
 
 #include <geode/inspector/inspection/topology/brep_topology.hpp>
 
-#include "../../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {

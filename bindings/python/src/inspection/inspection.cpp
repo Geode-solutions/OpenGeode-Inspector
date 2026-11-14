@@ -27,7 +27,7 @@
 
 #include <geode/bindings/python/common.hpp>
 
-#include "../inspection_helpers.hpp"
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 #include "criterion/adjacency/brep_meshes_adjacency.hpp"
 #include "criterion/adjacency/section_meshes_adjacency.hpp"
