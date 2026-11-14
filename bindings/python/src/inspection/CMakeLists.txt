@@ -67,4 +67,6 @@ add_geode_python_binding(
         "information.hpp"
     DEPENDENCIES
         ${PROJECT_NAME}::inspection
+        OpenGeode::mesh
+        OpenGeode::model
 )
