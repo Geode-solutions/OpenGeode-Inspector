@@ -263,8 +263,104 @@ def test_component_checks():
     )
 
 
+COMPONENT_METHODS = {
+    "corner": ["corner_is_meshed", "corner_vertices_are_associated_to_unique_vertices"],
+    "line": [
+        "line_is_meshed",
+        "line_vertices_are_associated_to_unique_vertices",
+        "line_edge_has_wrong_component_edges_around",
+    ],
+    "surface": [
+        "surface_is_meshed",
+        "surface_vertices_are_associated_to_unique_vertices",
+        "surface_facet_has_wrong_component_facets_around",
+    ],
+    "block": ["block_is_meshed", "block_vertices_are_associated_to_unique_vertices"],
+}
+
+
+def other_model(model_type, builder_type):
+    """A model with one component of each kind (without mesh): its uuids are
+    not in the models loaded from the files"""
+    model = model_type()
+    builder = builder_type(model)
+    builder.add_corner()
+    builder.add_line()
+    builder.add_surface()
+    if hasattr(builder, "add_block"):
+        builder.add_block()
+    return model
+
+
+def call_component_method(inspector, name, component):
+    if name.endswith("_around"):
+        return getattr(inspector, name)(component, 0)
+    return getattr(inspector, name)(component)
+
+
+def check_foreign_components(model, other, inspectors):
+    """A component of another model raises ValueError naming the method and the
+    component; the components of the inspected model are accepted"""
+    for inspector in inspectors:
+        for kind, names in COMPONENT_METHODS.items():
+            if not hasattr(model, kind + "s"):
+                continue
+            own = next(iter(getattr(model, kind + "s")()))
+            foreign = next(iter(getattr(other, kind + "s")()))
+            for name in names:
+                if not hasattr(inspector, name):
+                    continue
+                label = f"{type(inspector).__name__}.{name}"
+                check(
+                    "Raise ValueError if the" in getattr(inspector, name).__doc__,
+                    f"{label} documents the ValueError",
+                )
+                try:
+                    call_component_method(inspector, name, foreign)
+                except ValueError as error:
+                    message = str(error)
+                    check(
+                        name in message
+                        and foreign.id().string() in message
+                        and "not a component of the inspected model" in message,
+                        f"{label}: {message}",
+                    )
+                else:
+                    raise ValueError(
+                        f"[Test] {label} should reject a {kind} of another model"
+                    )
+                call_component_method(inspector, name, own)
+
+
+def test_foreign_components():
+    brep = load_brep()
+    check_foreign_components(
+        brep,
+        other_model(opengeode.BRep, opengeode.BRepBuilder),
+        [
+            inspection.BRepTopologyInspector(brep),
+            inspection.BRepCornersTopology(brep),
+            inspection.BRepLinesTopology(brep),
+            inspection.BRepSurfacesTopology(brep),
+            inspection.BRepBlocksTopology(brep),
+        ],
+    )
+    section = load_section()
+    check_foreign_components(
+        section,
+        other_model(opengeode.Section, opengeode.SectionBuilder),
+        [
+            inspection.SectionTopologyInspector(section),
+            inspection.SectionCornersTopology(section),
+            inspection.SectionLinesTopology(section),
+            inspection.SectionSurfacesTopology(section),
+        ],
+    )
+
+
 if __name__ == "__main__":
     test_methods_are_bound()
     test_unique_vertex_index_is_checked()
     test_results_agree_with_the_inspection()
     test_component_checks()
+    test_foreign_components()

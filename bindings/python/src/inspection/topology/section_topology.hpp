@@ -185,16 +185,23 @@ namespace geode
                 "is "
                 "linked to at most one Corner, this Corner has at most one "
                 "embedding, and is a boundary of every Line it is linked to" )
-            .def( "corner_is_meshed", &SectionCornersTopology::corner_is_meshed,
-                pybind11::arg( "corner" ), ReleaseGil(),
-                "Return True if the mesh of the Corner has vertices" )
+            .def( "corner_is_meshed",
+                checked_component< SectionCornersTopology >( "corner_is_meshed",
+                    &SectionCornersTopology::corner_is_meshed ),
+                pybind11::arg( "corner" ),
+                "Return True if the mesh of the Corner has vertices. Raise "
+                "ValueError if the Corner is not a component of the inspected "
+                "model" )
             .def( "corner_vertices_are_associated_to_unique_vertices",
-                &SectionCornersTopology::
-                    corner_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "corner" ), ReleaseGil(),
+                checked_component< SectionCornersTopology >(
+                    "corner_vertices_are_associated_to_unique_vertices",
+                    &SectionCornersTopology::
+                        corner_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "corner" ),
                 "Return True if every vertex of the mesh of the Corner is "
                 "linked "
-                "to a unique vertex" )
+                "to a unique vertex. Raise ValueError if the Corner is not a "
+                "component of the inspected model" )
             .def( "unique_vertex_has_multiple_corners",
                 checked_unique_vertex< SectionCornersTopology >(
                     "unique_vertex_has_multiple_corners",
@@ -262,16 +269,23 @@ namespace geode
                 "single Line is consistent with the Surfaces around, and a "
                 "vertex "
                 "at the end of a Line or shared by several Lines is a Corner" )
-            .def( "line_is_meshed", &SectionLinesTopology::line_is_meshed,
-                pybind11::arg( "line" ), ReleaseGil(),
-                "Return True if the mesh of the Line has vertices" )
+            .def( "line_is_meshed",
+                checked_component< SectionLinesTopology >(
+                    "line_is_meshed", &SectionLinesTopology::line_is_meshed ),
+                pybind11::arg( "line" ),
+                "Return True if the mesh of the Line has vertices. Raise "
+                "ValueError if the Line is not a component of the inspected "
+                "model" )
             .def( "line_vertices_are_associated_to_unique_vertices",
-                &SectionLinesTopology::
-                    line_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "line" ), ReleaseGil(),
+                checked_component< SectionLinesTopology >(
+                    "line_vertices_are_associated_to_unique_vertices",
+                    &SectionLinesTopology::
+                        line_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "line" ),
                 "Return True if every vertex of the mesh of the Line is linked "
                 "to "
-                "a unique vertex" )
+                "a unique vertex. Raise ValueError if the Line is not a "
+                "component of the inspected model" )
             .def( "vertex_is_part_of_line_with_wrong_relationships_to_surface",
                 checked_unique_vertex< SectionLinesTopology >(
                     "vertex_is_part_of_line_with_wrong_relationships_to_"
@@ -342,16 +356,23 @@ namespace geode
                 "which "
                 "is boundary of both" )
             .def( "surface_is_meshed",
-                &SectionSurfacesTopology::surface_is_meshed,
-                pybind11::arg( "surface" ), ReleaseGil(),
-                "Return True if the mesh of the Surface has vertices" )
+                checked_component< SectionSurfacesTopology >(
+                    "surface_is_meshed",
+                    &SectionSurfacesTopology::surface_is_meshed ),
+                pybind11::arg( "surface" ),
+                "Return True if the mesh of the Surface has vertices. Raise "
+                "ValueError if the Surface is not a component of the inspected "
+                "model" )
             .def( "surface_vertices_are_associated_to_unique_vertices",
-                &SectionSurfacesTopology::
-                    surface_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "surface" ), ReleaseGil(),
+                checked_component< SectionSurfacesTopology >(
+                    "surface_vertices_are_associated_to_unique_vertices",
+                    &SectionSurfacesTopology::
+                        surface_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "surface" ),
                 "Return True if every vertex of the mesh of the Surface is "
                 "linked "
-                "to a unique vertex" )
+                "to a unique vertex. Raise ValueError if the Surface is not a "
+                "component of the inspected model" )
             .def( "vertex_is_part_of_invalid_embedded_surface",
                 checked_unique_vertex< SectionSurfacesTopology >(
                     "vertex_is_part_of_invalid_embedded_surface",

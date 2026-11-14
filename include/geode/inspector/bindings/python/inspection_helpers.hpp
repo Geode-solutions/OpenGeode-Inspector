@@ -83,6 +83,69 @@ namespace geode
             };
     }
 
+    /*!
+     * Raise ValueError if the component is not a component of the model
+     * remembered by the constructor of the inspector (remember_model): the
+     * inspectors look its vertices up in this model. Nothing is checked if
+     * the inspector has no remembered model.
+     */
+    inline void check_inspected_component( std::string_view name,
+        const pybind11::handle& inspector,
+        const ComponentID& component_id )
+    {
+        if( !pybind11::hasattr( inspector, "_model" ) )
+        {
+            return;
+        }
+        const auto model = inspector.attr( "_model" );
+        auto nb_vertices = NO_ID;
+        if( pybind11::isinstance< BRep >( model ) )
+        {
+            nb_vertices = detail::nb_component_mesh_vertices(
+                model.cast< const BRep& >(), component_id );
+        }
+        else if( pybind11::isinstance< Section >( model ) )
+        {
+            nb_vertices = detail::nb_component_mesh_vertices(
+                model.cast< const Section& >(), component_id );
+        }
+        else
+        {
+            return;
+        }
+        if( nb_vertices == NO_ID )
+        {
+            throw pybind11::value_error{ absl::StrCat( "[", name, "] The ",
+                component_id.string(),
+                " is not a component of the inspected model" ) };
+        }
+    }
+
+    /*!
+     * Wrap a const method of a model inspector taking a component of the
+     * model first: the component is checked against the model remembered by
+     * the constructor (check_inspected_component, ValueError when it is not
+     * one of its components), then the method runs without the GIL. The
+     * Python signature is typed with Inspector.
+     */
+    template < typename Inspector,
+        typename Class,
+        typename Return,
+        typename Component,
+        typename... Args >
+    auto checked_component( std::string_view name,
+        Return ( Class::*method )( const Component&, Args... ) const )
+    {
+        return [name = std::string{ name }, method](
+                   TypedObject< Inspector > self, const Component& component,
+                   Args... args ) -> Return {
+            check_inspected_component( name, self, component.component_id() );
+            const auto& inspector = self.template cast< const Class& >();
+            const pybind11::gil_scoped_release release;
+            return ( inspector.*method )( component, args... );
+        };
+    }
+
     // Call form of the inspection results: the total number of issues, and
     // the number of issues of each member having some, e.g.
     // SurfaceInspectionResult(nb_issues=8, degenerated_edges=3,

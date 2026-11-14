@@ -275,16 +275,23 @@ namespace geode
                 "several components including a Block, and is a boundary of "
                 "every "
                 "Line it is linked to" )
-            .def( "corner_is_meshed", &BRepCornersTopology::corner_is_meshed,
-                pybind11::arg( "corner" ), ReleaseGil(),
-                "Return True if the mesh of the Corner has vertices" )
+            .def( "corner_is_meshed",
+                checked_component< BRepCornersTopology >( "corner_is_meshed",
+                    &BRepCornersTopology::corner_is_meshed ),
+                pybind11::arg( "corner" ),
+                "Return True if the mesh of the Corner has vertices. Raise "
+                "ValueError if the Corner is not a component of the inspected "
+                "model" )
             .def( "corner_vertices_are_associated_to_unique_vertices",
-                &BRepCornersTopology::
-                    corner_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "corner" ), ReleaseGil(),
+                checked_component< BRepCornersTopology >(
+                    "corner_vertices_are_associated_to_unique_vertices",
+                    &BRepCornersTopology::
+                        corner_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "corner" ),
                 "Return True if every vertex of the mesh of the Corner is "
                 "linked "
-                "to a unique vertex" )
+                "to a unique vertex. Raise ValueError if the Corner is not a "
+                "component of the inspected model" )
             .def( "unique_vertex_has_multiple_corners",
                 checked_unique_vertex< BRepCornersTopology >(
                     "unique_vertex_has_multiple_corners",
@@ -354,16 +361,23 @@ namespace geode
                 "consistent with the Surfaces and Blocks around, and a vertex "
                 "at "
                 "the end of a Line or shared by several Lines is a Corner" )
-            .def( "line_is_meshed", &BRepLinesTopology::line_is_meshed,
-                pybind11::arg( "line" ), ReleaseGil(),
-                "Return True if the mesh of the Line has vertices" )
+            .def( "line_is_meshed",
+                checked_component< BRepLinesTopology >(
+                    "line_is_meshed", &BRepLinesTopology::line_is_meshed ),
+                pybind11::arg( "line" ),
+                "Return True if the mesh of the Line has vertices. Raise "
+                "ValueError if the Line is not a component of the inspected "
+                "model" )
             .def( "line_vertices_are_associated_to_unique_vertices",
-                &BRepLinesTopology::
-                    line_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "line" ), ReleaseGil(),
+                checked_component< BRepLinesTopology >(
+                    "line_vertices_are_associated_to_unique_vertices",
+                    &BRepLinesTopology::
+                        line_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "line" ),
                 "Return True if every vertex of the mesh of the Line is linked "
                 "to "
-                "a unique vertex" )
+                "a unique vertex. Raise ValueError if the Line is not a "
+                "component of the inspected model" )
             .def( "vertex_is_part_of_line_with_wrong_relationships_to_surface",
                 checked_unique_vertex< BRepLinesTopology >(
                     "vertex_is_part_of_line_with_wrong_relationships_to_"
@@ -405,15 +419,20 @@ namespace geode
                 "part of several Lines but is not a Corner, None otherwise" )
             .def(
                 "line_edge_has_wrong_component_edges_around",
-                []( const BRepLinesTopology& inspector, const Line3D& line,
+                []( TypedObject< BRepLinesTopology > self, const Line3D& line,
                     index_t edge_index ) {
+                    check_inspected_component(
+                        "line_edge_has_wrong_component_edges_around", self,
+                        line.component_id() );
                     check_index( "line_edge_has_wrong_component_edges_around",
                         "edge", edge_index, line.mesh().nb_edges() );
+                    const auto& inspector =
+                        self.cast< const BRepLinesTopology& >();
+                    const pybind11::gil_scoped_release release;
                     return inspector.line_edge_has_wrong_component_edges_around(
                         line, edge_index );
                 },
                 pybind11::arg( "line" ), pybind11::arg( "edge_index" ),
-                ReleaseGil(),
                 "Return a message describing the problem if the edge of the "
                 "mesh "
                 "of the Line has an incorrect number of edges of a Surface "
@@ -421,7 +440,8 @@ namespace geode
                 "it (one for a boundary Surface, two for an embedding "
                 "Surface), "
                 "or is in common with a Surface it is neither boundary of nor "
-                "internal to, None otherwise" );
+                "internal to, None otherwise. Raise ValueError if the Line is "
+                "not a component of the inspected model" );
 
         pybind11::class_< BRepSurfacesTopology >( module,
             "BRepSurfacesTopology", pybind11::dynamic_attr(),
@@ -453,16 +473,23 @@ namespace geode
                 "vertex shared by several Surfaces is consistent with the "
                 "Lines "
                 "and Blocks around" )
-            .def( "surface_is_meshed", &BRepSurfacesTopology::surface_is_meshed,
-                pybind11::arg( "surface" ), ReleaseGil(),
-                "Return True if the mesh of the Surface has vertices" )
+            .def( "surface_is_meshed",
+                checked_component< BRepSurfacesTopology >( "surface_is_meshed",
+                    &BRepSurfacesTopology::surface_is_meshed ),
+                pybind11::arg( "surface" ),
+                "Return True if the mesh of the Surface has vertices. Raise "
+                "ValueError if the Surface is not a component of the inspected "
+                "model" )
             .def( "surface_vertices_are_associated_to_unique_vertices",
-                &BRepSurfacesTopology::
-                    surface_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "surface" ), ReleaseGil(),
+                checked_component< BRepSurfacesTopology >(
+                    "surface_vertices_are_associated_to_unique_vertices",
+                    &BRepSurfacesTopology::
+                        surface_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "surface" ),
                 "Return True if every vertex of the mesh of the Surface is "
                 "linked "
-                "to a unique vertex" )
+                "to a unique vertex. Raise ValueError if the Surface is not a "
+                "component of the inspected model" )
             .def( "vertex_is_part_of_invalid_embedded_surface",
                 checked_unique_vertex< BRepSurfacesTopology >(
                     "vertex_is_part_of_invalid_embedded_surface",
@@ -494,20 +521,26 @@ namespace geode
                 "otherwise" )
             .def(
                 "surface_facet_has_wrong_component_facets_around",
-                []( const BRepSurfacesTopology& inspector,
+                []( TypedObject< BRepSurfacesTopology > self,
                     const Surface3D& surface, index_t facet_index ) {
+                    check_inspected_component(
+                        "surface_facet_has_wrong_component_facets_around", self,
+                        surface.component_id() );
                     check_index(
                         "surface_facet_has_wrong_component_facets_around",
                         "polygon", facet_index, surface.mesh().nb_polygons() );
+                    const auto& inspector =
+                        self.cast< const BRepSurfacesTopology& >();
+                    const pybind11::gil_scoped_release release;
                     return inspector
                         .surface_facet_has_wrong_component_facets_around(
                             surface, facet_index );
                 },
                 pybind11::arg( "surface" ), pybind11::arg( "facet_index" ),
-                ReleaseGil(),
                 "Return a message describing the problem if the polygon of the "
                 "mesh of the Surface has invalid surrounding facets of Blocks, "
-                "None otherwise" );
+                "None otherwise. Raise ValueError if the Surface is not a "
+                "component of the inspected model" );
 
         pybind11::class_< BRepBlocksTopology >( module, "BRepBlocksTopology",
             pybind11::dynamic_attr(),
@@ -537,16 +570,23 @@ namespace geode
                 "consistent with the Blocks, the boundary Surfaces and the "
                 "Lines "
                 "around" )
-            .def( "block_is_meshed", &BRepBlocksTopology::block_is_meshed,
-                pybind11::arg( "block" ), ReleaseGil(),
-                "Return True if the mesh of the Block has vertices" )
+            .def( "block_is_meshed",
+                checked_component< BRepBlocksTopology >(
+                    "block_is_meshed", &BRepBlocksTopology::block_is_meshed ),
+                pybind11::arg( "block" ),
+                "Return True if the mesh of the Block has vertices. Raise "
+                "ValueError if the Block is not a component of the inspected "
+                "model" )
             .def( "block_vertices_are_associated_to_unique_vertices",
-                &BRepBlocksTopology::
-                    block_vertices_are_associated_to_unique_vertices,
-                pybind11::arg( "block" ), ReleaseGil(),
+                checked_component< BRepBlocksTopology >(
+                    "block_vertices_are_associated_to_unique_vertices",
+                    &BRepBlocksTopology::
+                        block_vertices_are_associated_to_unique_vertices ),
+                pybind11::arg( "block" ),
                 "Return True if every vertex of the mesh of the Block is "
                 "linked "
-                "to a unique vertex" )
+                "to a unique vertex. Raise ValueError if the Block is not a "
+                "component of the inspected model" )
             .def( "unique_vertex_is_part_of_two_blocks_and_no_boundary_surface",
                 checked_unique_vertex< BRepBlocksTopology >(
                     "unique_vertex_is_part_of_two_blocks_and_no_boundary_"
