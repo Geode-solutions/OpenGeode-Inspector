@@ -1,0 +1,128 @@
+OpenGeode-Inspector: validity inspection of the meshes and models of OpenGeode.
+
+The package checks the criteria that a mesh or a model must verify (adjacency,
+colocation, degeneration, intersections, isolation, manifold property, negative
+elements, topology) and lists the issues found. It works on the objects of the
+opengeode package, which must be built or loaded first:
+
+    >>> import opengeode
+    >>> import opengeode_inspector as inspector
+    >>> surface = opengeode.TriangulatedSurface2D.create()
+    >>> builder = opengeode.TriangulatedSurfaceBuilder2D.create(surface)
+    >>> builder.create_vertices(4)
+    0
+    >>> for vertex, (x, y) in enumerate([(0, 0), (1, 0), (0, 1), (5, 5)]):
+    ...     builder.set_point(vertex, opengeode.Point2D([x, y]))
+    >>> builder.create_triangle([0, 1, 2])
+    0
+
+Modules
+=======
+
+- inspector_inspection: the inspectors, which return the issues found.
+- validity: the is_*_valid functions, which tell if an object is valid.
+
+Inspecting a mesh or a model
+============================
+
+Each mesh type has an inspector (PointSetInspector2D/3D, EdgedCurveInspector2D/3D,
+SurfaceMeshInspector2D/3D, SolidMeshInspector3D) and each model type too (BRepInspector,
+SectionInspector). The inspect_* functions create the inspector and run it in one
+call; the result is the list of the issues found for each criterion:
+
+    >>> result = inspector.inspect_surface2D(surface)
+    >>> result.nb_issues()
+    1
+    >>> result.isolated_vertices.issues()
+    [3]
+    >>> result
+    SurfaceInspectionResult(nb_issues=1, isolated_vertices=1)
+    >>> "vertex 3, at position [5 5]" in str(result.isolated_vertices)
+    True
+
+repr() of a result summarizes the number of issues of each criterion, str() (and
+string()) is the full report, with the message of every issue. The result of a
+model is made of the results of its meshes and of its topology (BRepInspectionResult.meshes,
+BRepInspectionResult.topology), and the issues of a component are given by its uuid
+(InspectionIssuesMap*.issues_map()).
+
+Checking one criterion
+======================
+
+The inspectors of one criterion are available alone, with a method telling if
+there is an issue (cheaper) and a method listing them:
+
+    >>> isolation = inspector.SurfaceMeshIsolation2D(surface)
+    >>> isolation.mesh_has_isolated_vertices()
+    True
+    >>> isolation.isolated_vertices().nb_issues()
+    1
+    >>> negative = inspector.SurfaceMeshNegativeElements2D(surface)
+    >>> negative.mesh_has_negative_elements()
+    False
+
+The inspector keeps the object it inspects alive. The meshes must not be modified while
+an inspector of them exists, and an inspector built before a modification is out of
+date (the unique vertices colocation, for instance, is computed once).
+
+Validity
+========
+
+The is_*_valid functions inspect an object, and return an ObjectValidity, which is True
+when the object has no issue and reports the issues otherwise:
+
+    >>> validity = inspector.is_surface_valid2D(surface)
+    >>> bool(validity)
+    False
+    >>> validity.nb_issues()
+    1
+    >>> "vertex 3, at position [5 5]" in str(validity)
+    True
+
+An empty model has no unique vertex: its topology is invalid, but it has no issue to list.
+
+    >>> brep = opengeode.BRep()
+    >>> inspector.BRepTopologyInspector(brep).brep_topology_is_valid()
+    False
+    >>> inspector.inspect_brep(brep).nb_issues()
+    0
+
+Thresholds and tolerances
+=========================
+
+The colocation and the degeneration use the tolerance of OpenGeode (GLOBAL_EPSILON,
+1e-6). The degeneration inspectors also list the elements smaller than a threshold
+given by the caller:
+
+    >>> degeneration = inspector.SurfaceMeshDegeneration2D(surface)
+    >>> degeneration.small_edges(1.2).nb_issues()
+    2
+    >>> degeneration.degenerated_edges().nb_issues()
+    0
+
+The small edges are given by their index in the edges of the mesh, which are enabled
+for the inspection (and disabled when the inspector is destroyed if they were not enabled).
+
+Construction of results
+=======================
+
+The issues are built by the inspectors, but the lists of issues can be built to
+be assembled or compared:
+
+    >>> issues = inspector.InspectionIssuesIndex("vertices to check")
+    >>> issues.add_issue(3, "vertex 3 is far from the others")
+    >>> issues.nb_issues(), issues.issues()
+    (1, [3])
+    >>> issues
+    InspectionIssuesIndex(description='vertices to check', nb_issues=1)
+
+Performance
+===========
+
+The inspections release the GIL: other Python threads run during an inspection. The
+inspections of the elements of a mesh use the threads of the machine.
+
+An inspection may modify the inspected meshes: the degeneration inspections (also run
+by the inspectors and the is_*_valid functions of a whole model or mesh) enable the
+edges of the meshes where they find small edges. There is no lock: do not inspect or
+use the same mesh or model from two threads at once.

@@ -42,3 +42,11 @@ foreach(test_name
         DEPENDENCIES ${py_inspection_dependencies}
     )
 endforeach()
+
+add_geode_python_test(
+    SOURCE "test-py-package-docs.py"
+    ARGUMENTS
+        "${PROJECT_SOURCE_DIR}/bindings/python/opengeode_inspector_doc.txt"
+        "${PROJECT_BINARY_DIR}/wheel/opengeode_inspector"
+    DEPENDENCIES ${py_inspection_dependencies}
+)
