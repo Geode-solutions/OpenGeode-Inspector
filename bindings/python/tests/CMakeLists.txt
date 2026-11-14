@@ -80,8 +80,23 @@ add_geode_python_test(
     SOURCE "test-py-installed-helpers.py"
     ARGUMENTS
         "${CMAKE_COMMAND}"
-        "${PROJECT_BINARY_DIR}/bindings/python/src/cmake_install.cmake"
+        "${PROJECT_BINARY_DIR}/cmake_install.cmake"
         "${PROJECT_SOURCE_DIR}/include/geode/inspector/bindings/python"
         "${helpers_flags}"
         "${CMAKE_GENERATOR}"
 )
+
+# A configure without the Python bindings installs their helpers. Registered
+# with the Python tests (in-tree only, where PROJECT_SOURCE_DIR is the root of
+# the project), and named test-py-* to be selected by the Python test jobs.
+string(REPLACE ";" "|" prefix_path "${CMAKE_PREFIX_PATH}")
+add_test(NAME test-py-helpers-python-off
+    COMMAND ${CMAKE_COMMAND}
+        "-DSOURCE_DIR=${PROJECT_SOURCE_DIR}"
+        "-DBINARY_DIR=${PROJECT_BINARY_DIR}/python_off_install"
+        "-DPREFIX_PATH=${prefix_path}"
+        "-DGENERATOR=${CMAKE_GENERATOR}"
+        "-DCXX_COMPILER=${CMAKE_CXX_COMPILER}"
+        -P "${CMAKE_CURRENT_LIST_DIR}/check_python_off_install.cmake"
+)
+set_tests_properties(test-py-helpers-python-off PROPERTIES TIMEOUT 300)

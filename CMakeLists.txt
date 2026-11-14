@@ -40,6 +40,16 @@ install(
     COMPONENT public
 )
 
+# Helpers shared by the Python bindings, installed whatever the options: the
+# bindings of the downstream projects include them, and are built against
+# archives of C++-only builds:
+# #include <geode/inspector/bindings/python/inspection_helpers.hpp>
+install(
+    FILES include/geode/inspector/bindings/python/inspection_helpers.hpp
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/geode/inspector/bindings/python
+    COMPONENT public
+)
+
 #------------------------------------------------------------------------------------------------
 # Configure the OpenGeode-inspector libraries
 add_subdirectory(src/geode)

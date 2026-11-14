@@ -22,11 +22,11 @@
 
 """The reusable helpers of the Inspector bindings are installed for the
 bindings of the downstream projects, in include/geode/inspector/bindings/python:
-the install script of bindings/python/src is run in a temporary prefix, then the
+the install script of the project is run in a temporary prefix, then the
 helper is compiled alone from that prefix, as a downstream binding includes it
 (<geode/inspector/bindings/python/...>, without the sources of the bindings), in
 a small CMake project using the compile flags of a downstream binding.
-Arguments: the cmake executable, the cmake_install.cmake of bindings/python/src,
+Arguments: the cmake executable, the cmake_install.cmake of the project,
 the directory of the helpers in the sources, the file of the compile flags and
 the CMake generator."""
 
