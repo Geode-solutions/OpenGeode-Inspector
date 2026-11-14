@@ -27,6 +27,8 @@
 
 #include <geode/inspector/inspection/criterion/intersections/surface_curve_intersections.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -38,14 +40,28 @@ namespace geode
             SurfaceCurveIntersections< dimension >;
         const auto name =
             absl::StrCat( "SurfaceCurveIntersections", dimension, "D" );
-        pybind11::class_< SurfaceCurveIntersections >( module, name.c_str() )
+        pybind11::class_< SurfaceCurveIntersections >( module, name.c_str(),
+            "Inspection of the intersections between the triangles of a "
+            "TriangulatedSurface and the edges of an EdgedCurve" )
             .def( pybind11::init< const TriangulatedSurface&,
-                const EdgedCurve& >() )
+                      const EdgedCurve& >(),
+                pybind11::arg( "surface" ), pybind11::arg( "curve" ),
+                "Create the inspector of the intersections between this "
+                "surface and this curve. The inspector keeps both meshes "
+                "alive" )
             .def( "meshes_have_intersections",
-                &SurfaceCurveIntersections::meshes_have_intersections )
+                &SurfaceCurveIntersections::meshes_have_intersections,
+                ReleaseGil(),
+                "Return True if an edge of the curve intersects a triangle of "
+                "the surface" )
             .def( "intersecting_elements",
-                &SurfaceCurveIntersections::intersecting_elements );
+                &SurfaceCurveIntersections::intersecting_elements, ReleaseGil(),
+                "Return the InspectionIssuesPairIndex listing the pairs of "
+                "intersecting elements: the first index of each pair is a "
+                "triangle of the surface, the second one an edge of the "
+                "curve" );
     }
+
     void define_surface_curve_intersections( pybind11::module& module )
     {
         do_define_surface_curve_intersections< 2 >( module );

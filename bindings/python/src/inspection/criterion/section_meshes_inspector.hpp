@@ -20,42 +20,67 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/section.hpp>
 
 #include <geode/inspector/inspection/criterion/section_meshes_inspector.hpp>
+
+#include "../../inspection_helpers.hpp"
 
 namespace geode
 {
     void define_section_meshes_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< SectionMeshesInspectionResult >(
-                module, "SectionMeshesInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "unique_vertices_colocation",
-                &SectionMeshesInspectionResult::unique_vertices_colocation )
-            .def_readwrite( "meshes_colocation",
-                &SectionMeshesInspectionResult::meshes_colocation )
-            .def_readwrite( "meshes_adjacencies",
-                &SectionMeshesInspectionResult::meshes_adjacencies )
-            .def_readwrite( "meshes_degenerations",
-                &SectionMeshesInspectionResult::meshes_degenerations )
-            .def_readwrite( "meshes_intersections",
-                &SectionMeshesInspectionResult::meshes_intersections )
-            .def_readwrite( "meshes_non_manifolds",
-                &SectionMeshesInspectionResult::meshes_non_manifolds )
-            .def( "nb_issues", &SectionMeshesInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &SectionMeshesInspectionResult::inspection_type );
+        auto result = define_inspection_result< SectionMeshesInspectionResult >(
+            module, "SectionMeshesInspectionResult",
+            "Result of the inspection of the meshes of a Section: one "
+            "result per criterion" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            unique_vertices_colocation,
+            "UniqueVerticesInspectionResult: the colocation of the unique "
+            "vertices" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_colocation,
+            "MeshesColocationInspectionResult: the colocated vertices of the "
+            "component meshes" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_adjacencies,
+            "SectionMeshesAdjacencyInspectionResult: the adjacencies of the "
+            "component meshes" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_degenerations,
+            "SectionMeshesDegenerationInspectionResult: the degenerated "
+            "elements of the component meshes" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_intersections,
+            "ElementsIntersectionsInspectionResult: the intersections "
+            "between the component meshes" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_non_manifolds,
+            "SectionMeshesManifoldInspectionResult: the non manifold "
+            "vertices and edges" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesInspectionResult,
+            meshes_negative_elements,
+            "SectionMeshesNegativeElementsInspectionResult: the negative "
+            "polygons of the Surfaces" );
 
         pybind11::class_< SectionMeshesInspector,
             SectionUniqueVerticesColocation, SectionComponentMeshesAdjacency,
             SectionComponentMeshesColocation,
             SectionComponentMeshesDegeneration, SectionComponentMeshesManifold,
-            SectionMeshesIntersections >( module, "SectionMeshesInspector" )
-            .def( pybind11::init< const Section& >() )
+            SectionComponentMeshesNegativeElements,
+            SectionMeshesIntersections >( module, "SectionMeshesInspector",
+            "Inspection of the meshes of a Section: the unique vertices "
+            "colocation, and the adjacencies, colocation, degeneration, "
+            "manifold property, negative elements and intersections of the "
+            "component meshes. It also has the methods of each of these "
+            "inspectors" )
+            .def( pybind11::init< const Section& >(),
+                pybind11::arg( "section" ), ReleaseGil(),
+                "Create the inspector of the meshes of this Section. The "
+                "inspector keeps the Section alive" )
             .def( "inspect_section_meshes",
-                &SectionMeshesInspector::inspect_section_meshes );
+                &SectionMeshesInspector::inspect_section_meshes, ReleaseGil(),
+                "Return the SectionMeshesInspectionResult: the result of "
+                "every inspection of the meshes of the Section" );
     }
 } // namespace geode

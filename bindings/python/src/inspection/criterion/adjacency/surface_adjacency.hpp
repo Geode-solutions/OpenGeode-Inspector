@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/adjacency/surface_adjacency.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,13 +37,27 @@ namespace geode
         using SurfaceMeshAdjacency = SurfaceMeshAdjacency< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshAdjacency", dimension, "D" );
-        pybind11::class_< SurfaceMeshAdjacency >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshAdjacency >( module, name.c_str(),
+            "Inspection of the adjacencies between the polygons of a "
+            "SurfaceMesh" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ),
+                "Create the inspector of the adjacencies of the polygons of "
+                "this mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_wrong_adjacencies",
-                &SurfaceMeshAdjacency::mesh_has_wrong_adjacencies )
+                &SurfaceMeshAdjacency::mesh_has_wrong_adjacencies, ReleaseGil(),
+                "Return True if a polygon edge that is not on the border has "
+                "a wrong adjacency: the adjacent polygon does not exist, or "
+                "does not have the same edge in the opposite direction with "
+                "this polygon as adjacent" )
             .def( "polygon_edges_with_wrong_adjacency",
-                &SurfaceMeshAdjacency::polygon_edges_with_wrong_adjacency );
+                &SurfaceMeshAdjacency::polygon_edges_with_wrong_adjacency,
+                ReleaseGil(),
+                "Return the InspectionIssuesPolygonEdge listing every "
+                "polygon edge, not on the border, with a wrong adjacency (see "
+                "mesh_has_wrong_adjacencies)" );
     }
+
     void define_surface_adjacency( pybind11::module& module )
     {
         do_define_surface_adjacency< 2 >( module );

@@ -20,3 +20,23 @@
 
 add_subdirectory(inspection)
 add_subdirectory(validity)
+
+set(py_inspection_dependencies
+    ${PROJECT_NAME}::py_inspection
+    ${PROJECT_NAME}::py_validity
+)
+
+foreach(test_name
+    "test-py-naming"
+    "test-py-signatures"
+    "test-py-module-import"
+    "test-py-negative-elements"
+    "test-py-results"
+    "test-py-gil"
+    "test-py-model-inspectors"
+)
+    add_geode_python_test(
+        SOURCE "${test_name}.py"
+        DEPENDENCIES ${py_inspection_dependencies}
+    )
+endforeach()

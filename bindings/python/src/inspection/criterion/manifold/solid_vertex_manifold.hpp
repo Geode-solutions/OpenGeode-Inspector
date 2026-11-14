@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/solid_vertex_manifold.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,13 +37,24 @@ namespace geode
         using SolidMeshVertexManifold = SolidMeshVertexManifold< dimension >;
         const auto name =
             absl::StrCat( "SolidMeshVertexManifold", dimension, "D" );
-        pybind11::class_< SolidMeshVertexManifold >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshVertexManifold >( module, name.c_str(),
+            "Inspection of the manifold property of the vertices of a "
+            "SolidMesh" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                "Create the inspector of the manifold property of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_vertices_are_manifold",
-                &SolidMeshVertexManifold::mesh_vertices_are_manifold )
+                &SolidMeshVertexManifold::mesh_vertices_are_manifold,
+                ReleaseGil(),
+                "Return True if every vertex is manifold: every polyhedron "
+                "containing it is reached from the first one through the "
+                "adjacencies of the facets containing the vertex" )
             .def( "non_manifold_vertices",
-                &SolidMeshVertexManifold::non_manifold_vertices );
+                &SolidMeshVertexManifold::non_manifold_vertices, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "non manifold vertices (see mesh_vertices_are_manifold)" );
     }
+
     void define_solid_vertex_manifold( pybind11::module& module )
     {
         do_define_solid_vertex_manifold< 3 >( module );

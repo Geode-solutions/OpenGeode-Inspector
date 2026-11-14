@@ -20,41 +20,66 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/criterion/brep_meshes_inspector.hpp>
+
+#include "../../inspection_helpers.hpp"
 
 namespace geode
 {
     void define_brep_meshes_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< BRepMeshesInspectionResult >(
-                module, "BRepMeshesInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "unique_vertices_colocation",
-                &BRepMeshesInspectionResult::unique_vertices_colocation )
-            .def_readwrite( "meshes_colocation",
-                &BRepMeshesInspectionResult::meshes_colocation )
-            .def_readwrite( "meshes_adjacencies",
-                &BRepMeshesInspectionResult::meshes_adjacencies )
-            .def_readwrite( "meshes_degenerations",
-                &BRepMeshesInspectionResult::meshes_degenerations )
-            .def_readwrite( "meshes_intersections",
-                &BRepMeshesInspectionResult::meshes_intersections )
-            .def_readwrite( "meshes_non_manifolds",
-                &BRepMeshesInspectionResult::meshes_non_manifolds )
-            .def( "nb_issues", &BRepMeshesInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &BRepMeshesInspectionResult::inspection_type );
+        auto result = define_inspection_result< BRepMeshesInspectionResult >(
+            module, "BRepMeshesInspectionResult",
+            "Result of the inspection of the meshes of a BRep: one "
+            "result per criterion" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            unique_vertices_colocation,
+            "UniqueVerticesInspectionResult: the colocation of the unique "
+            "vertices" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_colocation,
+            "MeshesColocationInspectionResult: the colocated vertices of the "
+            "component meshes" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_adjacencies,
+            "BRepMeshesAdjacencyInspectionResult: the adjacencies of the "
+            "component meshes" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_degenerations,
+            "BRepMeshesDegenerationInspectionResult: the degenerated "
+            "elements of the component meshes" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_intersections,
+            "ElementsIntersectionsInspectionResult: the intersections "
+            "between the component meshes" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_non_manifolds,
+            "BRepMeshesManifoldInspectionResult: the non manifold vertices, "
+            "edges and facets" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesInspectionResult,
+            meshes_negative_elements,
+            "BRepMeshesNegativeElementsInspectionResult: the negative "
+            "polyhedra of the Blocks" );
 
         pybind11::class_< BRepMeshesInspector, BRepUniqueVerticesColocation,
             BRepComponentMeshesAdjacency, BRepComponentMeshesColocation,
             BRepComponentMeshesDegeneration, BRepComponentMeshesManifold,
-            BRepMeshesIntersections >( module, "BRepMeshesInspector" )
-            .def( pybind11::init< const BRep& >() )
+            BRepComponentMeshesNegativeElements, BRepMeshesIntersections >(
+            module, "BRepMeshesInspector",
+            "Inspection of the meshes of a BRep: the unique vertices "
+            "colocation, and the adjacencies, colocation, degeneration, "
+            "manifold property, negative elements and intersections of the "
+            "component meshes. It also has the methods of each of these "
+            "inspectors" )
+            .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                ReleaseGil(),
+                "Create the inspector of the meshes of this BRep. The "
+                "inspector keeps the BRep alive" )
             .def( "inspect_brep_meshes",
-                &BRepMeshesInspector::inspect_brep_meshes );
+                &BRepMeshesInspector::inspect_brep_meshes, ReleaseGil(),
+                "Return the BRepMeshesInspectionResult: the result of every "
+                "inspection of the meshes of the BRep" );
     }
 } // namespace geode

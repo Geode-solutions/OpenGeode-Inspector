@@ -20,11 +20,14 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
 #include <geode/inspector/inspection/surface_inspector.hpp>
+
+#include "../inspection_helpers.hpp"
 
 namespace geode
 {
@@ -42,44 +45,75 @@ namespace geode
             SurfaceMeshEdgeManifold< dimension >,
             SurfaceMeshVertexManifold< dimension >,
             SurfaceMeshIntersections< dimension >,
-            SurfaceMeshIsolation< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
-            .def( "inspect_surface", &SurfaceMeshInspector::inspect_surface );
+            SurfaceMeshNegativeElements< dimension >,
+            SurfaceMeshIsolation< dimension > >( module, name.c_str(),
+            "Complete inspection of a SurfaceMesh: adjacency, colocation, "
+            "degeneration, manifold property, intersections, negative "
+            "polygons and isolation (SurfaceMeshAdjacency, "
+            "SurfaceMeshColocation, ... whose methods it also has). The "
+            "edges of the mesh are enabled by the inspections returning "
+            "edge indices, and disabled again when the inspector is "
+            "destroyed (if they were not enabled)" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ),
+                "Create the inspector of this mesh. The inspector keeps the "
+                "mesh alive" )
+            .def( "inspect_surface", &SurfaceMeshInspector::inspect_surface,
+                ReleaseGil(),
+                "Return the SurfaceInspectionResult: the result of every "
+                "inspection of the mesh" );
 
         const auto inspect_function_name =
             absl::StrCat( "inspect_surface", dimension, "D" );
         module.def(
-            inspect_function_name.c_str(), []( const SurfaceMesh& surface ) {
-                SurfaceMeshInspector inspector{ surface };
+            inspect_function_name.c_str(),
+            []( const SurfaceMesh& surface ) {
+                const SurfaceMeshInspector inspector{ surface };
                 return inspector.inspect_surface();
-            } );
+            },
+            pybind11::arg( "surface" ), ReleaseGil(),
+            "Inspect the SurfaceMesh with a SurfaceMeshInspector and return "
+            "the SurfaceInspectionResult" );
     }
 
     void define_surface_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< SurfaceInspectionResult >(
-                module, "SurfaceInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "polygon_edges_with_wrong_adjacency",
-                &SurfaceInspectionResult::polygon_edges_with_wrong_adjacency )
-            .def_readwrite( "colocated_points_groups",
-                &SurfaceInspectionResult::colocated_points_groups )
-            .def_readwrite( "degenerated_edges",
-                &SurfaceInspectionResult::degenerated_edges )
-            .def_readwrite( "degenerated_polygons",
-                &SurfaceInspectionResult::degenerated_polygons )
-            .def_readwrite( "non_manifold_edges",
-                &SurfaceInspectionResult::non_manifold_edges )
-            .def_readwrite( "non_manifold_vertices",
-                &SurfaceInspectionResult::non_manifold_vertices )
-            .def_readwrite( "intersecting_elements",
-                &SurfaceInspectionResult::intersecting_elements )
-            .def_readwrite( "isolated_vertices",
-                &SurfaceInspectionResult::isolated_vertices )
-            .def( "nb_issues", &SurfaceInspectionResult::nb_issues )
-            .def(
-                "inspection_type", &SurfaceInspectionResult::inspection_type );
+        auto result = define_inspection_result< SurfaceInspectionResult >(
+            module, "SurfaceInspectionResult",
+            "Result of the inspection of a SurfaceMesh" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            polygon_edges_with_wrong_adjacency,
+            "InspectionIssuesPolygonEdge: the polygon edges with a wrong "
+            "adjacency" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            colocated_points_groups,
+            "InspectionIssuesVectorIndex: the groups of colocated vertices" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            degenerated_edges,
+            "InspectionIssuesIndex: the indices of the degenerated edges" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            degenerated_polygons,
+            "InspectionIssuesIndex: the indices of the degenerated "
+            "polygons" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            non_manifold_edges,
+            "InspectionIssuesArrayIndex2: the non manifold edges (pairs of "
+            "vertex indices)" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            non_manifold_vertices,
+            "InspectionIssuesIndex: the indices of the non manifold "
+            "vertices" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            intersecting_elements,
+            "InspectionIssuesPairIndex: the pairs of intersecting polygons" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            negative_polygons,
+            "InspectionIssuesIndex: the indices of the polygons with a "
+            "negative area (always empty for a 3D mesh)" );
+        INSPECTION_RESULT_MEMBER( result, SurfaceInspectionResult,
+            isolated_vertices,
+            "InspectionIssuesIndex: the indices of the vertices that are in "
+            "no polygon" );
 
         do_define_surface_inspector< 2 >( module );
         do_define_surface_inspector< 3 >( module );

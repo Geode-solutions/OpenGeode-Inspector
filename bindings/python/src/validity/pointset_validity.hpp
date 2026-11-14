@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/point_set.hpp>
@@ -27,11 +28,21 @@
 #include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/pointset_validity.hpp>
 
+#include "../inspection_helpers.hpp"
+
 namespace geode
 {
-    void define_point_set_validity( pybind11::module& module )
+    inline void define_point_set_validity( pybind11::module& module )
     {
-        module.def( "is_pointset_valid2D", &is_pointset_valid< 2 > );
-        module.def( "is_pointset_valid3D", &is_pointset_valid< 3 > );
+        module.def( "is_pointset_valid2D", &is_pointset_valid< 2 >,
+            pybind11::arg( "pointset" ), ReleaseGil(),
+            "Inspect the 2D PointSet with a PointSetInspector2D and return an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
+        module.def( "is_pointset_valid3D", &is_pointset_valid< 3 >,
+            pybind11::arg( "pointset" ), ReleaseGil(),
+            "Inspect the 3D PointSet with a PointSetInspector3D and return an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
     }
 } // namespace geode

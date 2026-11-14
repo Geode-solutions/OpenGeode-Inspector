@@ -24,9 +24,10 @@
 
 #include <geode/mesh/core/solid_mesh.hpp>
 
-#include <geode/mesh/core/detail/vertex_cycle.hpp>
-
 #include <geode/inspector/inspection/criterion/manifold/solid_edge_manifold.hpp>
+
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -36,12 +37,22 @@ namespace geode
         using SolidMeshEdgeManifold = SolidMeshEdgeManifold< dimension >;
         const auto name =
             absl::StrCat( "SolidMeshEdgeManifold", dimension, "D" );
-        pybind11::class_< SolidMeshEdgeManifold >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshEdgeManifold >( module, name.c_str(),
+            "Inspection of the manifold property of the edges of a SolidMesh" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                "Create the inspector of the manifold property of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_edges_are_manifold",
-                &SolidMeshEdgeManifold::mesh_edges_are_manifold )
+                &SolidMeshEdgeManifold::mesh_edges_are_manifold, ReleaseGil(),
+                "Return True if every edge is manifold: the polyhedra around "
+                "it form a single fan, which is checked through the polyhedron "
+                "adjacencies" )
             .def( "non_manifold_edges",
-                &SolidMeshEdgeManifold::non_manifold_edges );
+                &SolidMeshEdgeManifold::non_manifold_edges, ReleaseGil(),
+                "Return the InspectionIssuesArrayIndex listing the non "
+                "manifold edges, each one given by the indices of its two "
+                "vertices, and the edges that could not be checked because of "
+                "wrong polyhedron adjacencies (see SolidMeshAdjacency)" );
     }
 
     void define_solid_edge_manifold( pybind11::module& module )

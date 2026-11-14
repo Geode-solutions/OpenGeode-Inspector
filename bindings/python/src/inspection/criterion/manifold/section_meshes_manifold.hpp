@@ -20,34 +20,45 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/section.hpp>
 
 #include <geode/inspector/inspection/criterion/manifold/section_meshes_manifold.hpp>
+
+#include "../../../inspection_helpers.hpp"
 
 namespace geode
 {
     void define_section_meshes_manifold( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< SectionMeshesManifoldInspectionResult >(
-                module, "SectionMeshesManifoldInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "meshes_non_manifold_vertices",
-                &SectionMeshesManifoldInspectionResult::
-                    meshes_non_manifold_vertices )
-            .def_readwrite( "meshes_non_manifold_edges",
-                &SectionMeshesManifoldInspectionResult::
-                    meshes_non_manifold_edges )
-            .def(
-                "nb_issues", &SectionMeshesManifoldInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &SectionMeshesManifoldInspectionResult::inspection_type );
+        auto result =
+            define_inspection_result< SectionMeshesManifoldInspectionResult >(
+                module, "SectionMeshesManifoldInspectionResult",
+                "Result of the inspection of the manifold property of the "
+                "meshes of the Surfaces of a Section" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesManifoldInspectionResult,
+            meshes_non_manifold_vertices,
+            "InspectionIssuesMapIndex: the non manifold vertices of the "
+            "Surface meshes, by Surface" );
+        INSPECTION_RESULT_MEMBER( result, SectionMeshesManifoldInspectionResult,
+            meshes_non_manifold_edges,
+            "InspectionIssuesMapArrayIndex2: the non manifold edges of the "
+            "Surface meshes (pairs of vertex indices), by Surface" );
 
-        pybind11::class_< SectionComponentMeshesManifold >(
-            module, "SectionComponentMeshesManifold" )
-            .def( pybind11::init< const Section& >() )
+        pybind11::class_< SectionComponentMeshesManifold >( module,
+            "SectionComponentMeshesManifold",
+            "Inspection of the manifold property of the meshes of the active "
+            "Surfaces of a Section" )
+            .def( pybind11::init< const Section& >(),
+                pybind11::arg( "section" ),
+                "Create the inspector of the manifold property of the "
+                "meshes of this Section. The inspector keeps the Section "
+                "alive" )
             .def( "inspect_section_manifold",
-                &SectionComponentMeshesManifold::inspect_section_manifold );
+                &SectionComponentMeshesManifold::inspect_section_manifold,
+                ReleaseGil(),
+                "Return the SectionMeshesManifoldInspectionResult: the non "
+                "manifold vertices and edges of each Surface mesh, as "
+                "SurfaceMeshVertexManifold and SurfaceMeshEdgeManifold find "
+                "them" );
     }
 } // namespace geode

@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/colocation/surface_colocation.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,13 +37,24 @@ namespace geode
         using SurfaceMeshColocation = SurfaceMeshColocation< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshColocation", dimension, "D" );
-        pybind11::class_< SurfaceMeshColocation >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshColocation >( module, name.c_str(),
+            "Inspection of the colocation of the vertices of a SurfaceMesh" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ),
+                "Create the inspector of the colocated vertices of this "
+                "mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_colocated_points",
-                &SurfaceMeshColocation::mesh_has_colocated_points )
+                &SurfaceMeshColocation::mesh_has_colocated_points, ReleaseGil(),
+                "Return True if at least two vertices are colocated: their "
+                "distance is at most GLOBAL_EPSILON (1e-6)" )
             .def( "colocated_points_groups",
-                &SurfaceMeshColocation::colocated_points_groups );
+                &SurfaceMeshColocation::colocated_points_groups, ReleaseGil(),
+                "Return the InspectionIssuesVectorIndex listing the groups of "
+                "colocated vertices: each issue is the list of the indices of "
+                "at least two vertices at the same position (a vertex is in "
+                "at most one group)" );
     }
+
     void define_surface_colocation( pybind11::module& module )
     {
         do_define_surface_colocation< 2 >( module );

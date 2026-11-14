@@ -21,11 +21,13 @@
  *
  */
 
-#include "pybind11/iostream.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/stl.h"
+#include <pybind11/iostream.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
-#include "../issues_repr.hpp"
+#include <geode/bindings/python/common.hpp>
+
+#include "../inspection_helpers.hpp"
 
 #include "criterion/adjacency/brep_meshes_adjacency.hpp"
 #include "criterion/adjacency/section_meshes_adjacency.hpp"
@@ -61,6 +63,11 @@
 #include "criterion/manifold/surface_edge_manifold.hpp"
 #include "criterion/manifold/surface_vertex_manifold.hpp"
 
+#include "criterion/negative_elements/brep_meshes_negative_elements.hpp"
+#include "criterion/negative_elements/section_meshes_negative_elements.hpp"
+#include "criterion/negative_elements/solid_negative_elements.hpp"
+#include "criterion/negative_elements/surface_negative_elements.hpp"
+
 #include "criterion/brep_meshes_inspector.hpp"
 #include "criterion/section_meshes_inspector.hpp"
 
@@ -75,37 +82,26 @@
 #include "solid_inspector.hpp"
 #include "surface_inspector.hpp"
 
-namespace pybind11
-{
-    namespace detail
-    {
-        template < typename Key, typename Value >
-        struct type_caster< absl::flat_hash_map< Key, Value > >
-            : map_caster< absl::flat_hash_map< Key, Value >, Key, Value >
-        {
-        };
-
-        template < typename Key, typename Value >
-        struct type_caster< absl::linked_hash_map< Key, Value > >
-            : map_caster< absl::linked_hash_map< Key, Value >, Key, Value >
-        {
-        };
-
-        template < typename Type, size_t dimension >
-        struct type_caster< absl::InlinedVector< Type, dimension > >
-            : list_caster< absl::InlinedVector< Type, dimension >, Type >
-        {
-        };
-    } // namespace detail
-} // namespace pybind11
-
 PYBIND11_MODULE( opengeode_inspector_py_inspection, module )
 {
-    module.doc() = "OpenGeode-Inspector Python binding";
-    pybind11::class_< geode::OpenGeodeInspectorInspectionLibrary >(
-        module, "OpenGeodeInspectorInspectionLibrary" )
-        .def( "initialize",
-            &geode::OpenGeodeInspectorInspectionLibrary::initialize );
+    module.doc() =
+        "Inspection of the validity of the meshes and models of OpenGeode: "
+        "the inspectors check one criterion (adjacency, colocation, "
+        "degeneration, intersections, isolation, manifold property, "
+        "negative elements, topology) and return the issues found; the "
+        "inspectors of a mesh type or of a model type (SurfaceMeshInspector2D, "
+        "BRepInspector...) check every criterion, and the functions "
+        "inspect_surface2D, inspect_brep... do it in one call. Call "
+        "OpenGeodeInspectorInspectionLibrary.initialize() before using the "
+        "module.";
+    geode::import_binding_dependency( module, "opengeode" );
+    pybind11::class_< geode::OpenGeodeInspectorInspectionLibrary >( module,
+        "OpenGeodeInspectorInspectionLibrary",
+        "Initialization of the inspection module" )
+        .def_static( "initialize",
+            &geode::OpenGeodeInspectorInspectionLibrary::initialize,
+            "Initialize the inspection library, and OpenGeodeModelLibrary "
+            "with it. Calling it again has no effect" );
     geode::define_information( module );
     geode::define_surface_adjacency( module );
     geode::define_solid_adjacency( module );
@@ -135,6 +131,10 @@ PYBIND11_MODULE( opengeode_inspector_py_inspection, module )
     geode::define_solid_facet_manifold( module );
     geode::define_brep_meshes_manifold( module );
     geode::define_section_meshes_manifold( module );
+    geode::define_surface_negative_elements( module );
+    geode::define_solid_negative_elements( module );
+    geode::define_brep_meshes_negative_elements( module );
+    geode::define_section_meshes_negative_elements( module );
     geode::define_brep_topology_inspector( module );
     geode::define_section_topology_inspector( module );
     geode::define_brep_meshes_inspector( module );
@@ -145,4 +145,5 @@ PYBIND11_MODULE( opengeode_inspector_py_inspection, module )
     geode::define_edged_curve_inspector( module );
     geode::define_surface_inspector( module );
     geode::define_solid_inspector( module );
+    geode::document_missing_constructors( module );
 }

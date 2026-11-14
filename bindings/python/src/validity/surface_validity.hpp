@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/surface_mesh.hpp>
@@ -27,11 +28,23 @@
 #include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/surface_validity.hpp>
 
+#include "../inspection_helpers.hpp"
+
 namespace geode
 {
-    void define_surface_mesh_validity( pybind11::module& module )
+    inline void define_surface_mesh_validity( pybind11::module& module )
     {
-        module.def( "is_surface_valid2D", &is_surface_valid< 2 > );
-        module.def( "is_surface_valid3D", &is_surface_valid< 3 > );
+        module.def( "is_surface_valid2D", &is_surface_valid< 2 >,
+            pybind11::arg( "surface" ), ReleaseGil(),
+            "Inspect the 2D SurfaceMesh with a SurfaceMeshInspector2D and "
+            "return an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
+        module.def( "is_surface_valid3D", &is_surface_valid< 3 >,
+            pybind11::arg( "surface" ), ReleaseGil(),
+            "Inspect the 3D SurfaceMesh with a SurfaceMeshInspector3D and "
+            "return an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
     }
 } // namespace geode

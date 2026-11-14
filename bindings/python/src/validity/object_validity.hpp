@@ -27,13 +27,28 @@
 
 #include <geode/inspector/validity/object_validity.hpp>
 
+#include "../inspection_helpers.hpp"
+
 namespace geode
 {
     inline void define_object_validity( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< ObjectValidity >( module, "ObjectValidity" ) )
-            .def( "nb_issues", &ObjectValidity::nb_issues )
-            .def_readwrite( "invalidities", &ObjectValidity::invalidities );
+        auto validity = define_string_representation(
+            pybind11::class_< ObjectValidity >( module, "ObjectValidity",
+                "Validity of a mesh or of a model, as returned by the "
+                "is_*_valid functions: its list of invalidities is empty when "
+                "the object is valid, and bool(validity) is then True" ),
+            []( const ObjectValidity& object_validity ) {
+                return absl::StrCat( "ObjectValidity(nb_issues=",
+                    object_validity.nb_issues(), ")" );
+            } );
+        validity
+            .def( pybind11::init<>(), "Create the validity of a valid object" )
+            .def( "nb_issues", &ObjectValidity::nb_issues,
+                "Return the number of invalidities" );
+        def_readwrite_named( validity, "invalidities",
+            &ObjectValidity::invalidities,
+            "The list of invalidities: one message per inspection that found "
+            "issues, describing them" );
     }
 } // namespace geode

@@ -20,52 +20,74 @@
  * SOFTWARE.
  *
  */
+#include <absl/strings/str_cat.h>
 
 #include <geode/model/representation/core/brep.hpp>
 #include <geode/model/representation/core/section.hpp>
 
 #include <geode/inspector/inspection/criterion/colocation/unique_vertices_colocation.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
+    template < typename Model >
+    void do_define_unique_vertices_colocation(
+        pybind11::module& module, const std::string& model_name )
+    {
+        using UniqueVerticesColocation = UniqueVerticesColocation< Model >;
+        const auto name =
+            absl::StrCat( model_name, "UniqueVerticesColocation" );
+        pybind11::class_< UniqueVerticesColocation >( module, name.c_str(),
+            absl::StrCat( "Inspection of the colocation of the unique "
+                          "vertices of a ",
+                model_name,
+                ". The positions of the unique vertices are computed at the "
+                "first inspection and kept: create a new inspector after "
+                "modifying the model" )
+                .c_str() )
+            .def( pybind11::init< const Model& >(), pybind11::arg( "model" ),
+                absl::StrCat( "Create the inspector of the unique vertices of "
+                              "this ",
+                    model_name, ". The inspector keeps the ", model_name,
+                    " alive" )
+                    .c_str() )
+            .def( "model_has_unique_vertices_linked_to_different_points",
+                &UniqueVerticesColocation::
+                    model_has_unique_vertices_linked_to_different_points,
+                ReleaseGil(),
+                "Return True if a unique vertex is linked to mesh vertices "
+                "that are not colocated" )
+            .def( "model_has_colocated_unique_vertices",
+                &UniqueVerticesColocation::model_has_colocated_unique_vertices,
+                ReleaseGil(),
+                "Return True if two unique vertices are colocated (unique "
+                "vertices linked to no mesh vertex are ignored)" )
+            .def( "inspect_unique_vertices",
+                &UniqueVerticesColocation::inspect_unique_vertices,
+                ReleaseGil(),
+                "Return the UniqueVerticesInspectionResult: the groups of "
+                "colocated unique vertices and the unique vertices linked to "
+                "mesh vertices at different positions" );
+    }
+
     void define_models_uv_colocation( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< UniqueVerticesInspectionResult >(
-                module, "UniqueVerticesInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "colocated_unique_vertices_groups",
-                &UniqueVerticesInspectionResult::
-                    colocated_unique_vertices_groups )
-            .def_readwrite( "unique_vertices_linked_to_different_points",
-                &UniqueVerticesInspectionResult::
-                    unique_vertices_linked_to_different_points )
-            .def( "nb_issues", &UniqueVerticesInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &UniqueVerticesInspectionResult::inspection_type );
+        auto result =
+            define_inspection_result< UniqueVerticesInspectionResult >( module,
+                "UniqueVerticesInspectionResult",
+                "Result of the inspection of the colocation of the unique "
+                "vertices of a model" );
+        INSPECTION_RESULT_MEMBER( result, UniqueVerticesInspectionResult,
+            colocated_unique_vertices_groups,
+            "InspectionIssuesVectorIndex: the groups of colocated unique "
+            "vertices (lists of unique vertex indices)" );
+        INSPECTION_RESULT_MEMBER( result, UniqueVerticesInspectionResult,
+            unique_vertices_linked_to_different_points,
+            "InspectionIssuesIndex: the unique vertices linked to mesh "
+            "vertices at different positions" );
 
-        pybind11::class_< SectionUniqueVerticesColocation >(
-            module, "SectionUniqueVerticesColocation" )
-            .def( pybind11::init< const Section& >() )
-            .def( "model_has_unique_vertices_linked_to_different_points",
-                &SectionUniqueVerticesColocation::
-                    model_has_unique_vertices_linked_to_different_points )
-            .def( "model_has_colocated_unique_vertices",
-                &SectionUniqueVerticesColocation::
-                    model_has_colocated_unique_vertices )
-            .def( "inspect_unique_vertices",
-                &SectionUniqueVerticesColocation::inspect_unique_vertices );
-
-        pybind11::class_< BRepUniqueVerticesColocation >(
-            module, "BRepUniqueVerticesColocation" )
-            .def( pybind11::init< const BRep& >() )
-            .def( "model_has_unique_vertices_linked_to_different_points",
-                &BRepUniqueVerticesColocation::
-                    model_has_unique_vertices_linked_to_different_points )
-            .def( "model_has_colocated_unique_vertices",
-                &BRepUniqueVerticesColocation::
-                    model_has_colocated_unique_vertices )
-            .def( "inspect_unique_vertices",
-                &BRepUniqueVerticesColocation::inspect_unique_vertices );
+        do_define_unique_vertices_colocation< Section >( module, "Section" );
+        do_define_unique_vertices_colocation< BRep >( module, "BRep" );
     }
 } // namespace geode

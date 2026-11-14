@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/model/representation/core/section.hpp>
@@ -27,10 +28,16 @@
 #include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/section_validity.hpp>
 
+#include "../inspection_helpers.hpp"
+
 namespace geode
 {
-    void define_section_validity( pybind11::module& module )
+    inline void define_section_validity( pybind11::module& module )
     {
-        module.def( "is_section_valid", &is_section_valid );
+        module.def( "is_section_valid", &is_section_valid,
+            pybind11::arg( "section" ), ReleaseGil(),
+            "Inspect the Section (meshes and topology, as SectionInspector "
+            "does) and return an ObjectValidity with the report of every "
+            "inspection that found issues" );
     }
 } // namespace geode

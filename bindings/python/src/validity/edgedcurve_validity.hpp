@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/edged_curve.hpp>
@@ -27,11 +28,25 @@
 #include <geode/inspector/validity/edgedcurve_validity.hpp>
 #include <geode/inspector/validity/object_validity.hpp>
 
+#include "../inspection_helpers.hpp"
+
 namespace geode
 {
-    void define_edged_curve_validity( pybind11::module& module )
+    inline void define_edged_curve_validity( pybind11::module& module )
     {
-        module.def( "is_edged_curve_valid2D", &is_edged_curve_valid< 2 > );
-        module.def( "is_edged_curve_valid3D", &is_edged_curve_valid< 3 > );
+        module.def( "is_edged_curve_valid2D", &is_edged_curve_valid< 2 >,
+            pybind11::arg( "curve" ), ReleaseGil(),
+            "Inspect the 2D EdgedCurve with an EdgedCurveInspector2D and "
+            "return "
+            "an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
+        module.def( "is_edged_curve_valid3D", &is_edged_curve_valid< 3 >,
+            pybind11::arg( "curve" ), ReleaseGil(),
+            "Inspect the 3D EdgedCurve with an EdgedCurveInspector3D and "
+            "return "
+            "an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
     }
 } // namespace geode

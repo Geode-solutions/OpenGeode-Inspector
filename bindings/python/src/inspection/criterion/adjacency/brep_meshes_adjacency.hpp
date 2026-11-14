@@ -20,34 +20,46 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/criterion/adjacency/brep_meshes_adjacency.hpp>
+
+#include "../../../inspection_helpers.hpp"
 
 namespace geode
 {
     void define_brep_meshes_adjacency( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< BRepMeshesAdjacencyInspectionResult >(
-                module, "BRepMeshesAdjacencyInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
-                &BRepMeshesAdjacencyInspectionResult::
-                    surfaces_edges_with_wrong_adjacencies )
-            .def_readwrite( "blocks_facets_with_wrong_adjacencies",
-                &BRepMeshesAdjacencyInspectionResult::
-                    blocks_facets_with_wrong_adjacencies )
-            .def( "nb_issues", &BRepMeshesAdjacencyInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &BRepMeshesAdjacencyInspectionResult::inspection_type );
+        auto result =
+            define_inspection_result< BRepMeshesAdjacencyInspectionResult >(
+                module, "BRepMeshesAdjacencyInspectionResult",
+                "Result of the inspection of the adjacencies in the meshes of "
+                "the Surfaces and Blocks of a BRep" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesAdjacencyInspectionResult,
+            surfaces_edges_with_wrong_adjacencies,
+            "InspectionIssuesMapPolygonEdge: the polygon edges with a wrong "
+            "adjacency, by Surface" );
+        INSPECTION_RESULT_MEMBER( result, BRepMeshesAdjacencyInspectionResult,
+            blocks_facets_with_wrong_adjacencies,
+            "InspectionIssuesMapPolyhedronFacet: the polyhedron facets with "
+            "a wrong adjacency, by Block" );
 
-        pybind11::class_< BRepComponentMeshesAdjacency >(
-            module, "BRepComponentMeshesAdjacency" )
-            .def( pybind11::init< const BRep& >() )
+        pybind11::class_< BRepComponentMeshesAdjacency >( module,
+            "BRepComponentMeshesAdjacency",
+            "Inspection of the adjacencies between the elements of the meshes "
+            "of the Surfaces (polygon edges) and of the Blocks (polyhedron "
+            "facets) of a BRep" )
+            .def( pybind11::init< const BRep& >(), pybind11::arg( "model" ),
+                "Create the inspector of the adjacencies of the meshes of "
+                "this BRep. The inspector keeps the BRep alive" )
             .def( "inspect_brep_meshes_adjacencies",
-                &BRepComponentMeshesAdjacency::
-                    inspect_brep_meshes_adjacencies );
+                &BRepComponentMeshesAdjacency::inspect_brep_meshes_adjacencies,
+                ReleaseGil(),
+                "Return the BRepMeshesAdjacencyInspectionResult for the active "
+                "Surfaces and Blocks: the wrong adjacencies of their meshes "
+                "(as SurfaceMeshAdjacency and SolidMeshAdjacency find them), "
+                "the polygon edges on the border of a Surface that are not "
+                "part of a Line of the model, and the polyhedron facets on "
+                "the border of a Block that are not a polygon of a Surface" );
     }
 } // namespace geode

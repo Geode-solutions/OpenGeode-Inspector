@@ -20,32 +20,46 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/brep.hpp>
 
 #include <geode/inspector/inspection/brep_inspector.hpp>
+
+#include "../inspection_helpers.hpp"
 
 namespace geode
 {
     void define_brep_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< BRepInspectionResult >(
-                module, "BRepInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "meshes", &BRepInspectionResult::meshes )
-            .def_readwrite( "topology", &BRepInspectionResult::topology )
-            .def( "nb_issues", &BRepInspectionResult::nb_issues )
-            .def( "inspection_type", &BRepInspectionResult::inspection_type );
+        auto result = define_inspection_result< BRepInspectionResult >( module,
+            "BRepInspectionResult",
+            "Result of the inspection of a BRep: the inspection of its "
+            "meshes and of its topology" );
+        INSPECTION_RESULT_MEMBER( result, BRepInspectionResult, meshes,
+            "BRepMeshesInspectionResult: the inspection of the meshes" );
+        INSPECTION_RESULT_MEMBER( result, BRepInspectionResult, topology,
+            "BRepTopologyInspectionResult: the inspection of the topology" );
 
         pybind11::class_< BRepInspector, BRepMeshesInspector,
-            BRepTopologyInspector >( module, "BRepInspector" )
-            .def( pybind11::init< const BRep& >() )
-            .def( "inspect_brep", &BRepInspector::inspect_brep );
+            BRepTopologyInspector >( module, "BRepInspector",
+            "Complete inspection of a BRep: the inspection of its meshes "
+            "(BRepMeshesInspector) and of its topology "
+            "(BRepTopologyInspector), whose methods it also has" )
+            .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                ReleaseGil(),
+                "Create the inspector of this BRep. The inspector keeps the "
+                "BRep alive" )
+            .def( "inspect_brep", &BRepInspector::inspect_brep, ReleaseGil(),
+                "Return the BRepInspectionResult: the inspection of the "
+                "meshes and of the topology of the BRep" );
 
-        module.def( "inspect_brep", []( const BRep& brep ) {
-            BRepInspector inspector{ brep };
-            return inspector.inspect_brep();
-        } );
+        module.def(
+            "inspect_brep",
+            []( const BRep& brep ) {
+                const BRepInspector inspector{ brep };
+                return inspector.inspect_brep();
+            },
+            pybind11::arg( "brep" ), ReleaseGil(),
+            "Inspect the BRep with a BRepInspector and return the "
+            "BRepInspectionResult" );
     }
 } // namespace geode

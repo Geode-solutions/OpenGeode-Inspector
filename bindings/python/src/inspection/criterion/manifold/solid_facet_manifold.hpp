@@ -22,10 +22,11 @@
  */
 #include <absl/strings/str_cat.h>
 
-#include <geode/mesh/core/detail/vertex_cycle.hpp>
 #include <geode/mesh/core/solid_mesh.hpp>
 
 #include <geode/inspector/inspection/criterion/manifold/solid_facet_manifold.hpp>
+
+#include "../../../inspection_helpers.hpp"
 
 namespace geode
 {
@@ -36,13 +37,22 @@ namespace geode
         using SolidMeshFacetManifold = SolidMeshFacetManifold< dimension >;
         const auto name =
             absl::StrCat( "SolidMeshFacetManifold", dimension, "D" );
-        pybind11::class_< SolidMeshFacetManifold >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshFacetManifold >( module, name.c_str(),
+            "Inspection of the manifold property of the facets of a SolidMesh" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                "Create the inspector of the manifold property of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_facets_are_manifold",
-                &SolidMeshFacetManifold::mesh_facets_are_manifold )
+                &SolidMeshFacetManifold::mesh_facets_are_manifold, ReleaseGil(),
+                "Return True if every facet is manifold: no facet is shared by "
+                "more than two polyhedra" )
             .def( "non_manifold_facets",
-                &SolidMeshFacetManifold::non_manifold_facets );
+                &SolidMeshFacetManifold::non_manifold_facets, ReleaseGil(),
+                "Return the InspectionIssuesPolyhedronFacetVertices listing "
+                "the non manifold facets (shared by more than two polyhedra), "
+                "each one given by the indices of its vertices" );
     }
+
     void define_solid_facet_manifold( pybind11::module& module )
     {
         do_define_solid_facet_manifold< 3 >( module );

@@ -26,7 +26,7 @@
 
 #include <geode/inspector/inspection/criterion/colocation/edgedcurve_colocation.hpp>
 
-#define PYTHON_EDGEDCURVE_COLOCATION( dimension )
+#include "../../../inspection_helpers.hpp"
 
 namespace geode
 {
@@ -35,16 +35,26 @@ namespace geode
     {
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveColocation = EdgedCurveColocation< dimension >;
-
         const auto name =
             absl::StrCat( "EdgedCurveColocation", dimension, "D" );
-        pybind11::class_< EdgedCurveColocation >( module, name.c_str() )
-            .def( pybind11::init< const EdgedCurve& >() )
+        pybind11::class_< EdgedCurveColocation >( module, name.c_str(),
+            "Inspection of the colocation of the vertices of an EdgedCurve" )
+            .def( pybind11::init< const EdgedCurve& >(),
+                pybind11::arg( "mesh" ),
+                "Create the inspector of the colocated vertices of this "
+                "mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_colocated_points",
-                &EdgedCurveColocation::mesh_has_colocated_points )
+                &EdgedCurveColocation::mesh_has_colocated_points, ReleaseGil(),
+                "Return True if at least two vertices are colocated: their "
+                "distance is at most GLOBAL_EPSILON (1e-6)" )
             .def( "colocated_points_groups",
-                &EdgedCurveColocation::colocated_points_groups );
+                &EdgedCurveColocation::colocated_points_groups, ReleaseGil(),
+                "Return the InspectionIssuesVectorIndex listing the groups of "
+                "colocated vertices: each issue is the list of the indices of "
+                "at least two vertices at the same position (a vertex is in "
+                "at most one group)" );
     }
+
     void define_edged_curve_colocation( pybind11::module& module )
     {
         do_define_edged_curve_colocation< 2 >( module );

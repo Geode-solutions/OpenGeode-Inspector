@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/isolation/surface_isolation.hpp>
 
+#include "../../../inspection_helpers.hpp"
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,13 +37,23 @@ namespace geode
         using SurfaceMeshIsolation = SurfaceMeshIsolation< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshIsolation", dimension, "D" );
-        pybind11::class_< SurfaceMeshIsolation >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshIsolation >( module, name.c_str(),
+            "Inspection of the isolated vertices of a SurfaceMesh: the "
+            "vertices that "
+            "are in no polygon" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ),
+                "Create the inspector of the isolated vertices of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_has_isolated_vertices",
-                &SurfaceMeshIsolation::mesh_has_isolated_vertices )
-            .def(
-                "isolated_vertices", &SurfaceMeshIsolation::isolated_vertices );
+                &SurfaceMeshIsolation::mesh_has_isolated_vertices, ReleaseGil(),
+                "Return True if a vertex is in no polygon" )
+            .def( "isolated_vertices", &SurfaceMeshIsolation::isolated_vertices,
+                ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "vertices that are in no polygon" );
     }
+
     void define_surface_isolation( pybind11::module& module )
     {
         do_define_surface_isolation< 2 >( module );
