@@ -40,7 +40,7 @@ namespace geode
         pybind11::class_< SurfaceMeshColocation >( module, name.c_str(),
             "Inspection of the colocation of the vertices of a SurfaceMesh" )
             .def( pybind11::init< const SurfaceMesh& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the colocated vertices of this "
                 "mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_colocated_points",

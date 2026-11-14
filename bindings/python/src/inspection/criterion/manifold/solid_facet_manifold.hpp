@@ -40,6 +40,7 @@ namespace geode
         pybind11::class_< SolidMeshFacetManifold >( module, name.c_str(),
             "Inspection of the manifold property of the facets of a SolidMesh" )
             .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the manifold property of this mesh. "
                 "The inspector keeps the mesh alive" )
             .def( "mesh_facets_are_manifold",

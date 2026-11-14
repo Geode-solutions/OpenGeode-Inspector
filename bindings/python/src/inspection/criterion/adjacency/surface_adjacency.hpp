@@ -41,7 +41,7 @@ namespace geode
             "Inspection of the adjacencies between the polygons of a "
             "SurfaceMesh" )
             .def( pybind11::init< const SurfaceMesh& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the adjacencies of the polygons of "
                 "this mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_wrong_adjacencies",

@@ -46,7 +46,8 @@ namespace geode
             "(SectionMeshesInspector) and of its topology "
             "(SectionTopologyInspector), whose methods it also has" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ), ReleaseGil(),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                ReleaseGil(),
                 "Create the inspector of this Section. The inspector keeps "
                 "the Section alive" )
             .def( "inspect_section", &SectionInspector::inspect_section,

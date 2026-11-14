@@ -253,6 +253,7 @@ namespace geode
             "Corner, a Corner is internal to at most one component and is a "
             "boundary of every Line it is linked to" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Corners of this "
                 "BRep. The inspector keeps the BRep alive" )
             .def( "inspect_corners_topology",
@@ -269,6 +270,7 @@ namespace geode
             "components, the ends of a Line and the vertices shared by "
             "several Lines are Corners" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Lines of this "
                 "BRep. "
                 "The inspector keeps the BRep alive" )
@@ -287,6 +289,7 @@ namespace geode
             "unique vertices shared by several Surfaces are consistent with "
             "the Lines and Blocks around" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Surfaces of this "
                 "BRep. The inspector keeps the BRep alive" )
             .def( "inspect_surfaces_topology",
@@ -303,6 +306,7 @@ namespace geode
             "and the unique vertices shared by Blocks are consistent with the "
             "Surfaces and Lines around" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Blocks of this "
                 "BRep. "
                 "The inspector keeps the BRep alive" )
@@ -321,6 +325,7 @@ namespace geode
             "vertices. It also has the methods of the inspectors of the "
             "Corners, Lines, Surfaces and Blocks" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the topology inspector of this BRep. The inspector "
                 "keeps "
                 "the BRep alive" )

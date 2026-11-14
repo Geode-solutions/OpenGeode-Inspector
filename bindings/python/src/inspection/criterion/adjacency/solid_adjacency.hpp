@@ -40,6 +40,7 @@ namespace geode
             "Inspection of the adjacencies between the polyhedra of a "
             "SolidMesh" )
             .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the adjacencies of the polyhedra of "
                 "this mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_wrong_adjacencies",

@@ -52,6 +52,7 @@ namespace geode
             "inspections returning edge indices, and disabled again when "
             "the inspector is destroyed (if they were not enabled)" )
             .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of this mesh. The inspector keeps the "
                 "mesh alive" )
             .def( "inspect_solid", &SolidMeshInspector::inspect_solid,

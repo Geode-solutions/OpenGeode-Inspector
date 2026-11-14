@@ -74,7 +74,7 @@ namespace geode
             "component meshes. It also has the methods of each of these "
             "inspectors" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
-                ReleaseGil(),
+                pybind11::keep_alive< 1, 2 >(), ReleaseGil(),
                 "Create the inspector of the meshes of this BRep. The "
                 "inspector keeps the BRep alive" )
             .def( "inspect_brep_meshes",

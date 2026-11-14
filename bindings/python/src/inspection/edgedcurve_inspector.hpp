@@ -46,7 +46,7 @@ namespace geode
             "(EdgedCurveColocation, EdgedCurveDegeneration and "
             "EdgedCurveIsolation, whose methods it also has)" )
             .def( pybind11::init< const EdgedCurve& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of this mesh. The inspector keeps the "
                 "mesh alive" )
             .def( "inspect_edged_curve",

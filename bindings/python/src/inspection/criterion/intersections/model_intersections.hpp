@@ -45,7 +45,7 @@ namespace geode
                 "inspector is created" )
                 .c_str() )
             .def( pybind11::init< const Model& >(), pybind11::arg( "model" ),
-                ReleaseGil(),
+                pybind11::keep_alive< 1, 2 >(), ReleaseGil(),
                 absl::StrCat(
                     "Create the inspector of the intersections of the meshes "
                     "of this ",

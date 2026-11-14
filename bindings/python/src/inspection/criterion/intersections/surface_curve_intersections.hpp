@@ -46,6 +46,7 @@ namespace geode
             .def( pybind11::init< const TriangulatedSurface&,
                       const EdgedCurve& >(),
                 pybind11::arg( "surface" ), pybind11::arg( "curve" ),
+                pybind11::keep_alive< 1, 2 >(), pybind11::keep_alive< 1, 3 >(),
                 "Create the inspector of the intersections between this "
                 "surface and this curve. The inspector keeps both meshes "
                 "alive" )

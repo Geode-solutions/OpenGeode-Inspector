@@ -75,7 +75,8 @@ namespace geode
             "component meshes. It also has the methods of each of these "
             "inspectors" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ), ReleaseGil(),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                ReleaseGil(),
                 "Create the inspector of the meshes of this Section. The "
                 "inspector keeps the Section alive" )
             .def( "inspect_section_meshes",

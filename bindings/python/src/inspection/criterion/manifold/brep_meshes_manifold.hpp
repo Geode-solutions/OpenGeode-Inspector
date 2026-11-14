@@ -114,6 +114,7 @@ namespace geode
             "Inspection of the manifold property of the meshes of the active "
             "Surfaces and Blocks of a BRep, and of the BRep itself" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the manifold property of this BRep. "
                 "The inspector keeps the BRep alive" )
             .def( "inspect_brep_manifold",

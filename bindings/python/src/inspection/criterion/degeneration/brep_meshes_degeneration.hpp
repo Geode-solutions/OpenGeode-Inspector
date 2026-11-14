@@ -58,6 +58,7 @@ namespace geode
             "modify the BRep while an inspector exists, and do not inspect "
             "or use the same mesh or model from two threads at once" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the degenerated elements of the "
                 "meshes of this BRep. The inspector keeps the BRep alive" )
             .def( "inspect_elements_degeneration",

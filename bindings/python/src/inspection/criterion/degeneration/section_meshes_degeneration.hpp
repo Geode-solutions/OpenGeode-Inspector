@@ -54,7 +54,7 @@ namespace geode
             "inspector exists, and do not inspect or use the same mesh or "
             "model from two threads at once" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the degenerated elements of the "
                 "meshes of this Section. The inspector keeps the Section "
                 "alive" )

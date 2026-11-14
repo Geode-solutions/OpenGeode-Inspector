@@ -45,6 +45,7 @@ namespace geode
             "Inspection of the negative polyhedra in the meshes of the "
             "active Blocks of a BRep" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the negative polyhedra of this BRep. "
                 "The inspector keeps the BRep alive" )
             .def( "inspect_negative_elements",

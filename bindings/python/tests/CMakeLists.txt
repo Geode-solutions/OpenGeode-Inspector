@@ -30,6 +30,7 @@ foreach(test_name
     "test-py-naming"
     "test-py-signatures"
     "test-py-module-import"
+    "test-py-lifetime"
     "test-py-negative-elements"
     "test-py-results"
     "test-py-gil"

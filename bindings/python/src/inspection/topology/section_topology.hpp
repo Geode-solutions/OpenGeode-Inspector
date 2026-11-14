@@ -166,7 +166,7 @@ namespace geode
             "Corner, a Corner is internal to at most one component and is a "
             "boundary of every Line it is linked to" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Corners of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_corners_topology",
@@ -182,7 +182,7 @@ namespace geode
             "unique vertices: each Line is internal or boundary, the ends of "
             "a Line and the vertices shared by several Lines are Corners" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Lines of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_lines_topology",
@@ -199,7 +199,7 @@ namespace geode
             "the unique vertices: a unique vertex shared by two Surfaces is "
             "part of a Line which is a boundary of both" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the topology of the Surfaces of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_surfaces",
@@ -216,7 +216,7 @@ namespace geode
             "vertices. It also has the methods of the inspectors of the "
             "Corners, Lines and Surfaces" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the topology inspector of this Section. The inspector "
                 "keeps the Section alive" )
             .def( "section_topology_is_valid",

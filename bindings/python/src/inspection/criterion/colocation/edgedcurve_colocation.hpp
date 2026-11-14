@@ -40,7 +40,7 @@ namespace geode
         pybind11::class_< EdgedCurveColocation >( module, name.c_str(),
             "Inspection of the colocation of the vertices of an EdgedCurve" )
             .def( pybind11::init< const EdgedCurve& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the colocated vertices of this "
                 "mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_colocated_points",

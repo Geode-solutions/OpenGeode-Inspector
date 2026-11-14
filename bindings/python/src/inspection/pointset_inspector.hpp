@@ -42,6 +42,7 @@ namespace geode
             "Complete inspection of a PointSet: the colocation of its "
             "vertices (PointSetColocation, whose methods it also has)" )
             .def( pybind11::init< const PointSet& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of this mesh. The inspector keeps the "
                 "mesh alive" )
             .def( "inspect_point_set", &PointSetInspector::inspect_point_set,

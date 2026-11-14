@@ -45,7 +45,7 @@ namespace geode
             "Inspection of the negative polygons in the meshes of the active "
             "Surfaces of a Section" )
             .def( pybind11::init< const Section& >(),
-                pybind11::arg( "section" ),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the negative polygons of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_negative_elements",

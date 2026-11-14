@@ -45,7 +45,7 @@ namespace geode
             "(BRepMeshesInspector) and of its topology "
             "(BRepTopologyInspector), whose methods it also has" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
-                ReleaseGil(),
+                pybind11::keep_alive< 1, 2 >(), ReleaseGil(),
                 "Create the inspector of this BRep. The inspector keeps the "
                 "BRep alive" )
             .def( "inspect_brep", &BRepInspector::inspect_brep, ReleaseGil(),

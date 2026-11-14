@@ -42,6 +42,7 @@ namespace geode
             "Inspection of the negative polyhedra (with a negative volume) "
             "of a SolidMesh" )
             .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the negative polyhedra of this mesh. "
                 "The inspector keeps the mesh alive" )
             .def( "mesh_has_negative_elements",

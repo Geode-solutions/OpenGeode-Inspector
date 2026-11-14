@@ -50,6 +50,7 @@ namespace geode
             "of the Surfaces (polygon edges) and of the Blocks (polyhedron "
             "facets) of a BRep" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "model" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the adjacencies of the meshes of "
                 "this BRep. The inspector keeps the BRep alive" )
             .def( "inspect_brep_meshes_adjacencies",

@@ -40,7 +40,7 @@ namespace geode
         pybind11::class_< SurfaceMeshIntersections >( module, name.c_str(),
             "Inspection of the self intersections of a SurfaceMesh" )
             .def( pybind11::init< const SurfaceMesh& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the self intersections of this mesh. "
                 "The inspector keeps the mesh alive" )
             .def( "mesh_has_self_intersections",

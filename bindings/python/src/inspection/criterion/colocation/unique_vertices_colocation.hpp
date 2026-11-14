@@ -47,6 +47,7 @@ namespace geode
                 "modifying the model" )
                 .c_str() )
             .def( pybind11::init< const Model& >(), pybind11::arg( "model" ),
+                pybind11::keep_alive< 1, 2 >(),
                 absl::StrCat( "Create the inspector of the unique vertices of "
                               "this ",
                     model_name, ". The inspector keeps the ", model_name,

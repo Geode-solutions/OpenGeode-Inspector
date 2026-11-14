@@ -42,7 +42,7 @@ namespace geode
             "vertices that "
             "are in no polygon" )
             .def( pybind11::init< const SurfaceMesh& >(),
-                pybind11::arg( "mesh" ),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the isolated vertices of this mesh. "
                 "The inspector keeps the mesh alive" )
             .def( "mesh_has_isolated_vertices",

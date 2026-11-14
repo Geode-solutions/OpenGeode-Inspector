@@ -45,6 +45,7 @@ namespace geode
             "while an inspector exists, and do not inspect or use the same "
             "mesh or model from two threads at once" )
             .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
                 "Create the inspector of the degenerated elements of this "
                 "mesh. The inspector keeps the mesh alive" )
             .def( "is_mesh_degenerated",
