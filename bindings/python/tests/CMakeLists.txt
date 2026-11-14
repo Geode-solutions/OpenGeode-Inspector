@@ -50,3 +50,12 @@ add_geode_python_test(
         "${PROJECT_BINARY_DIR}/wheel/opengeode_inspector"
     DEPENDENCIES ${py_inspection_dependencies}
 )
+
+# The example runs in the tests, it cannot become stale
+add_geode_python_test(
+    SOURCE "test-py-examples.py"
+    ARGUMENTS
+        "${PROJECT_SOURCE_DIR}/examples"
+        "${PROJECT_SOURCE_DIR}/tests/data"
+    DEPENDENCIES ${py_inspection_dependencies}
+)
