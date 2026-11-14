@@ -342,8 +342,10 @@ def test_non_manifold_structures():
 
 def test_object_validity():
     result = validity.ObjectValidity()
+    check(bool(result), "no invalidity: valid")
     check(result.nb_issues() == 0 and result.string() == "", "valid object")
     result.invalidities = ["first issue\n", "second issue\n"]
+    check(not bool(result), "an invalidity: not valid")
     check(result.nb_issues() == 2, "two invalidities")
     check(result.string() == "first issue\nsecond issue\n", result.string())
     check(str(result) == result.string(), "str")

@@ -45,7 +45,13 @@ namespace geode
         validity
             .def( pybind11::init<>(), "Create the validity of a valid object" )
             .def( "nb_issues", &ObjectValidity::nb_issues,
-                "Return the number of invalidities" );
+                "Return the number of invalidities" )
+            .def(
+                "__bool__",
+                []( const ObjectValidity& object_validity ) {
+                    return static_cast< bool >( object_validity );
+                },
+                "Return True if the object is valid: there is no invalidity" );
         def_readwrite_named( validity, "invalidities",
             &ObjectValidity::invalidities,
             "The list of invalidities: one message per inspection that found "
