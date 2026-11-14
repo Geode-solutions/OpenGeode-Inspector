@@ -18,12 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""The inspections release the GIL: another Python thread keeps running while
-an inspection of a large model is in progress."""
+"""The inspections release the GIL: the main thread runs while an inspection is
+in progress in another thread."""
 
 import os
-import sys
-import threading
 
 import geode_test_env
 
@@ -43,79 +41,31 @@ def data_dir():
     )
 
 
-# The checks are deterministic thanks to a huge interpreter switch interval:
-# the interpreter never forces a GIL hand-over, so a thread keeps the GIL until
-# it blocks or exits. If a bound call holds the GIL, the worker thread runs the
-# whole work (and `finished.set()`) before the main thread can run. If the call
-# releases the GIL, the main thread is scheduled as soon as the call is inside
-# C++ and sees the work still running. Holding the GIL can therefore never
-# pass; the only possible flakiness is the work finishing before the main
-# thread wakes up, hence the work repeats the call and ATTEMPTS retries are
-# allowed.
-TIMEOUT = 60
-ATTEMPTS = 3
-REPETITIONS = 20
-
-
-class HugeSwitchInterval:
-    def __enter__(self):
-        self.previous = sys.getswitchinterval()
-        sys.setswitchinterval(1000)
-
-    def __exit__(self, *arguments):
-        sys.setswitchinterval(self.previous)
-
-
-def run_in_worker(work):
-    """Run work in a thread, return True if the main thread could run before
-    the work finished"""
-    ready = threading.Event()
-    finished = threading.Event()
-    box = {}
-
-    def target():
-        ready.set()
-        try:
-            work()
-        except BaseException as error:
-            box["error"] = error
-        finished.set()
-
-    thread = threading.Thread(target=target)
-    thread.start()
-    check(ready.wait(TIMEOUT), "the worker thread did not start")
-    main_ran_during_work = not finished.is_set()
-    thread.join(TIMEOUT)
-    if "error" in box:
-        raise box["error"]
-    return main_ran_during_work
-
-
 def check_releases_gil(name, call):
-    def work():
-        for _ in range(REPETITIONS):
-            call()
-
-    with HugeSwitchInterval():
-        for _ in range(ATTEMPTS):
-            if run_in_worker(work):
-                return
-    raise ValueError(f"[Test] {name} kept the GIL during the whole call")
+    geode_test_env.assert_gil_released(call, name=name)
 
 
 def test_model_inspections():
+    """Each callable contains only the call under test: the model is loaded
+    and the inspectors are built outside of it"""
     brep = opengeode.load(
         opengeode.BRep, os.path.join(data_dir(), "model_A1.og_brep")
     )
     check_releases_gil("inspect_brep", lambda: inspection.inspect_brep(brep))
     check_releases_gil("is_brep_valid", lambda: validity.is_brep_valid(brep))
     check_releases_gil(
-        "BRepInspector.inspect_brep",
-        lambda: inspection.BRepInspector(brep).inspect_brep(),
+        "BRepInspector.__init__", lambda: inspection.BRepInspector(brep)
     )
+    inspector = inspection.BRepInspector(brep)
+    check_releases_gil("BRepInspector.inspect_brep", inspector.inspect_brep)
     check_releases_gil(
-        "BRepMeshesIntersections",
-        lambda: inspection.BRepMeshesIntersections(brep).inspect_intersections(),
+        "BRepMeshesIntersections.__init__",
+        lambda: inspection.BRepMeshesIntersections(brep),
+    )
+    intersections = inspection.BRepMeshesIntersections(brep)
+    check_releases_gil(
+        "BRepMeshesIntersections.inspect_intersections",
+        intersections.inspect_intersections,
     )
 
 
@@ -129,13 +79,15 @@ def test_mesh_inspections():
     )
     biggest = surfaces[-1]
     check_releases_gil("inspect_surface3D", lambda: inspection.inspect_surface3D(biggest))
+    intersections = inspection.SurfaceMeshIntersections3D(biggest)
     check_releases_gil(
-        "SurfaceMeshIntersections3D",
-        lambda: inspection.SurfaceMeshIntersections3D(biggest).intersecting_elements(),
+        "SurfaceMeshIntersections3D.intersecting_elements",
+        intersections.intersecting_elements,
     )
+    colocation = inspection.SurfaceMeshColocation3D(biggest)
     check_releases_gil(
-        "SurfaceMeshColocation3D",
-        lambda: inspection.SurfaceMeshColocation3D(biggest).colocated_points_groups(),
+        "SurfaceMeshColocation3D.colocated_points_groups",
+        colocation.colocated_points_groups,
     )
     check_releases_gil(
         "is_surface_valid3D", lambda: validity.is_surface_valid3D(biggest)
