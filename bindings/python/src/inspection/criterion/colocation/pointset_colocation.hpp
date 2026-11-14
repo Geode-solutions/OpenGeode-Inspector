@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/colocation/pointset_colocation.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -34,13 +36,24 @@ namespace geode
         using PointSet = PointSet< dimension >;
         using PointSetColocation = PointSetColocation< dimension >;
         const auto name = absl::StrCat( "PointSetColocation", dimension, "D" );
-        pybind11::class_< PointSetColocation >( module, name.c_str() )
-            .def( pybind11::init< const PointSet& >() )
+        pybind11::class_< PointSetColocation >( module, name.c_str(),
+            "Inspection of the colocation of the vertices of a PointSet" )
+            .def( pybind11::init< const PointSet& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the colocated vertices of this "
+                "mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_colocated_points",
-                &PointSetColocation::mesh_has_colocated_points )
+                &PointSetColocation::mesh_has_colocated_points, ReleaseGil(),
+                "Return True if at least two vertices are colocated: their "
+                "distance is at most GLOBAL_EPSILON (1e-6)" )
             .def( "colocated_points_groups",
-                &PointSetColocation::colocated_points_groups );
+                &PointSetColocation::colocated_points_groups, ReleaseGil(),
+                "Return the InspectionIssuesVectorIndex listing the groups of "
+                "colocated vertices: each issue is the list of the indices of "
+                "at least two vertices at the same position (a vertex is in "
+                "at most one group)" );
     }
+
     void define_point_set_colocation( pybind11::module& module )
     {
         do_define_point_set_colocation< 2 >( module );

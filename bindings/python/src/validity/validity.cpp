@@ -21,11 +21,13 @@
  *
  */
 
-#include "pybind11/iostream.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/stl.h"
+#include <pybind11/iostream.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
-#include "../issues_repr.hpp"
+#include <geode/bindings/python/common.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 #include "brep_validity.hpp"
 #include "edgedcurve_validity.hpp"
@@ -37,11 +39,21 @@
 
 PYBIND11_MODULE( opengeode_inspector_py_validity, module )
 {
-    module.doc() = "OpenGeode-Inspector Python binding";
-    pybind11::class_< geode::OpenGeodeInspectorValidityLibrary >(
-        module, "OpenGeodeInspectorValidityLibrary" )
-        .def( "initialize",
-            &geode::OpenGeodeInspectorValidityLibrary::initialize );
+    module.doc() =
+        "Validity of the meshes and models of OpenGeode: the is_*_valid "
+        "functions (is_brep_valid, is_surface_valid3D...) run the complete "
+        "inspection of an object and return an ObjectValidity, which is True "
+        "when the object has no issue and reports the issues otherwise. Call "
+        "OpenGeodeInspectorValidityLibrary.initialize() before using the "
+        "module.";
+    geode::import_binding_dependency( module, "opengeode" );
+    pybind11::class_< geode::OpenGeodeInspectorValidityLibrary >( module,
+        "OpenGeodeInspectorValidityLibrary",
+        "Initialization of the validity module" )
+        .def_static( "initialize",
+            &geode::OpenGeodeInspectorValidityLibrary::initialize,
+            "Initialize the validity library, and OpenGeodeModelLibrary with "
+            "it. Calling it again has no effect" );
     geode::define_object_validity( module );
     geode::define_brep_validity( module );
     geode::define_edged_curve_validity( module );
@@ -49,4 +61,5 @@ PYBIND11_MODULE( opengeode_inspector_py_validity, module )
     geode::define_section_validity( module );
     geode::define_solid_mesh_validity( module );
     geode::define_surface_mesh_validity( module );
+    geode::document_missing_constructors( module );
 }

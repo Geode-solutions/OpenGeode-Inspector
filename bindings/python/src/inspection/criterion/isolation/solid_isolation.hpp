@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/isolation/solid_isolation.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -34,12 +36,23 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshIsolation = SolidMeshIsolation< dimension >;
         const auto name = absl::StrCat( "SolidMeshIsolation", dimension, "D" );
-        pybind11::class_< SolidMeshIsolation >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshIsolation >( module, name.c_str(),
+            "Inspection of the isolated vertices of a SolidMesh: the vertices "
+            "that "
+            "are in no polyhedron" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the isolated vertices of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_has_isolated_vertices",
-                &SolidMeshIsolation::mesh_has_isolated_vertices )
-            .def( "isolated_vertices", &SolidMeshIsolation::isolated_vertices );
+                &SolidMeshIsolation::mesh_has_isolated_vertices, ReleaseGil(),
+                "Return True if a vertex is in no polyhedron" )
+            .def( "isolated_vertices", &SolidMeshIsolation::isolated_vertices,
+                ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "vertices that are in no polyhedron" );
     }
+
     void define_solid_isolation( pybind11::module& module )
     {
         do_define_solid_isolation< 3 >( module );

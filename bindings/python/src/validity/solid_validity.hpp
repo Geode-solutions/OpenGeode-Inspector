@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/solid_mesh.hpp>
@@ -27,10 +28,17 @@
 #include <geode/inspector/validity/object_validity.hpp>
 #include <geode/inspector/validity/solid_validity.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
-    void define_solid_mesh_validity( pybind11::module& module )
+    inline void define_solid_mesh_validity( pybind11::module& module )
     {
-        module.def( "is_solid_valid3D", &is_solid_valid< 3 > );
+        module.def( "is_solid_valid3D", &is_solid_valid< 3 >,
+            pybind11::arg( "solid" ), ReleaseGil(),
+            "Inspect the 3D SolidMesh with a SolidMeshInspector3D and return "
+            "an "
+            "ObjectValidity with the report of every inspection that found "
+            "issues" );
     }
 } // namespace geode

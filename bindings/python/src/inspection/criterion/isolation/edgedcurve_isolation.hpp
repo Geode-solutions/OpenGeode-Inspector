@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/isolation/edgedcurve_isolation.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -34,13 +36,23 @@ namespace geode
         using EdgedCurve = EdgedCurve< dimension >;
         using EdgedCurveIsolation = EdgedCurveIsolation< dimension >;
         const auto name = absl::StrCat( "EdgedCurveIsolation", dimension, "D" );
-        pybind11::class_< EdgedCurveIsolation >( module, name.c_str() )
-            .def( pybind11::init< const EdgedCurve& >() )
+        pybind11::class_< EdgedCurveIsolation >( module, name.c_str(),
+            "Inspection of the isolated vertices of an EdgedCurve: the "
+            "vertices that "
+            "are in no edge" )
+            .def( pybind11::init< const EdgedCurve& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the isolated vertices of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_has_isolated_vertices",
-                &EdgedCurveIsolation::mesh_has_isolated_vertices )
-            .def(
-                "isolated_vertices", &EdgedCurveIsolation::isolated_vertices );
+                &EdgedCurveIsolation::mesh_has_isolated_vertices, ReleaseGil(),
+                "Return True if a vertex is in no edge" )
+            .def( "isolated_vertices", &EdgedCurveIsolation::isolated_vertices,
+                ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "vertices that are in no edge" );
     }
+
     void define_edged_curve_isolation( pybind11::module& module )
     {
         do_define_edged_curve_isolation< 2 >( module );

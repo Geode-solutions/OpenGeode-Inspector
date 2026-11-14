@@ -20,35 +20,50 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/section.hpp>
 
-#include <geode/inspector/inspection/criterion/section_meshes_inspector.hpp>
-
 #include <geode/inspector/inspection/section_inspector.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
     void define_section_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< SectionInspectionResult >(
-                module, "SectionInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "meshes", &SectionInspectionResult::meshes )
-            .def_readwrite( "topology", &SectionInspectionResult::topology )
-            .def( "nb_issues", &SectionInspectionResult::nb_issues )
-            .def(
-                "inspection_type", &SectionInspectionResult::inspection_type );
+        auto result = define_inspection_result< SectionInspectionResult >(
+            module, "SectionInspectionResult",
+            "Result of the inspection of a Section: the inspection of its "
+            "meshes and of its topology" );
+        INSPECTION_RESULT_MEMBER( result, SectionInspectionResult, meshes,
+            "SectionMeshesInspectionResult: the inspection of the meshes" );
+        INSPECTION_RESULT_MEMBER( result, SectionInspectionResult, topology,
+            "SectionTopologyInspectionResult: the inspection of the "
+            "topology" );
 
         pybind11::class_< SectionInspector, SectionMeshesInspector,
-            SectionTopologyInspector >( module, "SectionInspector" )
-            .def( pybind11::init< const Section& >() )
-            .def( "inspect_section", &SectionInspector::inspect_section );
+            SectionTopologyInspector >( module, "SectionInspector",
+            pybind11::dynamic_attr(),
+            "Complete inspection of a Section: the inspection of its meshes "
+            "(SectionMeshesInspector) and of its topology "
+            "(SectionTopologyInspector), whose methods it also has" )
+            .def( pybind11::init< const Section& >(),
+                pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                remember_model(), ReleaseGil(),
+                "Create the inspector of this Section. The inspector keeps "
+                "the Section alive" )
+            .def( "inspect_section", &SectionInspector::inspect_section,
+                ReleaseGil(),
+                "Return the SectionInspectionResult: the inspection of the "
+                "meshes and of the topology of the Section" );
 
-        module.def( "inspect_section", []( const Section& section ) {
-            SectionInspector inspector{ section };
-            return inspector.inspect_section();
-        } );
+        module.def(
+            "inspect_section",
+            []( const Section& section ) {
+                const SectionInspector inspector{ section };
+                return inspector.inspect_section();
+            },
+            pybind11::arg( "section" ), ReleaseGil(),
+            "Inspect the Section with a SectionInspector and return the "
+            "SectionInspectionResult" );
     }
 } // namespace geode

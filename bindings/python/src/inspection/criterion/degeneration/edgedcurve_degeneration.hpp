@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/degeneration/edgedcurve_degeneration.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,14 +37,26 @@ namespace geode
         using EdgedCurveDegeneration = EdgedCurveDegeneration< dimension >;
         const auto name =
             absl::StrCat( "EdgedCurveDegeneration", dimension, "D" );
-        pybind11::class_< EdgedCurveDegeneration >( module, name.c_str() )
-            .def( pybind11::init< const EdgedCurve& >() )
+        pybind11::class_< EdgedCurveDegeneration >( module, name.c_str(),
+            "Inspection of the degenerated edges of an EdgedCurve" )
+            .def( pybind11::init< const EdgedCurve& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the degenerated edges of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "is_mesh_degenerated",
-                &EdgedCurveDegeneration::is_mesh_degenerated )
+                &EdgedCurveDegeneration::is_mesh_degenerated, ReleaseGil(),
+                "Return True if an edge is degenerated: its length is at "
+                "most GLOBAL_EPSILON (1e-6)" )
             .def( "degenerated_edges",
-                &EdgedCurveDegeneration::degenerated_edges )
-            .def( "small_edges", &EdgedCurveDegeneration::small_edges );
+                &EdgedCurveDegeneration::degenerated_edges, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "degenerated edges (length at most GLOBAL_EPSILON (1e-6))" )
+            .def( "small_edges", &EdgedCurveDegeneration::small_edges,
+                pybind11::arg( "threshold" ), ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "edges whose length is at most threshold" );
     }
+
     void define_edged_curve_degeneration( pybind11::module& module )
     {
         do_define_edged_curve_degeneration< 2 >( module );

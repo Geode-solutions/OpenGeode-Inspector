@@ -24,9 +24,9 @@
 
 #include <geode/mesh/core/surface_mesh.hpp>
 
-#include <geode/mesh/core/detail/vertex_cycle.hpp>
-
 #include <geode/inspector/inspection/criterion/manifold/surface_edge_manifold.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
@@ -37,17 +37,24 @@ namespace geode
         using SurfaceMeshEdgeManifold = SurfaceMeshEdgeManifold< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshEdgeManifold", dimension, "D" );
-        pybind11::class_< SurfaceMeshEdgeManifold >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshEdgeManifold >( module, name.c_str(),
+            "Inspection of the manifold property of the edges of a "
+            "SurfaceMesh" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the manifold property of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_edges_are_manifold",
-                &SurfaceMeshEdgeManifold::mesh_edges_are_manifold )
+                &SurfaceMeshEdgeManifold::mesh_edges_are_manifold, ReleaseGil(),
+                "Return True if every edge is manifold: an edge on the border "
+                "has exactly one polygon, any other edge has exactly two" )
             .def( "non_manifold_edges",
-                &SurfaceMeshEdgeManifold::non_manifold_edges );
+                &SurfaceMeshEdgeManifold::non_manifold_edges, ReleaseGil(),
+                "Return the InspectionIssuesArrayIndex listing the non "
+                "manifold edges (see mesh_edges_are_manifold), each one given "
+                "by the indices of its two vertices" );
     }
-} // namespace geode
 
-namespace geode
-{
     void define_surface_edge_manifold( pybind11::module& module )
     {
         do_define_surface_edge_manifold< 2 >( module );

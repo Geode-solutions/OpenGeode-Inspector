@@ -20,6 +20,8 @@
 # SOFTWARE.
 #
 
+"""OpenGeode-Inspector validity: the is_*_valid functions run the complete inspection of a mesh or a model and return an ObjectValidity, True when the object is valid. Importing this module initializes the library."""
+
 import opengeode
 
 from opengeode_inspector_py_validity import *

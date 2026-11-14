@@ -20,11 +20,14 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/edged_curve.hpp>
 
 #include <geode/inspector/inspection/edgedcurve_inspector.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
@@ -32,41 +35,53 @@ namespace geode
     void do_define_edged_curve_inspector( pybind11::module& module )
     {
         using EdgedCurve = EdgedCurve< dimension >;
-        using EdgedCurveInspector = geode::EdgedCurveInspector< dimension >;
-
+        using EdgedCurveInspector = EdgedCurveInspector< dimension >;
         const auto name = absl::StrCat( "EdgedCurveInspector", dimension, "D" );
         pybind11::class_< EdgedCurveInspector,
             EdgedCurveColocation< dimension >,
             EdgedCurveDegeneration< dimension >,
-            EdgedCurveIsolation< dimension > >( module, name.c_str() )
-            .def( pybind11::init< const EdgedCurve& >() )
+            EdgedCurveIsolation< dimension > >( module, name.c_str(),
+            "Complete inspection of an EdgedCurve: the colocation, the "
+            "degeneration and the isolation of its vertices and edges "
+            "(EdgedCurveColocation, EdgedCurveDegeneration and "
+            "EdgedCurveIsolation, whose methods it also has)" )
+            .def( pybind11::init< const EdgedCurve& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of this mesh. The inspector keeps the "
+                "mesh alive" )
             .def( "inspect_edged_curve",
-                &EdgedCurveInspector::inspect_edged_curve );
+                &EdgedCurveInspector::inspect_edged_curve, ReleaseGil(),
+                "Return the EdgedCurveInspectionResult: the colocated "
+                "vertices, the degenerated edges and the isolated vertices" );
 
         const auto inspect_function_name =
             absl::StrCat( "inspect_edged_curve", dimension, "D" );
         module.def(
-            inspect_function_name.c_str(), []( const EdgedCurve& edged_curve ) {
-                EdgedCurveInspector inspector{ edged_curve };
+            inspect_function_name.c_str(),
+            []( const EdgedCurve& edged_curve ) {
+                const EdgedCurveInspector inspector{ edged_curve };
                 return inspector.inspect_edged_curve();
-            } );
+            },
+            pybind11::arg( "edged_curve" ), ReleaseGil(),
+            "Inspect the EdgedCurve with an EdgedCurveInspector and return "
+            "the EdgedCurveInspectionResult" );
     }
 
     void define_edged_curve_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< EdgedCurveInspectionResult >(
-                module, "EdgedCurveInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "colocated_points_groups",
-                &EdgedCurveInspectionResult::colocated_points_groups )
-            .def_readwrite( "degenerated_edges",
-                &EdgedCurveInspectionResult::degenerated_edges )
-            .def_readwrite( "isolated_vertices",
-                &EdgedCurveInspectionResult::isolated_vertices )
-            .def( "nb_issues", &EdgedCurveInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &EdgedCurveInspectionResult::inspection_type );
+        auto result = define_inspection_result< EdgedCurveInspectionResult >(
+            module, "EdgedCurveInspectionResult",
+            "Result of the inspection of an EdgedCurve" );
+        INSPECTION_RESULT_MEMBER( result, EdgedCurveInspectionResult,
+            colocated_points_groups,
+            "InspectionIssuesVectorIndex: the groups of colocated vertices" );
+        INSPECTION_RESULT_MEMBER( result, EdgedCurveInspectionResult,
+            degenerated_edges,
+            "InspectionIssuesIndex: the indices of the degenerated edges" );
+        INSPECTION_RESULT_MEMBER( result, EdgedCurveInspectionResult,
+            isolated_vertices,
+            "InspectionIssuesIndex: the indices of the vertices that are in "
+            "no edge" );
 
         do_define_edged_curve_inspector< 2 >( module );
         do_define_edged_curve_inspector< 3 >( module );

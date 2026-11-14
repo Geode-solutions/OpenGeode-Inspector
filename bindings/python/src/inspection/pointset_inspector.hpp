@@ -20,11 +20,14 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/mesh/core/point_set.hpp>
 
 #include <geode/inspector/inspection/pointset_inspector.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
@@ -35,30 +38,39 @@ namespace geode
         using PointSetInspector = PointSetInspector< dimension >;
         const auto name = absl::StrCat( "PointSetInspector", dimension, "D" );
         pybind11::class_< PointSetInspector, PointSetColocation< dimension > >(
-            module, name.c_str() )
-            .def( pybind11::init< const PointSet& >() )
-            .def( "inspect_point_set", &PointSetInspector::inspect_point_set );
+            module, name.c_str(),
+            "Complete inspection of a PointSet: the colocation of its "
+            "vertices (PointSetColocation, whose methods it also has)" )
+            .def( pybind11::init< const PointSet& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of this mesh. The inspector keeps the "
+                "mesh alive" )
+            .def( "inspect_point_set", &PointSetInspector::inspect_point_set,
+                ReleaseGil(),
+                "Return the PointSetInspectionResult: the groups of "
+                "colocated vertices" );
 
         const auto inspect_function_name =
             absl::StrCat( "inspect_point_set", dimension, "D" );
         module.def(
-            inspect_function_name.c_str(), []( const PointSet& point_set ) {
-                PointSetInspector inspector{ point_set };
+            inspect_function_name.c_str(),
+            []( const PointSet& point_set ) {
+                const PointSetInspector inspector{ point_set };
                 return inspector.inspect_point_set();
-            } );
+            },
+            pybind11::arg( "point_set" ), ReleaseGil(),
+            "Inspect the PointSet with a PointSetInspector and return the "
+            "PointSetInspectionResult" );
     }
 
     void define_point_set_inspector( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< PointSetInspectionResult >(
-                module, "PointSetInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "colocated_points_groups",
-                &PointSetInspectionResult::colocated_points_groups )
-            .def( "nb_issues", &PointSetInspectionResult::nb_issues )
-            .def(
-                "inspection_type", &PointSetInspectionResult::inspection_type );
+        auto result = define_inspection_result< PointSetInspectionResult >(
+            module, "PointSetInspectionResult",
+            "Result of the inspection of a PointSet" );
+        INSPECTION_RESULT_MEMBER( result, PointSetInspectionResult,
+            colocated_points_groups,
+            "InspectionIssuesVectorIndex: the groups of colocated vertices" );
 
         do_define_point_set_inspector< 2 >( module );
         do_define_point_set_inspector< 3 >( module );
