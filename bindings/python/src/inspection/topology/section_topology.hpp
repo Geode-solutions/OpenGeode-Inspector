@@ -160,13 +160,14 @@ namespace geode
             "mesh vertex that is linked to another unique vertex" );
 
         pybind11::class_< SectionCornersTopology >( module,
-            "SectionCornersTopology",
+            "SectionCornersTopology", pybind11::dynamic_attr(),
             "Inspection of the topology of the Corners of a Section through "
             "the unique vertices: each unique vertex is linked to at most one "
             "Corner, a Corner is internal to at most one component and is a "
             "boundary of every Line it is linked to" )
             .def( pybind11::init< const Section& >(),
                 pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                remember_model(),
                 "Create the inspector of the topology of the Corners of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_corners_topology",
@@ -174,15 +175,73 @@ namespace geode
                 "Return the SectionCornersTopologyInspectionResult: the "
                 "Corners "
                 "that are not meshed or not linked to unique vertices, and the "
-                "unique vertices with an invalid link to a Corner" );
+                "unique vertices with an invalid link to a Corner" )
+            .def( "section_corner_topology_is_valid",
+                checked_unique_vertex< SectionCornersTopology >(
+                    "section_corner_topology_is_valid",
+                    &SectionCornersTopology::section_corner_topology_is_valid ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return True if the unique vertex is a valid Corner vertex: it "
+                "is "
+                "linked to at most one Corner, this Corner has at most one "
+                "embedding, and is a boundary of every Line it is linked to" )
+            .def( "corner_is_meshed", &SectionCornersTopology::corner_is_meshed,
+                pybind11::arg( "corner" ), ReleaseGil(),
+                "Return True if the mesh of the Corner has vertices" )
+            .def( "corner_vertices_are_associated_to_unique_vertices",
+                &SectionCornersTopology::
+                    corner_vertices_are_associated_to_unique_vertices,
+                pybind11::arg( "corner" ), ReleaseGil(),
+                "Return True if every vertex of the mesh of the Corner is "
+                "linked "
+                "to a unique vertex" )
+            .def( "unique_vertex_has_multiple_corners",
+                checked_unique_vertex< SectionCornersTopology >(
+                    "unique_vertex_has_multiple_corners",
+                    &SectionCornersTopology::
+                        unique_vertex_has_multiple_corners ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of several active Corners, None otherwise" )
+            .def( "corner_has_multiple_embeddings",
+                checked_unique_vertex< SectionCornersTopology >(
+                    "corner_has_multiple_embeddings",
+                    &SectionCornersTopology::corner_has_multiple_embeddings ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "linked to a Corner with several embeddings, None otherwise" )
+            .def( "corner_is_not_internal_nor_boundary",
+                checked_unique_vertex< SectionCornersTopology >(
+                    "corner_is_not_internal_nor_boundary",
+                    &SectionCornersTopology::
+                        corner_is_not_internal_nor_boundary ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "linked to a Corner that is neither internal (embedded) nor "
+                "boundary (incident), None otherwise" )
+            .def( "corner_is_part_of_line_but_not_boundary",
+                checked_unique_vertex< SectionCornersTopology >(
+                    "corner_is_part_of_line_but_not_boundary",
+                    &SectionCornersTopology::
+                        corner_is_part_of_line_but_not_boundary ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "linked to a Corner and to a Line this Corner is not a "
+                "boundary "
+                "of, None otherwise" );
 
         pybind11::class_< SectionLinesTopology >( module,
-            "SectionLinesTopology",
+            "SectionLinesTopology", pybind11::dynamic_attr(),
             "Inspection of the topology of the Lines of a Section through the "
             "unique vertices: each Line is internal or boundary, the ends of "
             "a Line and the vertices shared by several Lines are Corners" )
             .def( pybind11::init< const Section& >(),
                 pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                remember_model(),
                 "Create the inspector of the topology of the Lines of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_lines_topology",
@@ -191,15 +250,78 @@ namespace geode
                 "that "
                 "are not meshed or not linked to unique vertices, and the "
                 "unique "
-                "vertices with an invalid link to a Line" );
+                "vertices with an invalid link to a Line" )
+            .def( "section_lines_topology_is_valid",
+                checked_unique_vertex< SectionLinesTopology >(
+                    "section_lines_topology_is_valid",
+                    &SectionLinesTopology::section_lines_topology_is_valid ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return True if the unique vertex is a valid Lines vertex: "
+                "each "
+                "Line it is linked to is internal or boundary, a vertex of a "
+                "single Line is consistent with the Surfaces around, and a "
+                "vertex "
+                "at the end of a Line or shared by several Lines is a Corner" )
+            .def( "line_is_meshed", &SectionLinesTopology::line_is_meshed,
+                pybind11::arg( "line" ), ReleaseGil(),
+                "Return True if the mesh of the Line has vertices" )
+            .def( "line_vertices_are_associated_to_unique_vertices",
+                &SectionLinesTopology::
+                    line_vertices_are_associated_to_unique_vertices,
+                pybind11::arg( "line" ), ReleaseGil(),
+                "Return True if every vertex of the mesh of the Line is linked "
+                "to "
+                "a unique vertex" )
+            .def( "vertex_is_part_of_line_with_wrong_relationships_to_surface",
+                checked_unique_vertex< SectionLinesTopology >(
+                    "vertex_is_part_of_line_with_wrong_relationships_to_"
+                    "surface",
+                    &SectionLinesTopology::
+                        vertex_is_part_of_line_with_wrong_relationships_to_surface ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of a Line with an incorrect relationship (internal or "
+                "boundary) to a Surface the vertex is in, None otherwise" )
+            .def( "vertex_is_part_of_invalid_embedded_line",
+                checked_unique_vertex< SectionLinesTopology >(
+                    "vertex_is_part_of_invalid_embedded_line",
+                    &SectionLinesTopology::
+                        vertex_is_part_of_invalid_embedded_line ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of a Line with invalid embeddings (internal topology), "
+                "None "
+                "otherwise" )
+            .def( "vertex_is_part_of_invalid_single_line",
+                checked_unique_vertex< SectionLinesTopology >(
+                    "vertex_is_part_of_invalid_single_line",
+                    &SectionLinesTopology::
+                        vertex_is_part_of_invalid_single_line ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of a single Line which is invalid with respect to the "
+                "Surfaces it is in, None otherwise" )
+            .def( "vertex_has_lines_but_is_not_a_corner",
+                checked_unique_vertex< SectionLinesTopology >(
+                    "vertex_has_lines_but_is_not_a_corner",
+                    &SectionLinesTopology::
+                        vertex_has_lines_but_is_not_a_corner ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of several Lines but is not a Corner, None otherwise" );
 
         pybind11::class_< SectionSurfacesTopology >( module,
-            "SectionSurfacesTopology",
+            "SectionSurfacesTopology", pybind11::dynamic_attr(),
             "Inspection of the topology of the Surfaces of a Section through "
             "the unique vertices: a unique vertex shared by two Surfaces is "
             "part of a Line which is a boundary of both" )
             .def( pybind11::init< const Section& >(),
                 pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                remember_model(),
                 "Create the inspector of the topology of the Surfaces of this "
                 "Section. The inspector keeps the Section alive" )
             .def( "inspect_surfaces",
@@ -207,16 +329,60 @@ namespace geode
                 "Return the SectionSurfacesTopologyInspectionResult: the "
                 "Surfaces "
                 "that are not meshed or not linked to unique vertices, and the "
-                "unique vertices with an invalid link to a Surface" );
+                "unique vertices with an invalid link to a Surface" )
+            .def( "section_vertex_surfaces_topology_is_valid",
+                checked_unique_vertex< SectionSurfacesTopology >(
+                    "section_vertex_surfaces_topology_is_valid",
+                    &SectionSurfacesTopology::
+                        section_vertex_surfaces_topology_is_valid ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return True if the unique vertex is a valid Surfaces vertex: "
+                "a "
+                "vertex shared by two Surfaces is part of at least one Line "
+                "which "
+                "is boundary of both" )
+            .def( "surface_is_meshed",
+                &SectionSurfacesTopology::surface_is_meshed,
+                pybind11::arg( "surface" ), ReleaseGil(),
+                "Return True if the mesh of the Surface has vertices" )
+            .def( "surface_vertices_are_associated_to_unique_vertices",
+                &SectionSurfacesTopology::
+                    surface_vertices_are_associated_to_unique_vertices,
+                pybind11::arg( "surface" ), ReleaseGil(),
+                "Return True if every vertex of the mesh of the Surface is "
+                "linked "
+                "to a unique vertex" )
+            .def( "vertex_is_part_of_invalid_embedded_surface",
+                checked_unique_vertex< SectionSurfacesTopology >(
+                    "vertex_is_part_of_invalid_embedded_surface",
+                    &SectionSurfacesTopology::
+                        vertex_is_part_of_invalid_embedded_surface ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of a Surface with invalid embeddings (internal "
+                "topology), "
+                "None otherwise" )
+            .def( "vertex_is_part_of_line_and_not_on_surface_border",
+                checked_unique_vertex< SectionSurfacesTopology >(
+                    "vertex_is_part_of_line_and_not_on_surface_border",
+                    &SectionSurfacesTopology::
+                        vertex_is_part_of_line_and_not_on_surface_border ),
+                pybind11::arg( "unique_vertex_index" ),
+                "Return a message describing the problem if the unique vertex "
+                "is "
+                "part of a Line but not on the border of a Surface, None "
+                "otherwise" );
 
         pybind11::class_< SectionTopologyInspector, SectionCornersTopology,
             SectionLinesTopology, SectionSurfacesTopology >( module,
-            "SectionTopologyInspector",
+            "SectionTopologyInspector", pybind11::dynamic_attr(),
             "Inspection of the topology of a Section through its unique "
             "vertices. It also has the methods of the inspectors of the "
             "Corners, Lines and Surfaces" )
             .def( pybind11::init< const Section& >(),
                 pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
+                remember_model(),
                 "Create the topology inspector of this Section. The inspector "
                 "keeps the Section alive" )
             .def( "section_topology_is_valid",

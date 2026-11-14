@@ -33,6 +33,7 @@
 #include <pybind11/stl.h>
 
 #include <geode/bindings/python/common.hpp>
+#include <geode/bindings/python/model/model_vertex_check.hpp>
 
 namespace pybind11
 {
@@ -53,6 +54,34 @@ namespace geode
      * while they run.
      */
     using ReleaseGil = pybind11::call_guard< pybind11::gil_scoped_release >;
+
+    /*!
+     * Wrap a const method of a model inspector taking a unique vertex index
+     * first: the index is checked against the model remembered by the
+     * constructor (remember_model, IndexError when out of range), then the
+     * method runs without the GIL. The Python signature is typed with
+     * Inspector.
+     */
+    template < typename Inspector,
+        typename Class,
+        typename Return,
+        typename... Args >
+    auto checked_unique_vertex( std::string_view name,
+        Return ( Class::*method )( index_t, Args... ) const )
+    {
+        return
+            [name = std::string{ name }, method]( TypedObject< Inspector > self,
+                index_t unique_vertex_index, Args... args ) -> Return {
+                if( pybind11::hasattr( self, "_model" ) )
+                {
+                    check_model_unique_vertex(
+                        name, self.attr( "_model" ), unique_vertex_index );
+                }
+                const auto& inspector = self.template cast< const Class& >();
+                const pybind11::gil_scoped_release release;
+                return ( inspector.*method )( unique_vertex_index, args... );
+            };
+    }
 
     // Call form of the inspection results: the total number of issues, and
     // the number of issues of each member having some, e.g.

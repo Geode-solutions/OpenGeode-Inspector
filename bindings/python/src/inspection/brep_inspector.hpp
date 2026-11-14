@@ -41,11 +41,12 @@ namespace geode
 
         pybind11::class_< BRepInspector, BRepMeshesInspector,
             BRepTopologyInspector >( module, "BRepInspector",
+            pybind11::dynamic_attr(),
             "Complete inspection of a BRep: the inspection of its meshes "
             "(BRepMeshesInspector) and of its topology "
             "(BRepTopologyInspector), whose methods it also has" )
             .def( pybind11::init< const BRep& >(), pybind11::arg( "brep" ),
-                pybind11::keep_alive< 1, 2 >(), ReleaseGil(),
+                pybind11::keep_alive< 1, 2 >(), remember_model(), ReleaseGil(),
                 "Create the inspector of this BRep. The inspector keeps the "
                 "BRep alive" )
             .def( "inspect_brep", &BRepInspector::inspect_brep, ReleaseGil(),

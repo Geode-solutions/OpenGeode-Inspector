@@ -42,12 +42,13 @@ namespace geode
 
         pybind11::class_< SectionInspector, SectionMeshesInspector,
             SectionTopologyInspector >( module, "SectionInspector",
+            pybind11::dynamic_attr(),
             "Complete inspection of a Section: the inspection of its meshes "
             "(SectionMeshesInspector) and of its topology "
             "(SectionTopologyInspector), whose methods it also has" )
             .def( pybind11::init< const Section& >(),
                 pybind11::arg( "section" ), pybind11::keep_alive< 1, 2 >(),
-                ReleaseGil(),
+                remember_model(), ReleaseGil(),
                 "Create the inspector of this Section. The inspector keeps "
                 "the Section alive" )
             .def( "inspect_section", &SectionInspector::inspect_section,

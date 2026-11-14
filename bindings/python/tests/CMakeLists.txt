@@ -35,6 +35,7 @@ foreach(test_name
     "test-py-results"
     "test-py-gil"
     "test-py-model-inspectors"
+    "test-py-topology-checks"
 )
     add_geode_python_test(
         SOURCE "${test_name}.py"
