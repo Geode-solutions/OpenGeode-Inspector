@@ -237,8 +237,15 @@ def check_a1(verbose):
         )
     if str(result) != result.string():
         raise ValueError("[Test] str should return the inspection report")
-    if repr(result) != "<BRepInspectionResult: " + str(result.nb_issues()) + " issues>":
-        raise ValueError("[Test] repr should summarize the inspection report")
+    expected = ["nb_issues=" + str(result.nb_issues())] + [
+        name + "=" + str(getattr(result, name).nb_issues())
+        for name in ["meshes", "topology"]
+        if getattr(result, name).nb_issues() != 0
+    ]
+    if repr(result) != "BRepInspectionResult(" + ", ".join(expected) + ")":
+        raise ValueError(
+            "[Test] repr should summarize the inspection report: " + repr(result)
+        )
 
 
 def inspect_model_A1(model_brep, verbose):

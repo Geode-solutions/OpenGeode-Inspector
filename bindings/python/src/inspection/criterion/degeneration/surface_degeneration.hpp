@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/degeneration/surface_degeneration.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -34,19 +36,43 @@ namespace geode
         using SurfaceMesh = SurfaceMesh< dimension >;
         using SurfaceMeshDegeneration = SurfaceMeshDegeneration< dimension >;
         const auto name =
-            absl::StrCat( "SurfaceMeshDegeneration", dimension, +"D" );
-        pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+            absl::StrCat( "SurfaceMeshDegeneration", dimension, "D" );
+        pybind11::class_< SurfaceMeshDegeneration >( module, name.c_str(),
+            "Inspection of the degenerated edges and polygons of a "
+            "SurfaceMesh. The edges of the mesh are enabled by the "
+            "inspections returning edge indices, and disabled again when the "
+            "inspector is destroyed (if they were not enabled): do not modify "
+            "the mesh while an inspector exists, and do not inspect or use "
+            "the same mesh or model from two threads at once" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the degenerated elements of this "
+                "mesh. The inspector keeps the mesh alive" )
             .def( "is_mesh_degenerated",
-                &SurfaceMeshDegeneration::is_mesh_degenerated )
+                &SurfaceMeshDegeneration::is_mesh_degenerated, ReleaseGil(),
+                "Return True if a polygon edge is shorter than "
+                "GLOBAL_EPSILON (1e-6), or a polygon is degenerated" )
+            .def( "small_edges", &SurfaceMeshDegeneration::small_edges,
+                pybind11::arg( "threshold" ), ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "edges of the mesh shorter than threshold (a positive length). "
+                "The edges of the mesh are enabled if they are not" )
             .def( "degenerated_edges",
-                &SurfaceMeshDegeneration::degenerated_edges )
-            .def( "small_edges", &SurfaceMeshDegeneration::small_edges )
-            .def( "degenerated_polygons",
-                &SurfaceMeshDegeneration::degenerated_polygons )
+                &SurfaceMeshDegeneration::degenerated_edges, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "edges shorter than GLOBAL_EPSILON (1e-6), as small_edges" )
             .def( "small_height_polygons",
-                &SurfaceMeshDegeneration::small_height_polygons );
+                &SurfaceMeshDegeneration::small_height_polygons,
+                pybind11::arg( "threshold" ), ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "polygons whose minimum height is at most threshold" )
+            .def( "degenerated_polygons",
+                &SurfaceMeshDegeneration::degenerated_polygons, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "polygons whose minimum height is at most GLOBAL_EPSILON "
+                "(1e-6)" );
     }
+
     void define_surface_degeneration( pybind11::module& module )
     {
         do_define_surface_degeneration< 2 >( module );

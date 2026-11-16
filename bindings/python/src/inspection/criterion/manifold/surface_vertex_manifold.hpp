@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/manifold/surface_vertex_manifold.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -36,13 +38,27 @@ namespace geode
             SurfaceMeshVertexManifold< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshVertexManifold", dimension, "D" );
-        pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshVertexManifold >( module, name.c_str(),
+            "Inspection of the manifold property of the vertices of a "
+            "SurfaceMesh" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the manifold property of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_vertices_are_manifold",
-                &SurfaceMeshVertexManifold::mesh_vertices_are_manifold )
+                &SurfaceMeshVertexManifold::mesh_vertices_are_manifold,
+                ReleaseGil(),
+                "Return True if every vertex is manifold: the polygons around "
+                "it form a single fan, which is checked through the polygon "
+                "adjacencies" )
             .def( "non_manifold_vertices",
-                &SurfaceMeshVertexManifold::non_manifold_vertices );
+                &SurfaceMeshVertexManifold::non_manifold_vertices, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "non manifold vertices, and of the vertices that could not be "
+                "checked because of wrong polygon adjacencies (see "
+                "SurfaceMeshAdjacency)" );
     }
+
     void define_surface_vertex_manifold( pybind11::module& module )
     {
         do_define_surface_vertex_manifold< 2 >( module );

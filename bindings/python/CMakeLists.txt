@@ -27,6 +27,7 @@ add_geode_python_wheel(
     MODULES
         "inspector_inspection.py"
         "validity.py"
+    DOCUMENTATION "${CMAKE_CURRENT_SOURCE_DIR}/opengeode_inspector_doc.txt"
     LICENSE "MIT"
 )
 

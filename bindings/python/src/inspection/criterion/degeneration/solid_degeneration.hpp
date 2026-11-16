@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/degeneration/solid_degeneration.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,18 +37,42 @@ namespace geode
         using SolidMeshDegeneration = SolidMeshDegeneration< dimension >;
         const auto name =
             absl::StrCat( "SolidMeshDegeneration", dimension, "D" );
-        pybind11::class_< SolidMeshDegeneration >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshDegeneration >( module, name.c_str(),
+            "Inspection of the degenerated edges and polyhedra of a "
+            "SolidMesh. The edges of the mesh are enabled by the inspections "
+            "returning edge indices, and disabled again when the inspector "
+            "is destroyed (if they were not enabled): do not modify the mesh "
+            "while an inspector exists, and do not inspect or use the same "
+            "mesh or model from two threads at once" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the degenerated elements of this "
+                "mesh. The inspector keeps the mesh alive" )
             .def( "is_mesh_degenerated",
-                &SolidMeshDegeneration::is_mesh_degenerated )
-            .def(
-                "degenerated_edges", &SolidMeshDegeneration::degenerated_edges )
-            .def( "small_edges", &SolidMeshDegeneration::small_edges )
-            .def( "degenerated_polyhedra",
-                &SolidMeshDegeneration::degenerated_polyhedra )
+                &SolidMeshDegeneration::is_mesh_degenerated, ReleaseGil(),
+                "Return True if a polyhedron edge is shorter than "
+                "GLOBAL_EPSILON (1e-6), or a polyhedron is degenerated" )
+            .def( "small_edges", &SolidMeshDegeneration::small_edges,
+                pybind11::arg( "threshold" ), ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "edges of the mesh shorter than threshold (a positive length). "
+                "The edges of the mesh are enabled if they are not" )
+            .def( "degenerated_edges",
+                &SolidMeshDegeneration::degenerated_edges, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "edges shorter than GLOBAL_EPSILON (1e-6), as small_edges" )
             .def( "small_height_polyhedra",
-                &SolidMeshDegeneration::small_height_polyhedra );
+                &SolidMeshDegeneration::small_height_polyhedra,
+                pybind11::arg( "threshold" ), ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "polyhedra whose minimum height is at most threshold" )
+            .def( "degenerated_polyhedra",
+                &SolidMeshDegeneration::degenerated_polyhedra, ReleaseGil(),
+                "Return the InspectionIssuesIndex listing the indices of the "
+                "polyhedra whose minimum height is at most GLOBAL_EPSILON "
+                "(1e-6)" );
     }
+
     void define_solid_degeneration( pybind11::module& module )
     {
         do_define_solid_degeneration< 3 >( module );

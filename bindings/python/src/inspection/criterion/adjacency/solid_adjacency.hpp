@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/adjacency/solid_adjacency.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -34,13 +36,27 @@ namespace geode
         using SolidMesh = SolidMesh< dimension >;
         using SolidMeshAdjacency = SolidMeshAdjacency< dimension >;
         const auto name = absl::StrCat( "SolidMeshAdjacency", dimension, "D" );
-        pybind11::class_< SolidMeshAdjacency >( module, name.c_str() )
-            .def( pybind11::init< const SolidMesh& >() )
+        pybind11::class_< SolidMeshAdjacency >( module, name.c_str(),
+            "Inspection of the adjacencies between the polyhedra of a "
+            "SolidMesh" )
+            .def( pybind11::init< const SolidMesh& >(), pybind11::arg( "mesh" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the adjacencies of the polyhedra of "
+                "this mesh. The inspector keeps the mesh alive" )
             .def( "mesh_has_wrong_adjacencies",
-                &SolidMeshAdjacency::mesh_has_wrong_adjacencies )
+                &SolidMeshAdjacency::mesh_has_wrong_adjacencies, ReleaseGil(),
+                "Return True if a polyhedron facet that is not on the border "
+                "has a wrong adjacency (see "
+                "polyhedron_facets_with_wrong_adjacency)" )
             .def( "polyhedron_facets_with_wrong_adjacency",
-                &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency );
+                &SolidMeshAdjacency::polyhedron_facets_with_wrong_adjacency,
+                ReleaseGil(),
+                "Return the InspectionIssuesPolyhedronFacet listing every "
+                "polyhedron facet, not on the border, whose adjacent "
+                "polyhedron does not exist, or does not share the facet "
+                "vertices with this polyhedron as adjacent" );
     }
+
     void define_solid_adjacency( pybind11::module& module )
     {
         do_define_solid_adjacency< 3 >( module );

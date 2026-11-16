@@ -20,6 +20,8 @@
 # SOFTWARE.
 #
 
+"""OpenGeode-Inspector inspection: inspectors checking the adjacencies, colocation, degeneration, intersections, isolation, manifold property, negative elements and topology of the meshes and models (BRep, Section) of OpenGeode, returning the issues found. Importing this module initializes the library."""
+
 import opengeode
 
 from opengeode_inspector_py_inspection import *

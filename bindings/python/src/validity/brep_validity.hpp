@@ -20,6 +20,7 @@
  * SOFTWARE.
  *
  */
+
 #include <string>
 
 #include <geode/model/representation/core/brep.hpp>
@@ -27,10 +28,16 @@
 #include <geode/inspector/validity/brep_validity.hpp>
 #include <geode/inspector/validity/object_validity.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
-    void define_brep_validity( pybind11::module& module )
+    inline void define_brep_validity( pybind11::module& module )
     {
-        module.def( "is_brep_valid", &is_brep_valid );
+        module.def( "is_brep_valid", &is_brep_valid, pybind11::arg( "brep" ),
+            ReleaseGil(),
+            "Inspect the BRep (meshes and topology, as BRepInspector does) "
+            "and return an ObjectValidity with the report of every "
+            "inspection that found issues" );
     }
 } // namespace geode

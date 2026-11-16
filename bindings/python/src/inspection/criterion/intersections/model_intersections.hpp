@@ -27,32 +27,66 @@
 
 #include <geode/inspector/inspection/criterion/intersections/model_intersections.hpp>
 
-#define PYTHON_MODEL_INTERSECTIONS( type, suffix )                             \
-    const auto name##type = absl::StrCat( #type, "MeshesIntersections" );      \
-    pybind11::class_< suffix##MeshesIntersections >(                           \
-        module, name##type.c_str() )                                           \
-        .def( pybind11::init< const type& >() )                                \
-        .def( "model_has_intersecting_surfaces",                               \
-            &suffix##MeshesIntersections::model_has_intersecting_surfaces )    \
-        .def( "inspect_intersections",                                         \
-            &suffix##MeshesIntersections::inspect_intersections )
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
+    template < typename Model >
+    void do_define_model_intersections(
+        pybind11::module& module, const std::string& model_name )
+    {
+        using ModelMeshesIntersections = ModelMeshesIntersections< Model >;
+        const auto name = absl::StrCat( model_name, "MeshesIntersections" );
+        pybind11::class_< ModelMeshesIntersections >( module, name.c_str(),
+            absl::StrCat( "Inspection of the intersections between the "
+                          "meshes of the Lines and Surfaces of a ",
+                model_name,
+                ". The AABB trees of the meshes are built when the "
+                "inspector is created" )
+                .c_str() )
+            .def( pybind11::init< const Model& >(), pybind11::arg( "model" ),
+                pybind11::keep_alive< 1, 2 >(), ReleaseGil(),
+                absl::StrCat(
+                    "Create the inspector of the intersections of the meshes "
+                    "of this ",
+                    model_name, ". The inspector keeps the ", model_name,
+                    " alive" )
+                    .c_str() )
+            .def( "model_has_intersecting_surfaces",
+                &ModelMeshesIntersections::model_has_intersecting_surfaces,
+                ReleaseGil(),
+                "Return True if two polygons of the Surface meshes intersect, "
+                "whether they are in two Surfaces or in the same one (a "
+                "contact at unique vertices they share is not an "
+                "intersection)" )
+            .def( "inspect_intersections",
+                &ModelMeshesIntersections::inspect_intersections, ReleaseGil(),
+                "Return the ElementsIntersectionsInspectionResult listing "
+                "the pairs of intersecting elements: polygons of two "
+                "Surfaces, edges of a Line with polygons of a Surface, and "
+                "edges of two Lines" )
+            .def( "inspect_surfaces_self_intersections",
+                &ModelMeshesIntersections::inspect_surfaces_self_intersections,
+                ReleaseGil(),
+                "Return the ElementsIntersectionsInspectionResult listing "
+                "the pairs of intersecting polygons inside the mesh of each "
+                "Surface" );
+    }
+
     void define_model_intersections( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< ElementsIntersectionsInspectionResult >(
-                module, "ElementsIntersectionsInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "elements_intersections",
-                &ElementsIntersectionsInspectionResult::elements_intersections )
-            .def(
-                "nb_issues", &ElementsIntersectionsInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &ElementsIntersectionsInspectionResult::inspection_type );
+        auto result =
+            define_inspection_result< ElementsIntersectionsInspectionResult >(
+                module, "ElementsIntersectionsInspectionResult",
+                "Result of the inspection of the intersections between the "
+                "meshes of the components of a model" );
+        INSPECTION_RESULT_MEMBER( result, ElementsIntersectionsInspectionResult,
+            elements_intersections,
+            "InspectionIssuesPairComponentMeshElement: the pairs of "
+            "intersecting elements, each one given by its component and its "
+            "element index" );
 
-        PYTHON_MODEL_INTERSECTIONS( Section, Section );
-        PYTHON_MODEL_INTERSECTIONS( BRep, BRep );
+        do_define_model_intersections< Section >( module, "Section" );
+        do_define_model_intersections< BRep >( module, "BRep" );
     }
 } // namespace geode

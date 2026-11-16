@@ -26,6 +26,8 @@
 
 #include <geode/inspector/inspection/criterion/intersections/surface_intersections.hpp>
 
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
+
 namespace geode
 {
     template < index_t dimension >
@@ -35,13 +37,24 @@ namespace geode
         using SurfaceMeshIntersections = SurfaceMeshIntersections< dimension >;
         const auto name =
             absl::StrCat( "SurfaceMeshIntersections", dimension, "D" );
-        pybind11::class_< SurfaceMeshIntersections >( module, name.c_str() )
-            .def( pybind11::init< const SurfaceMesh& >() )
+        pybind11::class_< SurfaceMeshIntersections >( module, name.c_str(),
+            "Inspection of the self intersections of a SurfaceMesh" )
+            .def( pybind11::init< const SurfaceMesh& >(),
+                pybind11::arg( "mesh" ), pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the self intersections of this mesh. "
+                "The inspector keeps the mesh alive" )
             .def( "mesh_has_self_intersections",
-                &SurfaceMeshIntersections::mesh_has_self_intersections )
+                &SurfaceMeshIntersections::mesh_has_self_intersections,
+                ReleaseGil(),
+                "Return True if two polygons of the mesh intersect (polygons "
+                "sharing vertices or an edge are reported only if they "
+                "intersect elsewhere than on these shared elements)" )
             .def( "intersecting_elements",
-                &SurfaceMeshIntersections::intersecting_elements );
+                &SurfaceMeshIntersections::intersecting_elements, ReleaseGil(),
+                "Return the InspectionIssuesPairIndex listing the pairs of "
+                "indices of intersecting polygons" );
     }
+
     void define_surface_intersections( pybind11::module& module )
     {
         do_define_surface_intersections< 2 >( module );

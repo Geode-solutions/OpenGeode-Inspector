@@ -20,32 +20,43 @@
  * SOFTWARE.
  *
  */
-
 #include <geode/model/representation/core/section.hpp>
 
 #include <geode/inspector/inspection/criterion/adjacency/section_meshes_adjacency.hpp>
+
+#include <geode/inspector/bindings/python/inspection_helpers.hpp>
 
 namespace geode
 {
     void define_section_meshes_adjacency( pybind11::module& module )
     {
-        define_issues_string_representation(
-            pybind11::class_< SectionMeshesAdjacencyInspectionResult >(
-                module, "SectionMeshesAdjacencyInspectionResult" ) )
-            .def( pybind11::init<>() )
-            .def_readwrite( "surfaces_edges_with_wrong_adjacencies",
-                &SectionMeshesAdjacencyInspectionResult::
-                    surfaces_edges_with_wrong_adjacencies )
-            .def( "nb_issues",
-                &SectionMeshesAdjacencyInspectionResult::nb_issues )
-            .def( "inspection_type",
-                &SectionMeshesAdjacencyInspectionResult::inspection_type );
+        auto result =
+            define_inspection_result< SectionMeshesAdjacencyInspectionResult >(
+                module, "SectionMeshesAdjacencyInspectionResult",
+                "Result of the inspection of the adjacencies in the meshes of "
+                "the Surfaces of a Section" );
+        INSPECTION_RESULT_MEMBER( result,
+            SectionMeshesAdjacencyInspectionResult,
+            surfaces_edges_with_wrong_adjacencies,
+            "InspectionIssuesMapPolygonEdge: the polygon edges with a wrong "
+            "adjacency, by Surface" );
 
-        pybind11::class_< SectionComponentMeshesAdjacency >(
-            module, "SectionComponentMeshesAdjacency" )
-            .def( pybind11::init< const Section& >() )
+        pybind11::class_< SectionComponentMeshesAdjacency >( module,
+            "SectionComponentMeshesAdjacency",
+            "Inspection of the adjacencies between the polygons of the meshes "
+            "of the Surfaces of a Section" )
+            .def( pybind11::init< const Section& >(), pybind11::arg( "model" ),
+                pybind11::keep_alive< 1, 2 >(),
+                "Create the inspector of the adjacencies of the meshes of "
+                "this Section. The inspector keeps the Section alive" )
             .def( "inspect_section_meshes_adjacencies",
                 &SectionComponentMeshesAdjacency::
-                    inspect_section_meshes_adjacencies );
+                    inspect_section_meshes_adjacencies,
+                ReleaseGil(),
+                "Return the SectionMeshesAdjacencyInspectionResult for the "
+                "active Surfaces: the wrong adjacencies of their meshes (as "
+                "SurfaceMeshAdjacency finds them) and the polygon edges on "
+                "the border of a Surface that are not part of a Line of the "
+                "model" );
     }
 } // namespace geode

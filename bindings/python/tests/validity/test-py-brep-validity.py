@@ -41,7 +41,7 @@ def check_a1():
         raise ValueError( "[Test] model model_A1 should have 8 issues." )
     if str(result) != result.string():
         raise ValueError("[Test] str should return the validity report")
-    if repr(result) != "<ObjectValidity: 8 issues>":
+    if repr(result) != "ObjectValidity(nb_issues=8)":
         raise ValueError("[Test] repr should summarize the validity report")
 
 

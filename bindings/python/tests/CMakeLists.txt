@@ -20,3 +20,83 @@
 
 add_subdirectory(inspection)
 add_subdirectory(validity)
+
+set(py_inspection_dependencies
+    ${PROJECT_NAME}::py_inspection
+    ${PROJECT_NAME}::py_validity
+)
+
+foreach(test_name
+    "test-py-naming"
+    "test-py-signatures"
+    "test-py-module-import"
+    "test-py-lifetime"
+    "test-py-negative-elements"
+    "test-py-results"
+    "test-py-gil"
+    "test-py-model-inspectors"
+    "test-py-topology-checks"
+)
+    add_geode_python_test(
+        SOURCE "${test_name}.py"
+        DEPENDENCIES ${py_inspection_dependencies}
+    )
+endforeach()
+
+add_geode_python_test(
+    SOURCE "test-py-package-docs.py"
+    ARGUMENTS
+        "${PROJECT_SOURCE_DIR}/bindings/python/opengeode_inspector_doc.txt"
+        "${PROJECT_BINARY_DIR}/wheel/opengeode_inspector"
+    DEPENDENCIES ${py_inspection_dependencies}
+)
+
+# The example runs in the tests, it cannot become stale
+add_geode_python_test(
+    SOURCE "test-py-examples.py"
+    ARGUMENTS
+        "${PROJECT_SOURCE_DIR}/examples"
+        "${PROJECT_SOURCE_DIR}/tests/data"
+    DEPENDENCIES ${py_inspection_dependencies}
+)
+
+# Compile flags of a downstream binding (pybind11, OpenGeode mesh and model)
+# for the test compiling the installed helpers: the transitive include
+# directories and definitions, without the sources of the bindings
+find_package(pybind11 REQUIRED)
+add_library(geode_installed_helpers_flags INTERFACE)
+target_link_libraries(geode_installed_helpers_flags
+    INTERFACE pybind11::module OpenGeode::mesh OpenGeode::model
+)
+set(helpers_flags "${PROJECT_BINARY_DIR}/installed_helpers_flags.cmake")
+file(GENERATE OUTPUT "${helpers_flags}" CONTENT
+"set(CHECK_INCLUDES \"$<TARGET_PROPERTY:geode_installed_helpers_flags,INTERFACE_INCLUDE_DIRECTORIES>\")
+set(CHECK_DEFINITIONS \"$<TARGET_PROPERTY:geode_installed_helpers_flags,INTERFACE_COMPILE_DEFINITIONS>\")
+set(CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+set(CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\")
+set(CMAKE_BUILD_TYPE Release)
+")
+add_geode_python_test(
+    SOURCE "test-py-installed-helpers.py"
+    ARGUMENTS
+        "${CMAKE_COMMAND}"
+        "${PROJECT_BINARY_DIR}/cmake_install.cmake"
+        "${PROJECT_SOURCE_DIR}/include/geode/inspector/bindings/python"
+        "${helpers_flags}"
+        "${CMAKE_GENERATOR}"
+)
+
+# A configure without the Python bindings installs their helpers. Registered
+# with the Python tests (in-tree only, where PROJECT_SOURCE_DIR is the root of
+# the project), and named test-py-* to be selected by the Python test jobs.
+string(REPLACE ";" "|" prefix_path "${CMAKE_PREFIX_PATH}")
+add_test(NAME test-py-helpers-python-off
+    COMMAND ${CMAKE_COMMAND}
+        "-DSOURCE_DIR=${PROJECT_SOURCE_DIR}"
+        "-DBINARY_DIR=${PROJECT_BINARY_DIR}/python_off_install"
+        "-DPREFIX_PATH=${prefix_path}"
+        "-DGENERATOR=${CMAKE_GENERATOR}"
+        "-DCXX_COMPILER=${CMAKE_CXX_COMPILER}"
+        -P "${CMAKE_CURRENT_LIST_DIR}/check_python_off_install.cmake"
+)
+set_tests_properties(test-py-helpers-python-off PROPERTIES TIMEOUT 300)
